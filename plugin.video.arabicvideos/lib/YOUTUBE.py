@@ -157,12 +157,16 @@ def TITLES(url):
 	if not items:
 		items = re.findall('src="(.*?)"(.*?)href="(.*?)".*?title="(.*?)".*?yt-lockup-meta(.*?)</li>.*?</div></div></div>(.*?)</li>',block,re.DOTALL)
 	for img,count,link,title,count2,paid in items:
-		if 'Watch later' in title: continue
-		if 'video-count-label"><b>' in count: count = ' '+re.findall('<b>(.*?)</b>',count,re.DOTALL)[0]
+		if 'Watch later' in title:
+			continue
+		if 'video-count-label"><b>' in count:
+			count = ' '+re.findall('<b>(.*?)</b>',count,re.DOTALL)[0]
 		else: count=''
-		if 'video' in count2 and '<li>' in count2: count2 = ' '+re.findall('<li>(.*?) video',count2,re.DOTALL)[0]
+		if 'video' in count2 and '<li>' in count2:
+			count2 = ' '+re.findall('<li>(.*?) video',count2,re.DOTALL)[0]
 		else: count2=''
-		if '\n' in paid: title = '$$:  '+title
+		if '\n' in paid:
+			title = '$$:  '+title
 		#xbmcgui.Dialog().ok(paid,'')
 		if '/channel/' in link: img = 'https:'+img
 		elif '/user/' in link: img = 'https:'+img

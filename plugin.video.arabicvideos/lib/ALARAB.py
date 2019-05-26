@@ -67,8 +67,7 @@ def TITLES(url):
 	items = re.findall('src="(http.*?)".*?<h5><a href="(.*?)">(.*?)<',block,re.DOTALL)
 	if not items:
 		items = re.findall('src="(http.*?)".*?<h2>#<a href="(.*?)">(.*?)<',block,re.DOTALL)		
-	allTitles = []
-	itemsNEW = []
+	allTitles,itemsNEW = [],[]
 	for img,link,title in items:
 		sequence = re.findall('([0-9]+)',title,re.DOTALL)
 		if sequence: sequence = int(sequence[0])
@@ -150,8 +149,7 @@ def EPISODES_OLD(url):
 	return
 
 def PLAY(url):
-	items_url = []
-	items_name = []
+	items_url,items_name = [],[]
 	if '/viewVedio/' in url:
 		id = re.findall('.com/viewVedio/([0-9]+)/',url,re.DOTALL)[0]
 	else:

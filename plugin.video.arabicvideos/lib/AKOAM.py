@@ -105,9 +105,7 @@ def EPISODES(url):
 	if not html_blocks:
 		xbmcgui.Dialog().notification('خطأ خارجي','لا يوجد ملف فيديو')
 		return
-	name = html_blocks[0][0]
-	img = html_blocks[0][1]
-	block = html_blocks[0][2]
+	name,img,block = html_blocks[0]
 	name = name.replace('\n','').replace('\t','').strip(' ')
 	if 'sub_epsiode_title' in block:
 		items = re.findall('sub_epsiode_title">(.*?)</h2>.*?sub_file_title.*?>(.*?)<',block,re.DOTALL)
@@ -119,8 +117,7 @@ def EPISODES(url):
 	if not items:
 		items = [ ('رابط التشغيل','') ]
 	count = 0
-	titleLIST = []
-	episodeLIST = []
+	titleLIST,episodeLIST = [],[]
 	size = len(items)
 	for title,filename in items:
 		filetype = ''
@@ -176,7 +173,7 @@ def PLAY(url):
 		linkLIST = []
 		serversDICT = {'1423075862':'dailymotion','1477487601':'estream','1505328404':'streamango',
 			'1423080015':'flashx','1458117295':'openload','1423079306':'vimple','1430052371':'ok.ru',
-			'1477488213':'thevid'}
+			'1477488213':'thevid','1558278006':'uqload'}
 		items = re.findall('download_btn\' target=\'_blank\' href=\'(.*?)\'',block,re.DOTALL)
 		for link in items:
 			linkLIST.append(link)
@@ -184,8 +181,8 @@ def PLAY(url):
 		for serverIMG,link in items:
 			serverIMG = serverIMG.split('/')[-1]
 			serverIMG = serverIMG.split('.')[0]
-			try: linkLIST.append(link+'/?name='+serversDICT[serverIMG])
-			except: linkLIST.append(link+'/?name='+serverIMG)
+			try: linkLIST.append(link+'?name='+serversDICT[serverIMG])
+			except: linkLIST.append(link+'?name='+serverIMG)
 		settings.setSetting('previous.url',url)
 		settings.setSetting('previous.linkLIST',str(linkLIST))
 	if len(linkLIST)==0:

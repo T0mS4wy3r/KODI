@@ -89,8 +89,7 @@ def MUSIC_MENU(url):
 def TITLES(url,page):
 	website0 = SITE(url)
 	lang = LANG(url)
-	parts = url.split('/')
-	type = parts[-1]
+	type = url.split('/')[-1]
 	order = str(int(page)/100)
 	page = str(int(page)%100)
 	#xbmcgui.Dialog().ok(url, type)
@@ -147,8 +146,7 @@ def EPISODES(url,page):
 	website0 = SITE(url)
 	lang = LANG(url)
 	parts = url.split('/')
-	id = parts[-1]
-	type = parts[3]
+	id,type = parts[-1],parts[3]
 	order = str(int(page)/100)
 	page = str(int(page)%100)
 	count_items=0

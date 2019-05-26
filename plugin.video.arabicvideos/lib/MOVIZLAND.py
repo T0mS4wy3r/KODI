@@ -85,12 +85,10 @@ def ITEMS(url,type=''):
 	return
 
 def EPISODES(url):
-	parts = url.split('?servers=')
-	url2 = parts[0]
+	url2 = url.split('?servers=')[0]
 	html = openURL(url2,'',headers,'','MOVIZLAND-EPISODES-1st')
 	block = re.findall('<title>(.*?)</title>.*?height="([0-9]+)" src="(.*?)"',html,re.DOTALL)
-	title = block[0][0]
-	img = block[0][2]
+	title,dummy,img = block[0]
 	name = re.findall('(.*?) (الحلقة|الحلقه) [0-9]+',title,re.DOTALL)
 	if name: name = name[0][0]
 	else: name = title
@@ -151,9 +149,7 @@ def PLAY(url):
 				html_blocks = re.findall('(src="/uploads/13721411411.png".*?href="http://moshahda\..*?/\w+.html".*?src="/uploads/13721411411.png")',html,re.DOTALL)
 				if html_blocks:
 					#xbmcgui.Dialog().ok(url,str(len(html_blocks)))
-					titleLIST2 = []
-					linkLIST2 = []
-					separator = ' '
+					titleLIST2,linkLIST2 = [],[]
 					if len(html_blocks)==1:
 						title = ''
 						block = html
@@ -167,7 +163,7 @@ def PLAY(url):
 							if block2: block = block2[0] + '  \n  src="/uploads/13721411411.png"'
 							title_blocks = re.findall('<(.*?)http://up.movizland.(online|com)/uploads/',block,re.DOTALL)
 							title = re.findall('> *([^<>]+) *<',title_blocks[0][0],re.DOTALL)
-							title = separator.join(title)
+							title = ' '.join(title)
 							title = title.decode('windows-1256')
 							title = title.replace('\n','').strip(' ')
 							title = title.replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ')

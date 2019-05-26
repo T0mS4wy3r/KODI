@@ -58,8 +58,7 @@ def PLAY(id):
 		html = response.text
 		#xbmcgui.Dialog().ok(html,html)
 		items = re.findall('"link3":"(.*?)"',html,re.DOTALL)
-		url = items[0]
-		url = url.replace('\/','/')
+		url = items[0].replace('\/','/')
 		#url = url.replace('#','')
 	elif source=='NT':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }

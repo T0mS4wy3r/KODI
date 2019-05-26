@@ -53,14 +53,12 @@ def TITLES(url):
 	#xbmcgui.Dialog().ok(url,url)
 	if '?' in url:
 		parts = url.split('?')
-		filter = '?' + urllib2.quote(parts[1],'=&:/%')
 		url = parts[0]
+		filter = '?' + urllib2.quote(parts[1],'=&:/%')
 	else: filter = ''
 	#xbmcgui.Dialog().ok(filter,'')
 	parts = url.split('/')
-	sort = parts[ len(parts)-1 ]
-	page = parts[ len(parts)-2 ]
-	type = parts[ len(parts)-3 ]
+	sort,page,type = parts[-1],parts[-2],parts[-3]
 	if sort in ['yop','review','views']:
 		if type=='movie': type1='فيلم'
 		elif type=='series': type1='مسلسل'
@@ -102,8 +100,7 @@ def EPISODES(url):
 	episodes_count = parts[1]
 	name = unquote(parts[2])
 	img = parts[3]
-	parts = url.split('?')
-	url = parts[0]
+	url = url.split('?')[0]
 	if episodes_count=='0':
 		html = openURL(url,'','','','SHOOFMAX-SEARCH-1st')
 		html_blocks = re.findall('<select(.*?)</select>',html,re.DOTALL)

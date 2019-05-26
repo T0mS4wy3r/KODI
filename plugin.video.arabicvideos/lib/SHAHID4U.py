@@ -190,8 +190,7 @@ def SEARCH(search=''):
 	block = html_blocks[0]
 	items = re.findall('data-cat="(.*?)".*?checkmark-bold">(.*?)</span>',block,re.DOTALL)
 	#xbmcgui.Dialog().textviewer('',str(block))
-	categoryLIST = []
-	filterLIST = []
+	categoryLIST,filterLIST = [],[]
 	for category,title in items:
 		categoryLIST.append(category)
 		filterLIST.append(title)

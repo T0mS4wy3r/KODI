@@ -40,8 +40,7 @@ def MENU():
 def ITEMS(url):
 	if '/search.php' in url:
 		parts = url.split('?')
-		url = parts[0]
-		search = parts[1]
+		url,search = parts
 		search = search.replace('%20',' ')
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 't' : search }
@@ -104,8 +103,7 @@ def PLAY(url):
 		linkLIST = linkLIST.split(',')
 		#xbmcgui.Dialog().ok(url,str(linkLIST))
 	else:
-		linkLIST = []
-		urlLIST = []
+		linkLIST,urlLIST = [],[]
 		adultLIST = ['R - للكبار فقط','PG-18','PG-16','TV-MA']
 		html = openURL(url,'',headers,'','4HELAL-PLAY-1st')
 		if any(value in html for value in adultLIST):

@@ -32,8 +32,7 @@ def MENU():
 	return
 
 def CATEGORIES(url,select=''):
-	info = url.split('/')
-	type = info[3]
+	type = url.split('/')[3]
 	#xbmcgui.Dialog().ok(type, url)
 	if type=='series':
 		html = openURL(url,'',headers,'','PANET-CATEGORIES-1st')

@@ -157,8 +157,7 @@ def RANDOM():
 	html = openURL(url,data,headers,'','PROGRAM-RANDOM-1st')
 	block = re.findall('list-unstyled(.*?)clearfix',html,re.DOTALL)
 	items = re.findall('<span>(.*?)</span>.*?<span>(.*?)</span>',html,re.DOTALL)
-	arbLIST = []
-	engLIST = []
+	arbLIST,engLIST = [],[]
 	for arbWORD, engWORD in items:
 		arbLIST.append(arbWORD.lower())
 		engLIST.append(engWORD.lower())

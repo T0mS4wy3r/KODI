@@ -125,16 +125,10 @@ def RESOLVABLE(url):
 	elif 'catch.is'	 	in url2: result1 = 'catch'
 	#elif 'estream'	 	in url2: result1 = 'estream'
 	elif 'filerio'		in url2: result1 = 'filerio'
-	elif 'go2ooo'		in url2: result1 = 'go2ooo'
-	elif 'go2to'		in url2: result1 = 'go2to'
-	elif 'gogoo'		in url2: result1 = 'gogoo'
-	elif 'gocoo'		in url2: result1 = 'gocoo'
-	elif 'golink'	 	in url2: result1 = 'golink'
 	elif 'gounlimited'	in url2: result1 = 'gounlimited'
 	elif 'govid'		in url2: result1 = 'govid'
 	elif 'intoupload' 	in url2: result1 = 'intoupload'
 	elif 'liivideo' 	in url2: result1 = 'liivideo'
-	elif 'load.is'	 	in url2: result1 = 'load'
 	elif 'mp4upload'	in url2: result1 = 'mp4upload'
 	elif 'publicvideohost' in url2: result1 = 'publicvideohost'
 	elif 'rapidvideo' 	in url2: result1 = 'rapidvideo'
@@ -179,10 +173,9 @@ def RESOLVABLE(url):
 
 def RESOLVE(url):
 	url2 = url.lower()
-	titleLIST = []
-	linkLIST = []
+	titleLIST,linkLIST = [],[]
 	if any(value in url2 for value in doNOTresolveMElist): return ''
-	elif 'go.akoam.net'	in url2: titleLIST,linkLIST = AKOAM_NET(url)
+	elif 'go.akoam.net'	in url2: titleLIST,linkLIST = AKOAM(url)
 	elif 'shahid4u.net'	in url2: titleLIST,linkLIST = SHAHID4U(url)
 	elif '://moshahda.'	in url2: titleLIST,linkLIST = MOSHAHDA_ONLINE(url)
 	elif 'e5tsar'		in url2: titleLIST,linkLIST = E5TSAR(url)
@@ -191,16 +184,10 @@ def RESOLVE(url):
 	elif 'catch.is'	 	in url2: titleLIST,linkLIST = CATCHIS(url)
 	#elif 'estream'	 	in url2: titleLIST,linkLIST = ESTREAM(url)
 	elif 'filerio'		in url2: titleLIST,linkLIST = FILERIO(url)
-	elif 'go2ooo'		in url2: titleLIST,linkLIST = GO2OOO(url)
-	elif 'go2to'		in url2: titleLIST,linkLIST = GO2TO(url)
-	elif 'gogoo'		in url2: titleLIST,linkLIST = GOGOO(url)
-	elif 'gocoo'		in url2: titleLIST,linkLIST = GOCOO(url)
-	elif 'golink'	 	in url2: titleLIST,linkLIST = GOLINK(url)
 	elif 'gounlimited'	in url2: titleLIST,linkLIST = GOUNLIMITED(url)
 	elif 'govid'		in url2: titleLIST,linkLIST = GOVID(url)
 	elif 'intoupload' 	in url2: titleLIST,linkLIST = INTOUPLOAD(url)
 	elif 'liivideo' 	in url2: titleLIST,linkLIST = LIIVIDEO(url)
-	elif 'load.is'	 	in url2: titleLIST,linkLIST = LOADIS(url)
 	elif 'mp4upload'	in url2: titleLIST,linkLIST = MP4UPLOAD(url)
 	elif 'publicvideohost' in url2: titleLIST,linkLIST = PUBLICVIDEOHOST(url)
 	elif 'rapidvideo' 	in url2: titleLIST,linkLIST = RAPIDVIDEO(url)
@@ -246,7 +233,7 @@ def SERVERS(linkLIST,script_name=''):
 			#xbmcgui.Dialog().ok(link,serverNAME)
 			if serverNAME=='':
 				if '?' in link and ('akoam' in link or 'shahid4u' in link or 'e5tsar' in link):
-					serverNAME = 'سيرفر عام مجهول ' + link.split('name=')[1].lower()
+					serverNAME = 'سيرفر عام مجهول ' + link.split('name=')[1].lower().split('__')[0]
 					serversDICT.append( [serverNAME,link] )
 				else:
 					serverNAME = 'سيرفر عام مجهول ' + link.split('//')[1].split('/')[0].lower()
@@ -324,7 +311,7 @@ def MOSHAHDA_ONLINE(link):
 			else:
 				title = title.replace(',label:"','')
 				title = title.strip('"')
-				title = ' سيرفر خاص ' + '  mp4: ' + name2 + ' ' + title
+				title = ' سيرفر  خاص ' + ' mp4: ' + name2 + ' ' + title
 				titleLIST.append(title)
 				linkLIST.append(link)
 		# download links
@@ -332,7 +319,7 @@ def MOSHAHDA_ONLINE(link):
 		html = openURL(link,'',headers,'','RESOLVERS-MOSHAHDA_ONLINE-5th')
 		items = re.findall("download_video\('(.*?)','(.*?)','(.*?)'.*?<td>(.*?)x",html,re.DOTALL)
 		for id,mode,hash,title in items:
-			title = ' سيرفر خاص ' + ' mp4: ' + name2 + ' download ' + title+'x'
+			title = ' سيرفر تحميل خاص ' + ' mp4: ' + name2 + title+'x'
 			link = 'http://moshahda.online/dl?op=download_orig&id='+id+'&mode='+mode+'&hash='+hash
 			titleLIST.append(title)
 			linkLIST.append(link)
@@ -364,51 +351,52 @@ def SHAHID4U(link):
 	#xbmcgui.Dialog().ok(str(url3),str(html))
 	return titleLIST,linkLIST
 
-def AKOAM_NET(link):
+def AKOAM(link):
 	from requests import request as requests_request
-	response = requests_request('GET', link, headers='', data='', allow_redirects=False)
-	url = response.headers['Location']
-	url = GOLINK(url)
-	try: url = url[0]
-	except:
-		url = RESOLVE(url)
-		url = url[0]
+	response = requests_request('GET', link, data='', headers='')
+	html = response.text
+	cookies = response.cookies.get_dict()
+	cookie = cookies['golink']
+	cookie = unquote(escapeUNICODE(cookie))
+	items = re.findall('route":"(.*?)"',cookie,re.DOTALL)
+	url = items[0].replace('\/','/')
+	url = escapeUNICODE(url)
 	if 'catch.is' in url:
 		id = url.split('%2F')[-1]
 		url = 'http://catch.is/'+id
-		url = CATCHIS(url)
-		url = url[0]
+		titles,urls = CATCHIS(url)
 	else:
 		response = requests_request('GET', 'https://akoam.net/', headers='', data='', allow_redirects=False)
 		relocateURL = response.headers['Location']
 		url = url.replace('https://akoam.net/',relocateURL)
-		#xbmcgui.Dialog().ok(str(url),str(relocateURL))
-		url2 = url
 		headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' , 'Referer':url }
-		response = requests_request('POST', url2, headers=headers, data='', allow_redirects=False)
+		response = requests_request('POST', url, headers=headers, data='', allow_redirects=False)
 		html = response.text
 		items = re.findall('direct_link":"(.*?)"',html,re.DOTALL|re.IGNORECASE)
 		if not items:
 			items = re.findall('<iframe.*?src="(.*?)"',html,re.DOTALL|re.IGNORECASE)
 			if not items:
 				items = re.findall('<embed.*?src="(.*?)"',html,re.DOTALL|re.IGNORECASE)
-		url = items[0].replace('\/','/')
-		url = url.rstrip('/')
-		if 'http' not in url: url = 'http:' + url
-		if '?' in link:
-			url = RESOLVE(url)
-			try: url = url[0]
-			except: url = ''
-		url1 = url
-		#hash_data = re.findall('hash_data":"(.*?)"',html,re.DOTALL|re.IGNORECASE)[0]
-		#response = requests_request('GET', url2, headers='', data='', allow_redirects=False)
-		#html = response.text
-		#watch_title = re.findall('<h1>(.*?)</h1>',html,re.DOTALL|re.IGNORECASE)[0]
-		#splits = url2.split('/')
-		#server = '/'.join(splits[0:3])
-		#url3 = server + '/watching/'+hash_data+'/'+watch_title
-		#xbmcgui.Dialog().ok(url1,url3)
-	if url1!='': return [url1],[url1]
+		url2 = items[0].replace('\/','/')
+		url2 = url2.rstrip('/')
+		if 'http' not in url2: url2 = 'http:' + url2
+		if '?name=' in link:
+			titles,urls = RESOLVE(url2)
+		else: 
+			titles,urls = ['ملف التحميل'],[url2]
+			"""
+			splits = url.split('/')
+			server = '/'.join(splits[0:3])
+			hash_data = url.split('/')[4]
+			watch_title = url.split('/')[-1]
+			url3 = server + '/watching/'+hash_data+'/'+watch_title
+			response = requests_request('GET', url3, headers='', data='', allow_redirects=False)
+			html = response.text
+			url3 = re.findall('file: "(.*?)"',html,re.DOTALL|re.IGNORECASE)[0]
+			titles2,urls2 = ['ملف المشاهدة المباشرة'],[url3]
+			titles,urls = titles+titles2,urls+urls2
+			"""
+	if urls: return titles,urls
 	else: return [],[]
 
 def RAPIDVIDEO(url):
@@ -564,47 +552,6 @@ def YOUTUBE(url):
 	youtubeID = id.split('?')[0]
 	url = 'plugin://plugin.video.youtube/play/?video_id='+youtubeID
 	return [url],[url]
-
-def GOLINK(url):
-	#id = url.split('/')[-1]
-	#url = 'http://golink.to/link/read?hash=' + id
-	import requests
-	response = requests.request('GET', url, data='', headers='')
-	html = response.text
-	cookies = response.cookies.get_dict()
-	cookie = cookies['golink']
-	cookie = unquote(escapeUNICODE(cookie))
-	items = re.findall('route":"(.*?)"',cookie,re.DOTALL)
-	if items:
-		url = items[0].replace('\/','/')
-		url = escapeUNICODE(url)
-		return [url],[url]
-	else: return [],[]
-
-def GO2OOO(url):
-	url1,url2 = GOLINK(url)
-	return url1,url2
-
-def GO2TO(url):
-	url1,url2 = GOLINK(url)
-	return url1,url2
-
-def GOGOO(url):
-	url1,url2 = GOLINK(url)
-	return url1,url2
-
-def GOCOO(url):
-	url1,url2 = GOLINK(url)
-	return url1,url2
-
-def LOADIS(url):
-	#id = url.split('/')[-1]
-	#url = 'http://load.is/link/read?hash=' + id
-	#html = openURL(url,'','','','RESOLVERS-LOADIS-1st')
-	#items = re.findall('route":"(.*?)"',html,re.DOTALL)
-	#url = items[0].replace('\/','/')
-	url1,url2 = GOLINK(url)
-	return url1,url2
 
 def CATCHIS(url):
 	id = url.split('/')[-1]
@@ -868,14 +815,6 @@ def PUBLICVIDEOHOST(url):
 		url = items[0]
 		return [url],[url]
 	else: return [],[]
-
-
-
-
-
-
-
-
 
 
 

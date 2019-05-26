@@ -104,9 +104,7 @@ def PLAY(url):
 		linkLIST = linkLIST.split(',')
 		#xbmcgui.Dialog().ok(url,str(linkLIST))
 	else:
-		urlLIST = []
-		dataLIST = []
-		linkLIST = []
+		urlLIST,dataLIST,linkLIST = [],[],[]
 		headers = { 'User-Agent' : '' }
 		html = openURL(url,'',headers,'','HALACIMA-PLAY-1st')
 		html_blocks = re.findall('class="download(.*?)div',html,re.DOTALL)
