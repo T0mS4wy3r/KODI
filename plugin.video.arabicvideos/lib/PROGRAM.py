@@ -5,7 +5,7 @@ script_name='PROGRAM'
 
 def MAIN(mode,text=''):
 	if (mode==0 or mode==1): FIX_KEYBOARD(mode,text)
-	elif mode==2: SEND_MESSAGE()
+	elif mode==2: SEND_MESSAGE(text)
 	elif mode==3: DMCA()
 	elif mode==4: HTTPS_TEST()
 	elif mode==5: SERVERS_TYPE()
@@ -43,14 +43,24 @@ def FIX_KEYBOARD(mode,text):
 		xbmcgui.Dialog().ok(new1,new2)
 	return
 
-def SEND_MESSAGE():
-	xbmcgui.Dialog().ok('المبرمج لا يعلم الغيب','اذا كانت لديك مشكلة فاذن أقرأ قسم المشاكل والحلول واذا لم تجد الحل هناك فاذن اكتب رسالة عن المكان والوقت والحال الذي تحدث فيه المشكلة واكتب جميع التفاصيل لان المبرمج لا يعلم الغيب')
-	xbmcgui.Dialog().ok('عنوان الايميل','اذا كنت تريد ان تسأل وتحتاج جواب من المبرمج فاذن يجب عليك اضافة عنوان البريد الالكتروني email الخاص بك الى رسالتك لانها الطريقة الوحيدة للوصول اليك')
+def SEND_MESSAGE(text):
+	if 'problem=yes' in text: problem='yes'
+	else: problem='no'
+	if problem=='yes':
+		yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','قبل ارسال سجل الاخطاء الى المبرمج عليك ان تقوم بتشغيل الفيديو او الرابط الذي يعطيك المشكلة لكي يتم تسجيل المشكلة في سجل الاخطاء. هل تريد الارسال الان ؟')
+		if yes==0: return ''
+		logs = xbmcgui.Dialog().yesno('ارسال سجل الاخطاء','هل توافق على ارسال ال 100 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع معرفة المشكلة واصلاحها اذا كانت المشكلة من البرنامج وليست من المواقع الاصلية')
+		if logs==1: text += 'logs=yes'
+		else: text += 'logs=no'
+		xbmcgui.Dialog().ok('المبرمج لا يعلم الغيب','اذا كانت لديك مشكلة فاذن أقرأ قسم المشاكل والحلول واذا لم تجد الحل هناك فاذن اكتب رسالة عن المكان والوقت والحال الذي حدثت فيه المشكلة وحاول كتابة جميع التفاصيل لان المبرمج لا يعلم الغيب')
+		xbmcgui.Dialog().ok('عنوان الايميل','اذا كنت تريد ان تسأل وتحتاج جواب من المبرمج فاذن يجب عليك اضافة عنوان البريد الالكتروني email الخاص بك الى رسالتك لانها الطريقة الوحيدة للوصول اليك')
 	search = KEYBOARD('Write a message   اكتب رسالة')
-	if search == '': return
+	if search == '':
+		xbmcgui.Dialog().ok('تم الغاء الارسال','')
+		return
 	message = search
 	subject = 'Message: From Arabic Videos'
-	result = SEND_EMAIL(subject,message,'yes','','EMAIL-FROM-USERS')
+	result = SEND_EMAIL(subject,message,'yes','','EMAIL-FROM-USERS',text)
 
 	#	url = 'my API and/or SMTP server'
 	#	payload = '{"api_key":"MY API KEY","to":["me@email.com"],"sender":"me@email.com","subject":"From Arabic Videos","text_body":"'+message+'"}'
@@ -75,7 +85,7 @@ def SEND_MESSAGE():
 	#	response = server.sendmail(FROMemailAddress,TOemailAddress, header + '\n' + message)
 	#	server.quit()
 	#	xbmcgui.Dialog().ok('Response',str(response))
-	return
+	return ''
 
 def DMCA():
 	text = ' نفي: البرنامج لا يوجد له اي سيرفر يستضيف اي محتويات. البرنامج يستخدم روابط وتضمين لمحتويات مرفوعة على سيرفرات خارجية. البرنامج غير مسؤول عن اي محتويات تم تحميلها على سيرفرات ومواقع خارجية "مواقع طرف 3". جميع الاسماء والماركات والصور والمنشورات هي خاصة باصحابها. البرنامج لا ينتهك حقوق الطبع والنشر وقانون الألفية للملكية الرقمية DMCA اذا كان لديك شكوى خاصة بالروابط والتضامين الخارجية فالرجاء التواصل مع ادارة هذه السيرفرات والمواقع الخارجية'
@@ -151,7 +161,7 @@ def VERSION():
 def RANDOM():
 	headers = { 'User-Agent' : '' }
 	url = 'https://www.bestrandoms.com/random-arabic-words'
-	payload = { 'quantity' : '4' }
+	payload = { 'quantity' : '5' }
 	data = urllib.urlencode(payload)
 	#xbmcgui.Dialog().ok('',str(data))
 	html = openURL(url,data,headers,'','PROGRAM-RANDOM-1st')
@@ -178,6 +188,20 @@ def CLOSED():
 	return
 
 def TESTINGS():
+	url = 'https://intoupload.net/w2j4lomvzopd'
+	from urlresolver import HostedMediaFile as urlresolver_HostedMediaFile
+	try:
+		#resolvable = urlresolver_HostedMediaFile(url).valid_url()
+		link = urlresolver_HostedMediaFile(url).resolve()
+		xbmcgui.Dialog().ok(str(link),url)
+	except: xbmcgui.Dialog().ok('urlresolver: fail',url)
+	import RESOLVERS
+	titles,urls = RESOLVERS.RESOLVE(url)
+	selection = xbmcgui.Dialog().select('TITLES :', titles)
+	selection = xbmcgui.Dialog().select('URLS :', urls)
+
+
+		
 	#url = ''
 	#PLAY_VIDEO(url)
 	#import xbmcaddon

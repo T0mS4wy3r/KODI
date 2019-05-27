@@ -171,3 +171,6 @@ Added browsing of new website "MOVIZLAND"
 v4.9.0	2019-05-25
 Major changes to "Resolvers"
 
+
+v5.0.0	2019-05-27
+Added "Problem Reporting"

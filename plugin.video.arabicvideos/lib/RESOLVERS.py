@@ -80,7 +80,7 @@ def CHECK(url):
 	elif 'govid'		in url: result = 'known'
 	elif 'hqq'			in url: result = 'known'
 	elif 'media4up'		in url: result = 'known'
-	elif 'mystream'		in url: result = 'known'
+	#elif 'mystream'		in url: result = 'known'
 	elif 'nitroflare'	in url: result = 'known'
 	elif 'nowvideo'		in url: result = 'known'
 	elif 'ok.ru'		in url: result = 'known'
@@ -105,7 +105,7 @@ def CHECK(url):
 	elif 'vidto.me'		in url: result = 'known'
 	elif 'archive'		in url: result = 'known'
 	elif 'publicvideohost' in url: result = 'known'
-	elif 'vidbom'		in url: result = 'known'
+	#elif 'vidbom'		in url: result = 'known'
 	else:
 		link = 'http://emadmahdi.pythonanywhere.com/check?url=' + url
 		result = openURL(link,'','','','RESOLVERS-CHECK-1st')
@@ -127,7 +127,7 @@ def RESOLVABLE(url):
 	elif 'filerio'		in url2: result1 = 'filerio'
 	elif 'gounlimited'	in url2: result1 = 'gounlimited'
 	elif 'govid'		in url2: result1 = 'govid'
-	elif 'intoupload' 	in url2: result1 = 'intoupload'
+	#elif 'intoupload' 	in url2: result1 = 'intoupload'
 	elif 'liivideo' 	in url2: result1 = 'liivideo'
 	elif 'mp4upload'	in url2: result1 = 'mp4upload'
 	elif 'publicvideohost' in url2: result1 = 'publicvideohost'
@@ -145,7 +145,7 @@ def RESOLVABLE(url):
 	#elif 'vidbom'		in url2: result1 = 'vidbom'
 	elif 'vidhd' 		in url2: result1 = 'vidhd'
 	elif 'vidoza' 		in url2: result1 = 'vidoza'
-	elif 'vidshare' 	in url2: result1 = 'vidshare'
+	#elif 'vidshare' 	in url2: result1 = 'vidshare'
 	elif 'watchvideo' 	in url2: result1 = 'watchvideo'
 	elif 'wintv.live'	in url2: result1 = 'wintv.live'
 	elif 'youtu'	 	in url2: result1 = 'youtube'
@@ -186,7 +186,7 @@ def RESOLVE(url):
 	elif 'filerio'		in url2: titleLIST,linkLIST = FILERIO(url)
 	elif 'gounlimited'	in url2: titleLIST,linkLIST = GOUNLIMITED(url)
 	elif 'govid'		in url2: titleLIST,linkLIST = GOVID(url)
-	elif 'intoupload' 	in url2: titleLIST,linkLIST = INTOUPLOAD(url)
+	#elif 'intoupload' 	in url2: titleLIST,linkLIST = INTOUPLOAD(url)
 	elif 'liivideo' 	in url2: titleLIST,linkLIST = LIIVIDEO(url)
 	elif 'mp4upload'	in url2: titleLIST,linkLIST = MP4UPLOAD(url)
 	elif 'publicvideohost' in url2: titleLIST,linkLIST = PUBLICVIDEOHOST(url)
@@ -204,7 +204,7 @@ def RESOLVE(url):
 	#elif 'vidbom'		in url2: titleLIST,linkLIST = VIDBOM(url)
 	elif 'vidhd' 		in url2: titleLIST,linkLIST = VIDHD(url)
 	elif 'vidoza' 		in url2: titleLIST,linkLIST = VIDOZA(url)
-	elif 'vidshare' 	in url2: titleLIST,linkLIST = VIDSHARE(url)
+	#elif 'vidshare' 	in url2: titleLIST,linkLIST = VIDSHARE(url)
 	elif 'watchvideo' 	in url2: titleLIST,linkLIST = WATCHVIDEO(url)
 	elif 'wintv.live'	in url2: titleLIST,linkLIST = WINTVLIVE(url)
 	elif 'youtu'	 	in url2: titleLIST,linkLIST = YOUTUBE(url)
@@ -400,25 +400,19 @@ def AKOAM(link):
 	else: return [],[]
 
 def RAPIDVIDEO(url):
+	# https://www.rapidvideo.com/e/FZSQ3R0XHZ
 	headers = { 'User-Agent' : '' }
 	html = openURL(url,'',headers,'','RESOLVERS-RAPIDVIDEO-1st')
 	#xbmcgui.Dialog().ok(url,html)
-	items = re.findall('poster=.*?src="(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
-
-def VIDSHARE(url):
-	headers = { 'User-Agent' : '' }
-	html = openURL(url,'',headers,'','RESOLVERS-VIDSHARE-1st')
-	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
+	items = re.findall('<source src="(.*?)".*?label="(.*?)"',html,re.DOTALL)
+	titles,urls = [],[]
+	for link,label in items:
+		titles.append(label)
+		urls.append(link)
+	return titles,urls
 
 def UQLOAD(url):
+	# https://uqload.com/embed-iaj1zudyf89v.html
 	headers = { 'User-Agent' : '' }
 	html = openURL(url,'',headers,'','RESOLVERS-UQLOAD-1st')
 	items = re.findall('sources: \["(.*?)"',html,re.DOTALL)
@@ -429,11 +423,16 @@ def UQLOAD(url):
 	else: return [],[]
 
 def VCSTREAM(url):
-	id = url.split('/')[-2]
+	# https://vcstream.to/embed/5c83f14297d62
+	url = url.strip('/')
+	id = url.split('/')[-1]
 	url = 'https://vcstream.to/player?fid=' + id
 	headers = { 'User-Agent' : '' }
 	html = openURL(url,'',headers,'','RESOLVERS-VCSTREAM-1st')
-	html = html.replace('\\','')
+	html = html.replace('\\\\','')
+	html = html.replace('\\/','/')
+	html = html.replace('\\"','"')
+	xbmcgui.Dialog().ok(url,html)
 	items = re.findall('file":"(.*?)"',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(items[0],items[0])
 	if items:
@@ -442,34 +441,42 @@ def VCSTREAM(url):
 	else: return [],[]
 
 def VIDOZA(url):
+	# https://vidoza.net/embed-pkqq5ljvckb7.html
 	url = url.replace('embed-','')
 	html = openURL(url,'','','','RESOLVERS-VIDOZA-1st')
-	items = re.findall('source src="(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(items),html)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
+	items = re.findall('src: "(.*?)".*?label:"(.*?)", res:"(.*?)"',html,re.DOTALL)
+	titles,urls = [],[]
+	for link,label,res in items:
+		titles.append(label+' '+res)
+		urls.append(link)
+	return titles,urls
 
 def WATCHVIDEO(url):
+	# https://watchvideo.us/embed-rpvwb9ns8i73.html
 	url = url.replace('embed-','')
 	html = openURL(url,'','','','RESOLVERS-WATCHVIDEO-1st')
-	items = re.findall("Download start.*?download_video\('(.*?)','(.*?)','(.*?)'",html,re.DOTALL)
-	for id,mode,hash in items:
+	items = re.findall("download_video\('(.*?)','(.*?)','(.*?)'\)\">(.*?)</a>.*?<td>(.*?),.*?</td>",html,re.DOTALL)
+	items = set(items)
+	titles,urls = [],[]
+	for id,mode,hash,label,res in items:
 		url = 'https://watchvideo.us/dl?op=download_orig&id='+id+'&mode='+mode+'&hash='+hash
 		html = openURL(url,'','','','RESOLVERS-WATCHVIDEO-2nd')
-	items = re.findall('direct link.*?href="(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
+		items = re.findall('direct link.*?href="(.*?)"',html,re.DOTALL)
+		for link in items:
+			titles.append(label+' '+res)
+			urls.append(link)
+	return titles,urls
 
 def UPBOM(url):
+	# http://upbom.live/hm9opje7okqm/TGQSDA001.The.Vanishing.2018.1080p.WEB-DL.Cima4U.mp4.html
+	url = url.replace('upbom.live','uppom.live')
+	url = url.strip('/')
 	id = url.split('/')[-2]
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
-	payload = { 'id' : id , 'op' : 'download2' }
+	payload = { 'id' : id  , 'op' : 'download2' , 'method_free':'Free+Download+%3E%3E' }
 	data = urllib.urlencode(payload)
 	html = openURL(url,data,headers,'','RESOLVERS-UPBOM-1st')
+	xbmcgui.Dialog().ok('',html)
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	items = re.findall('direct_link.*?href="(.*?)"',html,re.DOTALL)
 	if items:
@@ -478,194 +485,27 @@ def UPBOM(url):
 	else: return [],[]
 
 def LIIVIDEO(url):
+	# https://www.liivideo.com/012ocyw9li6g.html
 	headers = { 'User-Agent' : '' }
 	html = openURL(url,'',headers,'','RESOLVERS-LIIVIDEO-1st')
-	items = re.findall('file:"(.*?)"',html,re.DOTALL)
+	items = re.findall('sources:.*?"(.*?)","(.*?)"',html,re.DOTALL)
+	titles,urls = [],[]
 	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
+		titles.append('mp4')
+		urls.append(items[0][1])
+		titles.append('m3u8')
+		urls.append(items[0][0])
+	return titles,urls
 
 def VIDHD(url):
+	# https://vidhd.net/562ghl3hr1cw.html
 	html = openURL(url,'','','','RESOLVERS-LIIVIDEO-1st')
-	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
-
-def INTOUPLOAD(url):
-	headers = { 'User-Agent' : '' }
-	html = openURL(url,'',headers,'','RESOLVERS-INTOUPLOAD-1st')
-	html_blocks = re.findall('POST.*?(.*?)clearfix',html,re.DOTALL)
-	block = html_blocks[0]
-	items = re.findall('op" value="(.*?)".*?id" value="(.*?)".*?rand" value="(.*?)".*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);',block,re.DOTALL)
-	for op,id,rand,pos1,num1,pos2,num2,pos3,num3,pos4,num4 in items:
-		a=1
-	captcha = { int(pos1):chr(int(num1)) , int(pos2):chr(int(num2)) , int(pos3):chr(int(num3)) , int(pos4):chr(int(num4)) }
-	code = ''
-	for char in sorted(captcha):
-		code += captcha[char]
-	#xbmcgui.Dialog().ok(code,str(captcha))
-	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
-	payload = { 'id':id , 'op':op , 'code':code , 'rand':rand }
-	data = urllib.urlencode(payload)
-	progress = xbmcgui.DialogProgress()
-	progress.create('Waiting 15 seconds ...')
-	for i in range(0,15):
-		progress.update(i*100/15,str(15-i))
-		xbmc.sleep(1000)
-		if progress.iscanceled(): return
-	progress.close()
-	html = openURL(url,data,headers,'','RESOLVERS-INTOUPLOAD-2nd')
-	items = re.findall('target_type.*?href="(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
-
-def ESTREAM(url):
-	#url = url.replace('embed-','')
-	html = openURL(url,'','','','RESOLVERS-ESTREAM-1st')
-	items = re.findall('video preload.*?src=.*?src="(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(items[0],items[0])
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
-
-def VEVIO(url):
-	id = url.split('/')[-1]
-	url = 'https://vev.io/api/serve/video/' + id
-	headers = { 'User-Agent' : '' }
-	data = '{}'
-	html = openURL(url,data,headers,'','RESOLVERS-VEVIO-1st')
-	items = re.findall('":"(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(url,str(items))
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
-
-def YOUTUBE(url):
-	id = url.split('/')[-1]
-	youtubeID = id.split('?')[0]
-	url = 'plugin://plugin.video.youtube/play/?video_id='+youtubeID
-	return [url],[url]
-
-def CATCHIS(url):
-	id = url.split('/')[-1]
-	payload = { 'op' : 'download2' , 'id' : id }
-	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
-	data = urllib.urlencode(payload)
-	html = openURL(url,data,headers,'','RESOLVERS-CATCH-1st')
-	items = re.findall('direct_link.*?href="(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
-
-def VIDBOM_PROBLEM(url):
-	html = openURL(url,'','','','RESOLVERS-VIDBOM-1st')
-	xbmc.sleep(1500)
-	items = re.findall('file: "(.*?)"',html,re.DOTALL)
-	slidesURL = items[0].rstrip('/')
-	html2 = openURL(slidesURL,'','','','RESOLVERS-VIDBOM-2nd')
-	xbmc.sleep(1500)
-	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
-
-def HELAL(url):
-	headers = { 'User-Agent' : '' }
-	#url = url.replace('http:','https:')
-	html = openURL(url,'',headers,'','RESOLVERS-VIDBOB-1st')
-	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(items[0].rstrip('/'),'')
-	if items:
-		url = items[0].replace('https:','http:')
-		return [url],[url]
-	else: return [],[]
-
-def VIDBOB(url):
-	headers = { 'User-Agent' : '' }
-	#url = url.replace('http:','https:')
-	html = openURL(url,'',headers,'','RESOLVERS-VIDBOB-1st')
-	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(items[0].rstrip('/'),'')
-	if items:
-		url = items[0].replace('https:','http:')
-		return [url],[url]
-	else: return [],[]
-
-def ARABLOADS(url):
-	html = openURL(url,'','','','RESOLVERS-ARABLOADS-1st')
-	items = re.findall('color="red">(.*?)<',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
-
-def TOP4TOP(url):
-	return [url],[url]
-
-def ZIPPYSHARE(url):
-	#xbmcgui.Dialog().ok(url,'')
-	server = url.split('/')
-	basename = '/'.join(server[0:3])
-	html = openURL(url,'','','','RESOLVERS-ZIPPYSHARE-1st')
-	items = re.findall('dlbutton\'\).href = "(.*?)" \+ \((.*?) \% (.*?) \+ (.*?) \% (.*?)\) \+ "(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(url,str(var))
-	if items:
-		var1,var2,var3,var4,var5,var6 = items[0]
-		var = int(var2) % int(var3) + int(var4) % int(var5)
-		url = basename + var1 + str(var) + var6
-		return [url],[url]
-	else: return [],[]
-
-def GOUNLIMITED_PROBLEM(url):
-	url = url.replace('embed-','')
-	headers = { 'User-Agent' : '' }
-	html = openURL(url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
-	items = re.findall('data(.*?)hide.*?embed(.*?)hash',html,re.DOTALL)
-	id = items[0][0].replace('|','')
-	hash = items[0][1].split('|')
-	newhash = ''
-	for i in reversed(hash):
-		newhash += i + '-'
-	newhash = newhash.strip('-')
-	#url = 'https://gounlimited.to/dl?op=view&file_code='+id+'&hash='+newhash+'&embed=&adb=1'
-	#html = openURL(url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
-	from requests import request as requests_request
-	url = "https://gounlimited.to/dl"
-	querystring = { "op":"view","file_code":"o1yo2xwdmk0l","hash":newhash,"embed":"","adb":"1" }
-	headers = {
-		'accept': "*/*",
-		'dnt': "1",
-		'x-requested-with': "XMLHttpRequest",
-		'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
-		'referer': "https://gounlimited.to/o1yo2xwdmk0l.html",
-		'accept-encoding': "gzip, deflate, br",
-		'accept-language': "en-US,en;q=0.9,ar;q=0.8"
-		}
-	html = requests_request('GET', url, headers=headers, params=querystring)
-	items = re.findall('video="" src="(.*?)"',html.text,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(html.content),str(len(html.content)))
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return [],[]
-
-def GOUNLIMITED(url):
-	headers = { 'User-Agent' : '' }
-	html = openURL(url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
-	items = re.findall('preload\|mp4\|(.*?)\|sources\|Player',html,re.DOTALL)
-	if items:
-		url = 'https://shuwaikh.gounlimited.to/'+items[0]+'/v.mp4'
-		return [url],[url]
-	else: return [],[]
+	items = re.findall('file:"(.*?)",label:"(.*?)"',html,re.DOTALL)
+	titles,urls = [],[]
+	for link,label in items:
+		titles.append(label)
+		urls.append(link)
+	return titles,urls
 
 def UPTO(url):
 	#xbmcgui.Dialog().ok(url,'')
@@ -733,6 +573,106 @@ def UPTOBOX(url):
 	#file.write(html)
 	#file.close()
 
+def YOUTUBE(url):
+	id = url.split('/')[-1]
+	youtubeID = id.split('?')[0]
+	url = 'plugin://plugin.video.youtube/play/?video_id='+youtubeID
+	return [url],[url]
+
+def HELAL(url):
+	headers = { 'User-Agent' : '' }
+	#url = url.replace('http:','https:')
+	html = openURL(url,'',headers,'','RESOLVERS-VIDBOB-1st')
+	items = re.findall('file:"(.*?)"',html,re.DOTALL)
+	#xbmcgui.Dialog().ok(items[0].rstrip('/'),'')
+	if items:
+		url = items[0].replace('https:','http:')
+		return [url],[url]
+	else: return [],[]
+
+
+
+
+
+
+
+
+#####################################################
+#    NOT YET VERIFIED
+#    26-05-2019
+#####################################################
+
+
+def VEVIO(url):
+	id = url.split('/')[-1]
+	url = 'https://vev.io/api/serve/video/' + id
+	headers = { 'User-Agent' : '' }
+	data = '{}'
+	html = openURL(url,data,headers,'','RESOLVERS-VEVIO-1st')
+	items = re.findall('":"(.*?)"',html,re.DOTALL)
+	#xbmcgui.Dialog().ok(url,str(items))
+	if items:
+		url = items[0]
+		return [url],[url]
+	else: return [],[]
+
+def CATCHIS(url):
+	id = url.split('/')[-1]
+	payload = { 'op' : 'download2' , 'id' : id }
+	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
+	data = urllib.urlencode(payload)
+	html = openURL(url,data,headers,'','RESOLVERS-CATCH-1st')
+	items = re.findall('direct_link.*?href="(.*?)"',html,re.DOTALL)
+	if items:
+		url = items[0]
+		return [url],[url]
+	else: return [],[]
+
+def VIDBOB(url):
+	headers = { 'User-Agent' : '' }
+	#url = url.replace('http:','https:')
+	html = openURL(url,'',headers,'','RESOLVERS-VIDBOB-1st')
+	items = re.findall('file:"(.*?)"',html,re.DOTALL)
+	#xbmcgui.Dialog().ok(items[0].rstrip('/'),'')
+	if items:
+		url = items[0].replace('https:','http:')
+		return [url],[url]
+	else: return [],[]
+
+def ARABLOADS(url):
+	html = openURL(url,'','','','RESOLVERS-ARABLOADS-1st')
+	items = re.findall('color="red">(.*?)<',html,re.DOTALL)
+	if items:
+		url = items[0]
+		return [url],[url]
+	else: return [],[]
+
+def TOP4TOP(url):
+	return [url],[url]
+
+def ZIPPYSHARE(url):
+	#xbmcgui.Dialog().ok(url,'')
+	server = url.split('/')
+	basename = '/'.join(server[0:3])
+	html = openURL(url,'','','','RESOLVERS-ZIPPYSHARE-1st')
+	items = re.findall('dlbutton\'\).href = "(.*?)" \+ \((.*?) \% (.*?) \+ (.*?) \% (.*?)\) \+ "(.*?)"',html,re.DOTALL)
+	#xbmcgui.Dialog().ok(url,str(var))
+	if items:
+		var1,var2,var3,var4,var5,var6 = items[0]
+		var = int(var2) % int(var3) + int(var4) % int(var5)
+		url = basename + var1 + str(var) + var6
+		return [url],[url]
+	else: return [],[]
+
+def GOUNLIMITED(url):
+	headers = { 'User-Agent' : '' }
+	html = openURL(url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
+	items = re.findall('preload\|mp4\|(.*?)\|sources\|Player',html,re.DOTALL)
+	if items:
+		url = 'https://shuwaikh.gounlimited.to/'+items[0]+'/v.mp4'
+		return [url],[url]
+	else: return [],[]
+
 def THEVIDEO(url):
 	url = url.replace('embed-','')
 	html = openURL(url,'','','','RESOLVERS-THEVIDEO-1st')
@@ -787,17 +727,6 @@ def GOVID(url):
 		return [url],[url]
 	else: return [],[]
 
-def VIMPLE_PROBLEM(link):
-	id = link.split('id=')[1]
-	headers = { 'User-Agent' : '' }
-	url = 'http://player.vimple.ru/iframe/' + id
-	html = openURL(url,'',headers,'','RESOLVERS-VIMPLE-1st')
-	items = re.findall('true,"url":"(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0].replace('\/','/')
-		return [url],[url]
-	else: return [],[]
-
 def ARCHIVE(url):
 	html = openURL(url,'','','','RESOLVERS-ARCHIVE-1st')
 	items = re.findall('source src="(.*?)"',html,re.DOTALL)
@@ -815,6 +744,121 @@ def PUBLICVIDEOHOST(url):
 		url = items[0]
 		return [url],[url]
 	else: return [],[]
+
+def ESTREAM(url):
+	#url = url.replace('embed-','')
+	html = openURL(url,'','','','RESOLVERS-ESTREAM-1st')
+	items = re.findall('video preload.*?src=.*?src="(.*?)"',html,re.DOTALL)
+	#xbmcgui.Dialog().ok(items[0],items[0])
+	if items:
+		url = items[0]
+		return [url],[url]
+	else: return [],[]
+
+
+
+
+
+
+
+
+
+def VIMPLE_PROBLEM(link):
+	id = link.split('id=')[1]
+	headers = { 'User-Agent' : '' }
+	url = 'http://player.vimple.ru/iframe/' + id
+	html = openURL(url,'',headers,'','RESOLVERS-VIMPLE-1st')
+	items = re.findall('true,"url":"(.*?)"',html,re.DOTALL)
+	if items:
+		url = items[0].replace('\/','/')
+		return [url],[url]
+	else: return [],[]
+
+def VIDSHARE_PROBLEM(url):
+	headers = { 'User-Agent' : '' }
+	html = openURL(url,'',headers,'','RESOLVERS-VIDSHARE-1st')
+	items = re.findall('file:"(.*?)"',html,re.DOTALL)
+	if items:
+		url = items[0]
+		return [url],[url]
+	else: return [],[]
+
+def INTOUPLOAD_PROBLEM(url):
+	# https://intoupload.net/w2j4lomvzopd
+	headers = { 'User-Agent' : '' }
+	html = openURL(url,'',headers,'','RESOLVERS-INTOUPLOAD-1st')
+	html_blocks = re.findall('POST.*?(.*?)clearfix',html,re.DOTALL)
+	block = html_blocks[0]
+	items = re.findall('op" value="(.*?)".*?id" value="(.*?)".*?rand" value="(.*?)".*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);',block,re.DOTALL)
+	op,id,rand,pos1,num1,pos2,num2,pos3,num3,pos4,num4 = items
+	captcha = { int(pos1):chr(int(num1)) , int(pos2):chr(int(num2)) , int(pos3):chr(int(num3)) , int(pos4):chr(int(num4)) }
+	code = ''
+	for char in sorted(captcha):
+		code += captcha[char]
+	#xbmcgui.Dialog().ok(code,str(captcha))
+	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
+	payload = { 'id':id , 'op':op , 'code':code , 'rand':rand }
+	data = urllib.urlencode(payload)
+	progress = xbmcgui.DialogProgress()
+	progress.create('Waiting 15 seconds ...')
+	for i in range(0,15):
+		progress.update(i*100/15,str(15-i))
+		xbmc.sleep(1000)
+		if progress.iscanceled(): return
+	progress.close()
+	html = openURL(url,data,headers,'','RESOLVERS-INTOUPLOAD-2nd')
+	items = re.findall('target_type.*?href="(.*?)"',html,re.DOTALL)
+	if items:
+		url = items[0]
+		return [url],[url]
+	else: return [],[]
+
+def VIDBOM_PROBLEM(url):
+	html = openURL(url,'','','','RESOLVERS-VIDBOM-1st')
+	xbmc.sleep(1500)
+	items = re.findall('file: "(.*?)"',html,re.DOTALL)
+	slidesURL = items[0].rstrip('/')
+	html2 = openURL(slidesURL,'','','','RESOLVERS-VIDBOM-2nd')
+	xbmc.sleep(1500)
+	items = re.findall('file:"(.*?)"',html,re.DOTALL)
+	if items:
+		url = items[0]
+		return [url],[url]
+	else: return [],[]
+
+def GOUNLIMITED_OLD(url):
+	url = url.replace('embed-','')
+	headers = { 'User-Agent' : '' }
+	html = openURL(url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
+	items = re.findall('data(.*?)hide.*?embed(.*?)hash',html,re.DOTALL)
+	id = items[0][0].replace('|','')
+	hash = items[0][1].split('|')
+	newhash = ''
+	for i in reversed(hash):
+		newhash += i + '-'
+	newhash = newhash.strip('-')
+	#url = 'https://gounlimited.to/dl?op=view&file_code='+id+'&hash='+newhash+'&embed=&adb=1'
+	#html = openURL(url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
+	from requests import request as requests_request
+	url = "https://gounlimited.to/dl"
+	querystring = { "op":"view","file_code":"o1yo2xwdmk0l","hash":newhash,"embed":"","adb":"1" }
+	headers = {
+		'accept': "*/*",
+		'dnt': "1",
+		'x-requested-with': "XMLHttpRequest",
+		'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
+		'referer': "https://gounlimited.to/o1yo2xwdmk0l.html",
+		'accept-encoding': "gzip, deflate, br",
+		'accept-language': "en-US,en;q=0.9,ar;q=0.8"
+		}
+	html = requests_request('GET', url, headers=headers, params=querystring)
+	items = re.findall('video="" src="(.*?)"',html.text,re.DOTALL)
+	#xbmcgui.Dialog().ok(str(html.content),str(len(html.content)))
+	if items:
+		url = items[0]
+		return [url],[url]
+	else: return [],[]
+
 
 
 

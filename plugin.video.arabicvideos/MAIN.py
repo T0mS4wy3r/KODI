@@ -5,44 +5,45 @@ def MAIN():
 	#addLink('Testing - watched enabled','',179,'','','yes')
 	#addLink('Testing - watched disabled','',179,'','','no')
 
-	addLink('فحص الاصدار الاخير والتحديثات'+'  .1','',7)
-	addDir('بحث في جميع مواقع البرنامج'+'  .2','',6)
-	addDir('مشاهدة فيدوهات عشوائية'+'  .3','',8)
+	addLink('اخبار المبرمج عن مشكلة'+'  .1','',2,'','','IsPlayable=no,problem=yes')
+	addLink('فحص الاصدار الاخير والتحديثات'+'  .2','',7,'','','IsPlayable=no')
+	addDir('بحث في جميع مواقع البرنامج'+'  .3','',6)
+	addDir('مشاهدة فيدوهات عشوائية'+'  .4','',8)
 	addDir('=========================','',9999)
 
 	addDir('[COLOR FFC89008]مواقع سيرفرات خاصة - قليلة المشاكل[/COLOR]','',5)
-	addDir('4.  [COLOR FFC89008]YUT  [/COLOR]'+'موقع يوتيوب (مشفر)','',140)
-	addDir('5.  [COLOR FFC89008]SHF  [/COLOR]'+'موقع شوف ماكس (مشفر)','',50)
-	addDir('6.  [COLOR FFC89008]EGB  [/COLOR]'+'موقع ايجي بيست (مشفر)','',9)  #120
-	addDir('7.  [COLOR FFC89008]KLA   [/COLOR]'+'موقع كل العرب (مشفر)','',10)
-	addDir('8.  [COLOR FFC89008]PNT   [/COLOR]'+'موقع بانيت','',30)
-	addDir('9.  [COLOR FFC89008]IFL     [/COLOR]'+'موقع قناة اي فيلم','',20)
-	addDir('10. [COLOR FFC89008]KWT  [/COLOR]'+'موقع قناة الكوثر','',130)
-	addDir('11. [COLOR FFC89008]MRF  [/COLOR]'+'موقع قناة المعارف','',40)
-	addDir('12. [COLOR FFC89008]FTM  [/COLOR]'+'موقع المنبر الفاطمي','',60)
+	addDir('5.  [COLOR FFC89008]YUT  [/COLOR]'+'موقع يوتيوب (مشفر)','',140)
+	addDir('6.  [COLOR FFC89008]SHF  [/COLOR]'+'موقع شوف ماكس (مشفر)','',50)
+	addDir('7.  [COLOR FFC89008]EGB  [/COLOR]'+'موقع ايجي بيست (مشفر)','',9)  #120
+	addDir('8.  [COLOR FFC89008]KLA   [/COLOR]'+'موقع كل العرب (مشفر)','',10)
+	addDir('9.  [COLOR FFC89008]PNT   [/COLOR]'+'موقع بانيت','',30)
+	addDir('10. [COLOR FFC89008]IFL     [/COLOR]'+'موقع قناة اي فيلم','',20)
+	addDir('11. [COLOR FFC89008]KWT  [/COLOR]'+'موقع قناة الكوثر','',130)
+	addDir('12. [COLOR FFC89008]MRF  [/COLOR]'+'موقع قناة المعارف','',40)
+	addDir('13. [COLOR FFC89008]FTM  [/COLOR]'+'موقع المنبر الفاطمي','',60)
 	addDir('=========================','',9999)
 
 	addDir('[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',5)
-	addDir('13.  [COLOR FFC89008]MVZ   [/COLOR]'+'موقع موفيزلاند اونلاين','',180)
-	addDir('14.  [COLOR FFC89008]AKM  [/COLOR]'+'موقع اكوام (مشفر)','',70)
-	addDir('15.  [COLOR FFC89008]HEL   [/COLOR]'+'موقع هلال يوتيوب (مشفر)','',90)
+	addDir('14.  [COLOR FFC89008]MVZ   [/COLOR]'+'موقع موفيزلاند اونلاين','',180)
+	addDir('15.  [COLOR FFC89008]AKM  [/COLOR]'+'موقع اكوام (مشفر)','',70)
+	addDir('16.  [COLOR FFC89008]HEL   [/COLOR]'+'موقع هلال يوتيوب (مشفر)','',90)
 	addDir('=========================','',9999)
 
 	addDir('[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',5)
-	addDir('16.  [COLOR FFC89008]SHA   [/COLOR]'+'موقع شاهد فوريو (مشفر)','',110)
-	addDir('17.  [COLOR FFC89008]HLA   [/COLOR]'+'موقع هلا سيما (مشفر)','',80)
+	addDir('17.  [COLOR FFC89008]SHA   [/COLOR]'+'موقع شاهد فوريو (مشفر)','',110)
+	addDir('18.  [COLOR FFC89008]HLA   [/COLOR]'+'موقع هلا سيما (مشفر)','',80)
 	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
 
-	addDir('18.  [COLOR FFC89008]TV1   [/COLOR]'+'قنوات تلفزونية','',100)
-	addDir('19.  [COLOR FFC89008]TV2   [/COLOR]'+'قنوات تلفزونية خاصة','',101)
+	addDir('19.  [COLOR FFC89008]TV1   [/COLOR]'+'قنوات تلفزونية','',100)
+	addDir('20.  [COLOR FFC89008]TV2   [/COLOR]'+'قنوات تلفزونية خاصة','',101)
 	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
 
-	addDir('ـProblems & Solutions    مشاكل وحلول'+'  .20','',150)
-	addDir('ـMessage to developer    رسالة الى المبرمج'+'  .21','',2)
-	addDir('ـ DMCA     قانون الألفية للملكية الرقمية'+'  .22','',3)
-	addLink('فحص المواقع المشفرة'+'  .23','',4)
+	addLink('ـMessage to developer    رسالة الى المبرمج'+'  .21','',2,'','','IsPlayable=no,problem=no')
+	addDir('ـProblems & Solutions    مشاكل وحلول'+'  .22','',150)
+	addLink('ـ DMCA     قانون الألفية للملكية الرقمية'+'  .23','',3,'','','IsPlayable=no')
+	addLink('فحص المواقع المشفرة'+'  .24','',4,'','','IsPlayable=no')
 	xbmcplugin.endOfDirectory(addon_handle)
-	return
+	return ''
 
 def get_params():
 	param=[]

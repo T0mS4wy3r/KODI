@@ -20,9 +20,12 @@ def addDir(name,url='',mode='',iconimage=icon,page='',text=''):
 	return
 
 def addLink(name,url,mode,iconimage=icon,duration='',text=''):
+	if 'IsPlayable=no' in text: IsPlayable='no'
+	else: IsPlayable='yes'
 	if iconimage=='': iconimage=icon
 	#xbmcgui.Dialog().ok(duration,'')
 	u='plugin://'+addon_id+'/?mode='+str(mode)+'&url='+quote(url)
+	if text != '' : u = u + '&text=' + quote(text)
 	liz=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
 	liz.setProperty('fanart_image', fanart)
 	liz.setInfo('Video', {'mediatype': 'video'})
@@ -31,7 +34,7 @@ def addLink(name,url,mode,iconimage=icon,duration='',text=''):
 		if len(duration)<=5 : duration = '00:' + duration
 		duration = sum(x * int(t) for x, t in zip([3600,60,1], duration.split(":"))) 	
 		liz.setInfo('Video', {'duration': duration})
-	if text=='': liz.setProperty('IsPlayable', 'true')
+	if IsPlayable=='yes': liz.setProperty('IsPlayable', 'true')
 	xbmcplugin.setContent(addon_handle, 'videos')
 	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=liz,isFolder=False)
 	return
@@ -175,26 +178,40 @@ def PLAY_VIDEO(url,website='',showWatched='yes'):
 	openURL(url,'','','no','LIBRARY-PLAY_VIDEO-1st')
 	return
 
-def SEND_EMAIL(subject,message,showDialogs='yes',url='',source=''):
-	yes = True
+def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
+	if 'logs=yes' in text: logs='yes'
+	else: logs='no'
+	sendit=1
 	html = ''
 	if showDialogs=='yes':
-		yes = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'))
-	if yes:
+		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'))
+	if sendit==1:
 		addonVersion = xbmc.getInfoLabel( "System.AddonVersion(plugin.video.arabicvideos)" )
 		kodiVersion = xbmc.getInfoLabel( "System.BuildVersion" )	
 		kodiName = xbmc.getInfoLabel( "System.FriendlyName" )
-		message = message+' \\n\\n==== ==== ==== \\nAddon Version: '+addonVersion+' \\nEmail Sender: '+dummyClientID(32)+' \\nKodi Version: '+kodiVersion+' \\nKodi Name: '+kodiName
+		message = message+' \\n\\n==== ==== ==== \\nAddon Version: '+addonVersion+' :\\nEmail Sender: '+dummyClientID(32)+' :\\nKodi Version: '+kodiVersion+' :\\nKodi Name: '+kodiName
 		#xbmc.sleep(4000)
 		#playerTitle = xbmc.getInfoLabel( "Player.Title" )
 		#playerPath = xbmc.getInfoLabel( "Player.Filenameandpath" )
-		#if playerTitle != '': message += ' \\nPlayer Title: '+playerTitle
-		#if playerPath != '': message += ' \\nPlayer Path: '+playerPath
+		#if playerTitle != '': message += ' :\\nPlayer Title: '+playerTitle
+		#if playerPath != '': message += ' :\\nPlayer Path: '+playerPath
 		#xbmcgui.Dialog().ok(playerTitle,playerPath)
-		if url != '': message += ' \\nURL: ' + url
-		if source != '': message += ' \\nSource: ' + source
+		if url != '': message += ' :\\nURL: ' + url
+		if source != '': message += ' :\\nSource: ' + source
+		message += ' :\\n'
+		logfileNEW = ''
+		if logs:
+			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
+			logfile = open(logfile).read()
+			lines = re.findall('(.*?\n)',logfile,re.DOTALL)
+			for line in lines[-100:]:
+				logfileNEW += line
+			from base64 import b64encode as base64_b64encode
+			logfileNEW = base64_b64encode(logfileNEW)
+			#logfileNEW = logfile[-12000:]
+			#logfileNEW = logfile.encode('base64')[:-1]
 		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
-		payload = { 'subject' : quote(subject) , 'message' : quote(message) }
+		payload = { 'subject' : quote(subject) , 'message' : quote(message) , 'logfile' : logfileNEW }
 		data = urllib.urlencode(payload)
 		html = openURL(url,data,'','','LIBRARY-SEND_EMAIL-1st')
 		result = html[0:6]
