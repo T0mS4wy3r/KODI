@@ -7,7 +7,7 @@ headers = { 'User-Agent' : '' }
 script_name = 'PANET'
 menu_name='[COLOR FFC89008]PNT [/COLOR]'
 
-def MAIN(mode,url,text):
+def MAIN(mode,url,page,text):
 	if mode==30: MENU()
 	elif mode==31: CATEGORIES(url,'3')
 	elif mode==32: ITEMS(url)
@@ -15,13 +15,11 @@ def MAIN(mode,url,text):
 	elif mode==35: CATEGORIES(url,'1')
 	elif mode==36: CATEGORIES(url,'2')
 	elif mode==37: CATEGORIES(url,'4')
-	elif mode==39: SEARCH(url,text)
+	elif mode==39: SEARCH(text,page)
 	return
 
 def MENU():
-	addDir(menu_name+'بحث في الموقع',website0a,39)
-	#addDir(menu_name+'بحث عن افلام',website0a+'/search/result/title/movies',39)
-	#addDir(menu_name+'بحث عن مسلسلات',website0a+'/search/result/title/series',39)
+	addDir(menu_name+'بحث في الموقع','',39)
 	addDir(menu_name+'مسلسلات وبرامج',website0a+'/series',31)
 	addDir(menu_name+'المسلسلات الاكثر مشاهدة',website0a+'/series',37)
 	addDir(menu_name+'افلام حسب النوع',website0a+'/movies',35)
@@ -73,6 +71,7 @@ def CATEGORIES(url,select=''):
 	return
 
 def ITEMS(url):
+	#xbmcgui.Dialog().ok(url,'')
 	type = url.split('/')[3]
 	html = openURL(url,'',headers,'','PANET-ITEMS-1st')
 	if 'home' in url: type='episodes'
@@ -140,19 +139,22 @@ def PLAY(url):
 	PLAY_VIDEO(url,script_name)
 	return
 
-def SEARCH(url,search=''):
+def SEARCH(search,page):
+	#xbmcgui.Dialog().ok(search,page)
 	if search=='': search = KEYBOARD()
 	if search == '': return
-	new_search = search.replace(' ','-')
-	#if url=='':
-	#	typeLIST = [ 'movies' , 'series']
-	#	nameLIST = [ 'بحث عن افلام' , 'بحث عن مسلسلات']
-	#	selection = xbmcgui.Dialog().select('اختر النوع المناسب:', nameLIST)
-	#	if selection == -1 : return ''
-	#	type = typeLIST[selection]
-	#else: type=url.split('/')[-1]
-	#data = 'query='+new_search+'&searchDomain='+type
-	data = 'query='+new_search
+	new_search = search.replace(' ','%20')
+	if page=='':
+		page = '1'
+		typeLIST = [ 'movies' , 'series']
+		nameLIST = [ 'بحث عن افلام' , 'بحث عن مسلسلات']
+		selection = xbmcgui.Dialog().select('اختر النوع المناسب:', nameLIST)
+		if selection == -1 : return ''
+		type = typeLIST[selection]
+	else:
+		page,type = page.split('/')
+	payload = { 'query' : new_search  , 'searchDomain' : type , 'from' : page }
+	data = urllib.urlencode(payload)
 	html = openURL(website0a+'/search',data,headers,'','PANET-SEARCH-1st')
 	items=re.findall('title":"(.*?)".*?link":"(.*?)"',html,re.DOTALL)
 	if items:
@@ -161,6 +163,13 @@ def SEARCH(url,search=''):
 			#xbmcgui.Dialog().ok(title, url.split('/')[-1]   )
 			if '/movies/' in url: addLink(menu_name+'فيلم '+title,url,33)
 			elif '/series/' in url: addDir(menu_name+'مسلسل '+title,url+'/1',32)
+	count=re.findall('"total":(.*?)}',html,re.DOTALL)
+	if count:
+		pages = int(  (int(count[0])+9)   /10 )+1
+		for page2 in range(1,pages):
+			page2 = str(page2)
+			if page2!=page:
+				addDir('صفحة '+page2,'',39,'',page2+'/'+type,search)
 	xbmcplugin.endOfDirectory(addon_handle)
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
 	return

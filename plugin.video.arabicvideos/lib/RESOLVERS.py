@@ -11,23 +11,36 @@ def MAIN(mode,url,text):
 
 def PLAY(linkLIST,script_name):
 	serversLIST,urlLIST = SERVERS(linkLIST,script_name)
-	if len(serversLIST)==0:
-		xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
-		return ''
-	elif len(serversLIST)==1:
-		selection = 0
+	if len(serversLIST)==0: result = 'Unresolved'
 	else:
-		selection = xbmcgui.Dialog().select('اختر السيرفر المناسب:', serversLIST)
-		if selection == -1 : return ''
-	title = serversLIST[selection]
-	videoURL = ''
-	if 'مجهول' in title:
-		from PROBLEMS import MAIN as PROBLEMS_MAIN
-		PROBLEMS_MAIN(156)
-	else:
-		url = urlLIST[selection]
-		#xbmcgui.Dialog().ok(url,'')
-		videoURL = PLAY_LINK(url,title,script_name)
+		while True:
+			if len(serversLIST)==1: selection = 0
+			else: selection = xbmcgui.Dialog().select('اختر السيرفر المناسب', serversLIST)
+			if selection == -1: result = 'Canceled1'
+			else:
+				title = serversLIST[selection]
+				#xbmcgui.Dialog().ok(str(urlLIST[selection]),str(urlLIST[selection]))
+				if 'سيرفر عام مجهول' in title:
+					from PROBLEMS import MAIN as PROBLEMS_MAIN
+					PROBLEMS_MAIN(156)
+					result = 'Unresolved'
+				else:
+					url = urlLIST[selection]
+					result = PLAY_LINK(url,script_name)
+			if result in ['Playing','Canceled1'] or len(serversLIST)==1: break
+			elif result in ['Failed','Timeout','Canceled0','Tried']: break
+			elif result!='Canceled2': xbmcgui.Dialog().ok('السيرفر لم يعمل','جرب سيرفر غيره')
+	if result=='Unresolved': xbmcgui.Dialog().ok('سيرفر هذا الفيديو لم يعمل','جرب فيديو غيره')
+	elif result in ['Failed','Timeout']: xbmcgui.Dialog().ok('الفيديو لم يعمل',' ')
+	"""
+	elif result in ['Canceled1','Canceled2']:
+		#xbmc.log('['+addon_id+']:  Test:  '+sys.argv[0]+sys.argv[2], level=xbmc.LOGNOTICE)
+		xbmcplugin.setResolvedUrl(addon_handle, False, xbmcgui.ListItem())
+		play_item = xbmcgui.ListItem(path='plugin://plugin.video.arabicvideos/?mode=143&url=https://www.youtube.com/watch%3Fv%3Dgwb1pxVtw9Q')
+		xbmc.Player().play('https://flv1.alarab.com/iphone/123447.mp4',play_item)
+		#xbmcgui.Dialog().ok('تم الالغاء','')
+	"""
+	return result
 	#if script_name=='HALACIMA': menu_name='[COLOR FFC89008]HLA [/COLOR]'
 	#elif script_name=='4HELAL': menu_name='[COLOR FFC89008]HEL [/COLOR]'
 	#elif script_name=='AKOAM': menu_name='[COLOR FFC89008]AKM [/COLOR]'
@@ -38,30 +51,38 @@ def PLAY(linkLIST,script_name):
 	#	link = urlLIST[i]
 	#	addLink(menu_name+title,link,160,'','',script_name)
 	#xbmcplugin.endOfDirectory(addon_handle)
-	return videoURL
 
-def PLAY_LINK(url,title,script_name):
-	#title = xbmc.getInfoLabel( "ListItem.Label" )
-	if 'مجهول' in title:
-		from PROBLEMS import MAIN as PROBLEMS_MAIN
-		PROBLEMS_MAIN(156)
-		return ''
-	if '.mp4' in url or '.m3u' in url or '.mpd' in url:
-		videoURL = url
+def PLAY_LINK(url,script_name):
+	titleLIST,linkLIST = RESOLVE(url)
+	if not linkLIST:
+		result = 'Unresolved'
+		if '.mp4' in url or '.m3u' in url or '.mpd' in url or '.mkv' in url:
+			result = PLAY_VIDEO(url,script_name,'yes')
 	else:
-		titleLIST,linkLIST = RESOLVE(url)
-		#xbmcgui.Dialog().ok(url,str(linkLIST))
-		if len(linkLIST)==0:
-			xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
-			return ''
-		elif len(linkLIST)==1:
-			videoURL = linkLIST[0]
-		else:
-			selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
-			if selection == -1 : return ''
-			videoURL = linkLIST[selection]
-	PLAY_VIDEO(videoURL,script_name,'yes')
-	return videoURL
+		while True:
+			if len(linkLIST)==1: selection = 0
+			else: selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
+			if selection == -1: result = 'Canceled2'
+			else:
+				videoURL = linkLIST[selection]
+				if 'moshahda.' in videoURL and 'download_orig' in videoURL:
+					videoURL1,videoURL2 = MOVIZLAND(videoURL)
+					if videoURL2: videoURL = videoURL2[0]
+					else: videoURL = ''
+				if videoURL=='': result = 'Unresolved'
+				else: result = PLAY_VIDEO(videoURL,script_name,'yes')
+			if result in ['Playing','Canceled2'] or len(linkLIST)==1: break
+			else: xbmcgui.Dialog().ok('الملف لم يعمل','جرب ملف غيره')
+		if 'http://localhost:' in linkLIST[0]:
+			#xbmcgui.Dialog().ok('click ok to take down the http server','')
+			#html = openURL('http://localhost:64000/shutdown','','','','RESOLVERS-PLAY_LINK-1st')
+			titleLIST[0].shutdown()
+	return result
+	#title = xbmc.getInfoLabel( "ListItem.Label" )
+	#if 'سيرفر عام مجهول' in title:
+	#	from PROBLEMS import MAIN as PROBLEMS_MAIN
+	#	PROBLEMS_MAIN(156)
+	#	return ''
 
 def CHECK(url):
 	result = 'unknown'
@@ -115,11 +136,11 @@ def RESOLVABLE(url):
 	url2 = url.lower()
 	result1,result2,result3 = '','',''
 	if   any(value in url2 for value in doNOTresolveMElist): return ''
-	elif 'go.akoam.net'	in url2 and '?n' not in url2: result1 = 'akoam'
-	elif 'go.akoam.net'	in url2 and '?n' in url2: result2 = url2.split('?name=')[1]
-	elif 'shahid4u.net'	in url2 and '?n' in url2: result2 = url2.split('?name=')[1]
-	elif 'e5tsar'		in url2 and '?n' in url2: result3 = url2.split('?name=')[1]
-	elif '://moshahda.'	in url2: result1 = 'moshahda'
+	elif 'go.akoam.net'	in url2 and 'name=' not in url2: result1 = 'akoam'
+	elif 'go.akoam.net'	in url2 and 'name=' in url2: result3 = url2.split('name=')[1]
+	elif 'shahid4u.net'	in url2 and 'name=' in url2: result3 = url2.split('name=')[1]
+	elif 'e5tsar'		in url2 and 'name=' in url2: result3 = url2.split('name=')[1]
+	elif '://moshahda.'	in url2: result1 = 'movizland'
 	elif 'arabloads'	in url2: result1 = 'arabloads'
 	elif 'archive'		in url2: result1 = 'archive'
 	elif 'catch.is'	 	in url2: result1 = 'catch'
@@ -135,6 +156,7 @@ def RESOLVABLE(url):
 	elif 'thevideo'		in url2: result1 = 'thevideo'
 	elif 'top4top'		in url2: result1 = 'top4top'
 	elif 'upbom' 		in url2: result1 = 'upbom'
+	elif 'uppom' 		in url2: result1 = 'uppom'
 	elif 'uptobox' 		in url2: result1 = 'uptobox'
 	elif 'uptostream'	in url2: result1 = 'uptostream'
 	elif 'uqload' 		in url2: result1 = 'uqload'
@@ -156,6 +178,7 @@ def RESOLVABLE(url):
 			result2 = url.split('//')[1].split('/')[0]
 	#xbmcgui.Dialog().ok(str(url),result1)
 	if result1 in ['akoam','helal','moshahda']: result = ' سيرفر خاص ' + result1
+	elif result1=='movizland': result = ' سيرفرات خاصة ' + result1
 	elif result1!='': result = ' سيرفر عام معروف ' + result1
 	elif result2!='': result = 'سيرفر عام خارجي ' + result2
 	elif result3!='':
@@ -175,10 +198,10 @@ def RESOLVE(url):
 	url2 = url.lower()
 	titleLIST,linkLIST = [],[]
 	if any(value in url2 for value in doNOTresolveMElist): return ''
+	elif 'shahid4u.net'	in url2 and 'name=' in url2: titleLIST,linkLIST = SHAHID4U(url)
+	elif 'e5tsar'		in url2 and 'name=' in url2: titleLIST,linkLIST = E5TSAR(url)
+	elif '://moshahda.'	in url2: titleLIST,linkLIST = MOVIZLAND(url)
 	elif 'go.akoam.net'	in url2: titleLIST,linkLIST = AKOAM(url)
-	elif 'shahid4u.net'	in url2: titleLIST,linkLIST = SHAHID4U(url)
-	elif '://moshahda.'	in url2: titleLIST,linkLIST = MOSHAHDA_ONLINE(url)
-	elif 'e5tsar'		in url2: titleLIST,linkLIST = E5TSAR(url)
 	elif 'arabloads'	in url2: titleLIST,linkLIST = ARABLOADS(url)
 	elif 'archive'		in url2: titleLIST,linkLIST = ARCHIVE(url)
 	elif 'catch.is'	 	in url2: titleLIST,linkLIST = CATCHIS(url)
@@ -194,6 +217,7 @@ def RESOLVE(url):
 	elif 'thevideo'		in url2: titleLIST,linkLIST = THEVIDEO(url)
 	elif 'top4top'		in url2: titleLIST,linkLIST = TOP4TOP(url)
 	elif 'upbom' 		in url2: titleLIST,linkLIST = UPBOM(url)
+	elif 'uppom' 		in url2: titleLIST,linkLIST = UPBOM(url)
 	elif 'uptobox' 		in url2: titleLIST,linkLIST = UPTO(url)
 	elif 'uptostream'	in url2: titleLIST,linkLIST = UPTO(url)
 	elif 'uqload' 		in url2: titleLIST,linkLIST = UQLOAD(url)
@@ -207,10 +231,11 @@ def RESOLVE(url):
 	#elif 'vidshare' 	in url2: titleLIST,linkLIST = VIDSHARE(url)
 	elif 'watchvideo' 	in url2: titleLIST,linkLIST = WATCHVIDEO(url)
 	elif 'wintv.live'	in url2: titleLIST,linkLIST = WINTVLIVE(url)
-	elif 'youtu'	 	in url2: titleLIST,linkLIST = YOUTUBE(url)
+	elif 'youtu' in url2 or 'y2u.be' in url2: titleLIST,linkLIST = YOUTUBE(url)
 	elif 'zippyshare'	in url2: titleLIST,linkLIST = ZIPPYSHARE(url)
 	else:
 		resolvable = urlresolver_HostedMediaFile(url).valid_url()
+		#xbmcgui.Dialog().ok(url,str(resolvable))
 		if resolvable:
 			titleLIST,linkLIST = URLRESOLVER(url)
 	return titleLIST,linkLIST
@@ -224,22 +249,17 @@ def SERVERS(linkLIST,script_name=''):
 	for link in linkLIST:
 		if link=='': continue
 		link = link.rstrip('/')
-		if '://moshahda.' in link:
-			titleLIST,linkLIST = MOSHAHDA_ONLINE(link)
-			for i in range(0,len(linkLIST)):
-				serversDICT.append( [titleLIST[i],linkLIST[i]] )
-		else:
-			serverNAME = RESOLVABLE(link)
-			#xbmcgui.Dialog().ok(link,serverNAME)
-			if serverNAME=='':
-				if '?' in link and ('akoam' in link or 'shahid4u' in link or 'e5tsar' in link):
-					serverNAME = 'سيرفر عام مجهول ' + link.split('name=')[1].lower().split('__')[0]
-					serversDICT.append( [serverNAME,link] )
-				else:
-					serverNAME = 'سيرفر عام مجهول ' + link.split('//')[1].split('/')[0].lower()
-					serversDICT.append( [serverNAME,link] )
+		#xbmc.log('['+addon_id+']:  '+link, level=xbmc.LOGNOTICE)
+		serverNAME = RESOLVABLE(link)
+		if serverNAME=='':
+			if 'name=' in link:
+				serverNAME = 'سيرفر عام ' + link.split('name=')[1].lower().split('__')[0]
+				serversDICT.append( [serverNAME,link] )
 			else:
-				serversDICT.append( [serverNAME,link] )		
+				serverNAME = 'سيرفر عام مجهول ' + link.split('//')[1].split('/')[0].lower()
+				serversDICT.append( [serverNAME,link] )
+		else:
+			serversDICT.append( [serverNAME,link] )		
 	sortedDICT = sorted(serversDICT, reverse=False, key=lambda key: key[0])
 	for i in range(0,len(sortedDICT)):
 		serversLIST.append(sortedDICT[i][0])
@@ -258,7 +278,7 @@ def	URLRESOLVER(url):
 		return [link],[link]
 	except: return [],[]
 
-def MOSHAHDA_ONLINE(link):
+def MOVIZLAND(link):
 	headers = { 'User-Agent' : '' }
 	if 'op=download_orig' in link:
 		html = openURL(link,'',headers,'','RESOLVERS-MOSHAHDA_ONLINE-1st')
@@ -301,17 +321,17 @@ def MOSHAHDA_ONLINE(link):
 				items2 = re.findall('RESOLUTION=(.*?x).*?\n(.*?)\n',html,re.DOTALL)
 				if items:
 					for title,link in items2:
-						title = ' سيرفر خاص ' + 'm3u8: ' + name2 + ' ' + title
+						title = ' سيرفر خاص '+'m3u8: '+name2+' '+title
 						titleLIST.append(title)
 						linkLIST.append(link)
 				else:
-					title = ' سيرفر خاص ' + 'm3u8: ' + name2
+					title = ' سيرفر خاص '+'m3u8: '+name2
 					titleLIST.append(title)
 					linkLIST.append(link)
 			else:
 				title = title.replace(',label:"','')
 				title = title.strip('"')
-				title = ' سيرفر  خاص ' + ' mp4: ' + name2 + ' ' + title
+				title = ' سيرفر  خاص '+' mp4: '+name2+' '+title
 				titleLIST.append(title)
 				linkLIST.append(link)
 		# download links
@@ -319,10 +339,18 @@ def MOSHAHDA_ONLINE(link):
 		html = openURL(link,'',headers,'','RESOLVERS-MOSHAHDA_ONLINE-5th')
 		items = re.findall("download_video\('(.*?)','(.*?)','(.*?)'.*?<td>(.*?)x",html,re.DOTALL)
 		for id,mode,hash,title in items:
-			title = ' سيرفر تحميل خاص ' + ' mp4: ' + name2 + title+'x'
+			title = ' سيرفر تحميل خاص '+' mp4: '+name2+' '+title+'x'
 			link = 'http://moshahda.online/dl?op=download_orig&id='+id+'&mode='+mode+'&hash='+hash
 			titleLIST.append(title)
 			linkLIST.append(link)
+		serversDICT = []
+		for i in range(0,len(linkLIST)):
+			serversDICT.append( [titleLIST[i],linkLIST[i]] )
+		sortedDICT = sorted(serversDICT, reverse=False, key=lambda key: key[0])
+		titleLIST,linkLIST = [],[]
+		for i in range(0,len(sortedDICT)):
+			titleLIST.append(sortedDICT[i][0])
+			linkLIST.append(sortedDICT[i][1])
 		return titleLIST,linkLIST
 
 def E5TSAR(url):
@@ -345,6 +373,7 @@ def SHAHID4U(link):
 	headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 	html = openURL(url,'',headers,'','RESOLVERS-SHAHID4U-1st')
 	url2 = html
+	#xbmcgui.Dialog().ok(url2,'')
 	titleLIST,linkLIST = RESOLVE(url2)
 	#try: url3 = url2[0]
 	#except: url3 = ''
@@ -364,7 +393,7 @@ def AKOAM(link):
 	if 'catch.is' in url:
 		id = url.split('%2F')[-1]
 		url = 'http://catch.is/'+id
-		titles,urls = CATCHIS(url)
+		titleLIST,linkLIST = CATCHIS(url)
 	else:
 		response = requests_request('GET', 'https://akoam.net/', headers='', data='', allow_redirects=False)
 		relocateURL = response.headers['Location']
@@ -380,23 +409,21 @@ def AKOAM(link):
 		url2 = items[0].replace('\/','/')
 		url2 = url2.rstrip('/')
 		if 'http' not in url2: url2 = 'http:' + url2
-		if '?name=' in link:
-			titles,urls = RESOLVE(url2)
-		else: 
-			titles,urls = ['ملف التحميل'],[url2]
-			"""
-			splits = url.split('/')
-			server = '/'.join(splits[0:3])
-			hash_data = url.split('/')[4]
-			watch_title = url.split('/')[-1]
-			url3 = server + '/watching/'+hash_data+'/'+watch_title
-			response = requests_request('GET', url3, headers='', data='', allow_redirects=False)
-			html = response.text
-			url3 = re.findall('file: "(.*?)"',html,re.DOTALL|re.IGNORECASE)[0]
-			titles2,urls2 = ['ملف المشاهدة المباشرة'],[url3]
-			titles,urls = titles+titles2,urls+urls2
-			"""
-	if urls: return titles,urls
+		if 'name=' in link: titleLIST,linkLIST = RESOLVE(url2)
+		else: titleLIST,linkLIST = ['ملف التحميل'],[url2]
+		"""
+		splits = url.split('/')
+		server = '/'.join(splits[0:3])
+		hash_data = url.split('/')[4]
+		watch_title = url.split('/')[-1]
+		url3 = server + '/watching/'+hash_data+'/'+watch_title
+		response = requests_request('GET', url3, headers='', data='', allow_redirects=False)
+		html = response.text
+		url3 = re.findall('file: "(.*?)"',html,re.DOTALL|re.IGNORECASE)[0]
+		titles2,urls2 = ['ملف المشاهدة المباشرة'],[url3]
+		titleLIST,linkLIST = titleLIST+titles2,linkLIST+urls2
+		"""
+	if linkLIST: return titleLIST,linkLIST
 	else: return [],[]
 
 def RAPIDVIDEO(url):
@@ -511,20 +538,22 @@ def UPTO(url):
 	#xbmcgui.Dialog().ok(url,'')
 	titleLIST = ['uptostream','uptobox (delay 30sec)','both']
 	selection = xbmcgui.Dialog().select('اختر السيرفر:', titleLIST)
-	if selection == -1 : return ''
-	elif selection==0:
-		url2 = url.replace('://uptobox.','://uptostream.')
-		titleLIST,linkLIST = UPTOSTREAM(url2)
-	elif selection==1:
-		url2 = url.replace('://uptostream','://uptobox.')
-		titleLIST,linkLIST = UPTOBOX(url2)
+	if selection == -1:
+		titleLIST,linkLIST = [],[]
 	else:
-		url2 = url.replace('://uptobox.','://uptostream.')
-		titleLIST2,linkLIST2 = UPTOSTREAM(url2)
-		url2 = url.replace('://uptostream.','://uptobox.')
-		titleLIST3,linkLIST3 = UPTOBOX(url2)
-		titleLIST = titleLIST2 + titleLIST3
-		linkLIST = linkLIST2 + linkLIST3
+		if selection==0:
+			url2 = url.replace('://uptobox.','://uptostream.')
+			titleLIST,linkLIST = UPTOSTREAM(url2)
+		elif selection==1:
+			url2 = url.replace('://uptostream','://uptobox.')
+			titleLIST,linkLIST = UPTOBOX(url2)
+		else:
+			url2 = url.replace('://uptobox.','://uptostream.')
+			titleLIST2,linkLIST2 = UPTOSTREAM(url2)
+			url2 = url.replace('://uptostream.','://uptobox.')
+			titleLIST3,linkLIST3 = UPTOBOX(url2)
+			titleLIST = titleLIST2 + titleLIST3
+			linkLIST = linkLIST2 + linkLIST3
 	return titleLIST,linkLIST
 
 def UPTOSTREAM(url):
@@ -532,14 +561,13 @@ def UPTOSTREAM(url):
 	headers = { 'User-Agent' : '' }
 	html = openURL(url,'',headers,'','RESOLVERS-UPTOSTREAM-1st')
 	items = re.findall('src":"(.*?)".*?label":"(.*?)"',html,re.DOTALL)
+	titleLIST,linkLIST = [],[]
 	if items:
-		titleLIST,linkLIST = [],[]
 		for link,title in items:
 			link = link.replace('\/','/')
 			titleLIST.append(title)
 			linkLIST.append(link)
-		return titleLIST,linkLIST
-	else: return [],[]
+	return titleLIST,linkLIST
 
 def UPTOBOX(url):
 	#xbmcgui.Dialog().ok(url,'')
@@ -555,17 +583,16 @@ def UPTOBOX(url):
 		progress = xbmcgui.DialogProgress()
 		progress.create('Waiting 35 seconds ...')
 		for i in range(0,35):
-			progress.update(i*100/35,str(35-i))
+			progress.update(i*100/35,str(35-i)+' seconds left')
 			xbmc.sleep(1000)
-			if progress.iscanceled(): return
+			if progress.iscanceled(): break
 		progress.close()
 		html = openURL(url,data,headers,'','RESOLVERS-UPTOBOX-2nd')
 	items = re.findall('class=\'file-title\'>(.*?)<.*?comparison-table.*?href="(.*?)"',html,re.DOTALL)
 	if items:
-		title = items[0][0]
-		url = items[0][1]
-		return [title],[url]
-	else: return [],[]
+		title,url = items[0]
+		titleLIST,linkLIST = [title],[url]
+	return titleLIST,linkLIST
 	#xbmcgui.Dialog().ok(str(html),html)
 	#file = open('S:\emad3.html', 'w')
 	#file.write(token)
@@ -574,10 +601,225 @@ def UPTOBOX(url):
 	#file.close()
 
 def YOUTUBE(url):
-	id = url.split('/')[-1]
-	youtubeID = id.split('?')[0]
+	#url = 'https://www.youtube.com/watch?v=eDlZ5vANQUg'
+	#url = 'https://youtu.be/eDlZ5vANQUg'
+	#url = 'http://y2u.be/eDlZ5vANQUg'
+	#url = 'https://www.youtube.com/embed/eDlZ5vANQUg'
+	"""
+	youtubeID = url.split('/watch?v=')[-1]
+	#xbmcgui.Dialog().ok(url,youtubeID)
+	#id = url.split('/')[-1]
+	#youtubeID = id.split('?')[0]
 	url = 'plugin://plugin.video.youtube/play/?video_id='+youtubeID
 	return [url],[url]
+	"""
+	id = url.split('/')[-1]
+	id = id.replace('watch?v=','')
+	if 'embed' in url: url = 'https://www.youtube.com/watch?v='+id
+	block2,block3 = '',''
+	subtitleLINK = ''
+	html = openURL(url,'','','','RESOLVERS-YOUTUBE-1st')
+	#xbmc.log('===========================================',level=xbmc.LOGNOTICE)
+	html_blocks = re.findall('playerCaptionsTracklistRenderer(.*?)defaultAudioTrackIndex',html,re.DOTALL)
+	if html_blocks:
+		block = html_blocks[0].replace('\u0026','&').replace('\\','')
+		items = re.findall('{"languageCode":"(.*?)".*?simpleText":"(.*?)"',block,re.DOTALL)
+		titleLIST,linkLIST = ['بدون اضافة الترجمة الاضافية'],['']
+		for lang,title in items:
+			titleLIST.append(title)
+			linkLIST.append(lang)
+		selection = xbmcgui.Dialog().select('اختر الترجمة المناسبة:', titleLIST)
+		if selection in [0,-1]: subtitleLINK = ''
+		else:
+			subtitleLINK = re.findall('baseUrl":"(.*?)"',block,re.DOTALL)
+			subtitleLINK = subtitleLINK[0]+'&fmt=vtt&type=track&tlang='+linkLIST[selection]
+	titleLIST,linkLIST = [],[]
+	html_blocks = re.findall('url_encoded_fmt_stream_map":"(.*?)"',html,re.DOTALL)
+	if html_blocks: block2 = html_blocks[0]
+	html_blocks = re.findall('adaptive_fmts":"(.*?)"',html,re.DOTALL)
+	if html_blocks: block3 = html_blocks[0]
+	#xbmc.log(block2,level=xbmc.LOGNOTICE)
+	#xbmc.log(block3,level=xbmc.LOGNOTICE)
+	html_blocks = [block2,block3]
+	streams = []
+	for block in html_blocks:
+		lines = block.split(',')
+		for line in lines:
+			line = unquote(line)
+			dict = {}
+			#xbmc.log('===========================================',level=xbmc.LOGNOTICE)
+			#xbmc.log(line,level=xbmc.LOGNOTICE)
+			items = line.split('\u0026')
+			for item in items:
+				key,value = item.split('=',1)
+				dict[key] = value
+				#xbmc.log(key+'='+value,level=xbmc.LOGNOTICE)
+			filetype,codec,quality2,title,codecs = 'unknown','unknown','unknown','Unknown',''
+			try:
+				type = dict['type']
+				#xbmc.log('['+addon_id+']:  Type:['+type+']', level=xbmc.LOGNOTICE)
+				type = type.replace('+','')
+				items = re.findall('/(.*?);.*?"(.*?)"',type,re.DOTALL)
+				filetype,codecs = items[0]
+				codecs2 = codecs.split(',')
+				codec = ''
+				for item in codecs2: codec += item.split('.')[0]+','
+				codec = codec.strip(',')
+				if ',' in type:
+					type2 = 'A+V'
+					quality2 = dict['quality']
+				elif 'video' in type:
+					type2 = 'Video'
+					quality2 = str(int(dict['bitrate'])/1000)+'kbps  '+dict['quality_label']+'  '+dict['size']+'  '+dict['fps']+'fps'
+				elif 'audio' in type:
+					type2 = 'Audio'
+					quality2 = str(int(dict['bitrate'])/1000)+'kbps  '+str(int(dict['audio_sample_rate'])/1000)+'khz  '+dict['audio_channels']+'ch'
+			except: pass
+			if subtitleLINK=='': link = dict['url']
+			else: link = [dict['url'],subtitleLINK]
+			title = type2+':  '+filetype+'  '+quality2+'  ('+codec+','+dict['itag']+') '
+			#titleLIST.append(title)
+			#linkLIST.append(link)
+			dict['link'] = link
+			dict['title'] = title
+			dict['type2'] = type2
+			dict['filetype'] = filetype
+			dict['codecs'] = codecs
+			streams.append(dict)
+			#xbmc.log('['+addon_id+']:  dict:['+str(dict)+']', level=xbmc.LOGNOTICE)
+	#xbmc.log('['+addon_id+']:  dict:['+str(streams)+']', level=xbmc.LOGNOTICE)
+	videoTitleLIST,audioTitleLIST,videoaudioTitleLIST,mpdaudioTitleLIST,mpdvideoTitleLIST = [],[],[],[],[]
+	videoDictLIST,audioDictLIST,videoaudioDictLIST,mpdaudioDictLIST,mpdvideoDictLIST = [],[],[],[],[]
+	for dict in streams:
+		if dict['type2']=='Video':
+			videoTitleLIST.append(dict['title'])
+			videoDictLIST.append(dict)
+		elif dict['type2']=='Audio':
+			audioTitleLIST.append(dict['title'])
+			audioDictLIST.append(dict)
+		else:
+			videoaudioTitleLIST.append(dict['title'])
+			videoaudioDictLIST.append(dict)
+		if dict['type2']=='Video' and 'avc1' in dict['codecs']:
+			mpdvideoTitleLIST.append(dict['title'])
+			mpdvideoDictLIST.append(dict)
+		elif dict['type2']=='Audio' and 'mp4a' in dict['codecs']:
+			mpdaudioTitleLIST.append(dict['title'])
+			mpdaudioDictLIST.append(dict)
+	selectMenu = ['mpd: انت تختار دقة الصورة ودقة الصوت','صورة وصوت محدودة الدقة','صورة فقط','صوت فقط']
+	while True:
+		selection = xbmcgui.Dialog().select('اختر النوع المناسب:', selectMenu)
+		if selection==-1: break
+		elif selection!=0:
+			if selection==1: titleLIST,dictLIST = videoaudioTitleLIST,videoaudioDictLIST
+			elif selection==2: titleLIST,dictLIST = videoTitleLIST,videoaudioDictLIST
+			elif selection==3: titleLIST,dictLIST = audioTitleLIST,audioDictLIST
+			selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
+			if selection!=-1:
+				titleLIST,linkLIST = [titleLIST[selection]],[dictLIST[selection]['url']]
+				break
+		else:
+			selection = xbmcgui.Dialog().select('اختر دقة الصورة المناسبة:', mpdvideoTitleLIST)
+			if selection!=-1:
+				videoDICT = videoDictLIST[selection]
+				selection = xbmcgui.Dialog().select('اختر دقة الصوت المناسبة:', mpdaudioTitleLIST)
+				if selection!=-1:
+					audioDICT = audioDictLIST[selection]
+					videoDuration = int(round(0.5+float(videoDICT['url'].split('dur=',1)[1].split('&',1)[0])))
+					audioDuration = int(round(0.5+float(audioDICT['url'].split('dur=',1)[1].split('&',1)[0])))
+					duration = str(videoDuration) if videoDuration>=audioDuration else str(audioDuration)
+					mpd = '<?xml version="1.0" encoding="UTF-8"?>\n'
+					mpd += '<MPD xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mpeg:dash:schema:mpd:2011" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd" minBufferTime="PT2.5S" mediaPresentationDuration="PT'+duration+'S" type="static" profiles="urn:mpeg:dash:profile:isoff-main:2011">\n'
+					mpd += '<Period>\n'
+					mpd += '<AdaptationSet id="0" mimeType="video/'+videoDICT['filetype']+'" subsegmentAlignment="true" subsegmentStartsWithSAP="1" bitstreamSwitching="true" default="true">\n'
+					mpd += '<Role schemeIdUri="urn:mpeg:DASH:role:2011" value="main"/>\n'
+					mpd += '<Representation id="'+videoDICT['itag']+'" codecs="'+videoDICT['codecs']+'" startWithSAP="1" bandwidth="'+videoDICT['bitrate']+'" width="'+videoDICT['size'].split('x')[0]+'" height="'+videoDICT['size'].split('x')[1]+'" frameRate="'+str(int(videoDICT['fps'])*1000)+'/1001">\n'
+					mpd += '<BaseURL>'+videoDICT['url']+'</BaseURL>\n'
+					mpd += '<SegmentBase indexRange="'+videoDICT['index']+'">\n'
+					mpd += '<Initialization range="'+videoDICT['init']+'" />\n'
+					mpd += '</SegmentBase>\n'
+					mpd += '</Representation>\n'
+					mpd += '</AdaptationSet>\n'
+					mpd += '<AdaptationSet id="1" mimeType="audio/'+audioDICT['filetype']+'" subsegmentAlignment="true" subsegmentStartsWithSAP="1" bitstreamSwitching="true" default="true">\n'
+					mpd += '<Role schemeIdUri="urn:mpeg:DASH:role:2011" value="main"/>\n'
+					mpd += '<Representation id="'+audioDICT['itag']+'" codecs="'+audioDICT['codecs']+'" bandwidth="130475">\n'
+					mpd += '<AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="'+audioDICT['audio_channels']+'"/>\n'
+					mpd += '<BaseURL>'+audioDICT['url']+'</BaseURL>\n'
+					mpd += '<SegmentBase indexRange="'+audioDICT['index']+'">\n'
+					mpd += '<Initialization range="'+audioDICT['init']+'" />\n'
+					mpd += '</SegmentBase>\n'
+					mpd += '</Representation>\n'
+					mpd += '</AdaptationSet>\n'
+					mpd += '</Period>\n'
+					mpd += '</MPD>\n'
+					mpd = unquote(mpd).replace('&','&amp;')
+					#xbmc.log(mpd,level=xbmc.LOGNOTICE)
+					"""
+					mpdfolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
+					if not os.path.exists(mpdfolder):
+						#xbmcgui.Dialog().ok('folder does not exsit','')
+						from xbmcvfs import mkdir as xbmcvfs_mkdir
+						xbmcvfs_mkdir(mpdfolder)
+					mpdfile = os.path.join(mpdfolder,id+'.mpd')
+					#xbmcgui.Dialog().ok(mpdfile,mpd)
+					#with open(mpdfile,'w') as file: file.write(mpd)
+					#mpdfile = 'http://localhost:64000/'+id+'.mpd'
+					#titleLIST,linkLIST = [mpdfile],[mpdfile]
+					"""
+					import BaseHTTPServer,thread#,time,httplib
+					class HTTP_SERVER(BaseHTTPServer.HTTPServer):
+						#mpd = 'mpd = used when not using __init__'
+						def __init__(self,port='64000',mpd='mpd = from __init__'):
+							BaseHTTPServer.HTTPServer.__init__(self,("",port), HTTP_HANDLER)
+							self.port = port
+							self.mpd = mpd
+							#print('server is up now listening on port: '+str(port))
+						def serve(self):
+							#print('serving requests started')
+							self.keeprunning = True
+							#counter = 0
+							while self.keeprunning:
+								#counter += 1
+								#print('running a single handle_request() now: '+str(counter)+'')
+								#settimeout does not work due to error message if it kill an http request
+								#self.socket.settimeout(1)
+								self.handle_request()
+							#print('serving requests stopped\n')
+						def stop(self):
+							self.keeprunning = False
+							self.socket.close()
+							#self.send_http()
+						def shutdown(self):
+							self.stop()
+							self.server_close()
+							#print('server is down now\n')
+						def start(self):
+							thread.start_new_thread(self.serve, ())
+						def load(self,mpd):
+							self.mpd = mpd
+						#def send_http(self):
+						#	conn = httplib.HTTPConnection("localhost:%d" % self.port)
+						#	conn.request("HEAD", "/")
+						#	conn.getresponse()
+					class HTTP_HANDLER(BaseHTTPServer.BaseHTTPRequestHandler):
+						def do_HEAD(s):
+							#print('doing HEAD  '+self.path)
+							s.send_response(200)
+							s.end_headers()
+						def do_GET(self):
+							#print('doing GET  '+self.path)
+							self.send_response(200)
+							self.send_header('Content-type', 'text/plain')
+							self.end_headers()
+							#self.wfile.write(self.path+'\n')
+							self.wfile.write(self.server.mpd)
+							if self.path=='/shutdown': self.server.shutdown()
+					httpd = HTTP_SERVER(64000,mpd)
+					#httpd.load(mpd)
+					httpd.start()
+					titleLIST,linkLIST = [httpd],['http://localhost:64000/youtube.mpd']
+					break
+	return titleLIST,linkLIST
 
 def HELAL(url):
 	headers = { 'User-Agent' : '' }

@@ -18,9 +18,9 @@ def MAIN(mode,url,page,text):
 
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',89)
-	addDir(menu_name+'جديد المسلسلات','',84,'',0)
-	addDir(menu_name+'افلام ومسلسلات مميزة','',85,'',0)
-	addDir(menu_name+'الاكثر مشاهدة','',86,'',0)
+	addDir(menu_name+'جديد المسلسلات','',84,'','0')
+	addDir(menu_name+'افلام ومسلسلات مميزة','',85,'','0')
+	addDir(menu_name+'الاكثر مشاهدة','',86,'','0')
 	html = openURL(website0a,'',headers,'','HALACIMA-MENU-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
@@ -35,7 +35,8 @@ def MENU():
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def ITEMS(url,html='',type='',page=0):
+def ITEMS(url,html='',type='',page='0'):
+	page = int(page)
 	headers = { 'User-Agent' : '' }
 	if type=='':
 		if html=='':
@@ -55,9 +56,8 @@ def ITEMS(url,html='',type='',page=0):
 	for link,img,title in items:
 		title = title.replace('\n','')
 		if 'الحلقة' in title and '/category/' in url and 'برامج-وتلفزة' not in url:
-			episode = re.findall('(.*?) الحلقة [0-9]+',title,re.DOTALL)
-			if episode:
-				title = episode[0]
+			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
+			if episode: title = episode[0]
 			episode = re.findall('(.*?)/article/(.*?)-الحلقة.*?.html',link,re.DOTALL)
 			if episode:
 				link = episode[0][0]+'/series/'+episode[0][1]+'.html'
@@ -88,9 +88,9 @@ def ITEMS(url,html='',type='',page=0):
 		for link,title in items:
 			title = title.replace('الصفحة ','')
 			addDir(menu_name+'صفحة '+title,link,81)
-	if type=='lastRecent': addDir(menu_name+'صفحة المزيد','',84,icon,page+1)
-	elif type=='pin': addDir(menu_name+'صفحة المزيد','',85,icon,page+1)
-	elif type=='views': addDir(menu_name+'صفحة المزيد','',86,icon,page+1)
+	if type=='lastRecent': addDir(menu_name+'صفحة المزيد','',84,icon,str(page+1))
+	elif type=='pin': addDir(menu_name+'صفحة المزيد','',85,icon,str(page+1))
+	elif type=='views': addDir(menu_name+'صفحة المزيد','',86,icon,str(page+1))
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 

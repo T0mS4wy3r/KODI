@@ -12,7 +12,7 @@ def MAIN(mode,url,page,text):
 	elif mode==133: EPISODES(url,page)
 	elif mode==134: PLAY(url)
 	elif mode==135: LIVE()
-	elif mode==139: SEARCH(page,text)
+	elif mode==139: SEARCH(text,page)
 	return
 
 def MENU():
@@ -77,7 +77,7 @@ def CATEGORIES(url):
 	html = openURL(url,'','','','ALKAWTHAR-CATEGORIES-1st')
 	html_blocks = re.findall('parentcat(.*?)</div>',html,re.DOTALL)
 	if not html_blocks:
-		EPISODES(url,1)
+		EPISODES(url,'1')
 		return
 	block = html_blocks[0]
 	items = re.findall("href='(.*?)'.*?>(.*?)<",block,re.DOTALL)
@@ -91,7 +91,7 @@ def CATEGORIES(url):
 	return
 
 def EPISODES(url,page):
-	#xbmcgui.Dialog().ok(url, str(page))
+	#xbmcgui.Dialog().ok(url, page)
 	html = openURL(url,'','','','ALKAWTHAR-EPISODES-1st')
 	items = re.findall('totalpagecount=[\'"](.*?)[\'"]',html,re.DOTALL)
 	if items[0]=='':
@@ -104,7 +104,7 @@ def EPISODES(url,page):
 	#xbmcgui.Dialog().ok(name, str(''))
 	if '/category/' in url:
 		category = url.split('/')[-1]
-		url2 = website0a + '/category/' + category + '/' + str(page)
+		url2 = website0a + '/category/' + category + '/' + page
 		html = openURL(url2,'','','','ALKAWTHAR-EPISODES-3rd')
 		html_blocks = re.findall('currentpagenumber(.*?)javascript',html,re.DOTALL)
 		block = html_blocks[0]
@@ -143,7 +143,7 @@ def EPISODES(url,page):
 			episodeID = url.split('/')[-1]
 			items = re.findall('id="Categories.*?href=\'(.*?)\'',html,re.DOTALL)
 			category = items[0].split('/')[-1]
-			url2 = website0a + '/ajax/category/' + category + '/' + str(page)
+			url2 = website0a + '/ajax/category/' + category + '/' + page
 			html = openURL(url2,'','','','ALKAWTHAR-EPISODES-2nd')
 			items = re.findall('src="(.*?)".*?href="(.*?)"> <h5>(.*?)<',html,re.DOTALL)
 			for img,link,title in items:
@@ -155,7 +155,7 @@ def EPISODES(url,page):
 		"""
 	title = 'صفحة '
 	for i in range(1,1+totalpages):
-		if page!=i:
+		if page!=str(i):
 			addDir(menu_name+title+str(i),url,133,'',i)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
@@ -176,7 +176,7 @@ def LIVE():
 	PLAY_VIDEO(url,script_name,'no')
 	return
 
-def SEARCH(page,search=''):
+def SEARCH(search,page):
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	if page=='': page = 1

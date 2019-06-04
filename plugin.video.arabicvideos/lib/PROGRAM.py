@@ -8,11 +8,10 @@ def MAIN(mode,text=''):
 	elif mode==2: SEND_MESSAGE(text)
 	elif mode==3: DMCA()
 	elif mode==4: HTTPS_TEST()
-	elif mode==5: SERVERS_TYPE()
+	elif mode==5: CLOSED()
 	elif mode==6: GLOBAL_SEARCH(text)
 	elif mode==7: VERSION()
 	elif mode==8: RANDOM()
-	elif mode==9: CLOSED()
 	elif mode==179: TESTINGS()
 	return
 
@@ -47,17 +46,20 @@ def SEND_MESSAGE(text):
 	if 'problem=yes' in text: problem='yes'
 	else: problem='no'
 	if problem=='yes':
-		yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','قبل ارسال سجل الاخطاء الى المبرمج عليك ان تقوم بتشغيل الفيديو او الرابط الذي يعطيك المشكلة لكي يتم تسجيل المشكلة في سجل الاخطاء. هل تريد الارسال الان ؟')
-		if yes==0: return ''
-		logs = xbmcgui.Dialog().yesno('ارسال سجل الاخطاء','هل توافق على ارسال ال 100 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع معرفة المشكلة واصلاحها اذا كانت المشكلة من البرنامج وليست من المواقع الاصلية')
-		if logs==1: text += 'logs=yes'
+		logs = xbmcgui.Dialog().yesno('ارسال سجل الاخطاء','هل توافق على ارسال ال 100 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع معرفة المشكلة واصلاحها اذا كانت المشكلة من البرنامج وليست من المواقع الاصلية','','','كلا','نعم')
+		if logs==1:
+			text += 'logs=yes'
+			yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','قبل ارسال سجل الاخطاء الى المبرمج عليك ان تقوم بتشغيل الفيديو او الرابط الذي يعطيك المشكلة لكي يتم تسجيل المشكلة في سجل الاخطاء. هل تريد الارسال الان ؟','','','كلا','نعم')
+			if yes==0:
+				xbmcgui.Dialog().ok('تم الغاء الارسال','')
+				return ''
 		else: text += 'logs=no'
 		xbmcgui.Dialog().ok('المبرمج لا يعلم الغيب','اذا كانت لديك مشكلة فاذن أقرأ قسم المشاكل والحلول واذا لم تجد الحل هناك فاذن اكتب رسالة عن المكان والوقت والحال الذي حدثت فيه المشكلة وحاول كتابة جميع التفاصيل لان المبرمج لا يعلم الغيب')
 		xbmcgui.Dialog().ok('عنوان الايميل','اذا كنت تريد ان تسأل وتحتاج جواب من المبرمج فاذن يجب عليك اضافة عنوان البريد الالكتروني email الخاص بك الى رسالتك لانها الطريقة الوحيدة للوصول اليك')
 	search = KEYBOARD('Write a message   اكتب رسالة')
 	if search == '':
 		xbmcgui.Dialog().ok('تم الغاء الارسال','')
-		return
+		return ''
 	message = search
 	subject = 'Message: From Arabic Videos'
 	result = SEND_EMAIL(subject,message,'yes','','EMAIL-FROM-USERS',text)
@@ -88,7 +90,7 @@ def SEND_MESSAGE(text):
 	return ''
 
 def DMCA():
-	text = ' نفي: البرنامج لا يوجد له اي سيرفر يستضيف اي محتويات. البرنامج يستخدم روابط وتضمين لمحتويات مرفوعة على سيرفرات خارجية. البرنامج غير مسؤول عن اي محتويات تم تحميلها على سيرفرات ومواقع خارجية "مواقع طرف 3". جميع الاسماء والماركات والصور والمنشورات هي خاصة باصحابها. البرنامج لا ينتهك حقوق الطبع والنشر وقانون الألفية للملكية الرقمية DMCA اذا كان لديك شكوى خاصة بالروابط والتضامين الخارجية فالرجاء التواصل مع ادارة هذه السيرفرات والمواقع الخارجية'
+	text = 'نفي: البرنامج لا يوجد له اي سيرفر يستضيف اي محتويات. البرنامج يستخدم روابط وتضمين لمحتويات مرفوعة على سيرفرات خارجية. البرنامج غير مسؤول عن اي محتويات تم تحميلها على سيرفرات ومواقع خارجية "مواقع طرف 3". جميع الاسماء والماركات والصور والمنشورات هي خاصة باصحابها. البرنامج لا ينتهك حقوق الطبع والنشر وقانون الألفية للملكية الرقمية DMCA اذا كان لديك شكوى خاصة بالروابط والتضامين الخارجية فالرجاء التواصل مع ادارة هذه السيرفرات والمواقع الخارجية'
 	xbmcgui.Dialog().textviewer('حقوق الطبع والنشر وقانون الألفية للملكية الرقمية',text)
 	text = 'Disclaimer: The program does not host any content on any server. The program just use linking to or embedding content that was uploaded to popular Online Video hosting sites. All trademarks, Videos, trade names, service marks, copyrighted work, logos referenced herein belong to their respective owners/companies. The program is not responsible for what other people upload to 3rd party sites. We urge all copyright owners, to recognize that the links contained within this site are located somewhere else on the web or video embedded are from other various site. If you have any legal issues please contact appropriate media file owners/hosters.'
 	xbmcgui.Dialog().textviewer('Digital Millennium Copyright Act (DMCA)',text)
@@ -105,18 +107,13 @@ def HTTPS_TEST():
 		PROBLEMS_MAIN(152)
 	return
 
-def SERVERS_TYPE():
-	text = 'السيرفرات العامة هي سيرفرات خارجية وغير جيدة لان الكثير منها ممنوع او محذوف او خطأ بسبب حقوق الطبع وحقوق الالفية الرقمية ولا توجد طريقة لفحصها او اصلاحها \n\n السيرفرات الخاصة هي سيرفرات يتحكم فيها الموقع الاصلي وهي جيدة نسبيا ولا توجد طريقة لفحصها او اصلاحها \n\n الرجاء قبل الاعتراض على السيرفرات وقبل مراسلة المبرمج افحص الفيديو والسيرفر على الموقع الاصلي'
-	xbmcgui.Dialog().textviewer('مواقع تستخدم سيرفرات عامة',text)
-	return
-
 def GLOBAL_SEARCH(search=''):
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.lower()
 	addDir('1.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - موقع يوتيوب','',149,'','',search)
 	addDir('2.  [COLOR FFC89008]SHF  [/COLOR]'+search+' - موقع شوف ماكس','',59,'','',search)
-	addDir('3.  [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',9,'','',search)  #129
+	addDir('3.  [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',5,'','',search)  #129
 	addDir('4.  [COLOR FFC89008]KLA  [/COLOR]'+search+' - موقع كل العرب','',19,'','',search)
 	addDir('5.  [COLOR FFC89008]PNT  [/COLOR]'+search+' - موقع بانيت','',39,'','',search)
 	addDir('6.  [COLOR FFC89008]IFL    [/COLOR]'+search+' - موقع قناة اي فيلم','',29,'','',search)

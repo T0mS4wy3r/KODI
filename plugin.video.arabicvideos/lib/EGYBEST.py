@@ -79,10 +79,10 @@ def FILTERS_MENU(link):
 	return
 
 def TITLES(url,page):
-	#xbmcgui.Dialog().ok(str(url), str(page))
+	#xbmcgui.Dialog().ok(str(url), page)
 	if '/explore/' in url or '?' in url: url2 = url + '&'
 	else: url2 = url + '?'
-	url2 = url2 + 'output_format=json&output_mode=movies_list&page='+str(page)
+	url2 = url2 + 'output_format=json&output_mode=movies_list&page='+page
 	html = openURL(url2,'',headers,'','EGYBEST-TITLES-1st')
 	name = ''
 	found = False
@@ -110,6 +110,7 @@ def TITLES(url,page):
 			found = True
 	if found:
 		pagingLIST = ['/movies/','/tv/','/explore/','/trending/']
+		page = int(page)
 		if any(value in url for value in pagingLIST):
 			for n in range(0,1000,100):
 				if int(page/100)*100==n:
@@ -295,7 +296,7 @@ def SEARCH(search):
 	if search == '': return
 	new_search = search.replace(' ','+')
 	url = website0a + '/explore/?q=' + new_search
-	TITLES(url,1)
+	TITLES(url,'1')
 	return
 
 

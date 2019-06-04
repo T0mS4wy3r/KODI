@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'http://movizland.online'
-website0b = 'http://m.movizland.online'
+website0a = 'https://movizland.online'
+website0b = 'https://m.movizland.online'
 script_name='MOVIZLAND'
 headers = { 'User-Agent' : '' }
 menu_name='[COLOR FFC89008]MVZ [/COLOR]'
@@ -62,7 +62,7 @@ def ITEMS(url,type=''):
 		if title2: title = title2[0][0]
 		title = title.strip(' ')
 		if 'الحلقة' in title or 'الحلقه' in title:
-			episode = re.findall('(.*?) (الحلقة|الحلقه) [0-9]+',title,re.DOTALL)
+			episode = re.findall('(.*?) (الحلقة|الحلقه) \d+',title,re.DOTALL)
 			if episode:
 				title = '[COLOR FFC89008]Mod [/COLOR]'+episode[0][0]
 				if title not in allTitles:
@@ -120,7 +120,7 @@ def PLAY(url):
 	import xbmcaddon
 	settings = xbmcaddon.Addon(id=addon_id)
 	previous_url = settings.getSetting('previous.url')
-	if url==previous_url:
+	if url==previous_url and False:
 		linkLIST = settings.getSetting('previous.linkLIST')
 		linkLIST = linkLIST[1:-1].replace('&apos;','').replace(' ','').replace("'",'')
 		linkLIST = linkLIST.split(',')
@@ -136,10 +136,10 @@ def PLAY(url):
 		selection = ''
 		# main_watch_link
 		for link in urls[1:99]:
-			if 'http://moshahda.' in link:
+			if '://moshahda.' in link:
 				main_watch_link = link
 				linkLIST.append(main_watch_link+'?name=Main')
-			elif 'http://vb.movizland.' in link:
+			elif '://vb.movizland.' in link:
 				html = openURL(link,'',headers,'','MOVIZLAND-PLAY-2nd')
 				#xbmc.log(html, level=xbmc.LOGNOTICE)</a></div><br /><div align="center">(\*\*\*\*\*\*\*\*|13721411411.png|)
 				html = html.replace('src="http://up.movizland.com/uploads/13721411411.png"','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"')

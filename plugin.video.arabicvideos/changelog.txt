@@ -174,3 +174,10 @@ Major changes to "Resolvers"
 
 v5.0.0	2019-05-27
 Added "Problem Reporting"
+
+
+v5.1.0	2019-06-04
+Added playback and resolvers problem detection
+Added access and playback log
+Added full youtube resolver with mpd support
+

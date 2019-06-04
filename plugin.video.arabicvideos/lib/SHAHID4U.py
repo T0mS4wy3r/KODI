@@ -58,7 +58,7 @@ def ITEMS(url):
 		if 'مشاهدة' in title or '/film/' in link or any(value in title for value in itemLIST):
 			addLink(menu_name+title,link,112,img)
 		elif 'الحلقة' in title and '/episode/' in link:
-			episode = re.findall('(.*?) الحلقة [0-9]+',title,re.DOTALL)
+			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode:
 				title = '[COLOR FFC89008]Mod [/COLOR]'+episode[0]
 				if title not in allTitles:
@@ -95,7 +95,7 @@ def EPISODES(url):
 		items = re.findall('href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
 		itemsNEW = []
 		for link,title in items:
-			sequence = re.findall('الحلقة-([0-9]+)',link.split('/')[-1],re.DOTALL)
+			sequence = re.findall('الحلقة-(\d+)',link.split('/')[-1],re.DOTALL)
 			if sequence: itemsNEW.append([link,int(sequence[0])])
 			#xbmcgui.Dialog().ok(link.split('/')[-1],sequence[0])
 		#name = xbmc.getInfoLabel('ListItem.Label')

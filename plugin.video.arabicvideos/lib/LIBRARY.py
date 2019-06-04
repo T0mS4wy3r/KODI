@@ -3,20 +3,21 @@ import urllib2,xbmcplugin,xbmcgui,sys,xbmc,os,re,time,urllib
 
 addon_handle = int(sys.argv[1])
 addon_id = sys.argv[0].split('/')[2] 		# plugin.video.arabicvideos
+addon_path = sys.argv[0]+sys.argv[2] 		# plugin://plugin.video.arabicvideos/?mode=12&url=http://test.com
 fanart = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id , 'fanart.jpg'))
 icon = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id, 'icon.png'))
 
 def addDir(name,url='',mode='',iconimage=icon,page='',text=''):
 	if iconimage=='': iconimage=icon
-	u='plugin://'+addon_id+'/?mode='+str(mode)
-	if url != '' : u = u + '&url=' + quote(url)
-	if page != '' : u = u + '&page=' + str(page)
-	if text != '' : u = u + '&text=' + quote(text)
-	liz=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
-	liz.setInfo( type="Video", infoLabels={ "Title": name } )
-	liz.setProperty('fanart_image', fanart)
-	#liz.setProperty('IsPlayable', 'true')
-	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=liz,isFolder=True)
+	u = 'plugin://'+addon_id+'/?mode='+str(mode)
+	if url!='': u = u + '&url=' + quote(url)
+	if page!='': u = u + '&page=' + quote(page)
+	if text!='': u = u + '&text=' + quote(text)
+	listitem=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
+	listitem.setInfo( type="Video", infoLabels={ "Title": name } )
+	listitem.setProperty('fanart_image', fanart)
+	#listitem.setProperty('IsPlayable', 'true')
+	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=listitem,isFolder=True)
 	return
 
 def addLink(name,url,mode,iconimage=icon,duration='',text=''):
@@ -24,19 +25,20 @@ def addLink(name,url,mode,iconimage=icon,duration='',text=''):
 	else: IsPlayable='yes'
 	if iconimage=='': iconimage=icon
 	#xbmcgui.Dialog().ok(duration,'')
-	u='plugin://'+addon_id+'/?mode='+str(mode)+'&url='+quote(url)
-	if text != '' : u = u + '&text=' + quote(text)
-	liz=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
-	liz.setProperty('fanart_image', fanart)
-	liz.setInfo('Video', {'mediatype': 'video'})
+	u = 'plugin://'+addon_id+'/?mode='+str(mode)
+	if url!='': u = u + '&url=' + quote(url)
+	if text!='': u = u + '&text=' + quote(text)
+	listitem=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
+	listitem.setProperty('fanart_image', fanart)
+	listitem.setInfo('Video', {'mediatype': 'video'})
 	if duration != '' :
 		if len(duration)<=2 : duration = '00:' + duration
 		if len(duration)<=5 : duration = '00:' + duration
 		duration = sum(x * int(t) for x, t in zip([3600,60,1], duration.split(":"))) 	
-		liz.setInfo('Video', {'duration': duration})
-	if IsPlayable=='yes': liz.setProperty('IsPlayable', 'true')
+		listitem.setInfo('Video', {'duration': duration})
+	if IsPlayable=='yes': listitem.setProperty('IsPlayable', 'true')
 	xbmcplugin.setContent(addon_handle, 'videos')
-	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=liz,isFolder=False)
+	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=listitem,isFolder=False)
 	return
 
 def openURL(url,data='',headers='',showDialogs='',source=''):
@@ -45,9 +47,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 	elif data=='' and headers!='': request = urllib2.Request(url,headers=headers)
 	elif data!='' and headers=='': request = urllib2.Request(url,data=data)
 	elif data!='' and headers!='': request = urllib2.Request(url,headers=headers,data=data)
-	html = ''
-	code = '200'
-	reason = 'OK'
+	html,code,reason = '','200','OK'
 	try:
 		response = urllib2.urlopen(request,timeout=60)
 		html = response.read()
@@ -60,12 +60,9 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		code = str(error.reason[0])
 		reason = str(error.reason[1])
 	if code!='200':
-		message = ''
-		send = 'no'
-		showDialogs = 'no'
+		message,send,showDialogs = '','no','no'
 		html = 'Error {}: {!r}'.format(code, reason)
-		if 'google-analytics' in url:
-			send = showDialogs
+		if 'google-analytics' in url: send = showDialogs
 		if showDialogs=='yes':
 			xbmcgui.Dialog().ok('خطأ في الاتصال',html)
 			if code=='502' or code=='7':
@@ -74,18 +71,16 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 			elif code=='404':
 				xbmcgui.Dialog().ok('File not found','الملف غير موجود والسبب غالبا هو من المصدر ومن الموقع الاصلي الذي يغذي هذا البرنامج')
 			if send=='yes':
-				yes = xbmcgui.Dialog().yesno('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟')
-				if yes:
-					message = ' \\n\\n' + KEYBOARD('Write a message   اكتب رسالة')
-		if send=='yes':
-			SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
-	#xbmcgui.Dialog().ok('',source)
-	#file = open('/data/emad.html', 'w')
-	#file.write(url)
-	#file.write('\n\n\n')
-	#file.write(html)
-	#file.close()
+				yes = xbmcgui.Dialog().yesno('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
+				if yes: message = ' \\n\\n' + KEYBOARD('Write a message   اكتب رسالة')
+		if send=='yes': SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
 	return html
+
+#with open('S:\emad3.html', 'w') as file: file.write(block)
+
+#file = open('/data/emad.html', 'w')
+#file.write(html)
+#file.close()
 
 def quote(url):
 	return urllib2.quote(url,':/')
@@ -145,7 +140,27 @@ def KEYBOARD(label='Search'):
 	new_search = mixARABIC(search)
 	return new_search
 
-def PLAY_VIDEO(url,website='',showWatched='yes'):
+def PLAY_VIDEO(url3,website='',showWatched='yes'):
+	class PlayerCalss(xbmc.Player):
+		def __init__( self, *args, **kwargs ):
+			self.status = ''
+		def onPlayBackStopped(self):
+			self.status='Failed'
+		def onPlayBackStarted(self):
+			self.status='Playing'
+			time.sleep(1)
+		def onPlayBackError(self):
+			self.status='Failed'
+		def onPlayBackEnded(self):
+			self.status='Failed'
+	myplayer = PlayerCalss()
+	if len(url3)==2:
+		url,subtitle = url3
+		urlmessage = 'Url:['+url+']  Subtitle:['+subtitle+']'
+	else:
+		url,subtitle = url3,''
+		urlmessage = 'Url:['+url+']'
+	xbmc.log('['+addon_id+']:  Started playing video:  '+urlmessage, level=xbmc.LOGNOTICE)
 	if 'https' in url:
 		html = openURL('https://www.google.com','','','','LIBRARY-1st')
 		if 'html' not in html:
@@ -159,24 +174,80 @@ def PLAY_VIDEO(url,website='',showWatched='yes'):
 		#label = xbmc.getInfoLabel('ListItem.Label')
 		#xbmcgui.Dialog().ok(url,label)
 		#play_item.setInfo( "video", { "Title": label } )
-		#xbmc.log(url, level=xbmc.LOGNOTICE)
 		#play_item.setPath(url)
+		#play_item.setInfo('Video', {'duration': 3600})
 		if '.mpd' in url:
+			#play_item.setContentLookup(False)
+			#play_item.setMimeType('application/xml+dash')
 			play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
 			play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
-			#play_item.setMimeType('application/dash+xml')
-			#play_item.setContentLookup(True)
+			#emad   play_item.setMimeType('application/dash+xml')
+			#emad   play_item.setContentLookup(True)
+		if subtitle!='':
+			play_item.setSubtitles([subtitle])
+			#xbmc.log('['+addon_id+']:  Added subtitle to video: ['+subtitle+']', level=xbmc.LOGNOTICE)
 		xbmcplugin.setResolvedUrl(addon_handle, True, play_item)
+		#xbmc.Player().play(url,play_item)
 	else:
 		label = xbmc.getInfoLabel('ListItem.Label')
 		play_item.setInfo( "video", { "Title": label } )
-		xbmc.Player().play(url,play_item)
-	addonVersion = xbmc.getInfoLabel( "System.AddonVersion(plugin.video.arabicvideos)" )
+		myplayer.play(url,play_item)
+	#logfilename = xbmc.translatePath('special://logpath')+'kodi.log'
+	timeout,step,result = 60,2,'Tried'
+	#progress = xbmcgui.DialogProgress()
+	#progress.create('جاري محاولة تشغيل الفيديو المطلوب')
+	for i in range(0,timeout,step):
+		xbmc.sleep(step*1000)
+		#progress.update(i*100/timeout,'باقي '+str(timeout-i)+' ثانية')
+		result = myplayer.status
+		if result=='Playing':
+			xbmc.log('['+addon_id+']:  Success: Video is playing successfully:  '+urlmessage, level=xbmc.LOGNOTICE)
+			xbmcgui.Dialog().notification('','')
+			break
+		elif result=='Failed':
+			xbmc.log('['+addon_id+']:  Failure: Video failed playing:  '+urlmessage, level=xbmc.LOGNOTICE)
+			break
+		xbmcgui.Dialog().notification(myplayer.status +' جاري محاولة تشغيل الفيديو المطلوب','باقي '+str(timeout-i)+' ثانية')
+		"""
+		elif progress.iscanceled():
+			myplayer.stop()
+			result = 'Canceled0'
+			xbmc.log('['+addon_id+']:  Canceled: Video was canceled successfully:  '+urlmessage, level=xbmc.LOGNOTICE)
+			break
+		"""
+	else:
+		myplayer.stop()
+		result = 'Timeout'
+		xbmc.log('['+addon_id+']:  Timeout: Unknown playing issue:  '+urlmessage, level=xbmc.LOGNOTICE)
+		"""
+		playing = str(myplayer.isPlaying())
+		logfile = file(logfilename, 'rb')
+		logfile.seek(-4000, os.SEEK_END)
+		logfile = logfile.read()
+		logfile2 = logfile.split('['+addon_id+']:  Started playing video:')
+		if len(logfile2)==1: continue
+		else: logfile2 = logfile2[-1]
+		if 'CloseFile' in logfile2 or 'Attempt to use invalid handle' in logfile2:
+			result = 'Failed'
+			xbmc.log('['+addon_id+']:  Failure: Video failed playing:  '+urlmessage, level=xbmc.LOGNOTICE)
+			#break
+		elif 'Opening stream' in logfile2:
+			result = 'Playing'
+			xbmc.log('['+addon_id+']:  Success: Video is playing successfully:  '+urlmessage, level=xbmc.LOGNOTICE)
+			#break
+		"""
+	if result!='Playing': xbmcgui.Dialog().notification('انتهت عملية التشغيل','بالفشل')
+	#progress.close()
+	#if i==timeout-step:
+	#	myplayer.stop()
+	#	result = 'Timeout'
+	#	xbmc.log('['+addon_id+']:  Timeout: Unknown playing issue:  '+urlmessage, level=xbmc.LOGNOTICE)
+	addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 	import random
 	randomNumber = str(random.randrange(111111111111,999999999999))
-	url = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addonVersion+'&av='+addonVersion+'&an=ARABIC_VIDEOS&ea='+website+'&z='+randomNumber
-	openURL(url,'','','no','LIBRARY-PLAY_VIDEO-1st')
-	return
+	url2 = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addonVersion+'&av='+addonVersion+'&an=ARABIC_VIDEOS&ea='+website+'&z='+randomNumber
+	openURL(url2,'','','no','LIBRARY-PLAY_VIDEO-1st')
+	return result
 
 def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 	if 'logs=yes' in text: logs='yes'
@@ -184,9 +255,9 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 	sendit=1
 	html = ''
 	if showDialogs=='yes':
-		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'))
+		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
 	if sendit==1:
-		addonVersion = xbmc.getInfoLabel( "System.AddonVersion(plugin.video.arabicvideos)" )
+		addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 		kodiVersion = xbmc.getInfoLabel( "System.BuildVersion" )	
 		kodiName = xbmc.getInfoLabel( "System.FriendlyName" )
 		message = message+' \\n\\n==== ==== ==== \\nAddon Version: '+addonVersion+' :\\nEmail Sender: '+dummyClientID(32)+' :\\nKodi Version: '+kodiVersion+' :\\nKodi Name: '+kodiName
@@ -202,14 +273,13 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 		logfileNEW = ''
 		if logs:
 			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
-			logfile = open(logfile).read()
-			lines = re.findall('(.*?\n)',logfile,re.DOTALL)
-			for line in lines[-100:]:
-				logfileNEW += line
+			logfile=file(logfile, 'rb')
+			logfile.seek(-15000, os.SEEK_END)
+			logfile = logfile.read().splitlines()
+			#xbmcgui.Dialog().ok(logfile,str(len(logfile)))
+			logfileNEW = '\n'.join(logfile[-100:])
 			from base64 import b64encode as base64_b64encode
 			logfileNEW = base64_b64encode(logfileNEW)
-			#logfileNEW = logfile[-12000:]
-			#logfileNEW = logfile.encode('base64')[:-1]
 		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
 		payload = { 'subject' : quote(subject) , 'message' : quote(message) , 'logfile' : logfileNEW }
 		data = urllib.urlencode(payload)
@@ -219,7 +289,7 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 			if result == 'Error ':
 				xbmcgui.Dialog().ok('Failed sending the message','خطأ وفشل في ارسال الرسالة')
 			else:
-				xbmcgui.Dialog().ok('Message sent','تم ارسال الرسالة')
+				xbmcgui.Dialog().ok('Message sent','تم ارسال الرسالة بنجاح')
 	return html
 
 def dummyClientID(length):
@@ -247,7 +317,6 @@ def dummyClientID(length):
 	md5 = md5full[0:length]
 	#xbmcgui.Dialog().ok(node,md5)
 	return md5
-
 	#import xbmcaddon
 	#settings = xbmcaddon.Addon(id=addon_id)
 	#settings.setSetting('user.hash','')
@@ -269,6 +338,57 @@ def dummyClientID(length):
 	#url = 'http://emadmahdi.pythonanywhere.com/saveinput'
 	#payload = { 'file' : 'savehash' , 'input' : md5full + '  ::  ' + hashComponents }
 	#data = urllib.urlencode(payload)
+	#return ''
+
+"""
+lowLIST = [  ['']  ]
+lowLIST.append(['الاولى','الأولى','الحادية','الحاديه','الواحدة','الواحده','الحادي','الواحد'])
+lowLIST.append(['الثانية','الثانيه'])
+lowLIST.append(['الثالثة','الثالثه'])
+lowLIST.append(['الرابعة','الرابعه'])
+lowLIST.append(['الخامسة','الخامسه'])
+lowLIST.append(['السادسة','السادسه'])
+lowLIST.append(['السابعة','السابعه'])
+lowLIST.append(['الثامنة','الثامنه'])
+lowLIST.append(['التاسعة','التاسعه'])
+lowLIST.append(['العاشرة','العاشره'])
+lowLIST.append(['العشرون','العشرين'])
+lowLIST.append(['الثلاثون','الثلاثين'])
+lowLIST.append(['الاربعون','الاربعين'])
+lowLIST.append(['الخمسون','الخمسين'])
+highLIST = [  ['']  ]
+highLIST.append(['عشرة','عشر'])
+highLIST.append(['و العشرون','و العشرين','والعشرون','والعشرين'])
+highLIST.append(['و العشرون','و العشرين','والعشرون','والعشرين'])
+highLIST.append(['و الثلاثون','و الثلاثين','والثلاثون','والثلاثين'])
+highLIST.append(['و الاربعون','و الاربعين','والاربعون','والاربعين'])
+cleanLIST = ['و الاخيرة','و الاخيره','والاخيرة','والاخيره','الاخيرة','الاخيره','كاملة','كامله']
+
+def CLEAN_EPSIODE_NAME(title):
+	#return title
+	title2 = title.strip(' ').replace('  ',' ').replace('  ',' ')
+	title2 = title2.replace('ـ','')
+	episode = re.findall('(الحلقة|الحلقه) (\d+)',title2,re.DOTALL)
+	if episode:
+		for word in cleanLIST:
+			title2 = title2.replace(word,'')
+		number = int(episode[0][1])
+		high,low = int(number/10),int(number%10)
+		episode2 = []
+		if low==0: high,low = 0,high+9
+		for highTEXT in highLIST[high]:
+			if highTEXT!='': highTEXT=' '+highTEXT
+			for lowTEXT in lowLIST[low]:
+				findTEXT = episode[0][0]+' '+episode[0][1]+' '+lowTEXT+highTEXT
+				episode2 = re.findall(findTEXT,title2,re.DOTALL)
+				if episode2: break
+			if episode2: break
+		if episode2: title2 = title2.replace(episode2[0],'')
+		else: title2 = title2.replace(episode[0][0]+' '+episode[0][1],'')
+		title2 = title2.strip(' ').replace('  ',' ').replace('  ',' ')
+	#xbmcgui.Dialog().ok(title,title2)
+	return title2
+"""
 
 
 

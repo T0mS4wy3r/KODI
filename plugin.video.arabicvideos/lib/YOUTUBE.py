@@ -6,10 +6,11 @@ script_name='YOUTUBE'
 menu_name='[COLOR FFC89008]YUT [/COLOR]'
 
 def MAIN(mode,url,text):
+	result = ''
 	if mode==140: MENU()
 	elif mode==141: TITLES(url)
 	elif mode==142: PLAYLIST_ITEMS(url)
-	elif mode==143: PLAY(url)
+	elif mode==143: result = PLAY(url)
 	elif mode==144: SETTINGS()
 	elif mode==145: CHANNEL_MENU(url)
 	elif mode==146: CHANNEL_ITEMS(url)
@@ -34,7 +35,7 @@ def MAIN(mode,url,text):
 		settings.setSetting('previous.linkLIST','')
 	elif yes: settings.setSetting('previous.url','youtube')
 	"""
-	return
+	return result
 
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',149)
@@ -44,7 +45,7 @@ def MENU():
 	addDir(menu_name+'مسلسلات اجنبية','https://www.youtube.com/results?search_query=series&sp=EgIQAw%253D%253D',141)
 	addDir(menu_name+'افلام اجنبية','https://www.youtube.com/results?search_query=movie',141)
 	addDir(menu_name+'مسلسلات كارتون','https://www.youtube.com/results?search_query=كارتون&sp=EgIQAw%253D%253D',141)
-	addDir(menu_name+'اعدادات اضافة يوتيوب','',144)
+	#addDir(menu_name+'اعدادات اضافة يوتيوب','',144)
 	xbmcplugin.endOfDirectory(addon_handle)
 	#yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
 	#if yes:
@@ -55,13 +56,16 @@ def MENU():
 	return
 
 def PLAY(url):
-	url = url+'&'
-	items = re.findall('v=(.*?)&',url,re.DOTALL)
-	id = items[0]
-	#xbmcgui.Dialog().ok(url,id)
-	link = 'plugin://plugin.video.youtube/play/?video_id='+id
-	PLAY_VIDEO(link,script_name)
-	return
+	#url = url+'&'
+	#items = re.findall('v=(.*?)&',url,re.DOTALL)
+	#id = items[0]
+	#xbmcgui.Dialog().ok(url,'')
+	#link = 'plugin://plugin.video.youtube/play/?video_id='+id
+	#PLAY_VIDEO(link,script_name)
+	linkLIST = [url]
+	from RESOLVERS import PLAY as RESOLVERS_PLAY
+	result = RESOLVERS_PLAY(linkLIST,script_name)
+	return result
 
 def PLAYLIST_ITEMS(url):
 	if 'browse_ajax' in url:
@@ -129,7 +133,8 @@ def CHANNEL_ITEMS(url):
 		block = html_blocks[0]
 		items = re.findall('yt-lockup-thumbnail.*?href="(.*?)".*?src="(.*?)"(.*?)sessionlink.*?title="(.*?)"',block,re.DOTALL)
 		for link,img,count,title in items:
-			if 'video-count-label' in count: count = ' '+re.findall('<b>(.*?)</b>',count,re.DOTALL)[0]
+			if 'video-count-label' in count:
+				count = ' '+re.findall('video-count-label.*?(\d+).*?</',count,re.DOTALL)[0]
 			else: count=''
 			title = title.replace('\n','')
 			link = website0a+link
@@ -151,32 +156,35 @@ def CHANNEL_ITEMS(url):
 
 def TITLES(url):
 	html = openURL(url,'','','','YOUTUBE-TITLES-1st')
-	html_blocks = re.findall('class="item-section(.*?)footer-container',html,re.DOTALL)
+	html_blocks = re.findall('(yt-lockup-tile.*?)footer-container',html,re.DOTALL)
 	block = html_blocks[0]
-	items = re.findall('[thumb|src]="http(.*?)"(.*?)href="(.*?)".*?title="(.*?)".*?yt-lockup-meta(.*?)</li>.*?</div></div></div>(.*?)</li>',block,re.DOTALL)
-	if not items:
-		items = re.findall('src="(.*?)"(.*?)href="(.*?)".*?title="(.*?)".*?yt-lockup-meta(.*?)</li>.*?</div></div></div>(.*?)</li>',block,re.DOTALL)
-	for img,count,link,title,count2,paid in items:
-		if 'Watch later' in title:
+	items = re.findall('yt-lockup-tile.*?(src|thumb)="(.*?)"(.*?)href="(.*?)".*?title="(.*?)"(.*?)</div></div></div>(.*?)</li>',block,re.DOTALL)
+	#xbmcgui.Dialog().ok(str(block.count('yt-lockup-tile')),str(len(items)))
+	#with open('S:\emad3.html', 'w') as f: f.write(block)
+	for dummy,img,count,link,title,count2,paid in items:
+		if 'Watch later' in title: continue
+		if 'adurl=' in link:
+			#title = 'AD:  '+title
+			#link = re.findall('adurl=(.*?)&amp;',link+'&amp;',re.DOTALL)
+			#link = unquote(link[0])
 			continue
-		if 'video-count-label"><b>' in count:
-			count = ' '+re.findall('<b>(.*?)</b>',count,re.DOTALL)[0]
-		else: count=''
-		if 'video' in count2 and '<li>' in count2:
-			count2 = ' '+re.findall('<li>(.*?) video',count2,re.DOTALL)[0]
-		else: count2=''
-		if '\n' in paid:
-			title = '$$:  '+title
-		#xbmcgui.Dialog().ok(paid,'')
-		if '/channel/' in link: img = 'https:'+img
-		elif '/user/' in link: img = 'https:'+img
-		else: img = 'http'+img
-		link = website0a+link
+		img2 = re.findall('thumb="(.*?)"',count,re.DOTALL)
+		if img2: img = img2[0]
+		counts = ''
+		if 'video-count-label' in count:
+			count = re.findall('video-count-label.*?(\d+).*?</',count,re.DOTALL)
+			if count: counts = ' ' + count[0]
+		else:
+			count2 = re.findall('<li>(\d+) video',count2,re.DOTALL)
+			if count2: counts = ' ' + count2[0]
+		if 'http' not in img: img = 'https:'+img
+		if 'http' not in link: link = website0a+link
+		if '\n' in paid: title = '$$:  '+title
 		title = title.replace('\n','')
 		title = unescapeHTML(title)
-		if 'list=' in link: addDir(menu_name+'LIST'+count+':  '+title,link,142,img)
-		elif '/channel/' in link: addDir(menu_name+'CHNL'+count2+':  '+title,link,145,img)
-		elif '/user/' in link: addDir(menu_name+'USER'+count2+':  '+title,link,145,img)
+		if 'list=' in link: addDir(menu_name+'LIST'+counts+':  '+title,link,142,img)
+		elif '/channel/' in link: addDir(menu_name+'CHNL'+counts+':  '+title,link,145,img)
+		elif '/user/' in link: addDir(menu_name+'USER'+counts+':  '+title,link,145,img)
 		else: addLink(menu_name+title,link,143,img)
 	html_blocks = re.findall('search-pager(.*?)footer-container',html,re.DOTALL)
 	if html_blocks:
