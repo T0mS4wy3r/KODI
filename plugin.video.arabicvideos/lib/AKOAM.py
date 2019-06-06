@@ -4,7 +4,7 @@ from LIBRARY import *
 website0a = 'https://akoam.net'
 headers = { 'User-Agent' : '' }
 script_name='AKOAM'
-menu_name='[COLOR FFC89008]AKM [/COLOR]'
+menu_name='_AKM_'
 noEpisodesLIST = ['فيلم','كليب','العرض الاسبوعي','مسرحية','مسرحيه','اغنية','اعلان','لقاء']
 
 def MAIN(mode,url,text):

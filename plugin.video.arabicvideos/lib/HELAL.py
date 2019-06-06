@@ -4,7 +4,7 @@ from LIBRARY import *
 website0a = 'https://4helal.tv'
 script_name='4HELAL'
 headers = { 'User-Agent' : '' }
-menu_name='[COLOR FFC89008]HEL [/COLOR]'
+menu_name='_HEL_'
 
 def MAIN(mode,url,text):
 	if mode==90: MENU()
@@ -58,7 +58,7 @@ def ITEMS(url):
 		if 'الحلقة' in title and '/c/' not in url and '/cat/' not in url:
 			episode = re.findall('(.*?) الحلقة [0-9]+',title,re.DOTALL)
 			if episode:
-				title = '[COLOR FFC89008]Mod [/COLOR]'+episode[0]
+				title = '_MOD_'+episode[0]
 				if title not in allTitles:
 					addDir(menu_name+title,link,95,img)
 					allTitles.append(title)
@@ -85,7 +85,7 @@ def EPISODES(url):
 	name = re.findall('itemprop="title">(.*?)<',html,re.DOTALL)
 	if name: name = name[1]
 	else: name = xbmc.getInfoLabel('ListItem.Label')
-	#name = name.replace('Mod ','').replace('HEL ','')
+	#name = name.replace('_MOD_','').replace('HEL ','')
 	items = re.findall('href="(.*?)".*?name">(.*?)<',block,re.DOTALL)
 	for link,title in items:
 		title = name+' - '+title

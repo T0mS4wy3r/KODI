@@ -8,7 +8,7 @@ website0d = 'http://fa2.ifilmtv.com'
 website1  = 'http://93.190.24.122'
 
 script_name = 'IFILM'
-menu_name='[COLOR FFC89008]IFL [/COLOR]'
+menu_name='_IFL_'
 
 def MAIN(mode,url,page,text):
 	if mode==20: LANGUAGE_MENU()
@@ -22,10 +22,10 @@ def MAIN(mode,url,page,text):
 	return
 
 def LANGUAGE_MENU():
-	addDir(menu_name+'عربي',website0a,21,'',101)
-	addDir(menu_name+'English',website0b,21,'',101)
-	addDir(menu_name+'فارسى',website0c,21,'',101)
-	addDir(menu_name+'فارسى 2',website0d,21,'',101)
+	addDir(menu_name+'عربي',website0a,21,'','101')
+	addDir(menu_name+'English',website0b,21,'','101')
+	addDir(menu_name+'فارسى',website0c,21,'','101')
+	addDir(menu_name+'فارسى 2',website0d,21,'','101')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -62,13 +62,13 @@ def MAIN_MENU(website0):
 		if any(value in link for value in menu):
 			url = website0 + link
 			if 'Series' in link:
-				addDir(menu_name+name1,url,22,'',100)
-				addDir(menu_name+name2,url,22,'',101)
-				addDir(menu_name+name3,url,22,'',201)
+				addDir(menu_name+name1,url,22,'','100')
+				addDir(menu_name+name2,url,22,'','101')
+				addDir(menu_name+name3,url,22,'','201')
 			elif 'Music' in link:
-				addDir(menu_name+title,url,25,'',101)
+				addDir(menu_name+title,url,25,'','101')
 			elif 'Program':
-				addDir(menu_name+title,url,22,'',101)
+				addDir(menu_name+title,url,22,'','101')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -78,11 +78,11 @@ def MUSIC_MENU(url):
 	html_blocks = re.findall('Music-tools-header(.*?)Music-body',html,re.DOTALL)
 	block = html_blocks[0]
 	title = re.findall('<p>(.*?)</p>',block,re.DOTALL)[0]
-	addDir(menu_name+title,url,22,'',101)
+	addDir(menu_name+title,url,22,'','101')
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
 		link = website0 + link
-		addDir(menu_name+title,link,23,'',101)
+		addDir(menu_name+title,link,23,'','101')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -129,7 +129,7 @@ def TITLES(url,page):
 			count_items += 1
 			img = website0 + img
 			link = website0 + link
-			addDir(menu_name+title,link,23,img,101)
+			addDir(menu_name+title,link,23,img,'101')
 	if count_items>20:
 		title='صفحة '
 		if lang=='en': title = 'Page '
@@ -297,7 +297,7 @@ def SEARCH(url,search=''):
 				title = name + title
 				link = url + '/' + type + '/Content/' + id
 				img = url + quote(img)
-				addDir(menu_name+title,link,23,img,101)
+				addDir(menu_name+title,link,23,img,'101')
 	xbmcplugin.endOfDirectory(addon_handle)
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
 	return

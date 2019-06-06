@@ -30,7 +30,7 @@ def PLAY(linkLIST,script_name):
 			if result in ['Playing','Canceled1'] or len(serversLIST)==1: break
 			elif result in ['Failed','Timeout','Canceled0','Tried']: break
 			elif result!='Canceled2': xbmcgui.Dialog().ok('السيرفر لم يعمل','جرب سيرفر غيره')
-	if result=='Unresolved': xbmcgui.Dialog().ok('سيرفر هذا الفيديو لم يعمل','جرب فيديو غيره')
+	if result=='Unresolved' and len(serversLIST)>1: xbmcgui.Dialog().ok('سيرفر هذا الفيديو لم يعمل','جرب فيديو غيره')
 	elif result in ['Failed','Timeout']: xbmcgui.Dialog().ok('الفيديو لم يعمل',' ')
 	"""
 	elif result in ['Canceled1','Canceled2']:
@@ -41,10 +41,10 @@ def PLAY(linkLIST,script_name):
 		#xbmcgui.Dialog().ok('تم الالغاء','')
 	"""
 	return result
-	#if script_name=='HALACIMA': menu_name='[COLOR FFC89008]HLA [/COLOR]'
+	#if script_name=='HALACIMA': menu_name='HLA [/COLOR]'
 	#elif script_name=='4HELAL': menu_name='[COLOR FFC89008]HEL [/COLOR]'
 	#elif script_name=='AKOAM': menu_name='[COLOR FFC89008]AKM [/COLOR]'
-	#elif script_name=='SHAHID4U': menu_name='[COLOR FFC89008]SHA [/COLOR]'
+	#elif script_name=='SHAHID4U': menu_name='[COLOR FFC89008]SHA '
 	#size = len(urlLIST)
 	#for i in range(0,size):
 	#	title = serversLIST[i]
@@ -73,7 +73,8 @@ def PLAY_LINK(url,script_name):
 				else: result = PLAY_VIDEO(videoURL,script_name,'yes')
 			if result in ['Playing','Canceled2'] or len(linkLIST)==1: break
 			else: xbmcgui.Dialog().ok('الملف لم يعمل','جرب ملف غيره')
-		if 'http://localhost:' in linkLIST[0]:
+	if titleLIST:
+		if 'HTTP_SERVER' in str(titleLIST[0]):
 			#xbmcgui.Dialog().ok('click ok to take down the http server','')
 			#html = openURL('http://localhost:64000/shutdown','','','','RESOLVERS-PLAY_LINK-1st')
 			titleLIST[0].shutdown()
@@ -605,6 +606,7 @@ def YOUTUBE(url):
 	#url = 'https://youtu.be/eDlZ5vANQUg'
 	#url = 'http://y2u.be/eDlZ5vANQUg'
 	#url = 'https://www.youtube.com/embed/eDlZ5vANQUg'
+	#youtube unofficial details   https://tyrrrz.me/Blog/Reverse-engineering-YouTube
 	"""
 	youtubeID = url.split('/watch?v=')[-1]
 	#xbmcgui.Dialog().ok(url,youtubeID)
@@ -616,7 +618,7 @@ def YOUTUBE(url):
 	id = url.split('/')[-1]
 	id = id.replace('watch?v=','')
 	if 'embed' in url: url = 'https://www.youtube.com/watch?v='+id
-	block2,block3 = '',''
+	block2,block3,format_block = '','',''
 	subtitleLINK = ''
 	html = openURL(url,'','','','RESOLVERS-YOUTUBE-1st')
 	#xbmc.log('===========================================',level=xbmc.LOGNOTICE)
@@ -629,8 +631,7 @@ def YOUTUBE(url):
 			titleLIST.append(title)
 			linkLIST.append(lang)
 		selection = xbmcgui.Dialog().select('اختر الترجمة المناسبة:', titleLIST)
-		if selection in [0,-1]: subtitleLINK = ''
-		else:
+		if selection not in [0,-1]:
 			subtitleLINK = re.findall('baseUrl":"(.*?)"',block,re.DOTALL)
 			subtitleLINK = subtitleLINK[0]+'&fmt=vtt&type=track&tlang='+linkLIST[selection]
 	titleLIST,linkLIST = [],[]
@@ -638,6 +639,9 @@ def YOUTUBE(url):
 	if html_blocks: block2 = html_blocks[0]
 	html_blocks = re.findall('adaptive_fmts":"(.*?)"',html,re.DOTALL)
 	if html_blocks: block3 = html_blocks[0]
+	html_blocks = re.findall('fmt_list":"(.*?)"',html,re.DOTALL)
+	if html_blocks: format_block = ','+html_blocks[0]+','
+	#xbmc.log('fmt_list='+format_block,level=xbmc.LOGNOTICE)
 	#xbmc.log(block2,level=xbmc.LOGNOTICE)
 	#xbmc.log(block3,level=xbmc.LOGNOTICE)
 	html_blocks = [block2,block3]
@@ -654,7 +658,7 @@ def YOUTUBE(url):
 				key,value = item.split('=',1)
 				dict[key] = value
 				#xbmc.log(key+'='+value,level=xbmc.LOGNOTICE)
-			filetype,codec,quality2,title,codecs = 'unknown','unknown','unknown','Unknown',''
+			filetype,codec,quality2,title,codecs,bitrate = 'unknown','unknown','unknown','Unknown','',0
 			try:
 				type = dict['type']
 				#xbmc.log('['+addon_id+']:  Type:['+type+']', level=xbmc.LOGNOTICE)
@@ -667,29 +671,37 @@ def YOUTUBE(url):
 				codec = codec.strip(',')
 				if ',' in type:
 					type2 = 'A+V'
+					bitrate = 0
 					quality2 = dict['quality']
+					format = re.findall(','+dict['itag']+'\\\/(.*?),',format_block,re.DOTALL)
+					if format:
+						dict['size'] = format[0]
+						quality2 = dict['size'].split('x')[1]
 				elif 'video' in type:
 					type2 = 'Video'
-					quality2 = str(int(dict['bitrate'])/1000)+'kbps  '+dict['quality_label']+'  '+dict['size']+'  '+dict['fps']+'fps'
+					bitrate = int(dict['bitrate'])
+					#quality2 = str(bitrate/1000)+'kbps  '+dict['quality_label']+'  '+dict['size']+'  '+dict['fps']+'fps'
+					quality2 = dict['size'].split('x')[1]+'  '+str(bitrate/1000)+'kbps  '+dict['fps']+'fps'
 				elif 'audio' in type:
 					type2 = 'Audio'
-					quality2 = str(int(dict['bitrate'])/1000)+'kbps  '+str(int(dict['audio_sample_rate'])/1000)+'khz  '+dict['audio_channels']+'ch'
+					bitrate = int(dict['bitrate'])
+					quality2 = str(bitrate/1000)+'kbps  '+str(int(dict['audio_sample_rate'])/1000)+'khz  '+dict['audio_channels']+'ch'
 			except: pass
-			if subtitleLINK=='': link = dict['url']
-			else: link = [dict['url'],subtitleLINK]
-			title = type2+':  '+filetype+'  '+quality2+'  ('+codec+','+dict['itag']+') '
-			#titleLIST.append(title)
-			#linkLIST.append(link)
-			dict['link'] = link
+			title = type2+':  '+filetype+'  '+quality2+'  ('+codec+','+dict['itag']+')'
 			dict['title'] = title
 			dict['type2'] = type2
 			dict['filetype'] = filetype
 			dict['codecs'] = codecs
+			dict['bitrate'] = bitrate
+			dict['url'] = unquote(dict['url'])
+			dict['duration'] = round(0.5+float(dict['url'].split('dur=',1)[1].split('&',1)[0]))
 			streams.append(dict)
 			#xbmc.log('['+addon_id+']:  dict:['+str(dict)+']', level=xbmc.LOGNOTICE)
+			#xbmc.log('['+addon_id+']:  url:['+str(dict['url'])+']', level=xbmc.LOGNOTICE)
 	#xbmc.log('['+addon_id+']:  dict:['+str(streams)+']', level=xbmc.LOGNOTICE)
-	videoTitleLIST,audioTitleLIST,videoaudioTitleLIST,mpdaudioTitleLIST,mpdvideoTitleLIST = [],[],[],[],[]
-	videoDictLIST,audioDictLIST,videoaudioDictLIST,mpdaudioDictLIST,mpdvideoDictLIST = [],[],[],[],[]
+	videoTitleLIST,audioTitleLIST,muxedTitleLIST,mpdaudioTitleLIST,mpdvideoTitleLIST,allTitleLIST = [],[],[],[],[],[]
+	videoDictLIST,audioDictLIST,muxedDictLIST,mpdaudioDictLIST,mpdvideoDictLIST,allvideoDictLIST,allaudioDictLIST = [],[],[],[],[],[],[]
+	streams = sorted(streams, reverse=False, key=lambda key: key['filetype'])
 	for dict in streams:
 		if dict['type2']=='Video':
 			videoTitleLIST.append(dict['title'])
@@ -698,127 +710,167 @@ def YOUTUBE(url):
 			audioTitleLIST.append(dict['title'])
 			audioDictLIST.append(dict)
 		else:
-			videoaudioTitleLIST.append(dict['title'])
-			videoaudioDictLIST.append(dict)
-		if dict['type2']=='Video' and 'avc1' in dict['codecs']:
+			muxedTitleLIST.append(dict['title'].replace('A+V:  ',''))
+			muxedDictLIST.append(dict)
+		if dict['type2']=='Video' and dict['init']!='0-0' and 'avc' in dict['codecs']:
 			mpdvideoTitleLIST.append(dict['title'])
 			mpdvideoDictLIST.append(dict)
-		elif dict['type2']=='Audio' and 'mp4a' in dict['codecs']:
+		elif dict['type2']=='Audio' and dict['init']!='0-0' and 'mp4a' in dict['codecs']:
 			mpdaudioTitleLIST.append(dict['title'])
 			mpdaudioDictLIST.append(dict)
-	selectMenu = ['mpd: انت تختار دقة الصورة ودقة الصوت','صورة وصوت محدودة الدقة','صورة فقط','صوت فقط']
+	for dict in muxedDictLIST:
+		dict['title'] = dict['title'].replace('A+V:  ','')
+		allTitleLIST.append(dict['title'])
+		allvideoDictLIST.append(dict)
+		allaudioDictLIST.append({})
+	highest,highestAudioDICT = 0,{}
+	for dict in mpdaudioDictLIST:
+		if dict['bitrate']>highest: highest,highestAudioDICT = dict['bitrate'],dict
+	audiodict = highestAudioDICT
+	#for audiodict in mpdaudioDictLIST:
+	audioBitrate = int(audiodict['bitrate']/1000)
+	for videodict in mpdvideoDictLIST:
+		videoBitrate = int(videodict['bitrate']/1000)
+		title = videodict['title'].replace('Video:  '+videodict['filetype'],'mpd')+'('+audiodict['title'].split('(',1)[1]
+		title = title.replace(str(videoBitrate)+'kbps',str(videoBitrate+audioBitrate)+'kbps')
+		allTitleLIST.append(title)
+		allvideoDictLIST.append(videodict)
+		allaudioDictLIST.append(audiodict)
+	selectMenu = ['صورة وصوت جميع المتوفر','mpd انت تختار دقة الصورة ودقة الصوت','صورة وصوت محدودة الدقة','صورة فقط بدون صوت','صوت فقط بدون صورة']
+	choiceMenu = ['all','mpd','muxed','video','audio']
+	is_mpd = False
 	while True:
 		selection = xbmcgui.Dialog().select('اختر النوع المناسب:', selectMenu)
 		if selection==-1: break
-		elif selection!=0:
-			if selection==1: titleLIST,dictLIST = videoaudioTitleLIST,videoaudioDictLIST
-			elif selection==2: titleLIST,dictLIST = videoTitleLIST,videoaudioDictLIST
-			elif selection==3: titleLIST,dictLIST = audioTitleLIST,audioDictLIST
+		choice = choiceMenu[selection]
+		if choice in ['audio','video','muxed']:
+			if choice=='muxed': titleLIST,dictLIST = muxedTitleLIST,muxedDictLIST
+			elif choice=='video': titleLIST,dictLIST = videoTitleLIST,videoDictLIST
+			elif choice=='audio': titleLIST,dictLIST = audioTitleLIST,audioDictLIST
 			selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
 			if selection!=-1:
-				titleLIST,linkLIST = [titleLIST[selection]],[dictLIST[selection]['url']]
+				link = dictLIST[selection]['url']
+				if subtitleLINK!='': link = [dictLIST[selection]['url'],subtitleLINK]
+				titleLIST,linkLIST = [titleLIST[selection]],[link]
 				break
-		else:
+		elif choice=='mpd':
 			selection = xbmcgui.Dialog().select('اختر دقة الصورة المناسبة:', mpdvideoTitleLIST)
 			if selection!=-1:
 				videoDICT = videoDictLIST[selection]
 				selection = xbmcgui.Dialog().select('اختر دقة الصوت المناسبة:', mpdaudioTitleLIST)
 				if selection!=-1:
 					audioDICT = audioDictLIST[selection]
-					videoDuration = int(round(0.5+float(videoDICT['url'].split('dur=',1)[1].split('&',1)[0])))
-					audioDuration = int(round(0.5+float(audioDICT['url'].split('dur=',1)[1].split('&',1)[0])))
-					duration = str(videoDuration) if videoDuration>=audioDuration else str(audioDuration)
-					mpd = '<?xml version="1.0" encoding="UTF-8"?>\n'
-					mpd += '<MPD xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mpeg:dash:schema:mpd:2011" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd" minBufferTime="PT2.5S" mediaPresentationDuration="PT'+duration+'S" type="static" profiles="urn:mpeg:dash:profile:isoff-main:2011">\n'
-					mpd += '<Period>\n'
-					mpd += '<AdaptationSet id="0" mimeType="video/'+videoDICT['filetype']+'" subsegmentAlignment="true" subsegmentStartsWithSAP="1" bitstreamSwitching="true" default="true">\n'
-					mpd += '<Role schemeIdUri="urn:mpeg:DASH:role:2011" value="main"/>\n'
-					mpd += '<Representation id="'+videoDICT['itag']+'" codecs="'+videoDICT['codecs']+'" startWithSAP="1" bandwidth="'+videoDICT['bitrate']+'" width="'+videoDICT['size'].split('x')[0]+'" height="'+videoDICT['size'].split('x')[1]+'" frameRate="'+str(int(videoDICT['fps'])*1000)+'/1001">\n'
-					mpd += '<BaseURL>'+videoDICT['url']+'</BaseURL>\n'
-					mpd += '<SegmentBase indexRange="'+videoDICT['index']+'">\n'
-					mpd += '<Initialization range="'+videoDICT['init']+'" />\n'
-					mpd += '</SegmentBase>\n'
-					mpd += '</Representation>\n'
-					mpd += '</AdaptationSet>\n'
-					mpd += '<AdaptationSet id="1" mimeType="audio/'+audioDICT['filetype']+'" subsegmentAlignment="true" subsegmentStartsWithSAP="1" bitstreamSwitching="true" default="true">\n'
-					mpd += '<Role schemeIdUri="urn:mpeg:DASH:role:2011" value="main"/>\n'
-					mpd += '<Representation id="'+audioDICT['itag']+'" codecs="'+audioDICT['codecs']+'" bandwidth="130475">\n'
-					mpd += '<AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="'+audioDICT['audio_channels']+'"/>\n'
-					mpd += '<BaseURL>'+audioDICT['url']+'</BaseURL>\n'
-					mpd += '<SegmentBase indexRange="'+audioDICT['index']+'">\n'
-					mpd += '<Initialization range="'+audioDICT['init']+'" />\n'
-					mpd += '</SegmentBase>\n'
-					mpd += '</Representation>\n'
-					mpd += '</AdaptationSet>\n'
-					mpd += '</Period>\n'
-					mpd += '</MPD>\n'
-					mpd = unquote(mpd).replace('&','&amp;')
-					#xbmc.log(mpd,level=xbmc.LOGNOTICE)
-					"""
-					mpdfolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
-					if not os.path.exists(mpdfolder):
-						#xbmcgui.Dialog().ok('folder does not exsit','')
-						from xbmcvfs import mkdir as xbmcvfs_mkdir
-						xbmcvfs_mkdir(mpdfolder)
-					mpdfile = os.path.join(mpdfolder,id+'.mpd')
-					#xbmcgui.Dialog().ok(mpdfile,mpd)
-					#with open(mpdfile,'w') as file: file.write(mpd)
-					#mpdfile = 'http://localhost:64000/'+id+'.mpd'
-					#titleLIST,linkLIST = [mpdfile],[mpdfile]
-					"""
-					import BaseHTTPServer,thread#,time,httplib
-					class HTTP_SERVER(BaseHTTPServer.HTTPServer):
-						#mpd = 'mpd = used when not using __init__'
-						def __init__(self,port='64000',mpd='mpd = from __init__'):
-							BaseHTTPServer.HTTPServer.__init__(self,("",port), HTTP_HANDLER)
-							self.port = port
-							self.mpd = mpd
-							#print('server is up now listening on port: '+str(port))
-						def serve(self):
-							#print('serving requests started')
-							self.keeprunning = True
-							#counter = 0
-							while self.keeprunning:
-								#counter += 1
-								#print('running a single handle_request() now: '+str(counter)+'')
-								#settimeout does not work due to error message if it kill an http request
-								#self.socket.settimeout(1)
-								self.handle_request()
-							#print('serving requests stopped\n')
-						def stop(self):
-							self.keeprunning = False
-							self.socket.close()
-							#self.send_http()
-						def shutdown(self):
-							self.stop()
-							self.server_close()
-							#print('server is down now\n')
-						def start(self):
-							thread.start_new_thread(self.serve, ())
-						def load(self,mpd):
-							self.mpd = mpd
-						#def send_http(self):
-						#	conn = httplib.HTTPConnection("localhost:%d" % self.port)
-						#	conn.request("HEAD", "/")
-						#	conn.getresponse()
-					class HTTP_HANDLER(BaseHTTPServer.BaseHTTPRequestHandler):
-						def do_HEAD(s):
-							#print('doing HEAD  '+self.path)
-							s.send_response(200)
-							s.end_headers()
-						def do_GET(self):
-							#print('doing GET  '+self.path)
-							self.send_response(200)
-							self.send_header('Content-type', 'text/plain')
-							self.end_headers()
-							#self.wfile.write(self.path+'\n')
-							self.wfile.write(self.server.mpd)
-							if self.path=='/shutdown': self.server.shutdown()
-					httpd = HTTP_SERVER(64000,mpd)
-					#httpd.load(mpd)
-					httpd.start()
-					titleLIST,linkLIST = [httpd],['http://localhost:64000/youtube.mpd']
+					is_mpd = True
 					break
+		else:
+			selection = xbmcgui.Dialog().select('اختر الملف المناسب:', allTitleLIST)
+			if selection!=-1:
+				videoDICT = allvideoDictLIST[selection]
+				if 'mpd' in allTitleLIST[selection]:
+					audioDICT = allaudioDictLIST[selection]
+					is_mpd = True
+				else:
+					link = videoDICT['url']
+					if subtitleLINK!='': link = [videoDICT['url'],subtitleLINK]
+					titleLIST,linkLIST = [videoDICT['title']],[link]
+				break
+	if is_mpd:
+		#xbmc.log(videoDICT['url'],level=xbmc.LOGNOTICE)
+		#xbmc.log(audioDICT['url'],level=xbmc.LOGNOTICE)
+		videoDuration = int(videoDICT['duration'])
+		audioDuration = int(audioDICT['duration'])
+		duration = str(videoDuration) if videoDuration>audioDuration else str(audioDuration)
+		mpd = '<?xml version="1.0" encoding="UTF-8"?>\n'
+		mpd += '<MPD xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:mpeg:dash:schema:mpd:2011" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 http://standards.iso.org/ittf/PubliclyAvailableStandards/MPEG-DASH_schema_files/DASH-MPD.xsd" minBufferTime="PT1.5S" mediaPresentationDuration="PT'+duration+'S" type="static" profiles="urn:mpeg:dash:profile:isoff-main:2011">\n'
+		mpd += '<Period>\n'
+		mpd += '<AdaptationSet id="0" mimeType="video/'+videoDICT['filetype']+'" subsegmentAlignment="true">\n'# subsegmentStartsWithSAP="1" bitstreamSwitching="true" default="true">\n'
+		mpd += '<Role schemeIdUri="urn:mpeg:DASH:role:2011" value="main"/>\n'
+		mpd += '<Representation id="'+videoDICT['itag']+'" codecs="'+videoDICT['codecs']+'" startWithSAP="1" bandwidth="'+str(videoDICT['bitrate'])+'" width="'+videoDICT['size'].split('x')[0]+'" height="'+videoDICT['size'].split('x')[1]+'" frameRate="'+videoDICT['fps']+'">\n'
+		mpd += '<BaseURL>'+videoDICT['url'].replace('&','&amp;')+'</BaseURL>\n'
+		mpd += '<SegmentBase indexRange="'+videoDICT['index']+'">\n'# indexRangeExact="true">\n'
+		mpd += '<Initialization range="'+videoDICT['init']+'" />\n'
+		mpd += '</SegmentBase>\n'
+		mpd += '</Representation>\n'
+		mpd += '</AdaptationSet>\n'
+		mpd += '<AdaptationSet id="1" mimeType="audio/'+audioDICT['filetype']+'" subsegmentAlignment="true">\n'# subsegmentStartsWithSAP="1" bitstreamSwitching="true" default="true">\n'
+		mpd += '<Role schemeIdUri="urn:mpeg:DASH:role:2011" value="main"/>\n'
+		mpd += '<Representation id="'+audioDICT['itag']+'" codecs="'+audioDICT['codecs']+'" bandwidth="130475">\n'
+		mpd += '<AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="'+audioDICT['audio_channels']+'"/>\n'
+		mpd += '<BaseURL>'+audioDICT['url'].replace('&','&amp;')+'</BaseURL>\n'
+		mpd += '<SegmentBase indexRange="'+audioDICT['index']+'">\n'# indexRangeExact="true">\n'
+		mpd += '<Initialization range="'+audioDICT['init']+'" />\n'
+		mpd += '</SegmentBase>\n'
+		mpd += '</Representation>\n'
+		mpd += '</AdaptationSet>\n'
+		mpd += '</Period>\n'
+		mpd += '</MPD>\n'
+		#xbmc.log(mpd,level=xbmc.LOGNOTICE)
+		"""
+		mpdfolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
+		if not os.path.exists(mpdfolder):
+			#xbmcgui.Dialog().ok('folder does not exsit','')
+			from xbmcvfs import mkdir as xbmcvfs_mkdir
+			xbmcvfs_mkdir(mpdfolder)
+		mpdfile = os.path.join(mpdfolder,id+'.mpd')
+		#xbmcgui.Dialog().ok(mpdfile,mpd)
+		#with open(mpdfile,'w') as file: file.write(mpd)
+		#mpdfile = 'http://localhost:64000/'+id+'.mpd'
+		#titleLIST,linkLIST = [mpdfile],[mpdfile]
+		"""
+		import BaseHTTPServer,thread#,time,httplib
+		class HTTP_SERVER(BaseHTTPServer.HTTPServer):
+			#mpd = 'mpd = used when not using __init__'
+			def __init__(self,port='64000',mpd='mpd = from __init__'):
+				BaseHTTPServer.HTTPServer.__init__(self,("",port), HTTP_HANDLER)
+				self.port = port
+				self.mpd = mpd
+				#print('server is up now listening on port: '+str(port))
+			def serve(self):
+				#print('serving requests started')
+				self.keeprunning = True
+				#counter = 0
+				while self.keeprunning:
+					#counter += 1
+					#print('running a single handle_request() now: '+str(counter)+'')
+					#settimeout does not work due to error message if it kill an http request
+					#self.socket.settimeout(1)
+					self.handle_request()
+				#print('serving requests stopped\n')
+			def stop(self):
+				self.keeprunning = False
+				self.socket.close()
+				#self.send_http()
+			def shutdown(self):
+				self.stop()
+				self.server_close()
+				#print('server is down now\n')
+			def start(self):
+				thread.start_new_thread(self.serve, ())
+			def load(self,mpd):
+				self.mpd = mpd
+			#def send_http(self):
+			#	conn = httplib.HTTPConnection("localhost:%d" % self.port)
+			#	conn.request("HEAD", "/")
+			#	conn.getresponse()
+		class HTTP_HANDLER(BaseHTTPServer.BaseHTTPRequestHandler):
+			def do_HEAD(s):
+				#print('doing HEAD  '+self.path)
+				s.send_response(200)
+				s.end_headers()
+			def do_GET(self):
+				#print('doing GET  '+self.path)
+				self.send_response(200)
+				self.send_header('Content-type', 'text/plain')
+				self.end_headers()
+				#self.wfile.write(self.path+'\n')
+				self.wfile.write(self.server.mpd)
+				if self.path=='/shutdown': self.server.shutdown()
+		httpd = HTTP_SERVER(64000,mpd)
+		#httpd.load(mpd)
+		httpd.start()
+		link = 'http://localhost:64000/youtube.mpd'
+		if subtitleLINK!='': link = [link,subtitleLINK]
+		titleLIST,linkLIST = [httpd],[link]
 	return titleLIST,linkLIST
 
 def HELAL(url):

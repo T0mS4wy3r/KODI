@@ -8,6 +8,11 @@ fanart = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id , '
 icon = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id, 'icon.png'))
 
 def addDir(name,url='',mode='',iconimage=icon,page='',text=''):
+	#xbmc.log('['+addon_id+']:  name:['+name+']', level=xbmc.LOGNOTICE)
+	name2 = re.findall('&_(\D\D\w)__MOD_(.*)&','&'+name+'&',re.DOTALL)
+	if name2: name = '[COLOR FFC89008].'+name2[0][0]+' .[/COLOR]'+name2[0][1]
+	name2 = re.findall('&_(\D\D\w)_(.*)&','&'+name+'&',re.DOTALL)
+	if name2: name = '[COLOR FFC89008].'+name2[0][0]+'  [/COLOR]'+name2[0][1]
 	if iconimage=='': iconimage=icon
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
 	if url!='': u = u + '&url=' + quote(url)
@@ -21,6 +26,8 @@ def addDir(name,url='',mode='',iconimage=icon,page='',text=''):
 	return
 
 def addLink(name,url,mode,iconimage=icon,duration='',text=''):
+	name2 = re.findall('&_(\D\D\w)_(.*)&','&'+name+'&',re.DOTALL)
+	if name2: name = '[COLOR FFC89008] '+name2[0][0]+'  [/COLOR]'+name2[0][1]
 	if 'IsPlayable=no' in text: IsPlayable='no'
 	else: IsPlayable='yes'
 	if iconimage=='': iconimage=icon
@@ -202,7 +209,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		result = myplayer.status
 		if result=='Playing':
 			xbmc.log('['+addon_id+']:  Success: Video is playing successfully:  '+urlmessage, level=xbmc.LOGNOTICE)
-			xbmcgui.Dialog().notification('','')
+			xbmcgui.Dialog().notification('الفيديو يعمل','','',500)
 			break
 		elif result=='Failed':
 			xbmc.log('['+addon_id+']:  Failure: Video failed playing:  '+urlmessage, level=xbmc.LOGNOTICE)
@@ -236,7 +243,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 			xbmc.log('['+addon_id+']:  Success: Video is playing successfully:  '+urlmessage, level=xbmc.LOGNOTICE)
 			#break
 		"""
-	if result!='Playing': xbmcgui.Dialog().notification('انتهت عملية التشغيل','بالفشل')
+	if result!='Playing': xbmcgui.Dialog().notification('الفيديو لم يعمل','')
 	#progress.close()
 	#if i==timeout-step:
 	#	myplayer.stop()
@@ -274,10 +281,10 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 		if logs:
 			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
 			logfile=file(logfile, 'rb')
-			logfile.seek(-15000, os.SEEK_END)
+			logfile.seek(-30000, os.SEEK_END)
 			logfile = logfile.read().splitlines()
 			#xbmcgui.Dialog().ok(logfile,str(len(logfile)))
-			logfileNEW = '\n'.join(logfile[-100:])
+			logfileNEW = '\n'.join(logfile[-200:])
 			from base64 import b64encode as base64_b64encode
 			logfileNEW = base64_b64encode(logfileNEW)
 		url = 'http://emadmahdi.pythonanywhere.com/sendemail'

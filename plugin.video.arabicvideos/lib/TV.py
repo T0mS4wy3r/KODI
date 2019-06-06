@@ -11,7 +11,7 @@ def MAIN(mode,url):
 	return
 
 def ITEMS(type):
-	menu_name='[COLOR FFC89008]TV'+str(type)+' [/COLOR]'
+	menu_name='_TV'+str(type)+'_'
 	client = dummyClientID(32)
 	payload = { 'id' : '' , 'user' : client , 'function' : 'list'+str(type) }
 	data = urllib.urlencode(payload)

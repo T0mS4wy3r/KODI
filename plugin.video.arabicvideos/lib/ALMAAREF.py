@@ -5,7 +5,7 @@ website0a = 'http://www.almaareftv.com/old'
 website0b = 'http://www.almaareftv.com'
 script_name = 'ALMAAREF'
 headers = { 'User-Agent' : '' }
-menu_name='[COLOR FFC89008]MRF [/COLOR]'
+menu_name='_MRF_'
 
 
 def MAIN(mode,url,text):

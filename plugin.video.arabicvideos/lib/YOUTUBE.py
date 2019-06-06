@@ -3,7 +3,7 @@ from LIBRARY import *
 
 website0a = 'https://www.youtube.com'
 script_name='YOUTUBE'
-menu_name='[COLOR FFC89008]YUT [/COLOR]'
+menu_name='_YUT_'
 
 def MAIN(mode,url,text):
 	result = ''

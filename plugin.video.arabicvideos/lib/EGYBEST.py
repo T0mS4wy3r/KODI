@@ -4,7 +4,7 @@ from LIBRARY import *
 website0a = 'https://egy.best'
 headers = { 'User-Agent' : '' }
 script_name = 'EGYBEST'
-menu_name='[COLOR FFC89008]EGB [/COLOR]'
+menu_name='_EGB_'
 
 def MAIN(mode,url,page,text):
 	if   mode==120: MAIN_MENU()
@@ -40,8 +40,8 @@ def FILTERS_MENU(link):
 	filter = filter.replace('-',' + ')
 	#xbmcgui.Dialog().ok(str(link), str(filter))
 	if '/trending/' not in link:
-		addDir(menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'',1)
-		addDir(menu_name+'[[   ' + filter + '   ]]',link,122,'',1)
+		addDir(menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'','1')
+		addDir(menu_name+'[[   ' + filter + '   ]]',link,122,'','1')
 		addDir(menu_name+'===========================',link,9999)
 	html = openURL(link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
 	html_blocks=re.findall('mainLoad(.*?)</div></div>',html,re.DOTALL)
@@ -53,7 +53,7 @@ def FILTERS_MENU(link):
 			elif '/tv/' in url and 'مسلسل' not in title: title = 'مسلسلات ' + title
 			if '/trending/' in url:
 				title = 'الاكثر مشاهدة ' + title
-				addDir(menu_name+title,website0a+url,122,'',1)
+				addDir(menu_name+title,website0a+url,122,'','1')
 			else:
 				link = link.replace('popular','')
 				link = link.replace('top','')
@@ -106,7 +106,7 @@ def TITLES(url,page):
 			addLink(menu_name+title,url2.rstrip('/'),123,img)
 			found = True
 		else:
-			addDir(menu_name+title,url2,122,img,1)
+			addDir(menu_name+title,url2,122,img,'1')
 			found = True
 	if found:
 		pagingLIST = ['/movies/','/tv/','/explore/','/trending/']
@@ -118,11 +118,11 @@ def TITLES(url,page):
 						if int(page/10)*10==i:
 							for j in range(i,i+10,1):
 								if not page==j and j!=0:
-									addDir(menu_name+'صفحة '+str(j),url,122,'',j)
-						elif i!=0: addDir(menu_name+'صفحة '+str(i),url,122,'',i)
-						else: addDir(menu_name+'صفحة '+str(1),url,122,'',1)
-				elif n!=0: addDir(menu_name+'صفحة '+str(n),url,122,'',n)
-				else: addDir(menu_name+'صفحة '+str(1),url,122,'',1)
+									addDir(menu_name+'صفحة '+str(j),url,122,'',str(j))
+						elif i!=0: addDir(menu_name+'صفحة '+str(i),url,122,'',str(i))
+						else: addDir(menu_name+'صفحة '+str(1),url,122,'',str(1))
+				elif n!=0: addDir(menu_name+'صفحة '+str(n),url,122,'',str(n))
+				else: addDir(menu_name+'صفحة '+str(1),url,122,'','1')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 

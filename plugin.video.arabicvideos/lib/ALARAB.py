@@ -11,7 +11,7 @@ website0e = 'http://vod.alarab.com/index.php'
 
 script_name = 'ALARAB'
 headers = { 'User-Agent' : '' }
-menu_name='[COLOR FFC89008]KLA [/COLOR]'
+menu_name='_KLA_'
 
 def MAIN(mode,url,text):
 	if mode==10: MENU()
@@ -96,7 +96,7 @@ def TITLES(url):
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode: title2 = episode[0]
 			#if 'مسلسل' not in title2: title2 = 'مسلسل '+title2
-			title2 = '[COLOR FFC89008]Mod [/COLOR]'+title2
+			title2 = '_MOD_'+title2
 		if title2 not in allTitles:
 			allTitles.append(title2)
 			#xbmc.log(title2, level=xbmc.LOGNOTICE)

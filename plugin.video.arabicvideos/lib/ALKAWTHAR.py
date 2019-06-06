@@ -3,7 +3,7 @@ from LIBRARY import *
 
 website0a = 'http://www.alkawthartv.com'
 script_name = 'ALKAWTHAR'
-menu_name='[COLOR FFC89008]KWT [/COLOR]'
+menu_name='_KWT_'
 
 def MAIN(mode,url,page,text):
 	if mode==130: MENU()
@@ -17,20 +17,20 @@ def MAIN(mode,url,page,text):
 
 def MENU():
 	addLink(menu_name+'البث الحي لقناة الكوثر','',135,'','','IsPlayable=False')
-	addDir(menu_name+'بحث في الموقع','',139,'',1)
-	addDir(menu_name+'المسلسلات',website0a+'/category/543',132,'',1)
-	addDir(menu_name+'الافلام',website0a+'/category/628',132,'',1)
-	addDir(menu_name+'برامج الصغار والشباب',website0a+'/category/517',132,'',1)
-	addDir(menu_name+'ابرز البرامج',website0a+'/category/1763',132,'',1)
-	addDir(menu_name+'المحاضرات',website0a+'/category/943',132,'',1)
-	addDir(menu_name+'عاشوراء',website0a+'/category/1353',132,'',1)
-	addDir(menu_name+'البرامج الاجتماعية',website0a+'/category/501',132,'',1)
-	addDir(menu_name+'البرامج الدينية',website0a+'/category/509',132,'',1)
-	addDir(menu_name+'البرامج الوثائقية',website0a+'/category/553',132,'',1)
-	addDir(menu_name+'البرامج السياسية',website0a+'/category/545',132,'',1)
-	addDir(menu_name+'كتب',website0a+'/category/291',132,'',1)
-	addDir(menu_name+'تعلم الفارسية',website0a+'/category/88',132,'',1)
-	addDir(menu_name+'ارشيف البرامج',website0a+'/category/1279',132,'',1)
+	addDir(menu_name+'بحث في الموقع','',139,'','1')
+	addDir(menu_name+'المسلسلات',website0a+'/category/543',132,'','1')
+	addDir(menu_name+'الافلام',website0a+'/category/628',132,'','1')
+	addDir(menu_name+'برامج الصغار والشباب',website0a+'/category/517',132,'','1')
+	addDir(menu_name+'ابرز البرامج',website0a+'/category/1763',132,'','1')
+	addDir(menu_name+'المحاضرات',website0a+'/category/943',132,'','1')
+	addDir(menu_name+'عاشوراء',website0a+'/category/1353',132,'','1')
+	addDir(menu_name+'البرامج الاجتماعية',website0a+'/category/501',132,'','1')
+	addDir(menu_name+'البرامج الدينية',website0a+'/category/509',132,'','1')
+	addDir(menu_name+'البرامج الوثائقية',website0a+'/category/553',132,'','1')
+	addDir(menu_name+'البرامج السياسية',website0a+'/category/545',132,'','1')
+	addDir(menu_name+'كتب',website0a+'/category/291',132,'','1')
+	addDir(menu_name+'تعلم الفارسية',website0a+'/category/88',132,'','1')
+	addDir(menu_name+'ارشيف البرامج',website0a+'/category/1279',132,'','1')
 	"""
 	html = openURL(website0a,'','','','ALKAWTHAR-MENU-1st')
 	html_blocks=re.findall('dropdown-menu(.*?)dropdown-toggle',html,re.DOTALL)
@@ -43,9 +43,9 @@ def MENU():
 			title = 'البرامج ' + title
 		url = website0a + link
 		if '/category' in url:
-			addDir(menu_name+title,url,132,'',1)
+			addDir(menu_name+title,url,132,'','1')
 		elif '/conductor' not in url:
-			addDir(menu_name+title,url,131,'',1)
+			addDir(menu_name+title,url,131,'','1')
 	"""
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
@@ -61,13 +61,13 @@ def TITLES(url):
 		for img,link,title in items:
 			title = title.strip(' ')
 			link = website0a + link
-			addDir(menu_name+title,link,133,img,1)
+			addDir(menu_name+title,link,133,img,'1')
 	elif '/docs' in url:
 		items = re.findall("src='(.*?)'.*?<h2>(.*?)</h2>.*?href='(.*?)'",block,re.DOTALL)
 		for img,title,link in items:
 			title = title.strip(' ')
 			link = website0a + link
-			addDir(menu_name+title,link,133,img,1)
+			addDir(menu_name+title,link,133,img,'1')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 """
@@ -86,7 +86,7 @@ def CATEGORIES(url):
 		#if category==categoryNew: continue
 		title = title.strip(' ')
 		link = website0a + link
-		addDir(menu_name+title,link,132,'',1)
+		addDir(menu_name+title,link,132,'','1')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -118,7 +118,7 @@ def EPISODES(url,page):
 				title = name + ' - ' + title
 			link = website0a + link
 			if category=='628':
-				addDir(menu_name+title,link,133,img,1)
+				addDir(menu_name+title,link,133,img,'1')
 			else:
 				addLink(menu_name+title,link,134,img)
 	elif '/episode/' in url:
@@ -156,7 +156,7 @@ def EPISODES(url,page):
 	title = 'صفحة '
 	for i in range(1,1+totalpages):
 		if page!=str(i):
-			addDir(menu_name+title+str(i),url,133,'',i)
+			addDir(menu_name+title+str(i),url,133,'',str(i))
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -205,7 +205,7 @@ def SEARCH(search,page):
 				addDir(menu_name+title,url,132)
 				found = True
 		elif '/episode/' in link:
-			addDir(menu_name+title,link,133,'',1)
+			addDir(menu_name+title,link,133,'','1')
 			found = True
 		#else:
 		#	addDir(menu_name+title,url,132)
@@ -215,7 +215,7 @@ def SEARCH(search,page):
 		for i in range(1,8):
 			if i==page: continue
 			title = name + ' ' + str(i)
-			addDir(menu_name+title,'',136,'',i)
+			addDir(menu_name+title,'',136,'',str(i))
 	xbmcplugin.endOfDirectory(addon_handle)
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
 	return

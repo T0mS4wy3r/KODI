@@ -4,7 +4,7 @@ from LIBRARY import *
 website0a = 'https://shoofmax.com'
 website0b = 'https://static.shoofmax.com'
 script_name = 'SHOOFMAX'
-menu_name='[COLOR FFC89008]SHF [/COLOR]'
+menu_name='_SHF_'
 
 def MAIN(mode,url,text):
 	if mode==50: MAIN_MENU()

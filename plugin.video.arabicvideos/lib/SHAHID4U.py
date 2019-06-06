@@ -4,7 +4,7 @@ from LIBRARY import *
 website0a = 'https://tv.shahid4u.net'
 script_name='SHAHID4U'
 headers = { 'User-Agent' : '' }
-menu_name='[COLOR FFC89008]SHA [/COLOR]'
+menu_name='_SHA_'
 
 def MAIN(mode,url,text):
 	if mode==110: MENU()
@@ -60,7 +60,7 @@ def ITEMS(url):
 		elif 'الحلقة' in title and '/episode/' in link:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode:
-				title = '[COLOR FFC89008]Mod [/COLOR]'+episode[0]
+				title = '_MOD_'+episode[0]
 				if title not in allTitles:
 					addDir(menu_name+title,link,113,img)
 					allTitles.append(title)

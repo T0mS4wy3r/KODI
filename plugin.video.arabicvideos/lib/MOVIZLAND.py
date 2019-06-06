@@ -5,7 +5,7 @@ website0a = 'https://movizland.online'
 website0b = 'https://m.movizland.online'
 script_name='MOVIZLAND'
 headers = { 'User-Agent' : '' }
-menu_name='[COLOR FFC89008]MVZ [/COLOR]'
+menu_name='_MVZ_'
 
 def MAIN(mode,url,text):
 	if mode==180: MENU()
@@ -64,7 +64,7 @@ def ITEMS(url,type=''):
 		if 'الحلقة' in title or 'الحلقه' in title:
 			episode = re.findall('(.*?) (الحلقة|الحلقه) \d+',title,re.DOTALL)
 			if episode:
-				title = '[COLOR FFC89008]Mod [/COLOR]'+episode[0][0]
+				title = '_MOD_'+episode[0][0]
 				if title not in allTitles:
 					addDir(menu_name+title,link,183,img)
 					allTitles.append(title)

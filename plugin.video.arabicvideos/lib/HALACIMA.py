@@ -4,7 +4,7 @@ from LIBRARY import *
 website0a = 'https://www.halacima.net'
 script_name='HALACIMA'
 headers = { 'User-Agent' : '' }
-menu_name='[COLOR FFC89008]HLA [/COLOR]'
+menu_name='_HLA_'
 
 def MAIN(mode,url,page,text):
 	if mode==80: MENU()
@@ -66,7 +66,7 @@ def ITEMS(url,html='',type='',page='0'):
 				link = link.replace('مسلسل-الهيبة-الجزء-الثالث','الهيبة-الموسم-3')
 				link = link.replace('كلبش-الجزء-الثالث','كلبش-الجزء-3')
 				#title = link.replace(episode[0][0],'')
-				title = '[COLOR FFC89008]Mod [/COLOR]'+title
+				title = '_MOD_'+title
 		if 'فيلم' in title and '/series/' in link and '/category/' in url:
 			title = link
 			title = title.replace('-',' ')
