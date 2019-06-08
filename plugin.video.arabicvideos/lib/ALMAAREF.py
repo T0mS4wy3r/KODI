@@ -21,7 +21,7 @@ def MAIN(mode,url,text):
 	return
 
 def MENU():
-	addLink(menu_name+'البث الحي لقناة المعارف','',41,'','','IsPlayable=False')
+	addLink(menu_name+'البث الحي لقناة المعارف','',41,'','','IsPlayable=no')
 	addDir(menu_name+'بحث في الموقع','',49)
 	addDir(menu_name+'البرامج الحالية','',46)
 	html = openURL(website0a,'',headers,'','ALMAAREF-MENU-1st')

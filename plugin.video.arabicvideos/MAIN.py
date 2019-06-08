@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 from lib.LIBRARY import *
 
-label = xbmc.getInfoLabel('ListItem.Label').replace('[COLOR FFC89008]','').replace('[/COLOR]','')
-if label=='': label = 'Main menu'
+if menulabel=='' or menupath=='plugin://plugin.video.arabicvideos/': menulabel = 'Main Menu'
 addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 kodiVersion = xbmc.getInfoLabel( "System.BuildVersion" )	
 xbmc.log('['+addon_id+']:  Version:['+addonVersion+']   Kodi:['+kodiVersion+']', level=xbmc.LOGNOTICE)
-#addon_path = xbmc.getInfoLabel( "ListItem.FolderPath" )
-path = unquote(addon_path)
-xbmc.log('['+addon_id+']:  Starting menu item:  Label:['+label+']   Path:['+path+']', level=xbmc.LOGNOTICE)
+xbmc.log('['+addon_id+']:  Started menu item:  Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 
 def MAIN():
 	#addLink('Testing - watched enabled','',179,'','','yes','','','IsPlayable=yes')
@@ -33,7 +30,7 @@ def MAIN():
 	addLink('=========================','',9999,'','','IsPlayable=no')
 
 	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('14.  [COLOR FFC89008]MVZ   [/COLOR]'+'موقع موفيزلاند اونلاين','',180)
+	addDir('14.  [COLOR FFC89008]MVZ   [/COLOR]'+'موقع موفيزلاند اونلاين (مشفر)','',180)
 	addDir('15.  [COLOR FFC89008]AKM  [/COLOR]'+'موقع اكوام (مشفر)','',70)
 	addDir('16.  [COLOR FFC89008]HEL   [/COLOR]'+'موقع هلال يوتيوب (مشفر)','',90)
 	addLink('=========================','',9999,'','','IsPlayable=no')
@@ -87,26 +84,35 @@ except: pass
 
 result = ''
 
-if not mode: MAIN()
-elif mode>=0 and mode<=9: from lib.PROGRAM import MAIN ; MAIN(mode,text)
-elif mode>=10 and mode<=19: from lib.ALARAB import MAIN ; MAIN(mode,url,text)
-elif mode>=20 and mode<=29: from lib.IFILM import MAIN ; MAIN(mode,url,page,text)
-elif mode>=30 and mode<=39: from lib.PANET import MAIN ; MAIN(mode,url,page,text)
-elif mode>=40 and mode<=49: from lib.ALMAAREF import MAIN ; MAIN(mode,url,text)
-elif mode>=50 and mode<=59: from lib.SHOOFMAX import MAIN ; MAIN(mode,url,text)
-elif mode>=60 and mode<=69: from lib.ALFATIMI import MAIN ; MAIN(mode,url,text)
-elif mode>=70 and mode<=79: from lib.AKOAM import MAIN ; MAIN(mode,url,text)
-elif mode>=80 and mode<=89: from lib.HALACIMA import MAIN ; MAIN(mode,url,page,text)
-elif mode>=90 and mode<=99: from lib.HELAL import MAIN ; MAIN(mode,url,text)
-elif mode>=100 and mode<=109: from lib.TV import MAIN ; MAIN(mode,url)
-elif mode>=110 and mode<=119: from lib.SHAHID4U import MAIN ; MAIN(mode,url,text)
-elif mode>=120 and mode<=129: from lib.EGYBEST import MAIN ; MAIN(mode,url,page,text)
-elif mode>=130 and mode<=139: from lib.ALKAWTHAR import MAIN ; MAIN(mode,url,page,text)
-elif mode>=140 and mode<=149: from lib.YOUTUBE import MAIN ; result = MAIN(mode,url,text)
-elif mode>=150 and mode<=159: from lib.PROBLEMS import MAIN ; MAIN(mode)
-elif mode>=160 and mode<=169: from lib.RESOLVERS import MAIN ; MAIN(mode,url,text)
-elif mode>=170 and mode<=179: from lib.PROGRAM import MAIN ; MAIN(mode,text)
-elif mode>=180 and mode<=189: from lib.MOVIZLAND import MAIN ; MAIN(mode,url,text)
+if mode in [8,10,50,70,80,90,110,120,140,180,19,59,79,89,99,119,129,149,189]:
+	worked = HTTPS(False)
+	if not worked:
+		xbmcgui.Dialog().ok('هذا الموقع لا يعمل عندك لانه مشفر','جرب موقع غير مشفر')
+		from lib.PROBLEMS import MAIN
+		MAIN(152)
+else: worked = True
+
+if worked:
+	if not mode: MAIN()
+	elif mode>=0 and mode<=9: from lib.PROGRAM import MAIN ; MAIN(mode,text)
+	elif mode>=10 and mode<=19: from lib.ALARAB import MAIN ; MAIN(mode,url,text)
+	elif mode>=20 and mode<=29: from lib.IFILM import MAIN ; MAIN(mode,url,page,text)
+	elif mode>=30 and mode<=39: from lib.PANET import MAIN ; MAIN(mode,url,page,text)
+	elif mode>=40 and mode<=49: from lib.ALMAAREF import MAIN ; MAIN(mode,url,text)
+	elif mode>=50 and mode<=59: from lib.SHOOFMAX import MAIN ; MAIN(mode,url,text)
+	elif mode>=60 and mode<=69: from lib.ALFATIMI import MAIN ; MAIN(mode,url,text)
+	elif mode>=70 and mode<=79: from lib.AKOAM import MAIN ; MAIN(mode,url,text)
+	elif mode>=80 and mode<=89: from lib.HALACIMA import MAIN ; MAIN(mode,url,page,text)
+	elif mode>=90 and mode<=99: from lib.HELAL import MAIN ; MAIN(mode,url,text)
+	elif mode>=100 and mode<=109: from lib.TV import MAIN ; MAIN(mode,url)
+	elif mode>=110 and mode<=119: from lib.SHAHID4U import MAIN ; MAIN(mode,url,text)
+	elif mode>=120 and mode<=129: from lib.EGYBEST import MAIN ; MAIN(mode,url,page,text)
+	elif mode>=130 and mode<=139: from lib.ALKAWTHAR import MAIN ; MAIN(mode,url,page,text)
+	elif mode>=140 and mode<=149: from lib.YOUTUBE import MAIN ; result = MAIN(mode,url,text)
+	elif mode>=150 and mode<=159: from lib.PROBLEMS import MAIN ; MAIN(mode)
+	elif mode>=160 and mode<=169: from lib.RESOLVERS import MAIN ; MAIN(mode,url,text)
+	elif mode>=170 and mode<=179: from lib.PROGRAM import MAIN ; MAIN(mode,text)
+	elif mode>=180 and mode<=189: from lib.MOVIZLAND import MAIN ; MAIN(mode,url,text)
 
 
 
@@ -114,7 +120,5 @@ elif mode>=180 and mode<=189: from lib.MOVIZLAND import MAIN ; MAIN(mode,url,tex
 #if addon_handle > -1:
 #xbmcplugin.endOfDirectory(addon_handle)
 #xbmc.Player().play()
-#xbmcgui.Dialog().ok('النتيجة',result)
 
-#xbmc.log('['+addon_id+']:  Result:  '+result, level=xbmc.LOGNOTICE)
-#xbmc.log('['+addon_id+']:  Finished menu item:  Label:['+label+']   Path:['+path+']', level=xbmc.LOGNOTICE)
+#xbmc.log('['+addon_id+']:  Finished menu item:  Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)

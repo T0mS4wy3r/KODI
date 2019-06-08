@@ -11,27 +11,27 @@ def MAIN(mode,url,text):
 
 def PLAY(linkLIST,script_name):
 	serversLIST,urlLIST = SERVERS(linkLIST,script_name)
-	if len(serversLIST)==0: result = 'Unresolved'
+	if len(serversLIST)==0: result = 'unresolved'
 	else:
 		while True:
 			if len(serversLIST)==1: selection = 0
 			else: selection = xbmcgui.Dialog().select('اختر السيرفر المناسب', serversLIST)
-			if selection == -1: result = 'Canceled1'
+			if selection == -1: result = 'canceled1'
 			else:
 				title = serversLIST[selection]
 				#xbmcgui.Dialog().ok(str(urlLIST[selection]),str(urlLIST[selection]))
 				if 'سيرفر عام مجهول' in title:
 					from PROBLEMS import MAIN as PROBLEMS_MAIN
 					PROBLEMS_MAIN(156)
-					result = 'Unresolved'
+					result = 'unresolved'
 				else:
 					url = urlLIST[selection]
 					result = PLAY_LINK(url,script_name)
-			if result in ['Playing','Canceled1'] or len(serversLIST)==1: break
-			elif result in ['Failed','Timeout','Canceled0','Tried']: break
-			elif result!='Canceled2': xbmcgui.Dialog().ok('السيرفر لم يعمل','جرب سيرفر غيره')
-	if result=='Unresolved' and len(serversLIST)>1: xbmcgui.Dialog().ok('سيرفر هذا الفيديو لم يعمل','جرب فيديو غيره')
-	elif result in ['Failed','Timeout']: xbmcgui.Dialog().ok('الفيديو لم يعمل',' ')
+			if result in ['playing','canceled1'] or len(serversLIST)==1: break
+			elif result in ['failed','timeout','canceled0','tried']: break
+			elif result not in ['canceled2','https']: xbmcgui.Dialog().ok('السيرفر لم يعمل','جرب سيرفر غيره')
+	if result=='unresolved' and len(serversLIST)>0: xbmcgui.Dialog().ok('سيرفر هذا الفيديو لم يعمل','جرب فيديو غيره')
+	elif result in ['failed','timeout']: xbmcgui.Dialog().ok('الفيديو لم يعمل',' ')
 	"""
 	elif result in ['Canceled1','Canceled2']:
 		#xbmc.log('['+addon_id+']:  Test:  '+sys.argv[0]+sys.argv[2], level=xbmc.LOGNOTICE)
@@ -53,25 +53,26 @@ def PLAY(linkLIST,script_name):
 	#xbmcplugin.endOfDirectory(addon_handle)
 
 def PLAY_LINK(url,script_name):
+	url = url.strip(' ')
 	titleLIST,linkLIST = RESOLVE(url)
 	if not linkLIST:
-		result = 'Unresolved'
-		if '.mp4' in url or '.m3u' in url or '.mpd' in url or '.mkv' in url:
-			result = PLAY_VIDEO(url,script_name,'yes')
+		result = 'unresolved'
+		videofiletype = re.findall('(.mp4|.m3u|.m3u8|.mpd|.mkv)(|\?.*?|/\?.*?)&',url+'&',re.DOTALL)
+		if videofiletype: result = PLAY_VIDEO(url,script_name,'yes')
 	else:
 		while True:
 			if len(linkLIST)==1: selection = 0
 			else: selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
-			if selection == -1: result = 'Canceled2'
+			if selection == -1: result = 'canceled2'
 			else:
 				videoURL = linkLIST[selection]
 				if 'moshahda.' in videoURL and 'download_orig' in videoURL:
 					videoURL1,videoURL2 = MOVIZLAND(videoURL)
 					if videoURL2: videoURL = videoURL2[0]
 					else: videoURL = ''
-				if videoURL=='': result = 'Unresolved'
+				if videoURL=='': result = 'unresolved'
 				else: result = PLAY_VIDEO(videoURL,script_name,'yes')
-			if result in ['Playing','Canceled2'] or len(linkLIST)==1: break
+			if result in ['playing','canceled2'] or len(linkLIST)==1: break
 			else: xbmcgui.Dialog().ok('الملف لم يعمل','جرب ملف غيره')
 	if titleLIST:
 		if 'HTTP_SERVER' in str(titleLIST[0]):
@@ -196,6 +197,7 @@ def RESOLVABLE(url):
 	return result
 
 def RESOLVE(url):
+	xbmc.log('['+addon_id+']:  Started resolving:  URL:['+url+']', level=xbmc.LOGNOTICE)
 	url2 = url.lower()
 	titleLIST,linkLIST = [],[]
 	if any(value in url2 for value in doNOTresolveMElist): return ''
@@ -460,7 +462,7 @@ def VCSTREAM(url):
 	html = html.replace('\\\\','')
 	html = html.replace('\\/','/')
 	html = html.replace('\\"','"')
-	xbmcgui.Dialog().ok(url,html)
+	#xbmcgui.Dialog().ok(url,html)
 	items = re.findall('file":"(.*?)"',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(items[0],items[0])
 	if items:
@@ -504,12 +506,12 @@ def UPBOM(url):
 	payload = { 'id' : id  , 'op' : 'download2' , 'method_free':'Free+Download+%3E%3E' }
 	data = urllib.urlencode(payload)
 	html = openURL(url,data,headers,'','RESOLVERS-UPBOM-1st')
-	xbmcgui.Dialog().ok('',html)
+	#xbmcgui.Dialog().ok(url,html)
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	items = re.findall('direct_link.*?href="(.*?)"',html,re.DOTALL)
 	if items:
-		url = items[0]
-		return [url],[url]
+		url2 = items[0]
+		return [url2],[url2]
 	else: return [],[]
 
 def LIIVIDEO(url):
@@ -602,7 +604,9 @@ def UPTOBOX(url):
 	#file.close()
 
 def YOUTUBE(url):
-	#url = 'https://www.youtube.com/watch?v=eDlZ5vANQUg'
+	#subtitles example		url = 'https://www.youtube.com/watch?v=eDlZ5vANQUg'
+	#mpddash example		url = 'https://www.youtube.com/watch?v=XvmSNAyeyFI'
+	#mpddash example		url = 'https://www.youtube.com/watch?v=-ckLRhgN9r0'
 	#url = 'https://youtu.be/eDlZ5vANQUg'
 	#url = 'http://y2u.be/eDlZ5vANQUg'
 	#url = 'https://www.youtube.com/embed/eDlZ5vANQUg'
@@ -618,13 +622,15 @@ def YOUTUBE(url):
 	id = url.split('/')[-1]
 	id = id.replace('watch?v=','')
 	if 'embed' in url: url = 'https://www.youtube.com/watch?v='+id
-	block2,block3,format_block = '','',''
-	subtitleLINK = ''
+	block2,block3,format_block,jshtml = '','','',''
+	subtitleURL,dashURL,finalURL = '','',''
 	html = openURL(url,'','','','RESOLVERS-YOUTUBE-1st')
 	#xbmc.log('===========================================',level=xbmc.LOGNOTICE)
+	#xbmc.log(html,level=xbmc.LOGNOTICE)
+	html = html.replace('\\','')
 	html_blocks = re.findall('playerCaptionsTracklistRenderer(.*?)defaultAudioTrackIndex',html,re.DOTALL)
 	if html_blocks:
-		block = html_blocks[0].replace('\u0026','&').replace('\\','')
+		block = html_blocks[0].replace('u0026','&')
 		items = re.findall('{"languageCode":"(.*?)".*?simpleText":"(.*?)"',block,re.DOTALL)
 		titleLIST,linkLIST = ['بدون اضافة الترجمة الاضافية'],['']
 		for lang,title in items:
@@ -632,77 +638,109 @@ def YOUTUBE(url):
 			linkLIST.append(lang)
 		selection = xbmcgui.Dialog().select('اختر الترجمة المناسبة:', titleLIST)
 		if selection not in [0,-1]:
-			subtitleLINK = re.findall('baseUrl":"(.*?)"',block,re.DOTALL)
-			subtitleLINK = subtitleLINK[0]+'&fmt=vtt&type=track&tlang='+linkLIST[selection]
+			subtitleURL = re.findall('baseUrl":"(.*?)"',block,re.DOTALL)
+			subtitleURL = subtitleURL[0]+'&fmt=vtt&type=track&tlang='+linkLIST[selection]
 	titleLIST,linkLIST = [],[]
+	html_blocks = re.findall('dashManifestUrl":"(.*?)"',html,re.DOTALL)
+	if html_blocks:
+		if '/signature/' in html_blocks[0]: dashURL = html_blocks[0]
+		else: dashURL = html_blocks[0].replace('/s/','/signature/')
 	html_blocks = re.findall('url_encoded_fmt_stream_map":"(.*?)"',html,re.DOTALL)
 	if html_blocks: block2 = html_blocks[0]
 	html_blocks = re.findall('adaptive_fmts":"(.*?)"',html,re.DOTALL)
 	if html_blocks: block3 = html_blocks[0]
 	html_blocks = re.findall('fmt_list":"(.*?)"',html,re.DOTALL)
-	if html_blocks: format_block = ','+html_blocks[0]+','
+	if html_blocks: format_block = html_blocks[0]
 	#xbmc.log('fmt_list='+format_block,level=xbmc.LOGNOTICE)
 	#xbmc.log(block2,level=xbmc.LOGNOTICE)
 	#xbmc.log(block3,level=xbmc.LOGNOTICE)
-	html_blocks = [block2,block3]
-	streams = []
-	for block in html_blocks:
+	if 'sp=sig' in block2 or 'sp=sig' in block3:
+		html_blocks = re.findall('src="(/yts/jsbin/player_.*?)"',html,re.DOTALL)
+		if html_blocks:
+			jsfile = 'https://www.youtube.com'+html_blocks[0]
+			jshtml = openURL(jsfile,'','','','RESOLVERS-YOUTUBE-2nd')
+			from youtube_signature.cipher import Cipher
+			from youtube_signature.json_script_engine import JsonScriptEngine
+			cypher = Cipher()
+			cypher._object_cache = {}
+			json_script = cypher._load_javascript(jshtml)
+			json_script_engine = JsonScriptEngine(json_script)
+	#xbmc.log(jsfile,level=xbmc.LOGNOTICE)
+	streams,streams2 = [],[]
+	for block in [block2,block3]:
 		lines = block.split(',')
 		for line in lines:
-			line = unquote(line)
-			dict = {}
 			#xbmc.log('===========================================',level=xbmc.LOGNOTICE)
 			#xbmc.log(line,level=xbmc.LOGNOTICE)
-			items = line.split('\u0026')
+			"""
+			line = line.replace('"','_').replace('=','":"').replace('u0026','","')
+			dict = eval('{"'+line+'"}')
+			for key,value in dict.items():
+				dict[key] = unquote(value.replace('_','"'))
+				#xbmc.log(key+'='+dict[key],level=xbmc.LOGNOTICE)
+			"""
+			line = unquote(line)
+			dict = {}
+			items = line.split('u0026')
 			for item in items:
 				key,value = item.split('=',1)
 				dict[key] = value
 				#xbmc.log(key+'='+value,level=xbmc.LOGNOTICE)
-			filetype,codec,quality2,title,codecs,bitrate = 'unknown','unknown','unknown','Unknown','',0
-			try:
-				type = dict['type']
-				#xbmc.log('['+addon_id+']:  Type:['+type+']', level=xbmc.LOGNOTICE)
-				type = type.replace('+','')
-				items = re.findall('/(.*?);.*?"(.*?)"',type,re.DOTALL)
-				filetype,codecs = items[0]
-				codecs2 = codecs.split(',')
-				codec = ''
-				for item in codecs2: codec += item.split('.')[0]+','
-				codec = codec.strip(',')
-				if ',' in type:
-					type2 = 'A+V'
-					bitrate = 0
-					quality2 = dict['quality']
-					format = re.findall(','+dict['itag']+'\\\/(.*?),',format_block,re.DOTALL)
-					if format:
-						dict['size'] = format[0]
-						quality2 = dict['size'].split('x')[1]
-				elif 'video' in type:
-					type2 = 'Video'
-					bitrate = int(dict['bitrate'])
-					#quality2 = str(bitrate/1000)+'kbps  '+dict['quality_label']+'  '+dict['size']+'  '+dict['fps']+'fps'
-					quality2 = dict['size'].split('x')[1]+'  '+str(bitrate/1000)+'kbps  '+dict['fps']+'fps'
-				elif 'audio' in type:
-					type2 = 'Audio'
-					bitrate = int(dict['bitrate'])
-					quality2 = str(bitrate/1000)+'kbps  '+str(int(dict['audio_sample_rate'])/1000)+'khz  '+dict['audio_channels']+'ch'
-			except: pass
-			title = type2+':  '+filetype+'  '+quality2+'  ('+codec+','+dict['itag']+')'
-			dict['title'] = title
-			dict['type2'] = type2
-			dict['filetype'] = filetype
-			dict['codecs'] = codecs
-			dict['bitrate'] = bitrate
-			dict['url'] = unquote(dict['url'])
-			dict['duration'] = round(0.5+float(dict['url'].split('dur=',1)[1].split('&',1)[0]))
-			streams.append(dict)
+			#xbmc.log('url='+dict['url'],level=xbmc.LOGNOTICE)
+			if 'signature=' in dict['url'] or dict['url'].count('sig=')>1:
+				streams.append(dict)
+			elif jshtml!='':
+				signature = json_script_engine.execute(dict['s'])
+				if signature!=dict['s']:
+					dict['url'] = dict['url'] + '&'+dict['sp']+'=' + signature
+					streams.append(dict)
 			#xbmc.log('['+addon_id+']:  dict:['+str(dict)+']', level=xbmc.LOGNOTICE)
 			#xbmc.log('['+addon_id+']:  url:['+str(dict['url'])+']', level=xbmc.LOGNOTICE)
-	#xbmc.log('['+addon_id+']:  dict:['+str(streams)+']', level=xbmc.LOGNOTICE)
+	#xbmc.log('['+addon_id+']:  streams:['+str(streams)+']', level=xbmc.LOGNOTICE)
+	for dict in streams:
+		filetype,codec,quality2,title,codecs,bitrate = 'unknown','unknown','unknown','Unknown','',0
+		try:
+			type = dict['type']
+			#xbmc.log('['+addon_id+']:  Type:['+type+']', level=xbmc.LOGNOTICE)
+			type = type.replace('+','')
+			items = re.findall('/(.*?);.*?"(.*?)"',type,re.DOTALL)
+			filetype,codecs = items[0]
+			codecs2 = codecs.split(',')
+			codec = ''
+			for item in codecs2: codec += item.split('.')[0]+','
+			codec = codec.strip(',')
+			if ',' in type:
+				type2 = 'A+V'
+				bitrate = 0
+				quality2 = dict['quality']
+				format = re.findall(','+dict['itag']+'/(.*?),',','+format_block+',',re.DOTALL)
+				if format:
+					dict['size'] = format[0]
+					quality2 = dict['size'].split('x')[1]
+			elif 'video' in type:
+				type2 = 'Video'
+				bitrate = int(dict['bitrate'])
+				#quality2 = str(bitrate/1000)+'kbps  '+dict['quality_label']+'  '+dict['size']+'  '+dict['fps']+'fps'
+				quality2 = dict['size'].split('x')[1]+'  '+str(bitrate/1000)+'kbps  '+dict['fps']+'fps'
+			elif 'audio' in type:
+				type2 = 'Audio'
+				bitrate = int(dict['bitrate'])
+				quality2 = str(bitrate/1000)+'kbps  '+str(int(dict['audio_sample_rate'])/1000)+'khz  '+dict['audio_channels']+'ch'
+		except: pass
+		title = type2+':  '+filetype+'  '+quality2+'  ('+codec+','+dict['itag']+')'
+		dict['title'] = title
+		dict['type2'] = type2
+		dict['filetype'] = filetype
+		dict['codecs'] = codecs
+		dict['bitrate'] = bitrate
+		dict['duration'] = round(0.5+float(dict['url'].split('dur=',1)[1].split('&',1)[0]))
+		dict['url'] = unquote(dict['url'])#+'|User-Agent=&'
+		streams2.append(dict)
+	#xbmc.log('['+addon_id+']:  streams2:['+str(streams2)+']', level=xbmc.LOGNOTICE)
 	videoTitleLIST,audioTitleLIST,muxedTitleLIST,mpdaudioTitleLIST,mpdvideoTitleLIST,allTitleLIST = [],[],[],[],[],[]
 	videoDictLIST,audioDictLIST,muxedDictLIST,mpdaudioDictLIST,mpdvideoDictLIST,allvideoDictLIST,allaudioDictLIST = [],[],[],[],[],[],[]
-	streams = sorted(streams, reverse=False, key=lambda key: key['filetype'])
-	for dict in streams:
+	streams2 = sorted(streams2, reverse=False, key=lambda key: key['filetype'])
+	for dict in streams2:
 		if dict['type2']=='Video':
 			videoTitleLIST.append(dict['title'])
 			videoDictLIST.append(dict)
@@ -723,22 +761,27 @@ def YOUTUBE(url):
 		allTitleLIST.append(dict['title'])
 		allvideoDictLIST.append(dict)
 		allaudioDictLIST.append({})
-	highest,highestAudioDICT = 0,{}
-	for dict in mpdaudioDictLIST:
-		if dict['bitrate']>highest: highest,highestAudioDICT = dict['bitrate'],dict
-	audiodict = highestAudioDICT
-	#for audiodict in mpdaudioDictLIST:
-	audioBitrate = int(audiodict['bitrate']/1000)
-	for videodict in mpdvideoDictLIST:
-		videoBitrate = int(videodict['bitrate']/1000)
-		title = videodict['title'].replace('Video:  '+videodict['filetype'],'mpd')+'('+audiodict['title'].split('(',1)[1]
-		title = title.replace(str(videoBitrate)+'kbps',str(videoBitrate+audioBitrate)+'kbps')
-		allTitleLIST.append(title)
-		allvideoDictLIST.append(videodict)
-		allaudioDictLIST.append(audiodict)
-	selectMenu = ['صورة وصوت جميع المتوفر','mpd انت تختار دقة الصورة ودقة الصوت','صورة وصوت محدودة الدقة','صورة فقط بدون صوت','صوت فقط بدون صورة']
-	choiceMenu = ['all','mpd','muxed','video','audio']
-	is_mpd = False
+	#highest,highestAudioDICT = 0,{}
+	#for dict in mpdaudioDictLIST:
+	#	if dict['bitrate']>highest: highest,highestAudioDICT = dict['bitrate'],dict
+	#audiodict = highestAudioDICT
+	for audiodict in mpdaudioDictLIST:
+		audioBitrate = int(audiodict['bitrate']/1000)
+		for videodict in mpdvideoDictLIST:
+			videoBitrate = int(videodict['bitrate']/1000)
+			title = videodict['title'].replace('Video:  '+videodict['filetype'],'mpd')+'('+audiodict['title'].split('(',1)[1]
+			title = title.replace(str(videoBitrate)+'kbps',str(videoBitrate+audioBitrate)+'kbps')
+			allTitleLIST.append(title)
+			allvideoDictLIST.append(videodict)
+			allaudioDictLIST.append(audiodict)
+	if dashURL!='': allTitleLIST = allTitleLIST + ['mpd  دقة اوتوماتيكية']
+	selectMenu,choiceMenu = [],[]
+	if allTitleLIST: selectMenu.append('صورة وصوت جميع المتوفر') ; choiceMenu.append('all')
+	if muxedTitleLIST: selectMenu.append('صورة وصوت محدودة الدقة') ; choiceMenu.append('muxed')
+	if mpdvideoTitleLIST: selectMenu.append('mpd انت تختار دقة الصورة ودقة الصوت') ; choiceMenu.append('mpd')
+	if videoTitleLIST: selectMenu.append('صورة فقط بدون صوت') ; choiceMenu.append('video')
+	if audioTitleLIST: selectMenu.append('صوت فقط بدون صورة') ; choiceMenu.append('audio')
+	need_mpd_server = False
 	while True:
 		selection = xbmcgui.Dialog().select('اختر النوع المناسب:', selectMenu)
 		if selection==-1: break
@@ -749,9 +792,7 @@ def YOUTUBE(url):
 			elif choice=='audio': titleLIST,dictLIST = audioTitleLIST,audioDictLIST
 			selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
 			if selection!=-1:
-				link = dictLIST[selection]['url']
-				if subtitleLINK!='': link = [dictLIST[selection]['url'],subtitleLINK]
-				titleLIST,linkLIST = [titleLIST[selection]],[link]
+				finalURL = dictLIST[selection]['url']
 				break
 		elif choice=='mpd':
 			selection = xbmcgui.Dialog().select('اختر دقة الصورة المناسبة:', mpdvideoTitleLIST)
@@ -760,21 +801,21 @@ def YOUTUBE(url):
 				selection = xbmcgui.Dialog().select('اختر دقة الصوت المناسبة:', mpdaudioTitleLIST)
 				if selection!=-1:
 					audioDICT = audioDictLIST[selection]
-					is_mpd = True
+					need_mpd_server = True
 					break
 		else:
 			selection = xbmcgui.Dialog().select('اختر الملف المناسب:', allTitleLIST)
 			if selection!=-1:
-				videoDICT = allvideoDictLIST[selection]
-				if 'mpd' in allTitleLIST[selection]:
-					audioDICT = allaudioDictLIST[selection]
-					is_mpd = True
+				if dashURL!='' and selection==len(allTitleLIST)-1:
+					finalURL = dashURL
 				else:
-					link = videoDICT['url']
-					if subtitleLINK!='': link = [videoDICT['url'],subtitleLINK]
-					titleLIST,linkLIST = [videoDICT['title']],[link]
+					videoDICT = allvideoDictLIST[selection]
+					if 'mpd' in allTitleLIST[selection]:
+						audioDICT = allaudioDictLIST[selection]
+						need_mpd_server = True
+					else: finalURL = videoDICT['url']
 				break
-	if is_mpd:
+	if need_mpd_server:
 		#xbmc.log(videoDICT['url'],level=xbmc.LOGNOTICE)
 		#xbmc.log(audioDICT['url'],level=xbmc.LOGNOTICE)
 		videoDuration = int(videoDICT['duration'])
@@ -815,7 +856,6 @@ def YOUTUBE(url):
 		#xbmcgui.Dialog().ok(mpdfile,mpd)
 		#with open(mpdfile,'w') as file: file.write(mpd)
 		#mpdfile = 'http://localhost:64000/'+id+'.mpd'
-		#titleLIST,linkLIST = [mpdfile],[mpdfile]
 		"""
 		import BaseHTTPServer,thread#,time,httplib
 		class HTTP_SERVER(BaseHTTPServer.HTTPServer):
@@ -853,10 +893,6 @@ def YOUTUBE(url):
 			#	conn.request("HEAD", "/")
 			#	conn.getresponse()
 		class HTTP_HANDLER(BaseHTTPServer.BaseHTTPRequestHandler):
-			def do_HEAD(s):
-				#print('doing HEAD  '+self.path)
-				s.send_response(200)
-				s.end_headers()
 			def do_GET(self):
 				#print('doing GET  '+self.path)
 				self.send_response(200)
@@ -865,12 +901,18 @@ def YOUTUBE(url):
 				#self.wfile.write(self.path+'\n')
 				self.wfile.write(self.server.mpd)
 				if self.path=='/shutdown': self.server.shutdown()
+			#def do_HEAD(s):
+			#	#print('doing HEAD  '+self.path)
+			#	s.send_response(200)
+			#	s.end_headers()
 		httpd = HTTP_SERVER(64000,mpd)
 		#httpd.load(mpd)
 		httpd.start()
-		link = 'http://localhost:64000/youtube.mpd'
-		if subtitleLINK!='': link = [link,subtitleLINK]
-		titleLIST,linkLIST = [httpd],[link]
+		finalURL = 'http://localhost:64000/youtube.mpd'
+	titleLIST,linkLIST = [],[]
+	if finalURL!='':
+		if subtitleURL!='': finalURL = [finalURL,subtitleURL]
+		titleLIST,linkLIST = ['YOUTUBE'],[finalURL]
 	return titleLIST,linkLIST
 
 def HELAL(url):

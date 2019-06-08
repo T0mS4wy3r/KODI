@@ -15,6 +15,12 @@ def MAIN(mode,text=''):
 	elif mode==179: TESTINGS()
 	return
 
+def HTTPS_TEST():
+	worked = HTTPS(True)
+	if not worked:
+		from lib.PROBLEMS import MAIN
+		MAIN(152)
+
 def FIX_KEYBOARD(mode,text):
 	keyboard=text
 	if keyboard=='': return
@@ -96,17 +102,6 @@ def DMCA():
 	xbmcgui.Dialog().textviewer('Digital Millennium Copyright Act (DMCA)',text)
 	return
 
-def HTTPS_TEST():
-	html = openURL('https://www.google.com','','','','PROGRAM-1st')
-	#xbmcgui.Dialog().ok('Checking SSL',html)
-	if 'html' in html:
-		xbmcgui.Dialog().ok('الاتصال المشفر','جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل على جهازك ... وجهازك قادر على استخدام المواقع المشفرة')
-	else:
-		xbmcgui.Dialog().ok('الاتصال المشفر','مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل على جهازك ... وجهازك غير قادر على استخدام المواقع المشفرة')
-		from PROBLEMS import MAIN as PROBLEMS_MAIN
-		PROBLEMS_MAIN(152)
-	return
-
 def GLOBAL_SEARCH(search=''):
 	if search=='': search = KEYBOARD()
 	if search == '': return
@@ -131,8 +126,10 @@ def GLOBAL_SEARCH(search=''):
 	return
 
 def VERSION():
-	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
-	html = openURL(url,'','','','PROGRAM-VERSION-1st')
+	#url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
+	#url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
+	url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
+	html = openURL(url,'',{ 'User-Agent' : '' },'','PROGRAM-VERSION-1st')
 	latestVER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
 	currentVER = xbmc.getInfoLabel('System.AddonVersion(plugin.video.arabicvideos)')
 	latestVER2 = re.findall('repository.emad" name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]

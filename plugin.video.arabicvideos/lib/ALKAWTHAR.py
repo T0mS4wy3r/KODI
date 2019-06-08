@@ -16,7 +16,7 @@ def MAIN(mode,url,page,text):
 	return
 
 def MENU():
-	addLink(menu_name+'البث الحي لقناة الكوثر','',135,'','','IsPlayable=False')
+	addLink(menu_name+'البث الحي لقناة الكوثر','',135,'','','IsPlayable=no')
 	addDir(menu_name+'بحث في الموقع','',139,'','1')
 	addDir(menu_name+'المسلسلات',website0a+'/category/543',132,'','1')
 	addDir(menu_name+'الافلام',website0a+'/category/628',132,'','1')
@@ -172,7 +172,7 @@ def PLAY(url):
 def LIVE():
 	html = openURL(website0a+'/live','','','','ALKAWTHAR-LIVE-1st')
 	items = re.findall('file: "(.*?)"',html,re.DOTALL)
-	url = items[0]
+	url = items[0]+'|User-Agent=&'
 	PLAY_VIDEO(url,script_name,'no')
 	return
 

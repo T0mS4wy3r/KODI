@@ -34,7 +34,7 @@ def ITEMS(type):
 			name = name.replace('El ','El')
 			name = name.replace('AL ','Al')
 			name = name.replace('EL ','El')
-			addLink(menu_name+name,source+id,104,img,'','no')
+			addLink(menu_name+name,source+id,104,img,'','IsPlayable=no')
 	elif html=='Not Allowed':
 		addLink(menu_name+'للأسف لا توجد قنوات تلفزونية لك','',9999)
 		addLink(menu_name+'هذه الخدمة مخصصة للاقرباء والاصدقاء فقط','',9999)
@@ -48,7 +48,7 @@ def PLAY(id):
 	source = id[0:2]
 	id2 = id[2:99]
 	url = ''
-	xbmcgui.Dialog().notification('','Trying Channel ...')
+	xbmcgui.Dialog().notification('جاري تشغيل القناة','')
 	#xbmcgui.Dialog().ok(source,id2)
 	from requests import request as requests_request
 	if source=='GA':
@@ -84,8 +84,11 @@ def PLAY(id):
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'play'+source }
 		response = requests_request('POST', website0a, data=payload, headers=headers, allow_redirects=False)
 		url = response.headers['Location']
-	#xbmcgui.Dialog().ok(url,'')
-	PLAY_VIDEO(url,script_name,'no')
+		if source=='FM':
+			response = requests_request('GET', url, data='', headers='', allow_redirects=False)
+			url = response.headers['Location']
+			url = url.replace('https','http')
+	result = PLAY_VIDEO(url,script_name,'no')
 	return
 
 
