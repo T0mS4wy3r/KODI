@@ -61,8 +61,6 @@ def OPEN_URL(url,data='',headers='',showDialogs='',source='',flags=''):
 
 
 
-
-
 		response = urllib2.urlopen(request,timeout=60)
 		response.close
 	except urllib2.HTTPError as error:
@@ -108,7 +106,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		reason = str(error.reason[1])
 	if code!='200':
 		if 'google-analytics' not in url:
-			xbmc.log('['+addon_id+']:  Open URL Error:  Code:['+code+']   Reason:['+reason+']'+']   URL:['+url+']', level=xbmc.LOGNOTICE)
+			xbmc.log('['+addon_id+']:  Open URL Error:  Code:['+code+']   Reason:['+reason+']'+']   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
 		message,send,showDialogs = '','no','no'
 		html = 'Error {}: {!r}'.format(code, reason)
 		if 'google-analytics' in url: send = showDialogs
@@ -206,8 +204,8 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	if len(url3)==2: url,subtitle = url3
 	else: url,subtitle = url3,''
 	#url = url + '|User-Agent=&'
-	if subtitle!='': urlmessage = 'Url:['+url+']  Subtitle:['+subtitle+']'
-	else: urlmessage = 'Url:['+url+']'
+	if subtitle!='': urlmessage = 'Url:[ '+url+' ]  Subtitle:[ '+subtitle+' ]'
+	else: urlmessage = 'Url:[ '+url+' ]'
 	xbmc.log('['+addon_id+']:  Started playing video:  '+urlmessage, level=xbmc.LOGNOTICE)
 	if 'https' in url:
 		worked = HTTPS(False)
@@ -394,7 +392,7 @@ def HTTPS(show=True):
 		if show: xbmcgui.Dialog().ok('الاتصال المشفر','جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل عندك على كودي ... وعندك كودي قادر على استخدام المواقع المشفرة')
 	else:
 		worked = False
-		xbmc.log('['+addon_id+']:  HTTPS Failed:  Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+		xbmc.log('['+addon_id+']:  HTTPS Failed:  Label:['+menulabel+']   Path:[ '+menupath+' ]', level=xbmc.LOGNOTICE)
 		if show: xbmcgui.Dialog().ok('الاتصال المشفر','مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة')
 	return worked
 

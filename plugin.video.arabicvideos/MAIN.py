@@ -5,7 +5,7 @@ if menulabel=='' or menupath=='plugin://plugin.video.arabicvideos/': menulabel =
 addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 kodiVersion = xbmc.getInfoLabel( "System.BuildVersion" )	
 xbmc.log('['+addon_id+']:  Version:['+addonVersion+']   Kodi:['+kodiVersion+']', level=xbmc.LOGNOTICE)
-xbmc.log('['+addon_id+']:  Started menu item:  Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+xbmc.log('['+addon_id+']:  Started menu item:  Label:['+menulabel+']   Path:[ '+menupath+' ]', level=xbmc.LOGNOTICE)
 
 def MAIN():
 	#addLink('Testing - watched enabled','',179,'','','yes','','','IsPlayable=yes')
@@ -121,4 +121,4 @@ if worked:
 #xbmcplugin.endOfDirectory(addon_handle)
 #xbmc.Player().play()
 
-#xbmc.log('['+addon_id+']:  Finished menu item:  Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+#xbmc.log('['+addon_id+']:  Finished menu item:  Label:['+menulabel+']   Path:[ '+menupath+' ]', level=xbmc.LOGNOTICE)

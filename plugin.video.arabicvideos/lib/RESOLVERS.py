@@ -197,7 +197,7 @@ def RESOLVABLE(url):
 	return result
 
 def RESOLVE(url):
-	xbmc.log('['+addon_id+']:  Started resolving:  URL:['+url+']', level=xbmc.LOGNOTICE)
+	xbmc.log('['+addon_id+']:  Started resolving:  URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
 	url2 = url.lower()
 	titleLIST,linkLIST = [],[]
 	if any(value in url2 for value in doNOTresolveMElist): return ''
@@ -622,9 +622,10 @@ def YOUTUBE(url):
 	id = url.split('/')[-1]
 	id = id.replace('watch?v=','')
 	if 'embed' in url: url = 'https://www.youtube.com/watch?v='+id
+	#html = openURL('http://localhost:64000/shutdown','','','','RESOLVERS-YOUTUBE-1st')
 	block2,block3,format_block,jshtml = '','','',''
 	subtitleURL,dashURL,finalURL = '','',''
-	html = openURL(url,'','','','RESOLVERS-YOUTUBE-1st')
+	html = openURL(url,'','','','RESOLVERS-YOUTUBE-2nd')
 	#xbmc.log('===========================================',level=xbmc.LOGNOTICE)
 	#xbmc.log(html,level=xbmc.LOGNOTICE)
 	html = html.replace('\\','')
@@ -658,13 +659,13 @@ def YOUTUBE(url):
 		html_blocks = re.findall('src="(/yts/jsbin/player_.*?)"',html,re.DOTALL)
 		if html_blocks:
 			jsfile = 'https://www.youtube.com'+html_blocks[0]
-			jshtml = openURL(jsfile,'','','','RESOLVERS-YOUTUBE-2nd')
+			jshtml = openURL(jsfile,'','','','RESOLVERS-YOUTUBE-3rd')
 			from youtube_signature.cipher import Cipher
 			from youtube_signature.json_script_engine import JsonScriptEngine
 			cypher = Cipher()
 			cypher._object_cache = {}
 			json_script = cypher._load_javascript(jshtml)
-			json_script_engine = JsonScriptEngine(json_script)
+			json_STRING = str(json_script)
 	#xbmc.log(jsfile,level=xbmc.LOGNOTICE)
 	streams,streams2 = [],[]
 	for block in [block2,block3]:
@@ -690,15 +691,18 @@ def YOUTUBE(url):
 			if 'signature=' in dict['url'] or dict['url'].count('sig=')>1:
 				streams.append(dict)
 			elif jshtml!='':
+				json_script = eval(json_STRING)
+				json_script_engine = JsonScriptEngine(json_script)
 				signature = json_script_engine.execute(dict['s'])
 				if signature!=dict['s']:
 					dict['url'] = dict['url'] + '&'+dict['sp']+'=' + signature
 					streams.append(dict)
+				#xbmc.log('json_script='+str(json_script2),level=xbmc.LOGNOTICE)
 			#xbmc.log('['+addon_id+']:  dict:['+str(dict)+']', level=xbmc.LOGNOTICE)
-			#xbmc.log('['+addon_id+']:  url:['+str(dict['url'])+']', level=xbmc.LOGNOTICE)
+			#xbmc.log('url='+dict['url'], level=xbmc.LOGNOTICE)
 	#xbmc.log('['+addon_id+']:  streams:['+str(streams)+']', level=xbmc.LOGNOTICE)
 	for dict in streams:
-		filetype,codec,quality2,title,codecs,bitrate = 'unknown','unknown','unknown','Unknown','',0
+		filetype,codec,quality2,type2,codecs,bitrate = 'unknown','unknown','unknown','Unknown','',0
 		try:
 			type = dict['type']
 			#xbmc.log('['+addon_id+']:  Type:['+type+']', level=xbmc.LOGNOTICE)
@@ -734,7 +738,6 @@ def YOUTUBE(url):
 		dict['codecs'] = codecs
 		dict['bitrate'] = bitrate
 		dict['duration'] = round(0.5+float(dict['url'].split('dur=',1)[1].split('&',1)[0]))
-		dict['url'] = unquote(dict['url'])#+'|User-Agent=&'
 		streams2.append(dict)
 	#xbmc.log('['+addon_id+']:  streams2:['+str(streams2)+']', level=xbmc.LOGNOTICE)
 	videoTitleLIST,audioTitleLIST,muxedTitleLIST,mpdaudioTitleLIST,mpdvideoTitleLIST,allTitleLIST = [],[],[],[],[],[]
@@ -815,6 +818,7 @@ def YOUTUBE(url):
 						need_mpd_server = True
 					else: finalURL = videoDICT['url']
 				break
+	httpd = 'YOUTUBE'
 	if need_mpd_server:
 		#xbmc.log(videoDICT['url'],level=xbmc.LOGNOTICE)
 		#xbmc.log(audioDICT['url'],level=xbmc.LOGNOTICE)
@@ -901,10 +905,10 @@ def YOUTUBE(url):
 				#self.wfile.write(self.path+'\n')
 				self.wfile.write(self.server.mpd)
 				if self.path=='/shutdown': self.server.shutdown()
-			#def do_HEAD(s):
-			#	#print('doing HEAD  '+self.path)
-			#	s.send_response(200)
-			#	s.end_headers()
+			def do_HEAD(s):
+				#print('doing HEAD  '+self.path)
+				s.send_response(200)
+				s.end_headers()
 		httpd = HTTP_SERVER(64000,mpd)
 		#httpd.load(mpd)
 		httpd.start()
@@ -912,7 +916,7 @@ def YOUTUBE(url):
 	titleLIST,linkLIST = [],[]
 	if finalURL!='':
 		if subtitleURL!='': finalURL = [finalURL,subtitleURL]
-		titleLIST,linkLIST = ['YOUTUBE'],[finalURL]
+		titleLIST,linkLIST = [httpd],[finalURL]
 	return titleLIST,linkLIST
 
 def HELAL(url):
