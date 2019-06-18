@@ -181,3 +181,9 @@ Added playback and resolvers problem detection
 Added access and playback log
 Added full youtube resolver with mpd support
 
+
+v5.2.0	2019-06-17
+Added database webcache to improve performance
+Optimized imports to improve performance
+Added KProxy to bypass https
+

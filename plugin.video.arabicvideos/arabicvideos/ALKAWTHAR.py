@@ -32,7 +32,7 @@ def MENU():
 	addDir(menu_name+'تعلم الفارسية',website0a+'/category/88',132,'','1')
 	addDir(menu_name+'ارشيف البرامج',website0a+'/category/1279',132,'','1')
 	"""
-	html = openURL(website0a,'','','','ALKAWTHAR-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'','','','ALKAWTHAR-MENU-1st')
 	html_blocks=re.findall('dropdown-menu(.*?)dropdown-toggle',html,re.DOTALL)
 	block = html_blocks[1]
 	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
@@ -53,7 +53,7 @@ def MENU():
 """
 def TITLES(url):
 	typeLIST = ['/religious','/social','/political','/films','/series']
-	html = openURL(url,'','','','ALKAWTHAR-TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'','','','ALKAWTHAR-TITLES-1st')
 	html_blocks = re.findall('titlebar(.*?)titlebar',html,re.DOTALL)
 	block = html_blocks[0]
 	if any(value in url for value in typeLIST):
@@ -74,7 +74,7 @@ def TITLES(url):
 
 def CATEGORIES(url):
 	category = url.split('/')[-1]
-	html = openURL(url,'','','','ALKAWTHAR-CATEGORIES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'','','','ALKAWTHAR-CATEGORIES-1st')
 	html_blocks = re.findall('parentcat(.*?)</div>',html,re.DOTALL)
 	if not html_blocks:
 		EPISODES(url,'1')
@@ -92,7 +92,7 @@ def CATEGORIES(url):
 
 def EPISODES(url,page):
 	#xbmcgui.Dialog().ok(url, page)
-	html = openURL(url,'','','','ALKAWTHAR-EPISODES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'','','','ALKAWTHAR-EPISODES-1st')
 	items = re.findall('totalpagecount=[\'"](.*?)[\'"]',html,re.DOTALL)
 	if items[0]=='':
 		xbmcgui.Dialog().ok('فرع فارغ','لا يوجد حاليا ملفات فيديو في هذا الفرع')
@@ -105,7 +105,7 @@ def EPISODES(url,page):
 	if '/category/' in url:
 		category = url.split('/')[-1]
 		url2 = website0a + '/category/' + category + '/' + page
-		html = openURL(url2,'','','','ALKAWTHAR-EPISODES-3rd')
+		html = openURL_cached(REGULAR_CACHE,url2,'','','','ALKAWTHAR-EPISODES-3rd')
 		html_blocks = re.findall('currentpagenumber(.*?)javascript',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('src="(.*?)".*?full(.*?)>.*?href="(.*?)".*?>(.*?)<',block,re.DOTALL)
@@ -144,7 +144,7 @@ def EPISODES(url,page):
 			items = re.findall('id="Categories.*?href=\'(.*?)\'',html,re.DOTALL)
 			category = items[0].split('/')[-1]
 			url2 = website0a + '/ajax/category/' + category + '/' + page
-			html = openURL(url2,'','','','ALKAWTHAR-EPISODES-2nd')
+			html = openURL_cached(REGULAR_CACHE,url2,'','','','ALKAWTHAR-EPISODES-2nd')
 			items = re.findall('src="(.*?)".*?href="(.*?)"> <h5>(.*?)<',html,re.DOTALL)
 			for img,link,title in items:
 				link = website0a + link
@@ -163,35 +163,36 @@ def EPISODES(url,page):
 def PLAY(url):
 	#xbmcgui.Dialog().ok(url, '')
 	if '/news/' in url or '/episode/' in url:
-		html = openURL(url,'','','','ALKAWTHAR-PLAY-1st')
+		html = openURL_cached(LONG_CACHE,url,'','','','ALKAWTHAR-PLAY-1st')
 		items = re.findall("mobilevideopath.*?value='(.*?)'",html,re.DOTALL)
 		url = items[0]
 	PLAY_VIDEO(url,script_name,'yes')
 	return
 
 def LIVE():
-	html = openURL(website0a+'/live','','','','ALKAWTHAR-LIVE-1st')
+	html = openURL_cached(SHORT_CACHE,website0a+'/live','','','','ALKAWTHAR-LIVE-1st')
 	items = re.findall('file: "(.*?)"',html,re.DOTALL)
-	url = items[0]+'|User-Agent=&'
+	url = items[0]#+'|User-Agent=|'
 	PLAY_VIDEO(url,script_name,'no')
 	return
 
 def SEARCH(search,page):
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	if page=='': page = 1
+	page = int(page)
 	new_search = search.replace(' ','+')
 	url = 'https://www.google.ca/search?q=site:alkawthartv.com+'+new_search+'&start='+str((page-1)*10)
 	headers = { 'User-Agent' : '' }
-	html = openURL(url,'',headers,'','ALKAWTHAR-SEARCH-1st')
-	items = re.findall('rtl" href="/url\?q=(.*?)&.*?>(.*?)</a></h3>',html,re.DOTALL)
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALKAWTHAR-SEARCH-1st')
+	items = re.findall('<a href="/url\?q=(.*?)&.*?AP7Wnd"><span dir="rtl">(.*?)<',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(str(items), str(items))
 	found = False
 	for link,title in items:
+		#xbmc.log('['+addon_id+']:  الكوثر: [ '+title+' ]', level=xbmc.LOGNOTICE)
 		title = title.replace('<b>','').replace('</b>','')
 		title = title.replace('\xab','').replace('\xbb','')
-		#xbmcgui.Dialog().ok(title, title)
-		#xbmc.log('EMAD1 '+title+' 1EMAD',level=xbmc.LOGNOTICE)
+		title = title.replace('\xb7','')
 		title = unescapeHTML(title)
 		if '/category/' in link:	# or '/program/' in link:
 			vars = link.split('/')
@@ -215,7 +216,7 @@ def SEARCH(search,page):
 		for i in range(1,8):
 			if i==page: continue
 			title = name + ' ' + str(i)
-			addDir(menu_name+title,'',136,'',str(i))
+			addDir(menu_name+title,'',139,'',str(i),search)
 	xbmcplugin.endOfDirectory(addon_handle)
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
 	return

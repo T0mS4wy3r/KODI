@@ -15,26 +15,6 @@ def MAIN(mode,url,text):
 	elif mode==145: CHANNEL_MENU(url)
 	elif mode==146: CHANNEL_ITEMS(url)
 	elif mode==149: SEARCH(text)
-	"""
-	import xbmcaddon
-	settings = xbmcaddon.Addon(id=addon_id)
-	previous_url = settings.getSetting('previous.url')
-	previous_linkLIST = settings.getSetting('previous.linkLIST')
-	yes = True
-	if previous_linkLIST!='executed':
-		yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
-		if yes:
-			settings.setSetting('previous.linkLIST','executed')
-			xbmc.executebuiltin('Dialog.Close(busydialog)')
-			if mode==140: MENU()
-			elif mode==149: SEARCH(text)
-	if mode==140: MENU()
-	elif mode==149: SEARCH(text)
-	if previous_url=='youtube' and previous_linkLIST=='executed':
-		settings.setSetting('previous.url','')
-		settings.setSetting('previous.linkLIST','')
-	elif yes: settings.setSetting('previous.url','youtube')
-	"""
 	return result
 
 def MENU():
@@ -63,19 +43,19 @@ def PLAY(url):
 	#link = 'plugin://plugin.video.youtube/play/?video_id='+id
 	#PLAY_VIDEO(link,script_name)
 	linkLIST = [url]
-	from RESOLVERS import PLAY as RESOLVERS_PLAY
-	result = RESOLVERS_PLAY(linkLIST,script_name)
+	import RESOLVERS
+	result = RESOLVERS.PLAY(linkLIST,script_name)
 	return result
 
 def PLAYLIST_ITEMS(url):
 	if 'browse_ajax' in url:
-		html = openURL(url,'','','','YOUTUBE-PLAYLIST_ITEMS-1st')
+		html = openURL_cached(REGULAR_CACHE,url,'','','','YOUTUBE-PLAYLIST_ITEMS-1st')
 		html = CLEAN_AJAX(html)
 		html_blocks = [html]
 	else:
 		id = url.split('list=')[1]
 		url2 = website0a+'/playlist?list='+id
-		html = openURL(url2,'','','','YOUTUBE-PLAYLIST_ITEMS-2nd')
+		html = openURL_cached(REGULAR_CACHE,url2,'','','','YOUTUBE-PLAYLIST_ITEMS-2nd')
 		html_blocks = re.findall('class="pl-video-table(.*?)footer-container',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(url,url)
 	if html_blocks:
@@ -98,7 +78,7 @@ def PLAYLIST_ITEMS(url):
 
 def PLAYLIST_ITEMS_PLAYER(url):
 	#xbmcgui.Dialog().ok(url,'')
-	html = openURL(url,'','','','YOUTUBE-PLAYLIST_ITEMS_PLAYER-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'','','','YOUTUBE-PLAYLIST_ITEMS_PLAYER-1st')
 	html_blocks = re.findall('playlist-videos-container(.*?)watch7-container',html,re.DOTALL)
 	block = html_blocks[0]
 	items1 = re.findall('data-video-title="(.*?)".*?href="(.*?)"',block,re.DOTALL)
@@ -123,7 +103,7 @@ def CHANNEL_MENU(url):
 
 def CHANNEL_ITEMS(url):
 	#xbmcgui.Dialog().ok(url,'')
-	html = openURL(url,'','','','YOUTUBE-CHANNEL_ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'','','','YOUTUBE-CHANNEL_ITEMS-1st')
 	if 'browse_ajax' in url:
 		html = CLEAN_AJAX(html)
 		html_blocks = [html]
@@ -155,7 +135,7 @@ def CHANNEL_ITEMS(url):
 	return
 
 def TITLES(url):
-	html = openURL(url,'','','','YOUTUBE-TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'','','','YOUTUBE-TITLES-1st')
 	html_blocks = re.findall('(yt-lockup-tile.*?)footer-container',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('yt-lockup-tile.*?(src|thumb)="(.*?)"(.*?)href="(.*?)".*?title="(.*?)"(.*?)</div></div></div>(.*?)</li>',block,re.DOTALL)
@@ -209,7 +189,7 @@ def SEARCH(search):
 	#url2 = 'plugin://plugin.video.youtube/kodion/search/query/?q='+search
 	#xbmc.executebuiltin('Dialog.Close(busydialog)')
 	#xbmc.executebuiltin('ActivateWindow(videos,'+url2+',return)')
-	html = openURL(url2,'','','','YOUTUBE-SEARCH-1st')
+	html = openURL_cached(REGULAR_CACHE,url2,'','','','YOUTUBE-SEARCH-1st')
 	html_blocks = re.findall('filter-dropdown(.*?)class="item-section',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)".*?title="(.*?)"',block,re.DOTALL)

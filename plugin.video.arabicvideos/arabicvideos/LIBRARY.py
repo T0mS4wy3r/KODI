@@ -1,22 +1,106 @@
 ﻿# -*- coding: utf-8 -*-
-import urllib2,xbmcplugin,xbmcgui,sys,xbmc,os,re,time,urllib
+
+import xbmcplugin,xbmcgui,xbmcaddon,sys,xbmc,os,re,time,thread,zlib		# total cost = 0ms
+import urllib		# 160ms
+import urllib2		# 354ms (contains urllib)
+import sqlite3		# 50ms (with threading 71ms)
+#import requests   	# 986ms (contains urllib,urllib2,urllib3)
+#import threading	# 54ms (with sqlite3 71ms)
+#import urllib3		# 621ms (contains urllib)
+#import timeit		# 10ms
+#import base64		# 29ms
+#import httplib		# 280ms
+#import urlresolver	# 2170ms (contains urllib,urllib2,urllib3,requests)
+
+
+
+
+# calculate the average time needed to import a main-module and how many sub-modules will be imported with it
+"""
+import sys,time
+totalelpased = 0
+for i in range(20):
+	t1 = time.time()
+	before_import = sys.modules.keys()
+	import urlresolver
+	after_import = sys.modules.keys()
+	import_list = list(set(after_import)-set(before_import))
+	for modu in import_list:
+		del(sys.modules[modu])
+	after_delete = sys.modules.keys()
+	t2 = time.time()
+	elpased = t2-t1
+	totalelpased += elpased
+before_import_count = len(before_import)
+after_import_count = len(after_import)
+import_count = len(import_list)
+after_delete_count = len(after_delete)
+#print('import_count: '+str(import_count))
+#print('average time ms: '+str(totalelpased*1000/20))
+import xbmcgui
+xbmcgui.Dialog().ok(str(import_count),'average time ms: '+str(totalelpased*1000/20))
+"""
+
+
+# to check if main-module will import what sub-modules
+# example: importing "requests" will also import "urllib","urllib2" and "urllib3"
+"""
+import sys
+before_import = sys.modules.keys()
+import urlresolver
+after_import = sys.modules.keys()
+import_list = list(set(after_import)-set(before_import))
+list = ''
+if 'urllib' in after_import: list += 'urllib '
+if 'urllib2' in after_import: list += 'urllib2 '
+if 'urllib3' in after_import: list += 'urllib3 '
+if 'requests' in after_import: list += 'requests '
+import xbmcgui
+xbmcgui.Dialog().ok('yes exists: ',list)
+"""
+
+
+
 
 addon_handle = int(sys.argv[1])
 addon_id = sys.argv[0].split('/')[2] 		# plugin.video.arabicvideos
 addon_path = sys.argv[0]+sys.argv[2] 		# plugin://plugin.video.arabicvideos/?mode=12&url=http://test.com
-fanart = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id , 'fanart.jpg'))
-icon = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id, 'icon.png'))
+#addon_path = xbmc.getInfoLabel( "ListItem.FolderPath" )
+addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
+
 menupath = urllib2.unquote(addon_path)
 menulabel = xbmc.getInfoLabel('ListItem.Label').replace('[COLOR FFC89008]','').replace('[/COLOR]','')
-#addon_path = xbmc.getInfoLabel( "ListItem.FolderPath" )
+if menulabel=='' or menupath=='plugin://plugin.video.arabicvideos/': menulabel = 'Main Menu'
 
-def addDir(name,url='',mode='',iconimage=icon,page='',text=''):
+kodiVersion = xbmc.getInfoLabel( "System.BuildVersion" )	
+icon = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id, 'icon.png'))
+fanart = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id , 'fanart.jpg'))
+
+addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
+dbfile = os.path.join(addoncachefolder,"webcache_"+addonVersion+"_.db")
+
+LONG_CACHE = 60*60*24*3
+REGULAR_CACHE = 60*60*16
+SHORT_CACHE = 60*60*2
+NO_CACHE = 0
+now = time.time()
+
+page_error = 'الصفحة غير متوفرة الان ... قد يكون الموقع الاصلي غير متوفر الان او هذه الصفحة قد تغيرت والمبرمج لا يعرف ... الرجاء المحاولة لاحقا او ابلاغ المبرمج بالمشكلة'
+https_problem = 'مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة'
+
+def DELETE_WEBCACHE():
+	for filename in os.listdir(addoncachefolder):
+		if 'webcache_' in filename and '_.db' in filename:
+			filename = os.path.join(addoncachefolder,filename)
+			os.remove(filename)
+
+def addDir(name,url='',mode='',iconimage='',page='',text=''):
+	if iconimage=='': iconimage = icon
 	#xbmc.log('['+addon_id+']:  name:['+name+']', level=xbmc.LOGNOTICE)
-	name2 = re.findall('&_(\D\D\w)__MOD_(.*?)&','&'+name+'&',re.DOTALL)
-	if name2: name = '[COLOR FFC89008].'+name2[0][0]+' .[/COLOR]'+name2[0][1]
-	name2 = re.findall('&_(\D\D\w)_(.*?)&','&'+name+'&',re.DOTALL)
-	if name2: name = '[COLOR FFC89008].'+name2[0][0]+'  [/COLOR]'+name2[0][1]
-	if iconimage=='': iconimage=icon
+	name2 = re.findall('&&_(\D\D\w)__MOD_(.*?)&&','&&'+name+'&&',re.DOTALL)
+	if name2: name = ';[COLOR FFC89008]'+name2[0][0]+'  [/COLOR]'+name2[0][1]
+	name2 = re.findall('&&_(\D\D\w)_(.*?)&&','&&'+name+'&&',re.DOTALL)
+	if name2: name = ',[COLOR FFC89008]'+name2[0][0]+'  [/COLOR]'+name2[0][1]
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
 	if url!='': u = u + '&url=' + quote(url)
 	if page!='': u = u + '&page=' + quote(page)
@@ -28,12 +112,12 @@ def addDir(name,url='',mode='',iconimage=icon,page='',text=''):
 	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=listitem,isFolder=True)
 	return
 
-def addLink(name,url,mode,iconimage=icon,duration='',text=''):
-	name2 = re.findall('&_(\D\D\w)_(.*?)&','&'+name+'&',re.DOTALL)
+def addLink(name,url,mode,iconimage='',duration='',text=''):
+	if iconimage=='': iconimage = icon
+	name2 = re.findall('&&_(\D\D\w)_(.*?)&&','&&'+name+'&&',re.DOTALL)
 	if name2: name = '[COLOR FFC89008] '+name2[0][0]+'  [/COLOR]'+name2[0][1]
 	if 'IsPlayable=no' in text: IsPlayable = 'no'
 	else: IsPlayable='yes'
-	if iconimage=='': iconimage=icon
 	#xbmcgui.Dialog().ok(duration,'')
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
 	if url!='': u = u + '&url=' + quote(url)
@@ -51,43 +135,71 @@ def addLink(name,url,mode,iconimage=icon,duration='',text=''):
 	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=listitem,isFolder=False)
 	return
 
-def OPEN_URL(url,data='',headers='',showDialogs='',source='',flags=''):
-	if showDialogs=='': showDialogs='yes'
-	html,code,reason = '','200','OK'
-	try:
-		response = requests.request("GET", url, data=data, headers=headers)
-		html = response.text
-		code = str(response.code)
+def openURL_KPROXY(url,data='',headers='',showDialogs='',source=''):
+	#xbmcgui.Dialog().ok(url,html)
+	#xbmc.log(html, level=xbmc.LOGNOTICE)
+	html = openURL_cached(NO_CACHE,url,data,headers,showDialogs,'openURL_KPROXY')
+	if '___Error___' in html:
+		try:
+			import requests
+			response = requests.request('GET', 'http://www.kproxy.com', headers='', data='', allow_redirects=True)
+			html = response.text
+			cookies = response.cookies.get_dict()
+			KP_DAT2 = cookies['KP_DAT2__']
+			cookies2 = 'KP_DAT2__=' + KP_DAT2
+			headers2 = { 'Cookie' : cookies2 }
+			payload2 = { 'page' : quote(url) }
+			data2 = urllib.urlencode(payload2)
+			html = openURL_cached(NO_CACHE,'http://www.kproxy.com/doproxy.jsp',data2,headers2)
+			proxyURL = re.findall('url=(.*?)"',html,re.DOTALL)
+			proxyURL = proxyURL[0]
+			headers3 = headers
+			try: headers3['Cookie'] = headers['Cookie']+';'+ cookies2
+			except: headers3['Cookie'] = cookies2
+			html = openURL_cached(NO_CACHE,proxyURL,data,headers3,showDialogs,source)
+		except:
+			xbmcgui.Dialog().ok('مشكلة من الموقع الاصلي',page_error)
+			xbmc.log('['+addon_id+']:   Error opening kproxy:   [ '+url+' ]', level=xbmc.LOGNOTICE)
+			raise Exception('Page not found requested by:   '+source)
+	return html
 
-
-
-		response = urllib2.urlopen(request,timeout=60)
-		response.close
-	except urllib2.HTTPError as error:
-		code = str(error.code)
-		reason = str(error.reason)
-	except urllib2.URLError as error:
-		code = str(error.reason[0])
-		reason = str(error.reason[1])
-	if code!='200':
-		message,send,showDialogs = '','no','no'
-		html = 'Error {}: {!r}'.format(code, reason)
-		if 'google-analytics' in url: send = showDialogs
-		if showDialogs=='yes':
-			xbmcgui.Dialog().ok('خطأ في الاتصال',html)
-			if code=='502' or code=='7':
-				xbmcgui.Dialog().ok('Website is not available','لا يمكن الوصول الى الموقع والسبب قد يكون من جهازك او من الانترنيت الخاصة بك او من الموقع كونه مغلق للصيانة او التحديث لذا يرجى المحاولة لاحقا')
-				send = 'no'
-			elif code=='404':
-				xbmcgui.Dialog().ok('File not found','الملف غير موجود والسبب غالبا هو من المصدر ومن الموقع الاصلي الذي يغذي هذا البرنامج')
-			if send=='yes':
-				yes = xbmcgui.Dialog().yesno('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
-				if yes: message = ' \\n\\n' + KEYBOARD('Write a message   اكتب رسالة')
-		if send=='yes': SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
+def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
+	#t1 = time.time()
+	xbmc.log('['+addon_id+']:   Opening page:   [ '+url+' ]', level=xbmc.LOGNOTICE)
+	#xbmcgui.Dialog().ok(unquote(url),source+'     cache(hours)='+str(cacheperiod/60/60))
+	if cacheperiod==0:
+		return openURL(url,data,headers,showDialogs,source)
+	#nowTEXT = time.ctime(now)
+	conn = sqlite3.connect(dbfile)
+	c = conn.cursor()
+	conn.text_factory = str
+	#conn.text_factory = lambda x: unicode(x, "utf-8", "ignore")
+	t = (url,str(data),str(headers))
+	c.execute('SELECT html FROM htmlcache WHERE url=? AND data=? AND headers=?', t)
+	rows = c.fetchall()
+	#html = repr(rows[0][0])
+	if rows:
+		message = 'found in cache'
+		html = rows[0][0]
+		#html = base64.b64decode(html)
+		html = zlib.decompress(html)
+	else:
+		message = 'not found in cache'
+		html = openURL(url,data,headers,showDialogs,source)
+		#html2 = base64.b64encode(html)
+		html2 = zlib.compress(html)
+		t = (now,now+cacheperiod,url,str(data),str(headers),sqlite3.Binary(html2))
+		#t = (now,now+cacheperiod,url,str(data),str(headers),html2)
+		c.execute("INSERT INTO htmlcache VALUES (?,?,?,?,?,?)",t)
+		conn.commit()
+	conn.close()
+	#t2 = time.time()
+	#xbmcgui.Dialog().notification(message,str(int(t2-t1))+' ms')
 	return html
 
 def openURL(url,data='',headers='',showDialogs='',source=''):
 	if showDialogs=='': showDialogs='yes'
+	request = urllib2.Request(url)
 	if data=='' and headers=='': request = urllib2.Request(url)
 	elif data=='' and headers!='': request = urllib2.Request(url,headers=headers)
 	elif data!='' and headers=='': request = urllib2.Request(url,data=data)
@@ -106,9 +218,9 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		reason = str(error.reason[1])
 	if code!='200':
 		if 'google-analytics' not in url:
-			xbmc.log('['+addon_id+']:  Open URL Error:  Code:['+code+']   Reason:['+reason+']'+']   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
+			xbmc.log('['+addon_id+']:   Open URL Error:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
 		message,send,showDialogs = '','no','no'
-		html = 'Error {}: {!r}'.format(code, reason)
+		html = '___Error___ {}: {!r}'.format(code, reason)
 		if 'google-analytics' in url: send = showDialogs
 		if showDialogs=='yes':
 			xbmcgui.Dialog().ok('خطأ في الاتصال',html)
@@ -121,24 +233,20 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 				yes = xbmcgui.Dialog().yesno('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
 				if yes: message = ' \\n\\n' + KEYBOARD('Write a message   اكتب رسالة')
 		if send=='yes': SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
+	if '___Error___' in html and 'RESOLVERS' not in source and source not in ['openURL_KPROXY','PROGRAM-HTTPS-1st','LIBRARY-PLAY_VIDEO-1st']:
+		if 'https://' in url and source in ['PROGRAM-HTTPS-1st']:
+			xbmcgui.Dialog().ok('الاتصال المشفر',https_problem)
+		else:
+			xbmcgui.Dialog().ok('مشكلة من الموقع الاصلي',page_error)
+		xbmc.log('['+addon_id+']:   Error opening page:   [ '+url+' ]   Error: [ '+code+' ]   Reason: [ '+reason+' ]', level=xbmc.LOGNOTICE)
+		raise Exception('Page not found requested by:   '+source)
 	return html
-
-#with open('S:\emad3.html', 'w') as file: file.write(block)
-
-#file = open('/data/emad.html', 'w')
-#file.write(html)
-#file.close()
 
 def quote(url):
 	return urllib2.quote(url,':/')
 
 def unquote(url):
 	return urllib2.unquote(url)
-
-#decode('utf8')
-#decode('unicode_escape')
-#decode('ascii')
-#decode('windows-1256')
 
 def unescapeHTML(string):
 	if '&' in string and ';' in string:
@@ -188,45 +296,30 @@ def KEYBOARD(label='Search'):
 	return new_search
 
 def PLAY_VIDEO(url3,website='',showWatched='yes'):
-	class PlayerCalss(xbmc.Player):
-		def __init__( self, *args, **kwargs ):
-			self.status = ''
-		def onPlayBackStopped(self):
-			self.status='failed'
-		def onPlayBackStarted(self):
-			self.status='playing'
-			time.sleep(1)
-		def onPlayBackError(self):
-			self.status='failed'
-		def onPlayBackEnded(self):
-			self.status='failed'
-	myplayer = PlayerCalss()
+	result = 'canceled0'
 	if len(url3)==2: url,subtitle = url3
 	else: url,subtitle = url3,''
 	#url = url + '|User-Agent=&'
-	if subtitle!='': urlmessage = 'Url:[ '+url+' ]  Subtitle:[ '+subtitle+' ]'
-	else: urlmessage = 'Url:[ '+url+' ]'
-	xbmc.log('['+addon_id+']:  Started playing video:  '+urlmessage, level=xbmc.LOGNOTICE)
+	#xbmcgui.Dialog().ok(url,'video url')
+	if subtitle!='': urlmessage = '[ '+url+' ]   Subtitle:[ '+subtitle+' ]'
+	else: urlmessage = '[ '+url+' ]'
+	xbmc.log('['+addon_id+']:   Started playing video:   '+urlmessage, level=xbmc.LOGNOTICE)
 	if 'https' in url:
 		worked = HTTPS(False)
 		if not worked:
 			xbmcgui.Dialog().ok('الاتصال مشفر','مشكلة ... هذا الفيديو يحتاج الى اتصال مشفر (ربط مشفر) ولكن للأسف الاتصال المشفر لا يعمل على جهازك')
 			return 'https'
 	play_item = xbmcgui.ListItem(path=url)
+	myplayer = CustomePlayer()
 	if showWatched=='yes':
 		#title = xbmc.getInfoLabel('ListItem.Title')
 		#label = xbmc.getInfoLabel('ListItem.Label')
-		#xbmcgui.Dialog().ok(url,label)
 		#play_item.setInfo( "video", { "Title": label } )
 		#play_item.setPath(url)
 		#play_item.setInfo('Video', {'duration': 3600})
 		if '.mpd' in url or '/dash/' in url:
-			#play_item.setContentLookup(False)
-			#play_item.setMimeType('application/xml+dash')
 			play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
 			play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
-			#emad   play_item.setMimeType('application/dash+xml')
-			#emad   play_item.setContentLookup(True)
 		if subtitle!='':
 			play_item.setSubtitles([subtitle])
 			#xbmc.log('['+addon_id+']:  Added subtitle to video: ['+subtitle+']', level=xbmc.LOGNOTICE)
@@ -238,54 +331,22 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		myplayer.play(url,play_item)
 	#logfilename = xbmc.translatePath('special://logpath')+'kodi.log'
 	timeout,step,result = 60,2,'tried'
-	#progress = xbmcgui.DialogProgress()
-	#progress.create('جاري محاولة تشغيل الفيديو المطلوب')
 	for i in range(0,timeout,step):
 		xbmc.sleep(step*1000)
-		#progress.update(i*100/timeout,'باقي '+str(timeout-i)+' ثانية')
 		result = myplayer.status
 		if result=='playing':
-			xbmc.log('['+addon_id+']:  Success: Video is playing successfully:  '+urlmessage, level=xbmc.LOGNOTICE)
+			xbmc.log('['+addon_id+']:   Success: Video is playing:   '+urlmessage, level=xbmc.LOGNOTICE)
 			xbmcgui.Dialog().notification('الفيديو يعمل','','',500)
 			break
 		elif result=='failed':
-			xbmc.log('['+addon_id+']:  Failure: Video failed playing:  '+urlmessage, level=xbmc.LOGNOTICE)
+			xbmc.log('['+addon_id+']:   Failure: Error playing video:   '+urlmessage, level=xbmc.LOGNOTICE)
 			break
-		xbmcgui.Dialog().notification(myplayer.status +' جاري تشغيل الفيديو المطلوب','باقي '+str(timeout-i)+' ثانية')
-		"""
-		elif progress.iscanceled():
-			myplayer.stop()
-			result = 'canceled0'
-			xbmc.log('['+addon_id+']:  Canceled: Video was canceled successfully:  '+urlmessage, level=xbmc.LOGNOTICE)
-			break
-		"""
+		xbmcgui.Dialog().notification(myplayer.status +'جاري تشغيل الفيديو','باقي '+str(timeout-i)+' ثانية')
 	else:
 		myplayer.stop()
 		result = 'timeout'
-		xbmc.log('['+addon_id+']:  Timeout: Unknown playing issue:  '+urlmessage, level=xbmc.LOGNOTICE)
-		"""
-		playing = str(myplayer.isPlaying())
-		logfile = file(logfilename, 'rb')
-		logfile.seek(-4000, os.SEEK_END)
-		logfile = logfile.read()
-		logfile2 = logfile.split('['+addon_id+']:  Started playing video:')
-		if len(logfile2)==1: continue
-		else: logfile2 = logfile2[-1]
-		if 'CloseFile' in logfile2 or 'Attempt to use invalid handle' in logfile2:
-			result = 'failed'
-			xbmc.log('['+addon_id+']:  Failure: Video failed playing:  '+urlmessage, level=xbmc.LOGNOTICE)
-			#break
-		elif 'Opening stream' in logfile2:
-			result = 'playing'
-			xbmc.log('['+addon_id+']:  Success: Video is playing successfully:  '+urlmessage, level=xbmc.LOGNOTICE)
-			#break
-		"""
+		xbmc.log('['+addon_id+']:   Timeout: Unknown playing issue:   '+urlmessage, level=xbmc.LOGNOTICE)
 	if result!='playing': xbmcgui.Dialog().notification('الفيديو لم يعمل','')
-	#progress.close()
-	#if i==timeout-step:
-	#	myplayer.stop()
-	#	result = 'timeout'
-	#	xbmc.log('['+addon_id+']:  Timeout: Unknown playing issue:  '+urlmessage, level=xbmc.LOGNOTICE)
 	addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 	import random
 	randomNumber = str(random.randrange(111111111111,999999999999))
@@ -296,8 +357,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 	if 'logs=yes' in text: logs='yes'
 	else: logs='no'
-	sendit=1
-	html = ''
+	sendit,html = 1,''
 	if showDialogs=='yes':
 		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
 	if sendit==1:
@@ -315,19 +375,19 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 		if source != '': message += ' :\\nSource: ' + source
 		message += ' :\\n'
 		logfileNEW = ''
-		if logs:
+		if logs=='yes':
 			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
 			logfile=file(logfile, 'rb')
-			logfile.seek(-30000, os.SEEK_END)
+			logfile.seek(-45000, os.SEEK_END)
 			logfile = logfile.read().splitlines()
 			#xbmcgui.Dialog().ok(logfile,str(len(logfile)))
-			logfileNEW = '\n'.join(logfile[-200:])
-			from base64 import b64encode as base64_b64encode
-			logfileNEW = base64_b64encode(logfileNEW)
+			logfileNEW = '\n'.join(logfile[-300:])
+			import base64
+			logfileNEW = base64.b64encode(logfileNEW)
 		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
 		payload = { 'subject' : quote(subject) , 'message' : quote(message) , 'logfile' : logfileNEW }
 		data = urllib.urlencode(payload)
-		html = openURL(url,data,'','','LIBRARY-SEND_EMAIL-1st')
+		html = openURL_cached(NO_CACHE,url,data,'','','LIBRARY-SEND_EMAIL-1st')
 		result = html[0:6]
 		if showDialogs=='yes':
 			if result == 'Error ':
@@ -337,8 +397,8 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 	return html
 
 def dummyClientID(length):
-	#from uuid import getnode as uuid_getnode
-	#macfull = hex(uuid_getnode())		# e1f2ace4a35e
+	#import uuid
+	#macfull = hex(uuid.getnode())		# e1f2ace4a35e
 	#mac = '-'.join(mac_num[i:i+2].upper() for i in range(0,11,2))		# E1:F2:AC:E4:A3:5E
 	import platform
 	hostname = platform.node()			# empc12/localhosting
@@ -346,22 +406,20 @@ def dummyClientID(length):
 	os_version = platform.release()		# 10.0/3.14.22
 	os_bits = platform.machine()		# AMD64/aarch64
 	#processor = platform.processor()	# Intel64 Family 9 Model 68 Stepping 16, GenuineIntel/''
-	import xbmcaddon
 	settings = xbmcaddon.Addon(id=addon_id)
 	savednode = settings.getSetting('node')
 	if savednode=='':
-		from uuid import getnode as uuid_getnode
-		node = str(uuid_getnode())		# 326509845772831
+		import uuid
+		node = str(uuid.getnode())		# 326509845772831
 		settings.setSetting('node',node)
 	else:
 		node = savednode
 	hashComponents = node+':'+hostname+':'+os_type+':'+os_version+':'+os_bits
-	from hashlib import md5 as hashlib_md5
-	md5full = hashlib_md5(hashComponents).hexdigest()
+	import hashlib
+	md5full = hashlib.md5(hashComponents).hexdigest()
 	md5 = md5full[0:length]
 	#xbmcgui.Dialog().ok(node,md5)
 	return md5
-	#import xbmcaddon
 	#settings = xbmcaddon.Addon(id=addon_id)
 	#settings.setSetting('user.hash','')
 	#settings.setSetting('user.hash2','')
@@ -372,10 +430,10 @@ def dummyClientID(length):
 	#input = md5full + '  ::  Found at:' + str(i) + '  ::  ' + hashComponents
 	#	#payload = { 'file' : file , 'input' : input }
 	#	#data = urllib.urlencode(payload)
-	#	#html = openURL(url,data,'','','LIBRARY-DUMMYCLIENTID-1st')
-	#import requests
+	#	#html = openURL_cached(NO_CACHE,url,data,'','','LIBRARY-DUMMYCLIENTID-1st')
 	#headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
 	#payload = "file="+file+"&input="+input
+	#import requests
 	#response = requests.request("POST", url, data=payload, headers=headers)
 	#	#html = response.text
 	#	#xbmcgui.Dialog().ok(html,html)
@@ -385,18 +443,109 @@ def dummyClientID(length):
 	#return ''
 
 def HTTPS(show=True):
-	html = openURL('https://www.google.com','','','','PROGRAM-1st')
+	if show: cacheperiod = NO_CACHE
+	else: cacheperiod = REGULAR_CACHE
+	html = openURL_cached(cacheperiod,'https://www.google.com','','','','PROGRAM-HTTPS-1st')
 	#xbmcgui.Dialog().ok('Checking SSL',html)
 	if 'html' in html:
 		worked = True
 		if show: xbmcgui.Dialog().ok('الاتصال المشفر','جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل عندك على كودي ... وعندك كودي قادر على استخدام المواقع المشفرة')
 	else:
 		worked = False
-		xbmc.log('['+addon_id+']:  HTTPS Failed:  Label:['+menulabel+']   Path:[ '+menupath+' ]', level=xbmc.LOGNOTICE)
-		if show: xbmcgui.Dialog().ok('الاتصال المشفر','مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة')
+		xbmc.log('['+addon_id+']:   HTTPS Failed:   Label:[ '+menulabel+' ]   Path:[ '+menupath+' ]', level=xbmc.LOGNOTICE)
+		if show: xbmcgui.Dialog().ok('الاتصال المشفر',https_problem)
 	return worked
 
+class CustomePlayer(xbmc.Player):
+	def __init__( self, *args, **kwargs ):
+		self.status = ''
+	def onPlayBackStopped(self):
+		self.status='failed'
+	def onPlayBackStarted(self):
+		self.status='playing'
+		xbmc.sleep(1000)
+	def onPlayBackError(self):
+		self.status='failed'
+	def onPlayBackEnded(self):
+		self.status='failed'
 
+
+class CustomThread:
+	def __init__(self):
+		self.statusDICT,self.resultsDICT = {},{}
+	def start_new_thread(self,id,func,*args):
+		self.statusDICT[id] = 'running'
+		thread.start_new_thread(self.run,(id,func,args))
+		time.sleep(0.001)
+	def wait_finishing_all_threads(self):
+		while 'running' in self.statusDICT.values():
+			time.sleep(0.100)
+	def run(self,id,func,args):
+		self.resultsDICT[id] = func(*args)
+		self.statusDICT[id] = 'finished'
+
+
+
+
+
+# open file using one line example
+"""
+with open('S:\emad3.html', 'w') as file: file.write(block)
+"""
+
+
+# open file using manu line example
+"""
+#file = open('/data/emad.html', 'w')
+#file.write(html)
+#file.close()
+"""
+
+
+# encode & decode examples
+"""
+decode('utf8')
+decode('unicode_escape')
+decode('ascii')
+decode('windows-1256')
+"""
+
+
+# timing using time.time()
+"""
+t1 = time.time()
+t2 = time.time()
+xbmcgui.Dialog().ok(str(t2-t1), '')
+"""
+
+
+# timing using timeit.timeit()
+"""
+timeit.timeit('import LIBRARY',number=1)
+"""
+
+
+# logfile open, read, and close
+"""
+playing = str(myplayer.isPlaying())
+logfile = file(logfilename, 'rb')
+logfile.seek(-4000, os.SEEK_END)
+logfile = logfile.read()
+logfile2 = logfile.split('['+addon_id+']:  Started playing video:')
+if len(logfile2)==1: continue
+else: logfile2 = logfile2[-1]
+if 'CloseFile' in logfile2 or 'Attempt to use invalid handle' in logfile2:
+	result = 'failed'
+	xbmc.log('['+addon_id+']:   Failure: Video failed playing:  '+urlmessage, level=xbmc.LOGNOTICE)
+	#break
+elif 'Opening stream' in logfile2:
+	result = 'playing'
+	xbmc.log('['+addon_id+']:   Success: Video is playing successfully:  '+urlmessage, level=xbmc.LOGNOTICE)
+	#break
+"""
+
+
+# to change the numbers name to digits
 """
 lowLIST = [  ['']  ]
 lowLIST.append(['الاولى','الأولى','الحادية','الحاديه','الواحدة','الواحده','الحادي','الواحد'])
@@ -447,5 +596,34 @@ def CLEAN_EPSIODE_NAME(title):
 	return title2
 """
 
+
+# threading.Thread example
+"""
+items = re.findall('getVideoPlayer\(\'(.*?)\'',block,re.DOTALL)
+for server in items:
+	payload = { 'Ajax' : '1' , 'art' : artID , 'server' : server }
+	data = urllib.urlencode(payload)
+	#dataLIST.append(data)
+	t = threading.Thread(target=linkFUNC,args=(data,linkLIST))
+	t.start()
+	threads.append(t)
+for i in threads:
+	i.join()
+"""
+
+
+# concurrent.futures threading example
+"""
+count = len(dataLIST)
+import concurrent.futures
+with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+	responcesDICT = dict( (executor.submit(openURL, url2, dataLIST[i], headers,'','HALACIMA-PLAY-3rd'), i) for i in range(count) )
+for response in concurrent.futures.as_completed(responcesDICT):
+	html = response.result()
+	html = html.replace('SRC=','src=')
+	links = re.findall('src=\'(.*?)\'',html,re.DOTALL)
+	#if 'http' not in link: link = 'http:' + link
+	linkLIST.append(links[0])
+"""
 
 

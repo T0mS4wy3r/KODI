@@ -64,7 +64,7 @@ def TITLES(url):
 		elif type=='series': type1='مسلسل'
 		url = website0a + '/filter-programs/' + quote(type1) + '/' + page + '/' + sort + filter
 		#xbmcgui.Dialog().ok(url,page)
-		html = openURL(url,'','','','SHOOFMAX-TITLES-1st')
+		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-TITLES-1st')
 		items = re.findall('"ref":(.*?),.*?"title":"(.*?)".+?"numep":(.*?),"res":"(.*?)"',html,re.DOTALL)
 		count_items=0
 		for id,title,episodes_count,img in items:
@@ -77,7 +77,7 @@ def TITLES(url):
 		if type=='movie': type1='movies'
 		elif type=='series': type1='series'
 		url = website0b + '/json/selected/' + sort + '-' + type1 + '-WW.json'
-		html = openURL(url,'','','','SHOOFMAX-TITLES-2nd')
+		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-TITLES-2nd')
 		items = re.findall('"ref":(.*?),"ep":(.*?),"base":"(.*?)","title":"(.*?)"',html,re.DOTALL)
 		count_items=0
 		for id,episodes_count,img,title in items:
@@ -102,7 +102,7 @@ def EPISODES(url):
 	img = parts[3]
 	url = url.split('?')[0]
 	if episodes_count=='0':
-		html = openURL(url,'','','','SHOOFMAX-SEARCH-1st')
+		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-SEARCH-1st')
 		html_blocks = re.findall('<select(.*?)</select>',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('option value="(.*?)"',block,re.DOTALL)
@@ -120,7 +120,7 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
-	html = openURL(url,'','','','SHOOFMAX-PLAY-1st')
+	html = openURL_cached(LONG_CACHE,url,'','','','SHOOFMAX-PLAY-1st')
 	html_blocks = re.findall('intro_end(.*?)initialize',html,re.DOTALL)
 	if not html_blocks:
 		later = re.findall('(متوفر على شوف ماكس بعد).*?moment\("(.*?)"',html,re.DOTALL)
@@ -157,7 +157,7 @@ def PLAY(url):
 		else:
 			server = 'main server'
 			url = origin_link + link
-		html = openURL(url,'','','','SHOOFMAX-PLAY-2nd')
+		html = openURL_cached(LONG_CACHE,url,'','','','SHOOFMAX-PLAY-2nd')
 		items = re.findall('RESOLUTION=(.*?),.*?\n(.*?m3u8)',html,re.DOTALL)
 		for quality,link in items:
 			url2 = url.replace('variant.m3u8','') + link
@@ -175,7 +175,7 @@ def FILTERS(url,type):
 	if 'series' in url: url2 = website0a + '/genre/مسلسل'
 	else: url2 = website0a + '/genre/فيلم'
 	url2 = quote(url2)
-	html = openURL(url2,'','','','SHOOFMAX-FILTERS-1st')
+	html = openURL_cached(REGULAR_CACHE,url2,'','','','SHOOFMAX-FILTERS-1st')
 	#xbmcgui.Dialog().ok(url,html)
 	if type==1: html_blocks = re.findall('subgenre(.*?)div',html,re.DOTALL)
 	elif type==2: html_blocks = re.findall('country(.*?)div',html,re.DOTALL)
@@ -198,8 +198,8 @@ def SEARCH(search=''):
 	if search == '': return
 	#xbmcgui.Dialog().ok(search,search)
 	new_search = search.replace(' ','%20')
-	from requests import request as requests_request
-	response = requests_request('GET', website0a, data='', headers='')
+	import requests
+	response = requests.request('GET', website0a, data='', headers='')
 	html = response.text
 	cookies = response.cookies.get_dict()
 	cookie = cookies['session']
@@ -208,7 +208,7 @@ def SEARCH(search=''):
 	payload = '_csrf=' + csrf + '&q=' + quote(new_search)
 	headers = { 'content-type':'application/x-www-form-urlencoded' , 'cookie':'session='+cookie }
 	url = website0a + "/search"
-	response = requests_request('POST', url, data=payload, headers=headers)
+	response = requests.request('POST', url, data=payload, headers=headers)
 	html = response.text
 	html_blocks = re.findall('general-body(.*?)search-bottom-padding',html,re.DOTALL)
 	block = html_blocks[0]

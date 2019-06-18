@@ -19,7 +19,7 @@ def MENU():
 	addDir(menu_name+'بحث في الموقع','',99)
 	addDir(menu_name+'المضاف حديثا','',94)
 	addDir(menu_name+'جديد الموقع',website0a,91)
-	html = openURL(website0a,'',headers,'','4HELAL-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','4HELAL-MENU-1st')
 	html_blocks = re.findall('mainmenu(.*?)nav',html,re.DOTALL)
 	#upper menu
 	block1 = html_blocks[0]
@@ -45,10 +45,10 @@ def ITEMS(url):
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 't' : search }
 		data = urllib.urlencode(payload)
-		html = openURL(url,data,headers,'','4HELAL-SEARCH-1st')
+		html = openURL_cached(REGULAR_CACHE,url,data,headers,'','4HELAL-SEARCH-1st')
 	else:
 		headers = { 'User-Agent' : '' }
-		html = openURL(url,'',headers,'','4HELAL-ITEMS-1st')
+		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','4HELAL-ITEMS-1st')
 	html_blocks = re.findall('movies-items(.*?)pagination',html,re.DOTALL)
 	if html_blocks: block = html_blocks[0]
 	else: block = ''
@@ -78,7 +78,7 @@ def ITEMS(url):
 	return
 
 def EPISODES(url):
-	html = openURL(url,'',headers,'','4HELAL-ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','4HELAL-ITEMS-1st')
 	html_blocks = re.findall('episodes-panel(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	img = re.findall('image":.*?"(.*?)"',html,re.DOTALL)[0]
@@ -94,60 +94,49 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
-	import xbmcaddon
-	settings = xbmcaddon.Addon(id=addon_id)
-	previous_url = settings.getSetting('previous.url')
-	if url==previous_url:
-		linkLIST = settings.getSetting('previous.linkLIST')
-		linkLIST = linkLIST[1:-1].replace('&apos;','').replace(' ','').replace("'",'')
-		linkLIST = linkLIST.split(',')
-		#xbmcgui.Dialog().ok(url,str(linkLIST))
-	else:
-		linkLIST,urlLIST = [],[]
-		adultLIST = ['R - للكبار فقط','PG-18','PG-16','TV-MA']
-		html = openURL(url,'',headers,'','4HELAL-PLAY-1st')
-		if any(value in html for value in adultLIST):
-			xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
-			return
-		html_blocks = re.findall('links-panel(.*?)div',html,re.DOTALL)
-		if html_blocks:
-			block = html_blocks[0]
-			items = re.findall('href="(.*?)"',block,re.DOTALL)
-			for link in items:
-				linkLIST.append(link)
-		html_blocks = re.findall('nav-tabs(.*?)video-panel-more',html,re.DOTALL)
+	linkLIST,urlLIST = [],[]
+	adultLIST = ['R - للكبار فقط','PG-18','PG-16','TV-MA']
+	html = openURL_cached(LONG_CACHE,url,'',headers,'','4HELAL-PLAY-1st')
+	if any(value in html for value in adultLIST):
+		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
+		return
+	html_blocks = re.findall('links-panel(.*?)div',html,re.DOTALL)
+	if html_blocks:
 		block = html_blocks[0]
-		items = re.findall('ajax-file-id.*?value="(.*?)"',block,re.DOTALL)
-		id = items[0]
-		#xbmcgui.Dialog().ok('',id)
-		items = re.findall('data-server-src="(.*?)"',block,re.DOTALL)
+		items = re.findall('href="(.*?)"',block,re.DOTALL)
 		for link in items:
-			link = unquote(link)
 			linkLIST.append(link)
-		"""
-		items = re.findall('data-server="(.*?)"',block,re.DOTALL)
-		for link in items:
-			url2 = website0a + '/ajax.php?id='+id+'&ajax=true&server='+link
-			#link = openURL(url2,'',headers,'','4HELAL-PLAY-2nd')
-			#linkLIST.append(link)
-			urlLIST.append(url2)
-			html = openURL(url2,'',headers,'','4HELAL-PLAY-2nd')
-			#xbmcgui.Dialog().ok(url2,html)
-		count = len(urlLIST)
-		import concurrent.futures
-		with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
-			responcesDICT = dict( (executor.submit(openURL, urlLIST[i], '', headers,'','4HELAL-PLAY-2nd'), i) for i in range(0,count) )
-		for response in concurrent.futures.as_completed(responcesDICT):
-			linkLIST.append( response.result() )
-		"""
-		settings.setSetting('previous.url',url)
-		settings.setSetting('previous.linkLIST',str(linkLIST))
-	from RESOLVERS import PLAY as RESOLVERS_PLAY
-	RESOLVERS_PLAY(linkLIST,script_name)
+	html_blocks = re.findall('nav-tabs(.*?)video-panel-more',html,re.DOTALL)
+	block = html_blocks[0]
+	items = re.findall('ajax-file-id.*?value="(.*?)"',block,re.DOTALL)
+	id = items[0]
+	#xbmcgui.Dialog().ok('',id)
+	items = re.findall('data-server-src="(.*?)"',block,re.DOTALL)
+	for link in items:
+		link = unquote(link)
+		linkLIST.append(link)
+	"""
+	items = re.findall('data-server="(.*?)"',block,re.DOTALL)
+	for link in items:
+		url2 = website0a + '/ajax.php?id='+id+'&ajax=true&server='+link
+		#link = openURL_cached(LONG_CACHE,url2,'',headers,'','4HELAL-PLAY-2nd')
+		#linkLIST.append(link)
+		urlLIST.append(url2)
+		html = openURL_cached(LONG_CACHE,url2,'',headers,'','4HELAL-PLAY-2nd')
+		#xbmcgui.Dialog().ok(url2,html)
+	count = len(urlLIST)
+	import concurrent.futures
+	with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+		responcesDICT = dict( (executor.submit(openURL, urlLIST[i], '', headers,'','4HELAL-PLAY-2nd'), i) for i in range(0,count) )
+	for response in concurrent.futures.as_completed(responcesDICT):
+		linkLIST.append( response.result() )
+	"""
+	import RESOLVERS
+	RESOLVERS.PLAY(linkLIST,script_name)
 	return
 
 def LATEST():
-	html = openURL(website0a,'',headers,'','4HELAL-LATEST-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','4HELAL-LATEST-1st')
 	html_blocks = re.findall('index-last-movie(.*?)index-slider-movie',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)" title="(.*?)"',block,re.DOTALL)

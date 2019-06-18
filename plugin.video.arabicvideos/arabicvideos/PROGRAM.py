@@ -4,7 +4,7 @@ from LIBRARY import *
 script_name='PROGRAM'
 
 def MAIN(mode,text=''):
-	if (mode==0 or mode==1): FIX_KEYBOARD(mode,text)
+	if mode in [0,1]: FIX_KEYBOARD(mode,text)
 	elif mode==2: SEND_MESSAGE(text)
 	elif mode==3: DMCA()
 	elif mode==4: HTTPS_TEST()
@@ -12,14 +12,21 @@ def MAIN(mode,text=''):
 	elif mode==6: GLOBAL_SEARCH(text)
 	elif mode==7: VERSION()
 	elif mode==8: RANDOM()
+	elif mode==9: DELETE_CACHE()
 	elif mode==179: TESTINGS()
 	return
+
+def DELETE_CACHE():
+	import PROBLEMS
+	PROBLEMS.MAIN(190)
+	yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','الكاش مهم لتسريع عمل البرنامج ومسحه يسبب اعادة طلب جميع الصفحات من الانترنيت عند الحاجة اليها. هل متأكد وتريد مسح جميع الكاش ؟','','','كلا','نعم')
+	if yes==1: DELETE_WEBCACHE()
 
 def HTTPS_TEST():
 	worked = HTTPS(True)
 	if not worked:
-		from lib.PROBLEMS import MAIN
-		MAIN(152)
+		import PROBLEMS
+		PROBLEMS.MAIN(152)
 
 def FIX_KEYBOARD(mode,text):
 	keyboard=text
@@ -48,11 +55,11 @@ def FIX_KEYBOARD(mode,text):
 		xbmcgui.Dialog().ok(new1,new2)
 	return
 
-def SEND_MESSAGE(text):
+def SEND_MESSAGE(text=''):
 	if 'problem=yes' in text: problem='yes'
 	else: problem='no'
 	if problem=='yes':
-		logs = xbmcgui.Dialog().yesno('ارسال سجل الاخطاء','هل توافق على ارسال ال 200 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع معرفة المشكلة واصلاحها اذا كانت المشكلة من البرنامج وليست من المواقع الاصلية','','','كلا','نعم')
+		logs = xbmcgui.Dialog().yesno('ارسال سجل الاخطاء','هل توافق على ارسال ال 300 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع معرفة المشكلة واصلاحها اذا كانت المشكلة من البرنامج وليست من المواقع الاصلية','','','كلا','نعم')
 		if logs==1:
 			text += 'logs=yes'
 			yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','قبل ارسال سجل الاخطاء الى المبرمج عليك ان تقوم بتشغيل الفيديو او الرابط الذي يعطيك المشكلة لكي يتم تسجيل المشكلة في سجل الاخطاء. هل تريد الارسال الان ؟','','','كلا','نعم')
@@ -69,17 +76,16 @@ def SEND_MESSAGE(text):
 	message = search
 	subject = 'Message: From Arabic Videos'
 	result = SEND_EMAIL(subject,message,'yes','','EMAIL-FROM-USERS',text)
-
 	#	url = 'my API and/or SMTP server'
 	#	payload = '{"api_key":"MY API KEY","to":["me@email.com"],"sender":"me@email.com","subject":"From Arabic Videos","text_body":"'+message+'"}'
 	#	#auth=("api", "my personal api key"),
-	#	#response = requests.request('POST',url, data=payload, headers='', auth='')
+	#	import requests
+	#	response = requests.request('POST',url, data=payload, headers='', auth='')
 	#	response = requests.post(url, data=payload, headers='', auth='')
 	#	if response.status_code == 200:
 	#		xbmcgui.Dialog().ok('تم الارسال بنجاح','')
 	#	else:
 	#		xbmcgui.Dialog().ok('خطأ في الارسال','Error {}: {!r}'.format(response.status_code, response.content))
-
 	#	FROMemailAddress = 'me@email.com'
 	#	TOemailAddress = 'me@email.com'
 	#	header = ''
@@ -106,50 +112,57 @@ def GLOBAL_SEARCH(search=''):
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.lower()
-	addDir('1.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - موقع يوتيوب','',149,'','',search)
-	addDir('2.  [COLOR FFC89008]SHF  [/COLOR]'+search+' - موقع شوف ماكس','',59,'','',search)
-	addDir('3.  [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',5,'','',search)  #129
-	addDir('4.  [COLOR FFC89008]KLA  [/COLOR]'+search+' - موقع كل العرب','',19,'','',search)
-	addDir('5.  [COLOR FFC89008]PNT  [/COLOR]'+search+' - موقع بانيت','',39,'','',search)
-	addDir('6.  [COLOR FFC89008]IFL    [/COLOR]'+search+' - موقع قناة اي فيلم','',29,'','',search)
-	addDir('7.  [COLOR FFC89008]KWT  [/COLOR]'+search+' - موقع قناة الكوثر','',139,'','',search)
-	addDir('8.  [COLOR FFC89008]MRF  [/COLOR]'+search+' - موقع قناة المعارف','',49,'','',search)
-	addDir('9.  [COLOR FFC89008]FTM  [/COLOR]'+search+' - موقع المنبر الفاطمي','',69,'','',search)
+	addDir('1.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - موقع يوتيوب مشفر','',149,'','',search)
+	addDir('2.  [COLOR FFC89008]SHF  [/COLOR]'+search+' - موقع شوف ماكس مشفر','',59,'','',search)
+	addDir('3.  [COLOR FFC89008]KLA  [/COLOR]'+search+' - موقع كل العرب مشفر','',19,'','',search)
+	addDir('4.  [COLOR FFC89008]PNT  [/COLOR]'+search+' - موقع بانيت','',39,'','',search)
+	addDir('5.  [COLOR FFC89008]IFL    [/COLOR]'+search+' - موقع قناة اي فيلم','',29,'','',search)
+	addDir('6.  [COLOR FFC89008]KWT  [/COLOR]'+search+' - موقع قناة الكوثر','',139,'','',search)
+	addDir('7.  [COLOR FFC89008]MRF  [/COLOR]'+search+' - موقع قناة المعارف','',49,'','',search)
+	addDir('8.  [COLOR FFC89008]FTM  [/COLOR]'+search+' - موقع المنبر الفاطمي','',69,'','',search)
+	addDir('9.  [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست مشفر','',5,'','',search)  # 129
 	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
-	addDir('10.  [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيزلاند اونلاين','',189,'','',search)
-	addDir('11.  [COLOR FFC89008]AKM  [/COLOR]'+search+' - موقع اكوام','',79,'','',search)
-	addDir('12.  [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
+	addDir('10.  [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند مشفر','',189,'','',search)
+	addDir('11.  [COLOR FFC89008]AKM  [/COLOR]'+search+' - موقع اكوام مشفر','',79,'','',search)
 	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
-	addDir('13.  [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
-	addDir('14.  [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',89,'','',search)
+	addDir('12.  [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب مشفر','',99,'','',search)
+	addDir('13.  [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو مشفر','',119,'','',search)
+	addDir('14.  [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما مشفر','',89,'','',search)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def VERSION():
-	#url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
-	#url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
-	url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
-	html = openURL(url,'',{ 'User-Agent' : '' },'','PROGRAM-VERSION-1st')
-	latestVER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
-	currentVER = xbmc.getInfoLabel('System.AddonVersion(plugin.video.arabicvideos)')
-	latestVER2 = re.findall('repository.emad" name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]
-	currentVER2 = xbmc.getInfoLabel('System.AddonVersion(repository.emad)')
-	if latestVER > currentVER:
+	#xbmcgui.Dialog().notification('جاري طلب الارقام','','',2000)
+	threads = CustomThread()
+	threads.start_new_thread('1',KODI_VERSION)
+	#   http://www.kproxy.com
+	#   http://hideme.be
+	#   http://www.apirequest.io
+	#   url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
+	#   url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
+	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
+	html = openURL_KPROXY(url,'',{ 'User-Agent' : '' },'','PROGRAM-VERSION-1st')
+	latest_ADDON_VER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
+	current_ADDON_VER = xbmc.getInfoLabel('System.AddonVersion(plugin.video.arabicvideos)')
+	latest_REPO_VER = re.findall('repository.emad" name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]
+	current_REPO_VER = xbmc.getInfoLabel('System.AddonVersion(repository.emad)')
+	if latest_ADDON_VER > current_ADDON_VER:
 		message1 =  'الرجاء تحديث البرنامج لحل المشاكل'
 		message3 =  '\n\n' + 'جرب اغلاق كودي وتشغيله وانتظر التحديث الاوتوماتيكي'
 	else:
 		message1 = 'لا توجد اي تحديثات للبرنامج حاليا'
 		message3 =  '\n\n' + 'الرجاء ابلاغ المبرمج عن اي مشكلة تواجهك'
-	if currentVER2=='': currentVER2='لا يوجد'
-	else: currentVER2 = ' ' + currentVER2
-	message2 = 'الاصدار الاخير للبرنامج المتوفر الان هو :   ' + latestVER
-	message2 +=  '\n' + 'الاصدار الذي انت تستخدمه للبرنامج هو :   ' + currentVER
-	message2 += '\n' + 'الاصدار الاخير لمخزن عماد المتوفر الان هو :   ' + latestVER2
-	message2 +=  '\n' + 'الاصدار الذي انت تستخدمه لمخزن عماد هو :  ' + currentVER2
+	if current_REPO_VER=='': current_REPO_VER='لا يوجد'
+	else: current_REPO_VER = ' ' + current_REPO_VER
+	message2 = 'الاصدار الاخير للبرنامج المتوفر الان هو :   ' + latest_ADDON_VER
+	message2 +=  '\n' + 'الاصدار الذي انت تستخدمه للبرنامج هو :   ' + current_ADDON_VER
+	message2 += '\n' + 'الاصدار الاخير لمخزن عماد المتوفر الان هو :   ' + latest_REPO_VER
+	message2 +=  '\n' + 'الاصدار الذي انت تستخدمه لمخزن عماد هو :  ' + current_REPO_VER
 	message3 +=  '\n\n' + 'علما ان التحديث الاوتوماتيكي لا يعمل اذا لم يكن لديك في كودي مخزن عماد EMAD Repository'
 	message3 +=  '\n\n' + 'ملفات التنصيب مع التعليمات متوفرة على هذا الرابط'
 	message3 +=  '\n' + 'https://github.com/emadmahdi/KODI'
 	xbmcgui.Dialog().textviewer(message1,message2+message3)
+	threads.wait_finishing_all_threads()
 	return ''
 
 def RANDOM():
@@ -158,22 +171,23 @@ def RANDOM():
 	payload = { 'quantity' : '5' }
 	data = urllib.urlencode(payload)
 	#xbmcgui.Dialog().ok('',str(data))
-	html = openURL(url,data,headers,'','PROGRAM-RANDOM-1st')
-	block = re.findall('list-unstyled(.*?)clearfix',html,re.DOTALL)
-	items = re.findall('<span>(.*?)</span>.*?<span>(.*?)</span>',html,re.DOTALL)
+	html = openURL_KPROXY(url,data,headers,'','PROGRAM-RANDOM-1st')
+	html_blocks = re.findall('list-unstyled(.*?)clearfix',html,re.DOTALL)
+	block = html_blocks[0]
+	items = re.findall('<span>(.*?)</span>.*?<span>(.*?)</span>',block,re.DOTALL)
 	arbLIST,engLIST = [],[]
 	for arbWORD, engWORD in items:
 		arbLIST.append(arbWORD.lower())
 		engLIST.append(engWORD.lower())
 	list = ['كلمات عشوائية عربية','كلمات عشوائية انكليزية']
-	selection = xbmcgui.Dialog().select('اختر اللغة:', list)
-	if selection == -1: return
-	elif selection==0: list = arbLIST
-	else: list = engLIST
-	#xbmcgui.Dialog().ok('',str(html))
-	selection = xbmcgui.Dialog().select('اختر كلمة للبحث عنها:', list)
-	if selection == -1: return
-	search = list[selection]
+	while True:
+		selection = xbmcgui.Dialog().select('اختر اللغة:', list)
+		if selection == -1: return
+		elif selection==0: list2 = arbLIST
+		else: list2 = engLIST
+		selection = xbmcgui.Dialog().select('اختر كلمة للبحث عنها:', list2)
+		if selection != -1: break
+	search = list2[selection]
 	GLOBAL_SEARCH(search)
 	return
 
@@ -181,24 +195,34 @@ def CLOSED():
 	xbmcgui.Dialog().ok('الموقع الاصلي للأسف مغلق','')
 	return
 
+def KODI_VERSION():
+	#	https://kodi.tv/download/849
+	#   https://xbmc.en.uptodown.com/android
+	#   https://filehippo.com/download_kodi
+	#   https://kodi.en.softonic.com
+	#   https://play.google.com/store/apps/details?id=org.xbmc.kodi
+	url = 'https://xbmc.en.uptodown.com/android'
+	html = openURL_KPROXY(url,'',{ 'User-Agent' : '' },'','PROGRAM-KODI_VERSION-1st')
+	latest_KODI_VER = re.findall('softwareVersion>(.*?)<',html,re.DOTALL)[0]
+	current_KODI_VER = xbmc.getInfoLabel( "System.BuildVersion" ).split(' ')[0]
+	message4 = 'الاصدار الاخير لكودي المتوفر الان هو :   ' + latest_KODI_VER
+	message4 +=  '\n' + 'الاصدار الذي انت تستخدمه لكودي هو :   ' + current_KODI_VER
+	xbmcgui.Dialog().ok('كودي',message4)
+
 def TESTINGS():
 	url = 'https://intoupload.net/w2j4lomvzopd'
-	from urlresolver import HostedMediaFile as urlresolver_HostedMediaFile
+	import urlresolver
 	try:
-		#resolvable = urlresolver_HostedMediaFile(url).valid_url()
-		link = urlresolver_HostedMediaFile(url).resolve()
+		#resolvable = urlresolver.HostedMediaFile(url).valid_url()
+		link = urlresolver.HostedMediaFile(url).resolve()
 		xbmcgui.Dialog().ok(str(link),url)
 	except: xbmcgui.Dialog().ok('urlresolver: fail',url)
 	import RESOLVERS
 	titles,urls = RESOLVERS.RESOLVE(url)
 	selection = xbmcgui.Dialog().select('TITLES :', titles)
 	selection = xbmcgui.Dialog().select('URLS :', urls)
-
-
-		
 	#url = ''
 	#PLAY_VIDEO(url)
-	#import xbmcaddon
 	#settings = xbmcaddon.Addon(id=addon_id)
 	#settings.setSetting('test1','hello test1')
 	#var = settings.getSetting('test2')
@@ -210,7 +234,6 @@ def TESTINGS():
 	#var = os.popen("wmic diskdrive get serialnumber").read()
 	#xbmc.log('EMAD11 ' + str(var) + ' 11EMAD',level=xbmc.LOGNOTICE)
 
-	#import requests
 	#var = dummyClientID(32)
 	#xbmcgui.Dialog().ok(var,'')
 	#xbmc.log('EMAD11' + html + '11EMAD',level=xbmc.LOGNOTICE)
@@ -218,7 +241,6 @@ def TESTINGS():
 	urllist = [
 		''
 		]
-
 	#play_item = xbmcgui.ListItem(path=url, thumbnailImage='')
 	#play_item.setInfo(type="Video", infoLabels={"Title":''})
 	# Pass the item to the Kodi player.
@@ -228,8 +250,5 @@ def TESTINGS():
 
 	#import RESOLVERS
 	#url = RESOLVERS.PLAY(urllist,script_name,'no')
-
-
-
 	#PLAY_VIDEO(url,script_name,'yes')
 	return

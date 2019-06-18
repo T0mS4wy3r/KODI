@@ -33,7 +33,7 @@ def CATEGORIES(url,select=''):
 	type = url.split('/')[3]
 	#xbmcgui.Dialog().ok(type, url)
 	if type=='series':
-		html = openURL(url,'',headers,'','PANET-CATEGORIES-1st')
+		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','PANET-CATEGORIES-1st')
 		if select=='3':
 			html_blocks=re.findall('categoriesMenu(.*?)seriesForm',html,re.DOTALL)
 			block= html_blocks[0]
@@ -52,7 +52,7 @@ def CATEGORIES(url,select=''):
 				addDir(menu_name+title,url,32,img)
 		#xbmcgui.Dialog().ok(url,'')
 	if type=='movies':
-		html = openURL(url,'',headers,'','PANET-CATEGORIES-2nd')
+		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','PANET-CATEGORIES-2nd')
 		if select=='1':
 			html_blocks=re.findall('moviesGender(.*?)select',html,re.DOTALL)
 			block = html_blocks[0]
@@ -73,7 +73,7 @@ def CATEGORIES(url,select=''):
 def ITEMS(url):
 	#xbmcgui.Dialog().ok(url,'')
 	type = url.split('/')[3]
-	html = openURL(url,'',headers,'','PANET-ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','PANET-ITEMS-1st')
 	if 'home' in url: type='episodes'
 	if type=='series':
 		html_blocks = re.findall('panet-thumbnails(.*?)panet-pagination',html,re.DOTALL)
@@ -128,12 +128,12 @@ def PLAY(url):
 	#xbmcgui.Dialog().ok(url,'')
 	if 'series' in url:
 		url = website0a + '/series/v1/seriesLink/' + url.split('/')[-1]
-		html = openURL(url,'',headers,'','PANET-PLAY-1st')
+		html = openURL_cached(SHORT_CACHE,url,'',headers,'','PANET-PLAY-1st')
 		items = re.findall('url":"(.*?)"',html,re.DOTALL)
 		url = items[0]
 		url = url.replace('\/','/')
 	else:
-		html = openURL(url,'',headers,'','PANET-PLAY-2nd')
+		html = openURL_cached(SHORT_CACHE,url,'',headers,'','PANET-PLAY-2nd')
 		items = re.findall('contentURL" content="(.*?)"',html,re.DOTALL)
 		url = items[0]
 	PLAY_VIDEO(url,script_name)
@@ -155,7 +155,7 @@ def SEARCH(search,page):
 		page,type = page.split('/')
 	payload = { 'query' : new_search  , 'searchDomain' : type , 'from' : page }
 	data = urllib.urlencode(payload)
-	html = openURL(website0a+'/search',data,headers,'','PANET-SEARCH-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a+'/search',data,headers,'','PANET-SEARCH-1st')
 	items=re.findall('title":"(.*?)".*?link":"(.*?)"',html,re.DOTALL)
 	if items:
 		for title,link in items:

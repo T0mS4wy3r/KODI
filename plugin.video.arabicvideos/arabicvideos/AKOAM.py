@@ -17,21 +17,16 @@ def MAIN(mode,url,text):
 	return
 
 def MENU():
-	#from requests import request as requests_request
-	#response = requests_request('GET', 'https://akoam.net', headers='', data='', allow_redirects=False)
-	#website0a = response.headers['Location']
-	#website0a = website0a.strip('/')
-	#xbmcgui.Dialog().ok(website0a,'')
 	addDir(menu_name+'بحث في الموقع','',79)
 	addDir(menu_name+'المميزة',website0a,72,'','','featured')
 	addDir(menu_name+'المزيد',website0a,72,'','','more')
 	#addDir(menu_name+'الاخبار',website0a,72,'','','news')
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات']
-	html = openURL(website0a,'',headers,'','AKOAM-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#if not html_blocks:
 	#	xbmc.sleep(2000)
-	#	html = openURL(website0a,'',headers,'','AKOAM-MENU-2nd')
+	#	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','AKOAM-MENU-2nd')
 	#	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	block = html_blocks[0]
@@ -43,7 +38,7 @@ def MENU():
 	return
 
 def CATEGORIES(url):
-	html = openURL(url,'',headers,'','AKOAM-CATEGORIES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-CATEGORIES-1st')
 	html_blocks = re.findall('sect_parts(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -57,7 +52,7 @@ def CATEGORIES(url):
 	return
 
 def TITLES(url,type):
-	html = openURL(url,'',headers,'','AKOAM-TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-TITLES-1st')
 	items = []
 	if type=='featured':
 		html_blocks = re.findall('section_title featured_title(.*?)subjects-crousel',html,re.DOTALL)
@@ -94,7 +89,7 @@ def TITLES(url,type):
 
 def EPISODES(url):
 	notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
-	html = openURL(url,'',headers,'','AKOAM-EPISODES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-EPISODES-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#xbmcgui.Dialog().ok(url,html)
 	items = re.findall('<br />\n<a href="(.*?)".*?<span style="color:.*?">(.*?)</span>',html,re.DOTALL)
@@ -153,52 +148,37 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
-	import xbmcaddon
-	settings = xbmcaddon.Addon(id=addon_id)
-	previous_url = settings.getSetting('previous.url')
-	if url==previous_url:
-		linkLIST = settings.getSetting('previous.linkLIST')
-		linkLIST = linkLIST[1:-1].replace('&apos;','').replace(' ','').replace("'",'')
-		linkLIST = linkLIST.split(',')
-		#xbmcgui.Dialog().ok(url,str(linkLIST))
-	else:
-		url2,episode = url.split('?ep=')
-		html = openURL(url2,'',headers,'','AKOAM-PLAY-1st')
-		html_blocks = re.findall('ad-300-250.*?ad-300-250(.*?)ako-feedback',html,re.DOTALL)
-		html_block = html_blocks[0].replace('\'direct_link_box','"direct_link_box epsoide_box')
-		html_block = html_block + 'direct_link_box'
-		blocks = re.findall('epsoide_box(.*?)direct_link_box',html_block,re.DOTALL)
-		episode = len(blocks)-int(episode)
-		block = blocks[episode]
-		linkLIST = []
-		serversDICT = {'1423075862':'dailymotion','1477487601':'estream','1505328404':'streamango',
-			'1423080015':'flashx','1458117295':'openload','1423079306':'vimple','1430052371':'ok.ru',
-			'1477488213':'thevid','1558278006':'uqload'}
-		items = re.findall('download_btn\' target=\'_blank\' href=\'(.*?)\'',block,re.DOTALL)
-		for link in items:
-			linkLIST.append(link)
-		items = re.findall('background-image: url\((.*?)\).*?href=\'(.*?)\'',block,re.DOTALL)
-		for serverIMG,link in items:
-			serverIMG = serverIMG.split('/')[-1]
-			serverIMG = serverIMG.split('.')[0]
-			try: linkLIST.append(link+'?name='+serversDICT[serverIMG])
-			except: linkLIST.append(link+'?name='+serverIMG)
-		settings.setSetting('previous.url',url)
-		settings.setSetting('previous.linkLIST',str(linkLIST))
+	url2,episode = url.split('?ep=')
+	html = openURL_cached(LONG_CACHE,url2,'',headers,'','AKOAM-PLAY-1st')
+	html_blocks = re.findall('ad-300-250.*?ad-300-250(.*?)ako-feedback',html,re.DOTALL)
+	html_block = html_blocks[0].replace('\'direct_link_box','"direct_link_box epsoide_box')
+	html_block = html_block + 'direct_link_box'
+	blocks = re.findall('epsoide_box(.*?)direct_link_box',html_block,re.DOTALL)
+	episode = len(blocks)-int(episode)
+	block = blocks[episode]
+	linkLIST = []
+	serversDICT = {'1423075862':'dailymotion','1477487601':'estream','1505328404':'streamango',
+		'1423080015':'flashx','1458117295':'openload','1423079306':'vimple','1430052371':'ok.ru',
+		'1477488213':'thevid','1558278006':'uqload'}
+	items = re.findall('download_btn\' target=\'_blank\' href=\'(.*?)\'',block,re.DOTALL)
+	for link in items:
+		linkLIST.append(link)
+	items = re.findall('background-image: url\((.*?)\).*?href=\'(.*?)\'',block,re.DOTALL)
+	for serverIMG,link in items:
+		serverIMG = serverIMG.split('/')[-1]
+		serverIMG = serverIMG.split('.')[0]
+		try: linkLIST.append(link+'?name='+serversDICT[serverIMG])
+		except: linkLIST.append(link+'?name='+serverIMG)
 	if len(linkLIST)==0:
 		message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
 		if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
 		else: xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
 	else:
-		from RESOLVERS import PLAY as RESOLVERS_PLAY
-		RESOLVERS_PLAY(linkLIST,script_name)
+		import RESOLVERS
+		RESOLVERS.PLAY(linkLIST,script_name)
 	return ''
 
 def SEARCH(search):
-	#from requests import request as requests_request
-	#response = requests_request('GET', 'https://akoam.net', headers='', data='', allow_redirects=False)
-	#website0a = response.headers['Location']
-	#website0a = website0a.strip('/')
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	new_search = search.replace(' ','%20')

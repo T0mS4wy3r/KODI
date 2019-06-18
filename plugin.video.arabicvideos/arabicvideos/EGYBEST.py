@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
+import requests
 
-website0a = 'https://egy.best'
+website0a = 'https://egy1.best'
 headers = { 'User-Agent' : '' }
 script_name = 'EGYBEST'
 menu_name='_EGB_'
@@ -18,11 +19,11 @@ def MAIN(mode,url,page,text):
 def MAIN_MENU():
 	addDir(menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
 	addDir(menu_name+'بحث في الموقع','',129)
-	html = openURL(website0a,'',headers,'','EGYBEST-MAIN_MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','EGYBEST-MAIN_MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
-	html_blocks=re.findall('id="menu"(.*?)mainLoad',html,re.DOTALL)
+	html_blocks=re.findall('id="menu"(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
-	items=re.findall('a><a href="(.*?)".*?></i>(.*?)<',block,re.DOTALL)
+	items=re.findall('<a href="(https://egy1.best/.*?)".*?></i>(.*?)<',block,re.DOTALL)
 	for url,title in reversed(items):
 		if '/my/' not in url:
 			addDir(menu_name+title,website0a+url,121)
@@ -43,7 +44,7 @@ def FILTERS_MENU(link):
 		addDir(menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'','1')
 		addDir(menu_name+'[[   ' + filter + '   ]]',link,122,'','1')
 		addDir(menu_name+'===========================',link,9999)
-	html = openURL(link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
 	html_blocks=re.findall('mainLoad(.*?)</div></div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -83,7 +84,7 @@ def TITLES(url,page):
 	if '/explore/' in url or '?' in url: url2 = url + '&'
 	else: url2 = url + '?'
 	url2 = url2 + 'output_format=json&output_mode=movies_list&page='+page
-	html = openURL(url2,'',headers,'','EGYBEST-TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','EGYBEST-TITLES-1st')
 	name = ''
 	found = False
 	if '/season/' in url:
@@ -129,7 +130,7 @@ def TITLES(url,page):
 def PLAY(url):
 	#xbmcgui.Dialog().ok(url, url[-45:])
 	headers = { 'User-Agent' : '' }
-	html = openURL(url,'',headers,'','EGYBEST-PLAY-1st')
+	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGYBEST-PLAY-1st')
 	rating = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
 	if rating[0] in ['R','TVMA','TV-MA','PG-18','PG-16']:
 		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
@@ -151,8 +152,7 @@ def PLAY(url):
 	EGUDI, EGUSID, EGUSS = GET_PLAY_TOKENS()
 	if EGUDI=='': return
 	headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
-	from requests import request as requests_request
-	response = requests_request('GET', url, headers=headers, allow_redirects=False)
+	response = requests.request('GET', url, headers=headers, allow_redirects=False)
 	html = response.text
 	#xbmcgui.Dialog().ok(url,html)
 	items = re.findall('#EXT-X-STREAM.*?RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
@@ -167,7 +167,7 @@ def PLAY(url):
 		datacall = datacallLIST[selection]
 		url = website0a + '/api?call=' + datacall
 		headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
-		response = requests_request('GET', url, headers=headers, allow_redirects=False)
+		response = requests.request('GET', url, headers=headers, allow_redirects=False)
 		html = response.text
 		#xbmcgui.Dialog().ok(url,html)
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
@@ -176,7 +176,7 @@ def PLAY(url):
 
 		#url = website0a + '/api?call=' + datacall
 		#headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
-		#response = requests_request('GET', url, headers=headers, allow_redirects=False)
+		#response = requests.request('GET', url, headers=headers, allow_redirects=False)
 		#html = response.text
 		#xbmc.log(escapeUNICODE(html), level=xbmc.LOGNOTICE)
 		#items = re.findall('"url":"(.*?)"',html,re.DOTALL)
@@ -195,7 +195,6 @@ def PLAY(url):
 def GET_USERNAME_PASSWORD():
 	text = 'هذا الموقع يحتاج اسم دخول وكلمة السر لكي تستطيع تشغيل ملفات الفيديو. للحصول عليهم قم بفتح حساب مجاني من الموقع الاصلي'
 	xbmcgui.Dialog().ok('الموقع الاصلي  '+website0a,text)
-	import xbmcaddon
 	settings = xbmcaddon.Addon(id=addon_id)
 	oldusername = settings.getSetting('egybest.user')
 	oldpassword = settings.getSetting('egybest.pass')
@@ -209,7 +208,6 @@ def GET_USERNAME_PASSWORD():
 	return
 
 def GET_PLAY_TOKENS():
-	import xbmcaddon
 	settings = xbmcaddon.Addon(id=addon_id)
 	EGUDI = settings.getSetting('egybest.EGUDI')
 	EGUSID = settings.getSetting('egybest.EGUSID')
@@ -223,8 +221,6 @@ def GET_PLAY_TOKENS():
 		settings.setSetting('egybest.EGUSS','')
 		GET_USERNAME_PASSWORD()
 		return ['','','']
-
-	import requests
 
 	if EGUDI!='':
 		headers = { 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }

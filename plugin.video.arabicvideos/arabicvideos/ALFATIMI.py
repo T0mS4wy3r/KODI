@@ -5,6 +5,10 @@ website0a = 'http://alfatimi.tv'
 script_name = 'ALFATIMI'
 menu_name='_FTM_'
 
+moviesLIST = ['1239','1250','1245','20','1259','218','485','1238','1258','292']
+englishLIST = ['3030','628']
+
+
 def MAIN(mode,url,text):
 	if mode==60: MENU()
 	elif mode==61: TITLES(url,text)
@@ -28,72 +32,58 @@ def MENU():
 
 def TITLES(url,category):
 	#xbmcgui.Dialog().ok('', category)
-	moviesLIST = ['1239','1250','1245','20','1259','218','485','1238','1258','292']
-	englishLIST = ['3030','628']
-	if category in ['-1','-2','-3']:
-		html = openURL(website0a+'/menu_level.php','','','','ALFATIMI-TITLES-1st')
-	else:
-		html = openURL(website0a+'/menu_level.php?cat='+category,'','','','ALFATIMI-TITLES-2nd')
+	cat = ''
+	if category not in ['-1','-2','-3']: cat = '?cat='+category
+	url2 = website0a+'/menu_level.php'+cat
+	html = openURL_cached(REGULAR_CACHE,url2,'','','','ALFATIMI-TITLES-1st')
 	items = re.findall('href=\'(.*?)\'.*?>(.*?)<.*?>(.*?)</span>',html,re.DOTALL)
-	startADD = False
+	startAdd,found = False,False
 	for link,title,count in items:
 		title = unescapeHTML(title)
 		title = title.strip(' ')
+		if 'http' not in link: link = 'http:'+link
 		cat = re.findall('cat=(.*?)&',link,re.DOTALL)[0]
-		if category=='-1':
-			if cat in moviesLIST:
-				addDir(menu_name+title,website0a,61,'','',cat)
-		elif category=='-2':
-			if cat not in moviesLIST and cat not in englishLIST:
-				addDir(menu_name+title,website0a,61,'','',cat)
-		elif category=='-3':
-			if cat in englishLIST:
-				addDir(menu_name+title,website0a,61,'','',cat)
-		elif startADD==False:
-			if category==cat: startADD = True
-		elif count=='1':
-			if 'http' not in link: link = 'http:'+link
-			addLink(menu_name+title,link,63)
-		else: addDir(menu_name+title,website0a,61,'','',cat)
-	if category not in ['-1','-2','-3']:
-		EPISODES(website0a+'/videos.php?cat='+category)
+		if category==cat: startAdd = True
+		elif startAdd 	or (category=='-1' and cat in moviesLIST) \
+						or (category=='-2' and cat not in englishLIST and cat not in moviesLIST) \
+						or (category=='-3' and cat in englishLIST):
+							if count=='1': addLink(menu_name+title,link,63)
+							else: addDir(menu_name+title,link,61,'','',cat)
+							found = True
+	if not found: EPISODES(url)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def EPISODES(url):
-	#xbmcgui.Dialog().ok(url , url)
-	html = openURL(url,'','','','ALFATIMI-EPISODES-1st')
-	html_blocks = re.findall('pagination(.*?)pagination',html,re.DOTALL)
+	html = openURL_cached(REGULAR_CACHE,url,'','','','ALFATIMI-EPISODES-1st')
+	#xbmcgui.Dialog().ok(url , html)
+	html_blocks = re.findall('pagination(.*?)id="footer',html,re.DOTALL)
 	block = html_blocks[0]
-	items = re.findall('grid_view.*?src="(.*?)".*?<h2.*?href="(.*?)">(.*?)<',block,re.DOTALL)
+	items = re.findall('grid_view.*?src="(.*?)".*?title="(.*?)".*?<h2.*?href="(.*?)"',block,re.DOTALL)
 	link = ''
-	for img,link,title in items:
-		title = title.strip(' ')
+	for img,title,link in items:
+		title = title.replace('Add','').replace('to Quicklist','').strip(' ')
 		if 'http' not in link: link = 'http:'+link
 		addLink(menu_name+title,link,63,img)
 	html_blocks=re.findall('(.*?)div',block,re.DOTALL)
 	block=html_blocks[0]
+	block=re.findall('pagination(.*?)</div>',html,re.DOTALL)[0]
 	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
-	for link,page in items:
-		link = website0a + '/videos.php' + link
-		title = unescapeHTML(page)
+	url2 = url.split('?')[0]
+	for link,page2 in items:
+		link = url2 + link
+		title = unescapeHTML(page2)
 		title = 'صفحة ' + title
-		vars = re.findall('cat=(.*?)&page=(.*?)nnn',link+'nnn',re.DOTALL)
-		category = vars[0][0]
-		page = vars[0][1]
-		#xbmcgui.Dialog().ok(category, page)
-		if page=='1':
-			addDir(menu_name+title,website0a,61,'','',category)
-		else: addDir(menu_name+title,link,62)
-	if 'page' in url: xbmcplugin.endOfDirectory(addon_handle)
+		addDir(menu_name+title,link,62)
+	xbmcplugin.endOfDirectory(addon_handle)
 	return link
 
 def PLAY(url):
 	if 'videos.php' in url:
 		url = EPISODES(url)
-	html = openURL(url,'','','','ALFATIMI-PLAY-1st')
+	html = openURL_cached(LONG_CACHE,url,'','','','ALFATIMI-PLAY-1st')
 	items = re.findall('playlistfile:"(.*?)"',html,re.DOTALL)
-	url = items[0]
+	url = items[0]#+'|User-Agent=|'
 	if 'http' not in url: url = 'http:'+url
 	#xbmcgui.Dialog().ok(url,'')
 	PLAY_VIDEO(url,script_name)
@@ -104,7 +94,7 @@ def MOSTS(category):
 	url = 'http://alfatimi.tv/ajax.php'
 	headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 	data = urllib.urlencode(payload)
-	html = openURL(url,data,headers,'','ALFATIMI-GROUPS-1st')
+	html = openURL_cached(NO_CACHE,url,data,headers,'','ALFATIMI-GROUPS-1st')
 	items = re.findall('href="(.*?)".*?title="(.*?)".*?src="(.*?)".*?href',html,re.DOTALL)
 	for link,title,img in items:
 		title = title.strip(' ')
@@ -118,17 +108,8 @@ def SEARCH(search):
 	if search == '': return
 	#xbmcgui.Dialog().ok(search, website0a)
 	new_search = search.replace(' ','+')
-	url = website0a + '/search_result.php?query=' + new_search
-	html = openURL(url,'','','','ALFATIMI-SEARCH-1st')
-	html_blocks = re.findall('search_subs(.*?)</ul>',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall('cat=(.*?)&.*?>(.*?)<',block,re.DOTALL)
-		for category,title in items:
-			addDir(menu_name+title,website0a,61,'','',category)
-	xbmcplugin.endOfDirectory(addon_handle)
-	#except: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
-	return
-
+	url = website0a + '/search_result.php?query=' + new_search # + '&page=1'
+	EPISODES(url)
+	return ''
 
 

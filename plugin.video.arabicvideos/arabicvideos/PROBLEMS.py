@@ -3,14 +3,16 @@ from LIBRARY import *
 
 def MAIN(mode):
 	if mode==150:
-		addDir('Problem:   Can\'t see Arabic Text or Letters','',151)
-		addDir('المواقع المشفرة لا تعمل   :مشكلة','',152)
-		addDir('بعض الروابط لا تعمل   :مشكلة','',153)
-		addDir('لا توجد مواقع مخصصة للافلام والمسلسلات الاجنبية   :مشكلة','',154)
-		addDir('بعض الروابط بطيئة   :مشكلة','',155)
-		addDir('لماذا يوجد سيرفرات مجهولة او سيئة   :مشكلة','',156)
-		addDir('ما هي السيرفرات العامة والخاصة   :مشكلة','',157)
-		addDir('بعض الفيدوهات بطيئة   :مشكلة','',158)
+		addDir('[COLOR FFC89008]3.  [/COLOR]'+'Can\'t see Arabic Text or Letters','',151)
+		addDir('[COLOR FFC89008]1.  [/COLOR]'+'ما هو اخر اصدار لكودي وللبرنامج','',159)
+		addDir('[COLOR FFC89008]4.  [/COLOR]'+'ما هو الكاش وكم مقداره في البرنامج','',190)
+		addDir('[COLOR FFC89008]4.  [/COLOR]'+'المواقع المشفرة لا تعمل','',152)
+		addDir('[COLOR FFC89008]5.  [/COLOR]'+'بعض الروابط لا تعمل','',153)
+		addDir('[COLOR FFC89008]6.  [/COLOR]'+'بعض الروابط بطيئة','',155)
+		addDir('[COLOR FFC89008]7.  [/COLOR]'+'بعض الفيدوهات بطيئة وتقطع','',158)
+		addDir('[COLOR FFC89008]9.  [/COLOR]'+'لماذا يوجد سيرفرات مجهولة','',156)
+		addDir('[COLOR FFC89008]8.  [/COLOR]'+'ما هي السيرفرات العامة والخاصة','',157)
+		addDir('[COLOR FFC89008]10. [/COLOR]'+'اين مواقع الافلام والمسلسلات الاجنبية','',154)
 		xbmcplugin.endOfDirectory(addon_handle)
 
 	elif mode==151:
@@ -22,14 +24,16 @@ def MAIN(mode):
 	elif mode==152:
 		message1 = 'بعض المواقع تحتاج ربط مشفر ... حاول اضافة شهادة التشفير (SSL Certificate) على كودي أو استخدم كودي اصدار  17.6  أو اصدار  18.2'
 		xbmcgui.Dialog().ok('المواقع المشفرة',message1)
-		message2 = 'شهادة التشفير هي ملف يحتوي على شفرة خاصة او تواقيع خاصة لشركات معروفة وله تاريخ صلاحية ونفاذ والغرض منه هو تبادل المعلومات بطريقة مشفرة يصعب اختراقها وفهمها'
-		xbmcgui.Dialog().ok('شهادة التشفير - SSL Certificate',message2)
+		#message2 = 'شهادة التشفير هي ملف يحتوي على شفرة خاصة او تواقيع خاصة لشركات معروفة وله تاريخ صلاحية ونفاذ والغرض منه هو تبادل المعلومات بطريقة مشفرة يصعب اختراقها وفهمها'
+		#xbmcgui.Dialog().ok('شهادة التشفير - SSL Certificate',message2)
+		import PROGRAM
+		PROGRAM.KODI_VERSION()
 
 	elif mode==153:
 		yes = xbmcgui.Dialog().yesno('روابط لا تعمل','غالبا السبب هو من الموقع الاصلي المغذي للبرنامج وللتأكد تستطيع اخبار المبرمج بجميع التفاصيل فهل تريد اخبار المبرمج الان ؟')	
 		if yes: 
-			from PROGRAM import MAIN as PROGRAM_MAIN
-			PROGRAM_MAIN(2)
+			import PROGRAM
+			PROGRAM.SEND_MESSAGE()
 
 	elif mode==154:
 		message = 'السبب هو ان هذا البرنامج مخصص فقط للغة العربية ولكن مع هذا وبالصدفة يوجد فيه مواقع فيها افلام ومسلسلات مترجمة او مدبلجة الى اللغة العربية والى لغات اخرى ولا يوجد سبب للتكرار'
@@ -53,6 +57,18 @@ def MAIN(mode):
 		message3 = 'ابتعد عن ملفات التحميل والداونلود download'
 		message = message1 + '\n' + message2 + '\n' + message3
 		xbmcgui.Dialog().ok('لتسريع عمل الفيديوهات',message)
+
+	elif mode==159:
+		import PROGRAM
+		PROGRAM.VERSION()
+
+	elif mode==190:
+		message2 = 'الكاش هو مخزن مؤقت للمعلومات يستخدمه البرنامج لخزن صفحات الانترنيت وروابط الفيديوهات'
+		message2 += ' ' + 'للوصول اليها بسرعة وبدون انترنيت والبرنامج يمسحها اوتوماتيكيا بعد انتهاء وقتها والكاش في البرنامج هو ثلاثة انواع'
+		message2 += '\n\n' + 'طويل المدى للصفحات التي لا تتغير ومدته ' + str(LONG_CACHE/60/60) + ' ساعة'
+		message2 += '\n\n' + 'متوسط المدى للصفحات التي قد تتغير ومدته ' + str(REGULAR_CACHE/60/60) + ' ساعة'
+		message2 += '\n\n' + 'قصير المدى للصفحات التي تتغير دائما ومدته ' + str(SHORT_CACHE/60/60) + ' ساعة'
+		xbmcgui.Dialog().textviewer('ما هو الكاش المستخدم في البرنامج',message2)
 
 	return
 		

@@ -21,7 +21,7 @@ def MENU():
 	addDir(menu_name+'جديد المسلسلات','',84,'','0')
 	addDir(menu_name+'افلام ومسلسلات مميزة','',85,'','0')
 	addDir(menu_name+'الاكثر مشاهدة','',86,'','0')
-	html = openURL(website0a,'',headers,'','HALACIMA-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
 	block = html_blocks[0]
@@ -40,7 +40,7 @@ def ITEMS(url,html='',type='',page='0'):
 	headers = { 'User-Agent' : '' }
 	if type=='':
 		if html=='':
-			html = openURL(url,'',headers,'','HALACIMA-ITEMS-1st')
+			html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HALACIMA-ITEMS-1st')
 		html_blocks = re.findall('art_list(.*?)col-md-12',html,re.DOTALL)
 		if html_blocks: block = html_blocks[0]
 		else: block = ''
@@ -50,7 +50,7 @@ def ITEMS(url,html='',type='',page='0'):
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'Ajax' : '1' , 'item' : type , 'offset' : page*50 }
 		data = urllib.urlencode(payload)
-		block = openURL(url2,data,headers,'','HALACIMA-ITEMS-2nd')
+		block = openURL_cached(REGULAR_CACHE,url2,data,headers,'','HALACIMA-ITEMS-2nd')
 	items = re.findall('href="(.*?)".*?data-src="(.*?)".*?class="desc">(.*?)<',block,re.DOTALL)
 	allTitles = []
 	for link,img,title in items:
@@ -88,60 +88,46 @@ def ITEMS(url,html='',type='',page='0'):
 		for link,title in items:
 			title = title.replace('الصفحة ','')
 			addDir(menu_name+'صفحة '+title,link,81)
-	if type=='lastRecent': addDir(menu_name+'صفحة المزيد','',84,icon,str(page+1))
-	elif type=='pin': addDir(menu_name+'صفحة المزيد','',85,icon,str(page+1))
-	elif type=='views': addDir(menu_name+'صفحة المزيد','',86,icon,str(page+1))
+	if type=='lastRecent': addDir(menu_name+'صفحة المزيد','',84,'',str(page+1))
+	elif type=='pin': addDir(menu_name+'صفحة المزيد','',85,'',str(page+1))
+	elif type=='views': addDir(menu_name+'صفحة المزيد','',86,'',str(page+1))
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def PLAY(url):
-	import xbmcaddon
-	settings = xbmcaddon.Addon(id=addon_id)
-	previous_url = settings.getSetting('previous.url')
-	if url==previous_url:
-		linkLIST = settings.getSetting('previous.linkLIST')
-		linkLIST = linkLIST[1:-1].replace('&apos;','').replace(' ','').replace("'",'')
-		linkLIST = linkLIST.split(',')
-		#xbmcgui.Dialog().ok(url,str(linkLIST))
-	else:
-		urlLIST,dataLIST,linkLIST = [],[],[]
-		headers = { 'User-Agent' : '' }
-		html = openURL(url,'',headers,'','HALACIMA-PLAY-1st')
-		html_blocks = re.findall('class="download(.*?)div',html,re.DOTALL)
-		block = html_blocks[0]
-		items = re.findall('href="(.*?)"',block,re.DOTALL)
-		for link in items:
-			if 'http' not in link: link = 'http:' + link
-			linkLIST.append(link)
-		url2 = url.replace('/article/','/online/')
-		html = openURL(url2,'',headers,'','HALACIMA-PLAY-2nd')
-		html_blocks = re.findall('artId.*?(.*?)col-sm-12',html,re.DOTALL)
-		block = html_blocks[0]
-		items = re.findall(' = \'(.*?)\'',block,re.DOTALL)
-		artID = items[0]
-		url2 = website0a + '/ajax/getVideoPlayer'
-		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
-		items = re.findall('getVideoPlayer\(\'(.*?)\'',block,re.DOTALL)
-		for server in items:
-			payload = { 'Ajax' : '1' , 'art' : artID , 'server' : server }
-			data = urllib.urlencode(payload)
-			#html = openURL(url2,data,headers,'','HALACIMA-PLAY-3rd')
-			urlLIST.append(url2)
-			dataLIST.append(data)
-		count = len(urlLIST)
-		import concurrent.futures
-		with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
-			responcesDICT = dict( (executor.submit(openURL, urlLIST[i], dataLIST[i], headers,'','HALACIMA-PLAY-3rd'), i) for i in range(0,count) )
-		for response in concurrent.futures.as_completed(responcesDICT):
-			html = response.result()
-			html = html.replace('SRC=','src=')
-			links = re.findall('src=\'(.*?)\'',html,re.DOTALL)
-			#if 'http' not in link: link = 'http:' + link
-			linkLIST.append(links[0])
-		settings.setSetting('previous.url',url)
-		settings.setSetting('previous.linkLIST',str(linkLIST))
-	from RESOLVERS import PLAY as RESOLVERS_PLAY
-	RESOLVERS_PLAY(linkLIST,script_name)
+	linkLIST = []
+	headers = { 'User-Agent' : '' }
+	html = openURL_cached(LONG_CACHE,url,'',headers,'','HALACIMA-PLAY-1st')
+	html_blocks = re.findall('class="download(.*?)div',html,re.DOTALL)
+	block = html_blocks[0]
+	items = re.findall('href="(.*?)"',block,re.DOTALL)
+	for link in items:
+		if 'http' not in link: link = 'http:' + link
+		linkLIST.append(link)
+	url2 = url.replace('/article/','/online/')
+	html = openURL_cached(LONG_CACHE,url2,'',headers,'','HALACIMA-PLAY-2nd')
+	html_blocks = re.findall('artId.*?(.*?)col-sm-12',html,re.DOTALL)
+	block = html_blocks[0]
+	items = re.findall(' = \'(.*?)\'',block,re.DOTALL)
+	artID = items[0]
+	url2 = website0a + '/ajax/getVideoPlayer'
+	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
+	items = re.findall('getVideoPlayer\(\'(.*?)\'',block,re.DOTALL)
+	threads = CustomThread()
+	def linkFUNC():
+		html = openURL_cached(LONG_CACHE,url2,data,headers,'','HALACIMA-PLAY-3rd')
+		html = html.replace('SRC=','src=')
+		link = re.findall('src=\'(.*?)\'',html,re.DOTALL)
+		#if 'http' not in link: link = 'http:' + link
+		return link[0]
+	for server in items:
+		payload = { 'Ajax' : '1' , 'art' : artID , 'server' : server }
+		data = urllib.urlencode(payload)
+		threads.start_new_thread(server,linkFUNC)
+	threads.wait_finishing_all_threads()
+	linkLIST = linkLIST + threads.resultsDICT.values()
+	import RESOLVERS
+	RESOLVERS.PLAY(linkLIST,script_name)
 	return
 
 def SEARCH(search):
@@ -152,7 +138,7 @@ def SEARCH(search):
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 	payload = { 'name' : search , 'search' : 'البحث' }
 	data = urllib.urlencode(payload)
-	html = openURL(url,data,headers,'','HALACIMA-SEARCH-1st')
+	html = openURL_cached(REGULAR_CACHE,url,data,headers,'','HALACIMA-SEARCH-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	ITEMS('/category/',html)
 	#if 'art_list' in html: ITEMS('/category/',html)

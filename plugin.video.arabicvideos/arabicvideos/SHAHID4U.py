@@ -19,7 +19,7 @@ def MAIN(mode,url,text):
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',119)
 	#addDir(menu_name+'فلتر','',114,website0a)
-	html = openURL(website0a,'',headers,'','SHAHID4U-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search">',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
@@ -42,9 +42,8 @@ def MENU():
 
 def ITEMS(url):
 	#xbmcgui.Dialog().ok(url,url)
-	html = openURL(url,'',headers,'','SHAHID4U-ITEMS-1st')
-	if 'getposts' in url:
-		block = html
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-ITEMS-1st')
+	if 'getposts' in url: block = html
 	else:
 		html_blocks = re.findall('page-content(.*?)tags-cloud',html,re.DOTALL)
 		block = html_blocks[0]
@@ -82,10 +81,10 @@ def ITEMS(url):
 def EPISODES(url):
 	if '/series/' in url:
 		url2 = url+'/episodes'
-		html = openURL(url2,'',headers,'','SHAHID4U-ITEMS-1st')
+		html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','SHAHID4U-ITEMS-1st')
 		html_blocks = re.findall('container page-content(.*?)pagination',html,re.DOTALL)
 	else:
-		html = openURL(url,'',headers,'','SHAHID4U-ITEMS-1st')
+		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-ITEMS-1st')
 		html_blocks = re.findall('ti-list-numbered(.*?)</div>',html,re.DOTALL)
 	if not html_blocks or '/post/' in url:
 		title = re.findall('details col-12 col-m-9.*?<h1>(.*?)</h1>',html,re.DOTALL)
@@ -110,82 +109,71 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
-	import xbmcaddon
-	settings = xbmcaddon.Addon(id=addon_id)
-	previous_url = settings.getSetting('previous.url')
-	if url==previous_url:
-		linkLIST = settings.getSetting('previous.linkLIST')
-		linkLIST = linkLIST[1:-1].replace('&apos;','').replace(' ','').replace("'",'')
-		linkLIST = linkLIST.split(',')
-		#xbmcgui.Dialog().ok(url,str(linkLIST))
-	else:
-		headers = { 'User-Agent':'' }
-		linkLIST = []
-		#urlLIST = []
-		parts=url.split('/')
-		# watch links
-		url2 = url.replace(parts[3],'watch')
-		html = openURL(url2,'',headers,'','SHAHID4U-PLAY-1st')
-		html_blocks = re.findall('class="servers-list(.*?)</div>',html,re.DOTALL)
-		if html_blocks:
-			block = html_blocks[0]
-			items = re.findall('data-embedd="(.*?)".*?server_image">\n(.*?)\n',block,re.DOTALL)
-			if items:
-				id = re.findall('post_id=(.*?)"',html,re.DOTALL)
-				if id:
-					id2=id[0]
-					for link,title in items:
-						link = website0a+'/?postid='+id2+'&serverid='+link+'&name='+title
-						linkLIST.append(link)
-			else:
-				items = re.findall('data-embedd="(.*?)"',block,re.DOTALL)
-				for link in items:
+	headers = { 'User-Agent':'' }
+	linkLIST = []
+	#urlLIST = []
+	parts=url.split('/')
+	# watch links
+	url2 = url.replace(parts[3],'watch')
+	html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','SHAHID4U-PLAY-1st')
+	html_blocks = re.findall('class="servers-list(.*?)</div>',html,re.DOTALL)
+	if html_blocks:
+		block = html_blocks[0]
+		items = re.findall('data-embedd="(.*?)".*?server_image">\n(.*?)\n',block,re.DOTALL)
+		if items:
+			id = re.findall('post_id=(.*?)"',html,re.DOTALL)
+			if id:
+				id2=id[0]
+				for link,title in items:
+					link = website0a+'/?postid='+id2+'&serverid='+link+'&name='+title
 					linkLIST.append(link)
-		# download links
-		url2 = url.replace(parts[3],'download')
-		html = openURL(url2,'',headers,'','SHAHID4U-PLAY-2nd')
-		id = re.findall('postId:"(.*?)"',html,re.DOTALL)
-		if id:
-			id2=id[0]
-			headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
-			url2='https://shahid4u.net/ajaxCenter?_action=getdownloadlinks&postId='+id2
-			html = openURL(url2,'',headers,'','SHAHID4U-PLAY-3rd')
-			items = re.findall('href="(.*?)"',html,re.DOTALL)
+		else:
+			items = re.findall('data-embedd="(.*?)"',block,re.DOTALL)
 			for link in items:
 				linkLIST.append(link)
-		#url2 = url + '?watch=1'
-		#html = openURL(url2,'',headers,'','SHAHID4U-PLAY-2nd')
-		#xbmcgui.Dialog().ok(html,html)
-		#html_blocks = re.findall('li.server"(.*?)id="DataServers',html,re.DOTALL)
-		#block = html_blocks[0]
-		#items = re.findall('url: \'(.*?)\'.*?data: \'(.*?)\'',block,re.DOTALL)
-		#url2 = items[0][0]+'?'+items[0][1]
-		#items = re.findall('server\((.*?)\)',block,re.DOTALL)
-		#for server in items:
-		#	#html = openURL(url2+server,'',headers,'','SHAHID4U-PLAY-3rd')
-		#	urlLIST.append(url2+server)
-		#count = len(urlLIST)
-		#import concurrent.futures
-		#with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
-		#	responcesDICT = dict( (executor.submit(openURL, urlLIST[i], '', #headers,'','SHAHID4U-PLAY-3rd'), i) for i in range(0,count) )
-		#for response in concurrent.futures.as_completed(responcesDICT):
-		#	html = response.result()
-		#	#html = html.replace('SRC=','src=')
-		#	links = re.findall('src="(.*?)"',html,re.DOTALL)
-		#	linkLIST.append(links[0])
-		settings.setSetting('previous.url',url)
-		settings.setSetting('previous.linkLIST',str(linkLIST))
-	from RESOLVERS import PLAY as RESOLVERS_PLAY
+	# download links
+	url2 = url.replace(parts[3],'download')
+	html = openURL_cached(LONG_CACHE,url2,'',headers,'','SHAHID4U-PLAY-2nd')
+	id = re.findall('postId:"(.*?)"',html,re.DOTALL)
+	if id:
+		id2=id[0]
+		headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
+		url2='https://shahid4u.net/ajaxCenter?_action=getdownloadlinks&postId='+id2
+		html = openURL_cached(LONG_CACHE,url2,'',headers,'','SHAHID4U-PLAY-3rd')
+		items = re.findall('href="(.*?)"',html,re.DOTALL)
+		for link in items:
+			linkLIST.append(link)
+	#url2 = url + '?watch=1'
+	#html = openURL_cached(LONG_CACHE,url2,'',headers,'','SHAHID4U-PLAY-2nd')
+	#xbmcgui.Dialog().ok(html,html)
+	#html_blocks = re.findall('li.server"(.*?)id="DataServers',html,re.DOTALL)
+	#block = html_blocks[0]
+	#items = re.findall('url: \'(.*?)\'.*?data: \'(.*?)\'',block,re.DOTALL)
+	#url2 = items[0][0]+'?'+items[0][1]
+	#items = re.findall('server\((.*?)\)',block,re.DOTALL)
+	#for server in items:
+	#	#html = openURL_cached(LONG_CACHE,url2+server,'',headers,'','SHAHID4U-PLAY-3rd')
+	#	urlLIST.append(url2+server)
+	#count = len(urlLIST)
+	#import concurrent.futures
+	#with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+	#	responcesDICT = dict( (executor.submit(openURL, urlLIST[i], '', #headers,'','SHAHID4U-PLAY-3rd'), i) for i in range(0,count) )
+	#for response in concurrent.futures.as_completed(responcesDICT):
+	#	html = response.result()
+	#	#html = html.replace('SRC=','src=')
+	#	links = re.findall('src="(.*?)"',html,re.DOTALL)
+	#	linkLIST.append(links[0])
+	import RESOLVERS
 	#xbmcgui.Dialog().ok('',str(len(linkLIST)))
 	#xbmcgui.Dialog().ok(url,str(linkLIST[8:20]))
-	RESOLVERS_PLAY(linkLIST,script_name)
+	RESOLVERS.PLAY(linkLIST,script_name)
 	return
 
 def SEARCH(search=''):
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.replace(' ','+')
-	html = openURL(website0a,'',headers,'','SHAHID4U-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
 	html_blocks = re.findall('advanced-search">(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-cat="(.*?)".*?checkmark-bold">(.*?)</span>',block,re.DOTALL)
@@ -206,7 +194,7 @@ def FILTER_MENU(url):
 	addDir(menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'',1)
 	addDir(menu_name+'[[   ' + filter + '   ]]',link,122,'',1)
 	addDir(menu_name+'===========================',link,9999)
-	html = openURL(link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
 	html_blocks=re.findall('advanced-search">(.*?)MediaGrid">',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -215,7 +203,7 @@ def FILTER_MENU(url):
 			addLink(menu_name+'[[   ' + title + '   ]]',url,115,'','')
 
 def FILTER_SELECT(url):
-	html = openURL(url,'',headers,'','EGYBEST-FILTERS_MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','EGYBEST-FILTERS_MENU-1st')
 	html_blocks=re.findall('advanced-search">(.*?)MediaGrid">',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
