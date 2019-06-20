@@ -33,7 +33,7 @@ def CATEGORIES(url,select=''):
 	type = url.split('/')[3]
 	#xbmcgui.Dialog().ok(type, url)
 	if type=='series':
-		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','PANET-CATEGORIES-1st')
+		html = openURL_cached(LONG_CACHE,url,'',headers,'','PANET-CATEGORIES-1st')
 		if select=='3':
 			html_blocks=re.findall('categoriesMenu(.*?)seriesForm',html,re.DOTALL)
 			block= html_blocks[0]
@@ -52,7 +52,7 @@ def CATEGORIES(url,select=''):
 				addDir(menu_name+title,url,32,img)
 		#xbmcgui.Dialog().ok(url,'')
 	if type=='movies':
-		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','PANET-CATEGORIES-2nd')
+		html = openURL_cached(LONG_CACHE,url,'',headers,'','PANET-CATEGORIES-2nd')
 		if select=='1':
 			html_blocks=re.findall('moviesGender(.*?)select',html,re.DOTALL)
 			block = html_blocks[0]

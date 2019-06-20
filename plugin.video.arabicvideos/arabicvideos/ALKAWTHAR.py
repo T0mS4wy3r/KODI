@@ -74,7 +74,7 @@ def TITLES(url):
 
 def CATEGORIES(url):
 	category = url.split('/')[-1]
-	html = openURL_cached(REGULAR_CACHE,url,'','','','ALKAWTHAR-CATEGORIES-1st')
+	html = openURL_cached(LONG_CACHE,url,'','','','ALKAWTHAR-CATEGORIES-1st')
 	html_blocks = re.findall('parentcat(.*?)</div>',html,re.DOTALL)
 	if not html_blocks:
 		EPISODES(url,'1')
@@ -105,7 +105,7 @@ def EPISODES(url,page):
 	if '/category/' in url:
 		category = url.split('/')[-1]
 		url2 = website0a + '/category/' + category + '/' + page
-		html = openURL_cached(REGULAR_CACHE,url2,'','','','ALKAWTHAR-EPISODES-3rd')
+		html = openURL_cached(REGULAR_CACHE,url2,'','','','ALKAWTHAR-EPISODES-2nd')
 		html_blocks = re.findall('currentpagenumber(.*?)javascript',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('src="(.*?)".*?full(.*?)>.*?href="(.*?)".*?>(.*?)<',block,re.DOTALL)
@@ -144,7 +144,7 @@ def EPISODES(url,page):
 			items = re.findall('id="Categories.*?href=\'(.*?)\'',html,re.DOTALL)
 			category = items[0].split('/')[-1]
 			url2 = website0a + '/ajax/category/' + category + '/' + page
-			html = openURL_cached(REGULAR_CACHE,url2,'','','','ALKAWTHAR-EPISODES-2nd')
+			html = openURL_cached(REGULAR_CACHE,url2,'','','','ALKAWTHAR-EPISODES-3rd')
 			items = re.findall('src="(.*?)".*?href="(.*?)"> <h5>(.*?)<',html,re.DOTALL)
 			for img,link,title in items:
 				link = website0a + link
@@ -170,7 +170,7 @@ def PLAY(url):
 	return
 
 def LIVE():
-	html = openURL_cached(SHORT_CACHE,website0a+'/live','','','','ALKAWTHAR-LIVE-1st')
+	html = openURL_cached(LONG_CACHE,website0a+'/live','','','','ALKAWTHAR-LIVE-1st')
 	items = re.findall('file: "(.*?)"',html,re.DOTALL)
 	url = items[0]#+'|User-Agent=|'
 	PLAY_VIDEO(url,script_name,'no')

@@ -22,11 +22,11 @@ def MENU():
 	addDir(menu_name+'المزيد',website0a,72,'','','more')
 	#addDir(menu_name+'الاخبار',website0a,72,'','','news')
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات']
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#if not html_blocks:
 	#	xbmc.sleep(2000)
-	#	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','AKOAM-MENU-2nd')
+	#	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKOAM-MENU-2nd')
 	#	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	block = html_blocks[0]
@@ -38,7 +38,7 @@ def MENU():
 	return
 
 def CATEGORIES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-CATEGORIES-1st')
+	html = openURL_cached(LONG_CACHE,url,'',headers,'','AKOAM-CATEGORIES-1st')
 	html_blocks = re.findall('sect_parts(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -125,16 +125,17 @@ def EPISODES(url):
 		titleLIST.append(title)
 		episodeLIST.append(count)
 		count += 1
-	if len(titleLIST)>0:
+	#xbmcgui.Dialog().ok(str(size),str(episodeLIST))
+	if size>0:
 		if any(value in name for value in noEpisodesLIST):
-			if len(titleLIST)==1:
+			if size==1:
 				selection = 0
 			else:
-				selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', titleLIST)
+				selection = xbmcgui.Dialog().select(str(size)+'اختر الفيديو المناسب:', titleLIST)
 				if selection == -1: return
-			PLAY(url+'?ep='+str(episodeLIST[selection]+1))
+			PLAY(url+'?ep='+str(1+episodeLIST[size-selection-1]))
 		else:
-			for i in range(0,len(titleLIST)):
+			for i in reversed(range(size)):
 				#if ':' in titleLIST[i]: title = titleLIST[i].strip(':') + ' - ملف الفيديو غير موجود'
 				#else: title = name + ' - ' + titleLIST[i]
 				title = name + ' - ' + titleLIST[i]
@@ -148,6 +149,7 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
+	#xbmcgui.Dialog().ok(url,'')
 	url2,episode = url.split('?ep=')
 	html = openURL_cached(LONG_CACHE,url2,'',headers,'','AKOAM-PLAY-1st')
 	html_blocks = re.findall('ad-300-250.*?ad-300-250(.*?)ako-feedback',html,re.DOTALL)

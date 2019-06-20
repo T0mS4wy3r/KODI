@@ -85,6 +85,10 @@ SHORT_CACHE = 60*60*2
 NO_CACHE = 0
 now = time.time()
 
+#LONG_CACHE = 0
+#REGULAR_CACHE = 0
+#SHORT_CACHE = 0
+
 page_error = 'الصفحة غير متوفرة الان ... قد يكون الموقع الاصلي غير متوفر الان او هذه الصفحة قد تغيرت والمبرمج لا يعرف ... الرجاء المحاولة لاحقا او ابلاغ المبرمج بالمشكلة'
 https_problem = 'مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة'
 
@@ -103,6 +107,7 @@ def addDir(name,url='',mode='',iconimage='',page='',text=''):
 	if name2: name = ',[COLOR FFC89008]'+name2[0][0]+'  [/COLOR]'+name2[0][1]
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
 	if url!='': u = u + '&url=' + quote(url)
+	#xbmcgui.Dialog().ok(quote(url),'addDir')
 	if page!='': u = u + '&page=' + quote(page)
 	if text!='': u = u + '&text=' + quote(text)
 	listitem=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
@@ -118,9 +123,9 @@ def addLink(name,url,mode,iconimage='',duration='',text=''):
 	if name2: name = '[COLOR FFC89008] '+name2[0][0]+'  [/COLOR]'+name2[0][1]
 	if 'IsPlayable=no' in text: IsPlayable = 'no'
 	else: IsPlayable='yes'
-	#xbmcgui.Dialog().ok(duration,'')
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
 	if url!='': u = u + '&url=' + quote(url)
+	#xbmcgui.Dialog().ok(quote(url),'addLink')
 	if text!='': u = u + '&text=' + quote(text)
 	listitem=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
 	listitem.setProperty('fanart_image', fanart)
@@ -174,8 +179,8 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 	c = conn.cursor()
 	conn.text_factory = str
 	#conn.text_factory = lambda x: unicode(x, "utf-8", "ignore")
-	t = (url,str(data),str(headers))
-	c.execute('SELECT html FROM htmlcache WHERE url=? AND data=? AND headers=?', t)
+	t = (url,str(data),str(headers),source)
+	c.execute('SELECT html FROM htmlcache WHERE url=? AND data=? AND headers=? AND source=?', t)
 	rows = c.fetchall()
 	#html = repr(rows[0][0])
 	if rows:
@@ -188,8 +193,7 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 		html = openURL(url,data,headers,showDialogs,source)
 		#html2 = base64.b64encode(html)
 		html2 = zlib.compress(html)
-		t = (now,now+cacheperiod,url,str(data),str(headers),sqlite3.Binary(html2))
-		#t = (now,now+cacheperiod,url,str(data),str(headers),html2)
+		t = (now+cacheperiod,url,str(data),str(headers),source,sqlite3.Binary(html2))
 		c.execute("INSERT INTO htmlcache VALUES (?,?,?,?,?,?)",t)
 		conn.commit()
 	conn.close()
@@ -218,7 +222,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		reason = str(error.reason[1])
 	if code!='200':
 		if 'google-analytics' not in url:
-			xbmc.log('['+addon_id+']:   Open URL Error:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
+			xbmc.log('['+addon_id+']:   Open URL Error:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
 		message,send,showDialogs = '','no','no'
 		html = '___Error___ {}: {!r}'.format(code, reason)
 		if 'google-analytics' in url: send = showDialogs
@@ -238,7 +242,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 			xbmcgui.Dialog().ok('الاتصال المشفر',https_problem)
 		else:
 			xbmcgui.Dialog().ok('مشكلة من الموقع الاصلي',page_error)
-		xbmc.log('['+addon_id+']:   Error opening page:   [ '+url+' ]   Error: [ '+code+' ]   Reason: [ '+reason+' ]', level=xbmc.LOGNOTICE)
+		xbmc.log('['+addon_id+']:   Error opening page:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
 		raise Exception('Page not found requested by:   '+source)
 	return html
 
@@ -444,7 +448,7 @@ def dummyClientID(length):
 
 def HTTPS(show=True):
 	if show: cacheperiod = NO_CACHE
-	else: cacheperiod = REGULAR_CACHE
+	else: cacheperiod = LONG_CACHE
 	html = openURL_cached(cacheperiod,'https://www.google.com','','','','PROGRAM-HTTPS-1st')
 	#xbmcgui.Dialog().ok('Checking SSL',html)
 	if 'html' in html:

@@ -28,7 +28,7 @@ def MENU():
 	addDir(menu_name+'بحث في الموقع','',19)
 	addDir(menu_name+'اخر الاضافات','',14)
 	addDir(menu_name+'مسلسلات رمضان','',15)
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
 	html_blocks=re.findall('id="navbar"(.*?)</div>',html,re.DOTALL)
 	block=html_blocks[0]
 	#xbmcgui.Dialog().ok(str(len(html)), str(len(block)) )
@@ -61,7 +61,7 @@ def LATEST():
 	return
 
 def TITLES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-TITLES-1st')
 	html_blocks = re.findall('video-category(.*?)right_content',html,re.DOTALL)
 	block = html_blocks[0]
 	found = False
@@ -119,14 +119,14 @@ def TITLES(url):
 	return
 
 def EPISODES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-EPISODES-1st')
 	series = re.findall('href="(/series.*?)"',html,re.DOTALL)
 	url2 = website0a+series[0]
 	TITLES(url2)
 	return
 
 def EPISODES_OLD(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-EPISODES_OLD-1st')
 	html_blocks = re.findall('banner-right(.*?)classic-channel',html,re.DOTALL)
 	xbmcgui.Dialog().ok(url,'step 2')
 	block = html_blocks[0]
@@ -217,14 +217,14 @@ def PLAY(url):
 		selection = xbmcgui.Dialog().select('اختر الملف المناسب:', new_titleLIST)
 		if selection == -1 : return
 		url = new_linkLIST[selection]
-	#xbmcgui.Dialog().ok(url,'')
-	#PLAY_VIDEO(url,script_name)
-	import RESOLVERS
-	RESOLVERS.PLAY_LINK(url,script_name)
+	if 'youtu' in url:
+		import RESOLVERS
+		RESOLVERS.PLAY_LINK(url,script_name)
+	else: PLAY_VIDEO(url,script_name)
 	return ''
 
 def RAMADAN():
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','ALARAB-RAMADAN-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-RAMADAN-1st')
 	html_blocks=re.findall('id="content_sec"(.*?)id="left_content"',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)

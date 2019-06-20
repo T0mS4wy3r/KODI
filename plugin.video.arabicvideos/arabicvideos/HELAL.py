@@ -2,7 +2,7 @@
 from LIBRARY import *
 
 website0a = 'https://4helal.tv'
-script_name='4HELAL'
+script_name='HELAL'
 headers = { 'User-Agent' : '' }
 menu_name='_HEL_'
 
@@ -19,7 +19,7 @@ def MENU():
 	addDir(menu_name+'بحث في الموقع','',99)
 	addDir(menu_name+'المضاف حديثا','',94)
 	addDir(menu_name+'جديد الموقع',website0a,91)
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','4HELAL-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
 	html_blocks = re.findall('mainmenu(.*?)nav',html,re.DOTALL)
 	#upper menu
 	block1 = html_blocks[0]
@@ -45,10 +45,10 @@ def ITEMS(url):
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 't' : search }
 		data = urllib.urlencode(payload)
-		html = openURL_cached(REGULAR_CACHE,url,data,headers,'','4HELAL-SEARCH-1st')
+		html = openURL_cached(REGULAR_CACHE,url,data,headers,'','HELAL-ITEMS-1st')
 	else:
 		headers = { 'User-Agent' : '' }
-		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','4HELAL-ITEMS-1st')
+		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-ITEMS-2nd')
 	html_blocks = re.findall('movies-items(.*?)pagination',html,re.DOTALL)
 	if html_blocks: block = html_blocks[0]
 	else: block = ''
@@ -78,7 +78,7 @@ def ITEMS(url):
 	return
 
 def EPISODES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','4HELAL-ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-EPISODES-1st')
 	html_blocks = re.findall('episodes-panel(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	img = re.findall('image":.*?"(.*?)"',html,re.DOTALL)[0]
@@ -96,7 +96,7 @@ def EPISODES(url):
 def PLAY(url):
 	linkLIST,urlLIST = [],[]
 	adultLIST = ['R - للكبار فقط','PG-18','PG-16','TV-MA']
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','4HELAL-PLAY-1st')
+	html = openURL_cached(LONG_CACHE,url,'',headers,'','HELAL-PLAY-1st')
 	if any(value in html for value in adultLIST):
 		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
 		return
@@ -119,15 +119,15 @@ def PLAY(url):
 	items = re.findall('data-server="(.*?)"',block,re.DOTALL)
 	for link in items:
 		url2 = website0a + '/ajax.php?id='+id+'&ajax=true&server='+link
-		#link = openURL_cached(LONG_CACHE,url2,'',headers,'','4HELAL-PLAY-2nd')
+		#link = openURL_cached(LONG_CACHE,url2,'',headers,'','HELAL-PLAY-2nd')
 		#linkLIST.append(link)
 		urlLIST.append(url2)
-		html = openURL_cached(LONG_CACHE,url2,'',headers,'','4HELAL-PLAY-2nd')
+		html = openURL_cached(LONG_CACHE,url2,'',headers,'','HELAL-PLAY-3rd')
 		#xbmcgui.Dialog().ok(url2,html)
 	count = len(urlLIST)
 	import concurrent.futures
 	with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
-		responcesDICT = dict( (executor.submit(openURL, urlLIST[i], '', headers,'','4HELAL-PLAY-2nd'), i) for i in range(0,count) )
+		responcesDICT = dict( (executor.submit(openURL, urlLIST[i], '', headers,'','HELAL-PLAY-2nd'), i) for i in range(0,count) )
 	for response in concurrent.futures.as_completed(responcesDICT):
 		linkLIST.append( response.result() )
 	"""
@@ -136,7 +136,7 @@ def PLAY(url):
 	return
 
 def LATEST():
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','4HELAL-LATEST-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','HELAL-LATEST-1st')
 	html_blocks = re.findall('index-last-movie(.*?)index-slider-movie',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)" title="(.*?)"',block,re.DOTALL)

@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-
 #t1 =time.time()
-
 
 xbmc.log('['+addon_id+']:   Version:[ '+addonVersion+' ]   Kodi:[ '+kodiVersion+' ]', level=xbmc.LOGNOTICE)
 xbmc.log('['+addon_id+']:   Started menu item:  Label:[ '+menulabel+' ]   Path:[ '+menupath+' ]', level=xbmc.LOGNOTICE)
@@ -20,20 +18,12 @@ else: newdb = False
 conn = sqlite3.connect(dbfile)
 c = conn.cursor()
 if newdb:
-	sql1 = """CREATE TABLE htmlcache
-				(retrive_time date,expiry_time date,url text,data text,headers text,html blob);"""
-	sql2 = """CREATE TABLE resolvecache
-				(retrive_time date,expiry_time date,url text,titleLIST text,linkLIST text);"""
-	sql3 = """CREATE TABLE serverscache
-				(retrive_time date,expiry_time date,linkLIST text,serversLIST text,urlLIST text);"""
 	c.execute('PRAGMA auto_vacuum = FULL')
-	c.execute(sql1)
-	c.execute(sql2)
-	c.execute(sql3)
+	c.execute('CREATE TABLE htmlcache (expiry,url,data,headers,source,html)')
+	c.execute('CREATE TABLE serverscache (expiry,linkLIST,serversLIST,urlLIST)')
 else:
-	c.execute('DELETE FROM htmlcache WHERE expiry_time<'+str(now)+';')
-	c.execute('DELETE FROM resolvecache WHERE expiry_time<'+str(now)+';')
-	c.execute('DELETE FROM serverscache WHERE expiry_time<'+str(now)+';')
+	c.execute('DELETE FROM htmlcache WHERE expiry<'+str(now))
+	c.execute('DELETE FROM serverscache WHERE expiry<'+str(now))
 conn.commit()
 conn.close()
 

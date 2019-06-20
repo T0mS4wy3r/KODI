@@ -1,179 +1,8 @@
-﻿v1.0.0
-Initial Release
-
-
-v1.1.0
-Added Search to "iFilm"
-Updated "Al-Maaref"
-
-
-v1.2.0
-Added Recent Series to "iFilm"
-
-
-v1.3.0
-Added new website "Al-Fatimi" 
-
-
-v1.4.0
-Added Email function
-
-
-v1.5.0
-Added new website "Akoam"
-
-
-v1.6.0
-Added "Analytics"
-
-
-v1.7.0
-Changed "Analytics" Number
-
-
-v1.8.0
-Got new "Analytics" Number
-
-
-v1.9.0
-Added new website "HalaCima"
-
-
-v2.0.0
-Added new website "4Helal"
-
-
-v2.1.0
-Added Search to "ShoofMax"
-Changed "Analytics" Number
-
-
-v2.2.0
-Added new sections to "Alfatimi", 'Akoam', "HalaCima", & "4Helal"
-Added new resolvers
-Added DMCA message
-
-
-v2.3.0
-Added "Tv Channels"
-
-
-v2.4.0
-Added new website "SHAHID4U"
-
-
-v2.5.0
-Modified addon icon
-
-
-v2.6.0
-Added and used "script.module.urlresolver" to allow for more resolvers
-
-
-v2.7.0
-Changed users ID's
-Changed "Analytics" Number
-
-
-v2.8.0
-Changed users ID's
-Changed "Analytics" Number
-
-
-v2.9.0
-Skipped
-
-
-v3.0.0
-Back to previous (v2.7.0) "Analytics" Number
-
-
-v3.1.0	2018-10-25
-Added and used "script.module.futures" to allow for parallel web requests
-
-
-v3.2.0	2018-10-31
-Added new website "EGYBEST"
-
-
-v3.3.0	2018-11-05
-Changed users ID's
-Changed "Analytics" Number
-
-
-v3.4.0	2018-11-11
-Added new website "ALKAWTHAR"
-
-
-v3.5.0	2018-11-13
-Changed users ID's
-Changed "Analytics" Number
-
-
-v3.6.0	2018-11-15
-Changed users ID's
-Changed "Analytics" Number
-
-
-v3.7.0	2018-12-25
-Added HD & SD Tv sources
-
-
-v3.8.0	2019-01-08
-Added NT & PL Tv sources
-
-
-v3.9.0	2019-03-31
-Added initials to all menus
-
-
-v4.0.0	2019-04-21
-Added Global Search
-
-
-v4.1.0	2019-04-22
-Changed main menu
-
-
-v4.2.0	2019-04-25
-Added last request cache for Akoam, Helal, HalaCima, and Shahid4u
-Added new "TA" tv source
-
-
-v4.3.0	2019-04-28
-Rewrote "Shahid4U" to browse their new website
-Added new menu item for special tv cahnnels
-Added new "YU" tv source
-
-
-v4.4.0	2019-05-01
-Added new website "Youtube" using youtube plugin
-Added new "WS" tv source
-
-
-v4.5.0	2019-05-04
-Created full "Youtube" website browser
-
-
-v4.6.0	2019-05-12
-Added addon version check
-Fixed akoam new website name
-
-
-v4.7.0	2019-05-14
-Added random videos
-
-
-v4.8.0	2019-05-19
-Added browsing of new website "MOVIZLAND"
-
-
-v4.9.0	2019-05-25
-Major changes to "Resolvers"
-
-
-v5.0.0	2019-05-27
-Added "Problem Reporting"
+﻿
+v5.2.0	2019-06-17
+Added database webcache to improve performance
+Optimized imports to improve performance
+Added KProxy to bypass https
 
 
 v5.1.0	2019-06-04
@@ -182,8 +11,180 @@ Added access and playback log
 Added full youtube resolver with mpd support
 
 
-v5.2.0	2019-06-17
-Added database webcache to improve performance
-Optimized imports to improve performance
-Added KProxy to bypass https
+v5.0.0	2019-05-27
+Added "Problem Reporting"
+
+
+v4.9.0	2019-05-25
+Major changes to "Resolvers"
+
+
+v4.8.0	2019-05-19
+Added browsing of new website "MOVIZLAND"
+
+
+v4.7.0	2019-05-14
+Added random videos
+
+
+v4.6.0	2019-05-12
+Added addon version check
+Fixed akoam new website name
+
+
+v4.5.0	2019-05-04
+Created full "Youtube" website browser
+
+
+v4.4.0	2019-05-01
+Added new website "Youtube" using youtube plugin
+Added new "WS" tv source
+
+
+v4.3.0	2019-04-28
+Rewrote "Shahid4U" to browse their new website
+Added new menu item for special tv cahnnels
+Added new "YU" tv source
+
+
+v4.2.0	2019-04-25
+Added last request cache for Akoam, Helal, HalaCima, and Shahid4u
+Added new "TA" tv source
+
+
+v4.1.0	2019-04-22
+Changed main menu
+
+
+v4.0.0	2019-04-21
+Added Global Search
+
+
+v3.9.0	2019-03-31
+Added initials to all menus
+
+
+v3.8.0	2019-01-08
+Added NT & PL Tv sources
+
+
+v3.7.0	2018-12-25
+Added HD & SD Tv sources
+
+
+v3.6.0	2018-11-15
+Changed users ID's
+Changed "Analytics" Number
+
+
+v3.5.0	2018-11-13
+Changed users ID's
+Changed "Analytics" Number
+
+
+v3.4.0	2018-11-11
+Added new website "ALKAWTHAR"
+
+
+v3.3.0	2018-11-05
+Changed users ID's
+Changed "Analytics" Number
+
+
+v3.2.0	2018-10-31
+Added new website "EGYBEST"
+
+
+v3.1.0	2018-10-25
+Added and used "script.module.futures" to allow for parallel web requests
+
+
+v3.0.0
+Back to previous (v2.7.0) "Analytics" Number
+
+
+v2.9.0
+Skipped
+
+
+v2.8.0
+Changed users ID's
+Changed "Analytics" Number
+
+
+v2.7.0
+Changed users ID's
+Changed "Analytics" Number
+
+
+v2.6.0
+Added and used "script.module.urlresolver" to allow for more resolvers
+
+
+v2.5.0
+Modified addon icon
+
+
+v2.4.0
+Added new website "SHAHID4U"
+
+
+v2.3.0
+Added "Tv Channels"
+
+
+v2.2.0
+Added new sections to "Alfatimi", 'Akoam', "HalaCima", & "4Helal"
+Added new resolvers
+Added DMCA message
+
+
+v2.1.0
+Added Search to "ShoofMax"
+Changed "Analytics" Number
+
+
+v2.0.0
+Added new website "4Helal"
+
+
+v1.9.0
+Added new website "HalaCima"
+
+
+v1.8.0
+Got new "Analytics" Number
+
+
+v1.7.0
+Changed "Analytics" Number
+
+
+v1.6.0
+Added "Analytics"
+
+
+v1.5.0
+Added new website "Akoam"
+
+
+v1.4.0
+Added Email function
+
+
+v1.3.0
+Added new website "Al-Fatimi" 
+
+
+v1.2.0
+Added Recent Series to "iFilm"
+
+
+v1.1.0
+Added Search to "iFilm"
+Updated "Al-Maaref"
+
+
+v1.0.0
+Initial Release
 

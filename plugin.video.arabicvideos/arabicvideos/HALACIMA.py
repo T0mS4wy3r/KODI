@@ -21,7 +21,7 @@ def MENU():
 	addDir(menu_name+'جديد المسلسلات','',84,'','0')
 	addDir(menu_name+'افلام ومسلسلات مميزة','',85,'','0')
 	addDir(menu_name+'الاكثر مشاهدة','',86,'','0')
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
 	block = html_blocks[0]
@@ -117,8 +117,8 @@ def PLAY(url):
 	def linkFUNC():
 		html = openURL_cached(LONG_CACHE,url2,data,headers,'','HALACIMA-PLAY-3rd')
 		html = html.replace('SRC=','src=')
-		link = re.findall('src=\'(.*?)\'',html,re.DOTALL)
-		#if 'http' not in link: link = 'http:' + link
+		link = re.findall("src='(.*?)'",html,re.DOTALL)
+		if 'http' not in link[0]: link[0] = 'http:' + link[0]
 		return link[0]
 	for server in items:
 		payload = { 'Ajax' : '1' , 'art' : artID , 'server' : server }

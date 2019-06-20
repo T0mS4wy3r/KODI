@@ -19,7 +19,7 @@ def MAIN(mode,url,page,text):
 def MAIN_MENU():
 	addDir(menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
 	addDir(menu_name+'بحث في الموقع','',129)
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','EGYBEST-MAIN_MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBEST-MAIN_MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
 	html_blocks=re.findall('id="menu"(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -44,7 +44,7 @@ def FILTERS_MENU(link):
 		addDir(menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'','1')
 		addDir(menu_name+'[[   ' + filter + '   ]]',link,122,'','1')
 		addDir(menu_name+'===========================',link,9999)
-	html = openURL_cached(REGULAR_CACHE,link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
+	html = openURL_cached(LONG_CACHE,link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
 	html_blocks=re.findall('mainLoad(.*?)</div></div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]

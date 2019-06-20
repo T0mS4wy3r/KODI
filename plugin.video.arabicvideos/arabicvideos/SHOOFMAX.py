@@ -102,7 +102,7 @@ def EPISODES(url):
 	img = parts[3]
 	url = url.split('?')[0]
 	if episodes_count=='0':
-		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-SEARCH-1st')
+		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-EPISODES-1st')
 		html_blocks = re.findall('<select(.*?)</select>',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('option value="(.*?)"',block,re.DOTALL)
@@ -175,7 +175,7 @@ def FILTERS(url,type):
 	if 'series' in url: url2 = website0a + '/genre/مسلسل'
 	else: url2 = website0a + '/genre/فيلم'
 	url2 = quote(url2)
-	html = openURL_cached(REGULAR_CACHE,url2,'','','','SHOOFMAX-FILTERS-1st')
+	html = openURL_cached(LONG_CACHE,url2,'','','','SHOOFMAX-FILTERS-1st')
 	#xbmcgui.Dialog().ok(url,html)
 	if type==1: html_blocks = re.findall('subgenre(.*?)div',html,re.DOTALL)
 	elif type==2: html_blocks = re.findall('country(.*?)div',html,re.DOTALL)

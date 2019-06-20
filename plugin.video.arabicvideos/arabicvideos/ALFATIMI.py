@@ -94,7 +94,7 @@ def MOSTS(category):
 	url = 'http://alfatimi.tv/ajax.php'
 	headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 	data = urllib.urlencode(payload)
-	html = openURL_cached(NO_CACHE,url,data,headers,'','ALFATIMI-GROUPS-1st')
+	html = openURL_cached(NO_CACHE,url,data,headers,'','ALFATIMI-MOSTS-1st')
 	items = re.findall('href="(.*?)".*?title="(.*?)".*?src="(.*?)".*?href',html,re.DOTALL)
 	for link,title,img in items:
 		title = title.strip(' ')

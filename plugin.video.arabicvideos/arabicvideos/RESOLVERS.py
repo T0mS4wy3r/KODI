@@ -2,7 +2,7 @@
 from LIBRARY import *
 
 script_name='RESOLVERS'
-doNOTresolveMElist = [ 'mystream','vimple','vidbom' ]
+doNOTresolveMElist = [ 'mystream','vimple','vidbom','gounlimited' ]
 
 def MAIN(mode,url,text):
 	if mode==160: PLAY_LINK(url,text)
@@ -53,33 +53,33 @@ def PLAY(linkLIST,script_name):
 	#xbmcplugin.endOfDirectory(addon_handle)
 
 def PLAY_LINK(url,script_name):
-	url = url.strip(' ')
-	videofiletype = re.findall('(.mp4|.m3u|.m3u8|.mpd|.mkv)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
-	if videofiletype: result = PLAY_VIDEO(url,script_name,'yes')
+	url = url.strip(' ').strip('&').strip('?').strip('/')
+	titleLIST,linkLIST = RESOLVE(url)
+	if linkLIST:
+		while True:
+			if len(linkLIST)==1: selection = 0
+			else: selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
+			if selection == -1: result = 'canceled2'
+			else:
+				videoURL = linkLIST[selection]
+				#xbmcgui.Dialog().ok('',str(videoURL))
+				if 'moshahda.' in videoURL and 'download_orig' in videoURL:
+					videoURL1,videoURL2 = MOVIZLAND(videoURL)
+					if videoURL2: videoURL = videoURL2[0]
+					else: videoURL = ''
+				if videoURL=='': result = 'unresolved'
+				else: result = PLAY_VIDEO(videoURL,script_name,'yes')
+			if result in ['playing','canceled2'] or len(linkLIST)==1: break
+			elif result in ['failed','timeout','tried']: break
+			else: xbmcgui.Dialog().ok('الملف لم يعمل','جرب ملف غيره')
+		if 'youtube.mpd' in linkLIST[0]:
+			#xbmcgui.Dialog().ok('click ok to shutdown the http server','')
+			#html = openURL_cached(NO_CACHE,'http://localhost:64000/shutdown','','','','RESOLVERS-PLAY_LINK-1st')
+			titleLIST[0].shutdown()
 	else:
-		titleLIST,linkLIST = RESOLVE_cached(url)
-		#xbmcgui.Dialog().ok(url,str(linkLIST))
-		if not linkLIST: result = 'unresolved'
-		else:
-			while True:
-				if len(linkLIST)==1: selection = 0
-				else: selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
-				if selection == -1: result = 'canceled2'
-				else:
-					videoURL = linkLIST[selection]
-					if 'moshahda.' in videoURL and 'download_orig' in videoURL:
-						videoURL1,videoURL2 = MOVIZLAND(videoURL)
-						if videoURL2: videoURL = videoURL2[0]
-						else: videoURL = ''
-					if videoURL=='': result = 'unresolved'
-					else: result = PLAY_VIDEO(videoURL,script_name,'yes')
-				if result in ['playing','canceled2'] or len(linkLIST)==1: break
-				elif result in ['failed','timeout','tried']: break
-				else: xbmcgui.Dialog().ok('الملف لم يعمل','جرب ملف غيره')
-			if 'youtube.mpd' in linkLIST[0]:
-				#xbmcgui.Dialog().ok('click ok to take down the http server','')
-				#html = openURL_cached(NO_CACHE,'http://localhost:64000/shutdown','','','','RESOLVERS-PLAY_LINK-1st')
-				titleLIST[0].shutdown()
+		result = 'unresolved'
+		videofiletype = re.findall('(.mp4|.m3u|.m3u8|.mpd|.mkv)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
+		if videofiletype: result = PLAY_VIDEO(url,script_name,'yes')
 	return result
 	#title = xbmc.getInfoLabel( "ListItem.Label" )
 	#if 'سيرفر عام مجهول' in title:
@@ -87,6 +87,7 @@ def PLAY_LINK(url,script_name):
 	#	PROBLEMS.MAIN(156)
 	#	return ''
 
+"""
 def CHECK(url):
 	result = 'unknown'
 	if   '1fichier'		in url: result = 'known'
@@ -134,70 +135,71 @@ def CHECK(url):
 		link = 'http://emadmahdi.pythonanywhere.com/check?url=' + url
 		result = openURL_cached(SHORT_CACHE,link,'','','','RESOLVERS-CHECK-1st')
 	return result
+"""
 
 def RESOLVABLE(url):
-	url2 = url.lower()
-	result1,result2,result3 = '','',''
-	if   any(value in url2 for value in doNOTresolveMElist): return ''
-	elif 'go.akoam.net'	in url2 and 'name=' not in url2: result1 = 'akoam'
-	elif 'go.akoam.net'	in url2 and 'name=' in url2: result3 = url2.split('name=')[1]
-	elif 'shahid4u.net'	in url2 and 'name=' in url2: result3 = url2.split('name=')[1]
-	elif 'e5tsar'		in url2 and 'name=' in url2: result3 = url2.split('name=')[1]
-	elif '://moshahda.'	in url2: result1 = 'movizland'
-	elif 'arabloads'	in url2: result1 = 'arabloads'
-	elif 'archive'		in url2: result1 = 'archive'
-	elif 'catch.is'	 	in url2: result1 = 'catch'
-	#elif 'estream'	 	in url2: result1 = 'estream'
-	elif 'filerio'		in url2: result1 = 'filerio'
-	elif 'gounlimited'	in url2: result1 = 'gounlimited'
-	elif 'govid'		in url2: result1 = 'govid'
-	#elif 'intoupload' 	in url2: result1 = 'intoupload'
-	elif 'liivideo' 	in url2: result1 = 'liivideo'
-	elif 'mp4upload'	in url2: result1 = 'mp4upload'
-	elif 'publicvideohost' in url2: result1 = 'publicvideohost'
-	elif 'rapidvideo' 	in url2: result1 = 'rapidvideo'
-	elif 'thevideo'		in url2: result1 = 'thevideo'
-	elif 'top4top'		in url2: result1 = 'top4top'
-	elif 'upbom' 		in url2: result1 = 'upbom'
-	elif 'uppom' 		in url2: result1 = 'uppom'
-	elif 'uptobox' 		in url2: result1 = 'uptobox'
-	elif 'uptostream'	in url2: result1 = 'uptostream'
-	elif 'uqload' 		in url2: result1 = 'uqload'
-	elif 'vcstream' 	in url2: result1 = 'vcstream'
-	#elif 'vev.io'	 	in url2: result1 = 'vev'
-	elif 'vidbob'		in url2: result1 = 'vidbob'
-	#elif 'playr.4helal'	in url2: result1 = 'helal'
-	#elif 'vidbom'		in url2: result1 = 'vidbom'
-	elif 'vidhd' 		in url2: result1 = 'vidhd'
-	elif 'vidoza' 		in url2: result1 = 'vidoza'
-	#elif 'vidshare' 	in url2: result1 = 'vidshare'
-	elif 'watchvideo' 	in url2: result1 = 'watchvideo'
-	elif 'wintv.live'	in url2: result1 = 'wintv.live'
-	elif 'youtu'	 	in url2: result1 = 'youtube'
-	elif 'zippyshare'	in url2: result1 = 'zippyshare'
+	url2 = url.lower().split('name=',1)[0].strip('?').strip('/').strip('&')
+	server = url2.split('/')[2]
+	private,known,external,named = '','','',''
+	# private	: سيرفر خاص
+	# known		: سيرفر عام معروف
+	# external	: سيرفر عام خارجي
+	# named		: سيرفر عام محدد
+	if   any(value in server for value in doNOTresolveMElist): pass
+	elif 'akoam'		in server and 'name=' not in url: private = 'akoam'
+	elif 'moshahda'		in server:	private = 'Movizland '+url.split('name=')[1]
+	elif 'name=' 		in url:		named = url.split('name=')[1]
+	elif 'arabloads'	in server:	known = 'arabloads'
+	elif 'archive'		in server:	known = 'archive'
+	elif 'catch.is'	 	in server:	known = 'catch'
+	#elif 'estream'	 	in server:	known = 'estream'
+	elif 'filerio'		in server:	known = 'filerio'
+	#elif 'gounlimited'	in server:	known = 'gounlimited'
+	elif 'govid'		in server:	known = 'govid'
+	#elif 'intoupload' 	in server:	known = 'intoupload'
+	elif 'liivideo' 	in server:	known = 'liivideo'
+	elif 'mp4upload'	in server:	known = 'mp4upload'
+	elif 'publicvideohost' in server:	known = 'publicvideohost'
+	elif 'rapidvideo' 	in server:	known = 'rapidvideo'
+	elif 'thevideo'		in server:	known = 'thevideo'
+	elif 'top4top'		in server:	known = 'top4top'
+	elif 'upbom' 		in server:	known = 'upbom'
+	elif 'uppom' 		in server:	known = 'uppom'
+	elif 'uptobox' 		in server:	known = 'uptobox'
+	elif 'uptostream'	in server:	known = 'uptostream'
+	elif 'uqload' 		in server:	known = 'uqload'
+	elif 'vcstream' 	in server:	known = 'vcstream'
+	#elif 'vev.io'	 	in server:	known = 'vev'
+	elif 'vidbob'		in server:	known = 'vidbob'
+	#elif 'playr.4helal'in server:	private = 'helal'
+	#elif 'vidbom'		in server:	known = 'vidbom'
+	#elif 'vidhd' 		in server:	known = 'vidhd'
+	elif 'vidoza' 		in server:	known = 'vidoza'
+	#elif 'vidshare' 	in server:	known = 'vidshare'
+	elif 'watchvideo' 	in server:	known = 'watchvideo'
+	elif 'wintv.live'	in server:	known = 'wintv.live'
+	elif 'youtu'	 	in server:	private = 'youtube'
+	elif 'zippyshare'	in server:	known = 'zippyshare'
 	else:
 		import urlresolver
-		resolvable = urlresolver.HostedMediaFile(url).valid_url()
-		if resolvable:
-			result2 = url.split('//')[1].split('/')[0]
-	#xbmcgui.Dialog().ok(str(url),result1)
-	if result1 in ['akoam','helal','moshahda']: result = ' سيرفر خاص ' + result1
-	elif result1=='movizland': result = ' سيرفرات خاصة ' + result1
-	elif result1!='': result = ' سيرفر عام معروف ' + result1
-	elif result2!='': result = 'سيرفر عام خارجي ' + result2
-	elif result3!='':
-		parts = result3.split('__')
-		name = parts[0]
-		if len(parts)==1:
-			result = 'سيرفر عام ' + name
+		resolvable = urlresolver.HostedMediaFile(url2).valid_url()
+		if resolvable: external = url2.split('//')[1].split('/')[0]
+	if private!='': result = ' سيرفر خاص ' + private	
+	elif known!='': result = ' سيرفر عام معروف ' + known
+	elif external!='': result = 'سيرفر عام خارجي ' + external
+	elif named!='':
+		if '__' not in named: result = 'سيرفر عام محدد ' + named
 		else:
+			parts = named.split('__')
+			name = parts[0]
 			type = parts[1]
 			if type=='download': result = 'سيرفر تحميل عام ' + name
 			elif type=='watch': result = 'سيرفر  مشاهدة عام ' + name
 			else: result = 'سيرفر  مشاهدة وتحميل عام  ' + name
-	else: result = ''
+	else: result = 'سيرفر مجهول ' + server
 	return result
 
+"""
 def RESOLVE_cached(url):
 	server = url.split('/')[2]
 	if 'youtu' in server or 'upto' in server:
@@ -216,61 +218,61 @@ def RESOLVE_cached(url):
 		else:
 			#message = 'not found in cache'
 			titleLIST,linkLIST = RESOLVE(url)
-			t = (now,now+cacheperiod,url,str(titleLIST),str(linkLIST))
-			c.execute("INSERT INTO resolvecache VALUES (?,?,?,?,?)",t)
+			t = (now+cacheperiod,url,str(titleLIST),str(linkLIST))
+			c.execute("INSERT INTO resolvecache VALUES (?,?,?,?)",t)
 			conn.commit()
 		conn.close()
 		#t2 = time.time()
 		#xbmcgui.Dialog().notification(message,str(int(t2-t1))+' ms')
 	return titleLIST,linkLIST
+"""
 
 def RESOLVE(url):
-	#url = 'https://govid.co/video/play/AAVENd'
+	#url = 'https://gounlimited.to/embed-wqsi313vbpua.html'
 	xbmc.log('['+addon_id+']:   Started resolving:   [ '+url+' ]', level=xbmc.LOGNOTICE)
-	url2 = url.lower()
+	url2 = url.split('name=',1)[0].strip('?').strip('/').strip('&')
+	server = url2.lower().split('/')[2]
+	#if 'gounlimited' in server: url2 = url2.replace('https:','http:')
+	#xbmcgui.Dialog().ok(url2,'')
 	titleLIST,linkLIST = [],[]
-	if any(value in url2 for value in doNOTresolveMElist): titleLIST,linkLIST = [],[]
-	elif 'shahid4u.net'	in url2 and 'name=' in url2: titleLIST,linkLIST = SHAHID4U(url)
-	elif 'e5tsar'		in url2 and 'name=' in url2: titleLIST,linkLIST = E5TSAR(url)
-	elif '://moshahda.'	in url2: titleLIST,linkLIST = MOVIZLAND(url)
-	elif 'go.akoam.net'	in url2: titleLIST,linkLIST = AKOAM(url)
-	elif 'arabloads'	in url2: titleLIST,linkLIST = ARABLOADS(url)
-	elif 'archive'		in url2: titleLIST,linkLIST = ARCHIVE(url)
-	elif 'catch.is'	 	in url2: titleLIST,linkLIST = CATCHIS(url)
-	#elif 'estream'	 	in url2: titleLIST,linkLIST = ESTREAM(url)
-	elif 'filerio'		in url2: titleLIST,linkLIST = FILERIO(url)
-	elif 'gounlimited'	in url2: titleLIST,linkLIST = GOUNLIMITED(url)
-	elif 'govid'		in url2: titleLIST,linkLIST = GOVID(url)
-	#elif 'intoupload' 	in url2: titleLIST,linkLIST = INTOUPLOAD(url)
-	elif 'liivideo' 	in url2: titleLIST,linkLIST = LIIVIDEO(url)
-	elif 'mp4upload'	in url2: titleLIST,linkLIST = MP4UPLOAD(url)
-	elif 'publicvideohost' in url2: titleLIST,linkLIST = PUBLICVIDEOHOST(url)
-	elif 'rapidvideo' 	in url2: titleLIST,linkLIST = RAPIDVIDEO(url)
-	elif 'thevideo'		in url2: titleLIST,linkLIST = THEVIDEO(url)
-	elif 'top4top'		in url2: titleLIST,linkLIST = TOP4TOP(url)
-	elif 'upbom' 		in url2: titleLIST,linkLIST = UPBOM(url)
-	elif 'uppom' 		in url2: titleLIST,linkLIST = UPBOM(url)
-	elif 'uptobox' 		in url2: titleLIST,linkLIST = UPTO(url)
-	elif 'uptostream'	in url2: titleLIST,linkLIST = UPTO(url)
-	elif 'uqload' 		in url2: titleLIST,linkLIST = UQLOAD(url)
-	elif 'vcstream' 	in url2: titleLIST,linkLIST = VCSTREAM(url)
-	#elif 'vev.io'	 	in url2: titleLIST,linkLIST = VEVIO(url)
-	#elif 'playr.4helal'	in url2: titleLIST,linkLIST = HELAL(url)
-	elif 'vidbob'		in url2: titleLIST,linkLIST = VIDBOB(url)
-	#elif 'vidbom'		in url2: titleLIST,linkLIST = VIDBOM(url)
-	elif 'vidhd' 		in url2: titleLIST,linkLIST = VIDHD(url)
-	elif 'vidoza' 		in url2: titleLIST,linkLIST = VIDOZA(url)
-	#elif 'vidshare' 	in url2: titleLIST,linkLIST = VIDSHARE(url)
-	elif 'watchvideo' 	in url2: titleLIST,linkLIST = WATCHVIDEO(url)
-	elif 'wintv.live'	in url2: titleLIST,linkLIST = WINTVLIVE(url)
-	elif 'youtu' in url2 or 'y2u.be' in url2: titleLIST,linkLIST = YOUTUBE(url)
-	elif 'zippyshare'	in url2: titleLIST,linkLIST = ZIPPYSHARE(url)
-	else:
-		import urlresolver
-		resolvable = urlresolver.HostedMediaFile(url).valid_url()
-		#xbmcgui.Dialog().ok(url,str(resolvable))
-		if resolvable:
-			titleLIST,linkLIST = URLRESOLVER(url)
+	if any(value in server for value in doNOTresolveMElist): titleLIST,linkLIST = [],[]
+	elif 'moshahda'		in server: titleLIST,linkLIST = MOVIZLAND(url)
+	elif 'akoam'		in server: titleLIST,linkLIST = AKOAM(url)
+	elif 'shahid4u'		in server: titleLIST,linkLIST = SHAHID4U(url2)
+	elif 'e5tsar'		in server: titleLIST,linkLIST = E5TSAR(url2)
+	elif 'arabloads'	in server: titleLIST,linkLIST = ARABLOADS(url2)
+	elif 'archive'		in server: titleLIST,linkLIST = ARCHIVE(url2)
+	elif 'catch.is'	 	in server: titleLIST,linkLIST = CATCHIS(url2)
+	#elif 'estream'	 	in server: titleLIST,linkLIST = ESTREAM(url2)
+	elif 'filerio'		in server: titleLIST,linkLIST = FILERIO(url2)
+	#elif 'gounlimited'	in server: titleLIST,linkLIST = GOUNLIMITED(url2)
+	elif 'govid'		in server: titleLIST,linkLIST = GOVID(url2)
+	#elif 'intoupload' 	in server: titleLIST,linkLIST = INTOUPLOAD(url2)
+	elif 'liivideo' 	in server: titleLIST,linkLIST = LIIVIDEO(url2)
+	elif 'mp4upload'	in server: titleLIST,linkLIST = MP4UPLOAD(url2)
+	elif 'publicvideohost' in server: titleLIST,linkLIST = PUBLICVIDEOHOST(url2)
+	elif 'rapidvideo' 	in server: titleLIST,linkLIST = RAPIDVIDEO(url2)
+	elif 'thevideo'		in server: titleLIST,linkLIST = THEVIDEO(url2)
+	elif 'top4top'		in server: titleLIST,linkLIST = TOP4TOP(url2)
+	elif 'upbom' 		in server: titleLIST,linkLIST = UPBOM(url2)
+	elif 'uppom' 		in server: titleLIST,linkLIST = UPBOM(url2)
+	elif 'uptobox' 		in server: titleLIST,linkLIST = UPTO(url2)
+	elif 'uptostream'	in server: titleLIST,linkLIST = UPTO(url2)
+	elif 'uqload' 		in server: titleLIST,linkLIST = UQLOAD(url2)
+	elif 'vcstream' 	in server: titleLIST,linkLIST = VCSTREAM(url2)
+	#elif 'vev.io'	 	in server: titleLIST,linkLIST = VEVIO(url2)
+	#elif 'playr.4helal'	in server: titleLIST,linkLIST = HELAL(url2)
+	elif 'vidbob'		in server: titleLIST,linkLIST = VIDBOB(url2)
+	#elif 'vidbom'		in server: titleLIST,linkLIST = VIDBOM(url2)
+	#elif 'vidhd' 		in server: titleLIST,linkLIST = VIDHD(url2)
+	elif 'vidoza' 		in server: titleLIST,linkLIST = VIDOZA(url2)
+	#elif 'vidshare' 	in server: titleLIST,linkLIST = VIDSHARE(url2)
+	elif 'watchvideo' 	in server: titleLIST,linkLIST = WATCHVIDEO(url2)
+	elif 'wintv.live'	in server: titleLIST,linkLIST = WINTVLIVE(url2)
+	elif 'youtu'		in server: titleLIST,linkLIST = YOUTUBE(url2)
+	elif 'y2u.be'		in server: titleLIST,linkLIST = YOUTUBE(url2)
+	elif 'zippyshare'	in server: titleLIST,linkLIST = ZIPPYSHARE(url2)
+	else: titleLIST,linkLIST = URLRESOLVER(url2)
 	if len(linkLIST)==0: xbmc.log('['+addon_id+']:   Resolving Failed', level=xbmc.LOGNOTICE)
 	else: xbmc.log('['+addon_id+']:   Resolving succeded:   [ '+str(linkLIST)+' ]', level=xbmc.LOGNOTICE)
 	return titleLIST,linkLIST
@@ -289,8 +291,8 @@ def SERVERS_cached(linkLIST,script_name=''):
 	else:
 		#message = 'not found in cache'
 		serversLIST,urlLIST = SERVERS(linkLIST)
-		t = (now,now+cacheperiod,str(linkLIST),str(serversLIST),str(urlLIST))
-		c.execute("INSERT INTO serverscache VALUES (?,?,?,?,?)",t)
+		t = (now+cacheperiod,str(linkLIST),str(serversLIST),str(urlLIST))
+		c.execute("INSERT INTO serverscache VALUES (?,?,?,?)",t)
 		conn.commit()
 	conn.close()
 	#t2 = time.time()
@@ -299,30 +301,20 @@ def SERVERS_cached(linkLIST,script_name=''):
 
 def SERVERS(linkLIST,script_name=''):
 	serversLIST,urlLIST,unknownLIST,serversDICT = [],[],[],[]
-	message = '\\n'
 	linkLIST = list(set(linkLIST))
 	#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', NEWlinkLIST)
 	#if selection == -1 : return ''
 	for link in linkLIST:
 		if link=='': continue
-		link = link.rstrip('/')
-		#xbmc.log('['+addon_id+']:  '+link, level=xbmc.LOGNOTICE)
 		serverNAME = RESOLVABLE(link)
-		if serverNAME=='':
-			if 'name=' in link:
-				serverNAME = 'سيرفر عام ' + link.split('name=')[1].lower().split('__')[0]
-				serversDICT.append( [serverNAME,link] )
-			else:
-				serverNAME = 'سيرفر عام مجهول ' + link.split('//')[1].split('/')[0].lower()
-				serversDICT.append( [serverNAME,link] )
-		else:
-			serversDICT.append( [serverNAME,link] )		
+		serversDICT.append( [serverNAME,link] )
 	sortedDICT = sorted(serversDICT, reverse=False, key=lambda key: key[0])
-	for i in range(0,len(sortedDICT)):
-		serversLIST.append(sortedDICT[i][0])
-		urlLIST.append(sortedDICT[i][1])
+	for server,link in sortedDICT:
+		serversLIST.append(server)
+		urlLIST.append(link)
 	#lines = len(unknownLIST)
 	#if lines>0:
+	#	message = '\\n'
 	#	for link in unknownLIST:
 	#		message += link + '\\n'
 	#	subject = 'Unknown Resolvers = ' + str(lines)
@@ -330,11 +322,12 @@ def SERVERS(linkLIST,script_name=''):
 	return serversLIST,urlLIST
 
 def	URLRESOLVER(url):
-	try:
-		import urlresolver
-		link = urlresolver.HostedMediaFile(url).resolve()
-		return [link],[link]
-	except: return [],[]
+	import urlresolver
+	# urlresolver might fail either with an error or returns value False
+	try: link = urlresolver.HostedMediaFile(url).resolve()
+	except: link = False
+	if link==False: return [],[]
+	return [link],[link]
 
 def MOVIZLAND(link):
 	# http://moshahda.online/hj4ihfwvu3rl.html?name=Main
@@ -353,6 +346,7 @@ def MOVIZLAND(link):
 			if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
 			return [],[]
 	else:
+		#xbmcgui.Dialog().ok(link,'')
 		parts = link.split('?')
 		url = parts[0]
 		name2 = parts[1].replace('name=','').lower()
@@ -433,25 +427,25 @@ def E5TSAR(url):
 	parts = url.split('?')
 	url2 = parts[0]
 	headers = { 'User-Agent' : '' }
-	html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','RESOLVERS-E5TSAR-1st')
+	html = openURL_cached(SHORT_CACHE,url2,'',headers,'','RESOLVERS-E5TSAR-1st')
 	items = re.findall('Please wait.*?href=\'(.*?)\'',html,re.DOTALL)
 	url = items[0]
-	titleLIST,linkLIST = RESOLVE_cached(url)
+	titleLIST,linkLIST = RESOLVE(url)
 	#xbmcgui.Dialog().ok(items[0],html)
 	return titleLIST,linkLIST
 
 def SHAHID4U(link):
-	# https://tv.shahid4u.net/?postid=126981&serverid=5&name=Streamango
-	parts = re.findall('postid=(.*?)&serverid=(.*?)&name=',link,re.DOTALL|re.IGNORECASE)
+	# https://tv.shahid4u.net/?postid=126981&serverid=5
+	parts = re.findall('postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL|re.IGNORECASE)
 	#xbmcgui.Dialog().ok(link,str(parts))
 	postid = parts[0][0]
 	serverid = parts[0][1]
 	url = 'https://on.shahid4u.net/ajaxCenter?_action=getserver&_post_id='+postid+'&serverid='+serverid
 	headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','RESOLVERS-SHAHID4U-1st')
+	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-SHAHID4U-1st')
 	url2 = html
 	#xbmcgui.Dialog().ok(url2,'')
-	titleLIST,linkLIST = RESOLVE_cached(url2)
+	titleLIST,linkLIST = RESOLVE(url2)
 	#try: url3 = url2[0]
 	#except: url3 = ''
 	#xbmcgui.Dialog().ok(str(url3),str(html))
@@ -487,7 +481,8 @@ def AKOAM(link):
 		url2 = items[0].replace('\/','/')
 		url2 = url2.rstrip('/')
 		if 'http' not in url2: url2 = 'http:' + url2
-		if 'name=' in link: titleLIST,linkLIST = RESOLVE_cached(url2)
+		#xbmcgui.Dialog().ok(link,url2)
+		if 'name=' in link: titleLIST,linkLIST = RESOLVE(url2)
 		else: titleLIST,linkLIST = ['ملف التحميل'],[url2]
 		"""
 		splits = url.split('/')
@@ -529,7 +524,8 @@ def UQLOAD(url):
 def VCSTREAM(url):
 	# https://vcstream.to/embed/5c83f14297d62
 	url = url.strip('/')
-	id = url.split('/')[-1]
+	if '/embed/' in url: id = url.split('/')[4]
+	else: id = url.split('/')[-1]
 	url = 'https://vcstream.to/player?fid=' + id
 	headers = { 'User-Agent' : '' }
 	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-VCSTREAM-1st')
@@ -547,11 +543,11 @@ def VIDOZA(url):
 	url = url.replace('embed-','')
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-VIDOZA-1st')
 	items = re.findall('src: "(.*?)".*?label:"(.*?)", res:"(.*?)"',html,re.DOTALL)
-	titles,urls = [],[]
+	titleLIST,linkLIST = [],[]
 	for link,label,res in items:
-		titles.append(label+' '+res)
-		urls.append(link)
-	return titles,urls
+		titleLIST.append(label+' '+res)
+		linkLIST.append(link)
+	return titleLIST,linkLIST
 
 def WATCHVIDEO(url):
 	# https://watchvideo.us/embed-rpvwb9ns8i73.html
@@ -559,21 +555,22 @@ def WATCHVIDEO(url):
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-WATCHVIDEO-1st')
 	items = re.findall("download_video\('(.*?)','(.*?)','(.*?)'\)\">(.*?)</a>.*?<td>(.*?),.*?</td>",html,re.DOTALL)
 	items = set(items)
-	titles,urls = [],[]
+	titleLIST,linkLIST = [],[]
 	for id,mode,hash,label,res in items:
 		url = 'https://watchvideo.us/dl?op=download_orig&id='+id+'&mode='+mode+'&hash='+hash
 		html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-WATCHVIDEO-2nd')
 		items = re.findall('direct link.*?href="(.*?)"',html,re.DOTALL)
 		for link in items:
-			titles.append(label+' '+res)
-			urls.append(link)
-	return titles,urls
+			titleLIST.append(label+' '+res)
+			linkLIST.append(link)
+	return titleLIST,linkLIST
 
 def UPBOM(url):
 	# http://upbom.live/hm9opje7okqm/TGQSDA001.The.Vanishing.2018.1080p.WEB-DL.Cima4U.mp4.html
 	url = url.replace('upbom.live','uppom.live')
-	url = url.strip('/')
-	id = url.split('/')[-2]
+	url = url.split('/')
+	id = url[3]
+	url = '/'.join(url[0:4])
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 	payload = { 'id' : id  , 'op' : 'download2' , 'method_free':'Free+Download+%3E%3E' }
 	data = urllib.urlencode(payload)
@@ -591,13 +588,13 @@ def LIIVIDEO(url):
 	headers = { 'User-Agent' : '' }
 	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-LIIVIDEO-1st')
 	items = re.findall('sources:.*?"(.*?)","(.*?)"',html,re.DOTALL)
-	titles,urls = [],[]
+	titleLIST,linkLIST = [],[]
 	if items:
-		titles.append('mp4')
-		urls.append(items[0][1])
-		titles.append('m3u8')
-		urls.append(items[0][0])
-	return titles,urls
+		titleLIST.append('mp4')
+		linkLIST.append(items[0][1])
+		titleLIST.append('m3u8')
+		linkLIST.append(items[0][0])
+	return titleLIST,linkLIST
 
 def UPTO(url):
 	#xbmcgui.Dialog().ok(url,'')
@@ -1027,46 +1024,6 @@ def	FILERIO(url):
 	if items: return [items[0]],[items[0]]
 	else: return [],[]
 
-def GOUNLIMITED(url):
-	# https://gounlimited.to/embed-wqsi313vbpua.html
-	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
-	html_blocks = re.findall('function\(p,a,c,k,e,d\)(.*?)split',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall(",'(.*?)'",block,re.DOTALL)
-		items = items[-1].split('|')
-		link = items[12]+'://'+items[84]+'.'+items[11]+'.'+items[10]+'/'+items[83]+'/v.mp4'
-		return [link],[link]
-	else: return [],[]
-	#link = 'https://shuwaikh.gounlimited.to/'+id+'/v.mp4'
-	#link = 'https://fs67.gounlimited.to/'+id+'/v.mp4'
-
-def VIDHD(url):
-	# https://vidhd.net/562ghl3hr1cw.html
-	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-LIIVIDEO-1st')
-	items = re.findall('file:"(.*?)",label:"(.*?)"',html,re.DOTALL)
-	titleLIST,linkLIST = [],[]
-	for link,label in items:
-		titleLIST.append(label)
-		linkLIST.append(link)
-	html_blocks = re.findall('function\(p,a,c,k,e,d\)(.*?)split',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall(",'(.*?)'",block,re.DOTALL)
-		items = items[-1].split('|')
-		server = items[7]+'://'+items[19]+'.'+items[6]+'.'+items[4]
-		html_blocks = re.findall('\|image(\|.*?\|)sources\|',block,re.DOTALL)
-		if html_blocks:
-			block = html_blocks[0]
-			items = re.findall('\|(\w+)\|(\w+)',block,re.DOTALL)
-			for label,id in items:
-				link = server+'/'+id+'/v.mp4'
-				titleLIST.append(label)
-				linkLIST.append(link)
-	return titleLIST,linkLIST
-	#link = https://s2.vidhd.net/kmxsuzrepjumwmesrluuynfphmbrrpofmbwknihn4l6rdua3pwajpcxqvboq/v.mp4
-
 def GOVID(url):
 	# https://govid.co/video/play/AAVENd
 	headers = { 'User-Agent' : '' }
@@ -1342,6 +1299,49 @@ def VEVIO_PROBLEM(url):
 			titleLIST.append(label)
 			linkLIST.append(link)
 	return titleLIST,linkLIST
+
+def GOUNLIMITED_PROBLEM(url):
+	# https://gounlimited.to/embed-wqsi313vbpua.html
+	# http://gounlimited.to/embed-bhczqclxokgq.html
+	url = url.replace('https:','http:')
+	headers = { 'User-Agent' : '' }
+	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
+	html_blocks = re.findall('function\(p,a,c,k,e,d\)(.*?)split',html,re.DOTALL)
+	if html_blocks:
+		block = html_blocks[0]
+		items = re.findall(",'(.*?)'",block,re.DOTALL)
+		items = items[-1].split('|')
+		link = items[12]+'://'+items[85]+'.'+items[11]+'.'+items[10]+'/'+items[84]+'/v.mp4'
+		return [link],[link]
+	else: return [],[]
+	#link = 'https://shuwaikh.gounlimited.to/'+id+'/v.mp4'
+	#link = 'https://fs67.gounlimited.to/'+id+'/v.mp4'
+
+def VIDHD_PROBLEM(url):
+	# https://vidhd.net/562ghl3hr1cw.html
+	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-LIIVIDEO-1st')
+	items = re.findall('file:"(.*?)",label:"(.*?)"',html,re.DOTALL)
+	titleLIST,linkLIST = [],[]
+	for link,label in items:
+		titleLIST.append(label)
+		linkLIST.append(link)
+	html_blocks = re.findall('function\(p,a,c,k,e,d\)(.*?)split',html,re.DOTALL)
+	if html_blocks:
+		block = html_blocks[0]
+		items = re.findall(",'(.*?)'",block,re.DOTALL)
+		items = items[-1].split('|')
+		server = items[7]+'://'+items[19]+'.'+items[6]+'.'+items[4]
+		html_blocks = re.findall('\|image(\|.*?\|)sources\|',block,re.DOTALL)
+		if html_blocks:
+			block = html_blocks[0]
+			items = re.findall('\|(\w+)\|(\w+)',block,re.DOTALL)
+			for label,id in items:
+				link = server+'/'+id+'/v.mp4'
+				titleLIST.append(label)
+				linkLIST.append(link)
+	return titleLIST,linkLIST
+	#link = https://s2.vidhd.net/kmxsuzrepjumwmesrluuynfphmbrrpofmbwknihn4l6rdua3pwajpcxqvboq/v.mp4
+
 
 
 

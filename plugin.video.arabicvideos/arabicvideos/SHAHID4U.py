@@ -19,7 +19,7 @@ def MAIN(mode,url,text):
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',119)
 	#addDir(menu_name+'فلتر','',114,website0a)
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search">',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
@@ -81,10 +81,10 @@ def ITEMS(url):
 def EPISODES(url):
 	if '/series/' in url:
 		url2 = url+'/episodes'
-		html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','SHAHID4U-ITEMS-1st')
+		html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','SHAHID4U-EPISODES-1st')
 		html_blocks = re.findall('container page-content(.*?)pagination',html,re.DOTALL)
 	else:
-		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-ITEMS-1st')
+		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-EPISODES-2nd')
 		html_blocks = re.findall('ti-list-numbered(.*?)</div>',html,re.DOTALL)
 	if not html_blocks or '/post/' in url:
 		title = re.findall('details col-12 col-m-9.*?<h1>(.*?)</h1>',html,re.DOTALL)
@@ -115,7 +115,7 @@ def PLAY(url):
 	parts=url.split('/')
 	# watch links
 	url2 = url.replace(parts[3],'watch')
-	html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','SHAHID4U-PLAY-1st')
+	html = openURL_cached(LONG_CACHE,url2,'',headers,'','SHAHID4U-PLAY-1st')
 	html_blocks = re.findall('class="servers-list(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -125,7 +125,7 @@ def PLAY(url):
 			if id:
 				id2=id[0]
 				for link,title in items:
-					link = website0a+'/?postid='+id2+'&serverid='+link+'&name='+title
+					link = website0a+'/?postid='+id2+'&serverid='+link+'&name='+title+'__watch'
 					linkLIST.append(link)
 		else:
 			items = re.findall('data-embedd="(.*?)"',block,re.DOTALL)
@@ -140,9 +140,17 @@ def PLAY(url):
 		headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 		url2='https://shahid4u.net/ajaxCenter?_action=getdownloadlinks&postId='+id2
 		html = openURL_cached(LONG_CACHE,url2,'',headers,'','SHAHID4U-PLAY-3rd')
-		items = re.findall('href="(.*?)"',html,re.DOTALL)
-		for link in items:
-			linkLIST.append(link)
+		html_blocks = re.findall('<h3.*?(\d+)(.*?)</div>',html,re.DOTALL)
+		if html_blocks:
+			for resolution,block in html_blocks:
+				items = re.findall('<td>(.*?)<.*?href="(.*?)"',block,re.DOTALL)
+				for name,link in items:
+					linkLIST.append(link+'?name='+name+' '+resolution+'__download')
+		else:
+			items = re.findall('href="(.*?)"',html,re.DOTALL)
+			for link in items:
+				linkLIST.append(link)
+	#xbmc.log(str(linkLIST).replace(',','\n'), level=xbmc.LOGNOTICE)
 	#url2 = url + '?watch=1'
 	#html = openURL_cached(LONG_CACHE,url2,'',headers,'','SHAHID4U-PLAY-2nd')
 	#xbmcgui.Dialog().ok(html,html)
@@ -173,7 +181,7 @@ def SEARCH(search=''):
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.replace(' ','+')
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','SHAHID4U-SEARCH-1st')
 	html_blocks = re.findall('advanced-search">(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-cat="(.*?)".*?checkmark-bold">(.*?)</span>',block,re.DOTALL)
@@ -194,7 +202,7 @@ def FILTER_MENU(url):
 	addDir(menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'',1)
 	addDir(menu_name+'[[   ' + filter + '   ]]',link,122,'',1)
 	addDir(menu_name+'===========================',link,9999)
-	html = openURL_cached(REGULAR_CACHE,link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,link,'',headers,'','SHAHID4U-FILTER_MENU-1st')
 	html_blocks=re.findall('advanced-search">(.*?)MediaGrid">',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -203,7 +211,7 @@ def FILTER_MENU(url):
 			addLink(menu_name+'[[   ' + title + '   ]]',url,115,'','')
 
 def FILTER_SELECT(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','EGYBEST-FILTERS_MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-FILTER_SELECT-1st')
 	html_blocks=re.findall('advanced-search">(.*?)MediaGrid">',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]

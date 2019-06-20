@@ -31,7 +31,7 @@ def LANGUAGE_MENU():
 
 def MAIN_MENU(website0):
 	menu=['Series', 'Program', 'Music']
-	html = openURL_cached(REGULAR_CACHE,website0,'','','','IFILM-MAIN_MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0,'','','','IFILM-MAIN_MENU-1st')
 	html_blocks=re.findall('main-body.*?menu(.*?)nav',html,re.DOTALL)
 	#html_blocks=re.findall('input_Search_" placeholder="(.*?)"',html,re.DOTALL)
 	#name = html_blocks[0]
@@ -74,7 +74,7 @@ def MAIN_MENU(website0):
 
 def MUSIC_MENU(url):
 	website0 = SITE(url)
-	html = openURL_cached(REGULAR_CACHE,url,'','','','IFILM-MUSIC_MENU-1st')
+	html = openURL_cached(LONG_CACHE,url,'','','','IFILM-MUSIC_MENU-1st')
 	html_blocks = re.findall('Music-tools-header(.*?)Music-body',html,re.DOTALL)
 	block = html_blocks[0]
 	title = re.findall('<p>(.*?)</p>',block,re.DOTALL)[0]
@@ -256,7 +256,7 @@ def LANG(url):
 def LIVE(url):
 	lang = LANG(url)
 	url2 = url + '/Home/Live'
-	html = openURL_cached(SHORT_CACHE,url2,'','','','IFILM-SEARCH_TITLES-1st')
+	html = openURL_cached(LONG_CACHE,url2,'','','','IFILM-LIVE-1st')
 	items = re.findall('source src="(.*?)"',html,re.DOTALL)
 	url3 = items[0]
 	PLAY_VIDEO(url3,script_name,'no')
@@ -275,7 +275,7 @@ def SEARCH(url,search=''):
 	lang = LANG(url)
 	url2 = url + "/Home/Search?searchstring=" + new_search
 	#xbmcgui.Dialog().ok(lang,url2)
-	html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-SEARCH_TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-SEARCH-1st')
 	items = re.findall('"ImageAddress_S":"(.*?)".*?"CategoryId":(.*?),"Id":(.*?),"Title":(.*?),',html,re.DOTALL)
 	if items:
 		for img,category,id,title in items:

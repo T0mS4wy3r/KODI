@@ -15,13 +15,13 @@ def ITEMS(type):
 	client = dummyClientID(32)
 	payload = { 'id' : '' , 'user' : client , 'function' : 'list'+str(type) }
 	data = urllib.urlencode(payload)
-	html = openURL_cached(REGULAR_CACHE,website0a,data,'','','TV-ITEMS-1st')
+	html = openURL_cached(LONG_CACHE,website0a,data,'','','TV-ITEMS-1st')
 	#html = html.replace('\r','')
 	#xbmcgui.Dialog().ok(html,html)
-	#file = open('s:/emad.html', 'w')
-	#file.write(html)
-	#file.close()
-	items = re.findall('(.*?):(.*?):(.*?):(.*?)\r\n',html,re.DOTALL)
+	file = open('s:/emad.html', 'w')
+	file.write(html)
+	file.close()
+	items = re.findall('(.*?):(.*?):(.*?):(.*?)[\r\n]+',html,re.DOTALL)
 	if 'Not Allowed' in html:
 		addLink(menu_name+'للأسف لا توجد قنوات تلفزونية لك','',9999)
 		addLink(menu_name+'هذه الخدمة مخصصة للاقرباء والاصدقاء فقط','',9999)
@@ -40,6 +40,8 @@ def ITEMS(type):
 			name = name.replace('El ','El')
 			name = name.replace('AL ','Al')
 			name = name.replace('EL ','El')
+			name = name.replace('AL','Al')
+			name = name.replace('EL','El')
 			addLink(menu_name+name,source+id,104,img,'','IsPlayable=no')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
