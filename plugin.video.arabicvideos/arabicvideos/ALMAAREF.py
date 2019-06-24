@@ -87,7 +87,7 @@ def EPISODES(url):
 				title = escapeUNICODE(title)
 				link = escapeUNICODE(link)
 				title = title.split(' ')[-1]
-				title = name + ' - ' + title
+				title = '_MOD_' + name + ' - ' + title
 				duration = re.findall('length_formatted":"(.*?)"',meta,re.DOTALL)
 				if duration: addLink(menu_name+title,link,43,img2,duration[0])
 				else: addLink(menu_name+title,link,43,img2)
@@ -135,9 +135,9 @@ def CATEGORIES(url,category):
 			title = unescapeHTML(title)
 			if 'وقات برامج' in title: continue
 			if '(' in title:
-				title = title.replace(re.findall(' \(.*?\)',title)[0],'')
+				title = '_MOD_' + title.replace(re.findall(' \(.*?\)',title)[0],'')
 			url = website0a + '/' + link
-			if cat == '-165': title = 'السيد صباح شبر (60)'
+			if cat == '-165': title = '_MOD_' + 'السيد صباح شبر (60)'
 			if '-' in cat: addDir(menu_name+title,url,44,'','',cat)
 			else: addDir(menu_name+title,url,42)
 			exist=True

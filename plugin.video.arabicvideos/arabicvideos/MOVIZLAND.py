@@ -58,13 +58,15 @@ def ITEMS(url,type=''):
 		link = link.replace('?view=true','')
 		#xbmcgui.Dialog().ok(link,link2)
 		title = unescapeHTML(title)
-		title2 = re.findall('(.*?)(بجودة|بجوده)',title,re.DOTALL)
-		if title2: title = title2[0][0]
+		#title2 = re.findall('(.*?)(بجودة|بجوده)',title,re.DOTALL)
+		#if title2: title = title2[0][0]
+		if 'بجودة ' in title or 'بجوده ' in title:
+			title = '_MOD_' + title.replace('بجودة ','').replace('بجوده ','')
 		title = title.strip(' ')
 		if 'الحلقة' in title or 'الحلقه' in title:
 			episode = re.findall('(.*?) (الحلقة|الحلقه) \d+',title,re.DOTALL)
 			if episode:
-				title = '_MOD_'+episode[0][0]
+				title = episode[0][0]
 				if title not in allTitles:
 					addDir(menu_name+title,link,183,img)
 					allTitles.append(title)
@@ -90,7 +92,7 @@ def EPISODES(url):
 	block = re.findall('<title>(.*?)</title>.*?height="([0-9]+)" src="(.*?)"',html,re.DOTALL)
 	title,dummy,img = block[0]
 	name = re.findall('(.*?) (الحلقة|الحلقه) [0-9]+',title,re.DOTALL)
-	if name: name = name[0][0]
+	if name: name = '_MOD_' + name[0][0]
 	else: name = title
 	items = []
 	html_blocks = re.findall('class="episodesNumbers"(.*?)</div>',html,re.DOTALL)
@@ -101,8 +103,7 @@ def EPISODES(url):
 		for link in items:
 			link = unquote(link)
 			title = re.findall('(الحلقة|الحلقه)-([0-9]+)',link.split('/')[-2],re.DOTALL)
-			if not title:
-				title = re.findall('()-([0-9]+)',link.split('/')[-2],re.DOTALL)
+			if not title: title = re.findall('()-([0-9]+)',link.split('/')[-2],re.DOTALL)
 			if title: title = ' ' + title[0][1]
 			else: title = ''
 			title = name + ' - ' + 'الحلقة' + title
@@ -110,26 +111,30 @@ def EPISODES(url):
 			addLink(menu_name+title,link,182,img)
 	if not items:
 		title = unescapeHTML(title)
-		title2 = re.findall('(.*?)(بجودة|بجوده)',title,re.DOTALL)
-		if title2: title = title2[0][0]
+		if 'بجودة ' in title or 'بجوده ' in title:
+			title = '_MOD_' + title.replace('بجودة ','').replace('بجوده ','')
 		addLink(menu_name+title,url,182,img)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def PLAY(url):
 	urls = url.split('?servers=')
-	html = openURL_cached(LONG_CACHE,urls[0],'',headers,'','MOVIZLAND-PLAY-1st')
+	url2 = urls[0]
+	del urls[0]
+	html = openURL_cached(LONG_CACHE,url2,'',headers,'','MOVIZLAND-PLAY-1st')
 	link = re.findall('font-size: 25px;" href="(.*?)"',html,re.DOTALL)[0]
 	if link not in urls: urls.append(link)
-	main_watch_link = ''
-	linkLIST = []
-	selection = ''
+	linkLIST,links = [],[]
 	# main_watch_link
-	for link in urls[1:99]:
+	for link in urls:
 		if '://moshahda.' in link:
 			main_watch_link = link
-			linkLIST.append(main_watch_link+'?name=Main')
-		elif '://vb.movizland.' in link:
+			if main_watch_link not in links:
+				linkLIST.append(main_watch_link+'?name= Main')
+				links.append(main_watch_link)	
+	# all_vb_links
+	for link in urls:
+		if '://vb.movizland.' in link:
 			html = openURL_cached(LONG_CACHE,link,'',headers,'','MOVIZLAND-PLAY-2nd')
 			html = html.decode('windows-1256').encode('utf8')
 			#xbmc.log(html, level=xbmc.LOGNOTICE)</a></div><br /><div align="center">(\*\*\*\*\*\*\*\*|13721411411.png|)
@@ -163,15 +168,17 @@ def PLAY(url):
 					title = titleLIST2[selection]
 					block = html_blocks[selection]
 				link = re.findall('href="(http://moshahda\..*?/\w+.html)"',block,re.DOTALL)
-				main_watch_link = link[0]
-				linkLIST.append(main_watch_link+'?name=Main')
+				forum_watch_link = link[0]
+				if forum_watch_link not in links:
+					linkLIST.append(forum_watch_link+'?name=Forum')
+					links.append(forum_watch_link)
 				block = block.replace('ـ','')
 				block = block.replace('src="http://up.movizland.online/uploads/1517412175296.png"','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="both"  \n  ')
 				block = block.replace('src="http://up.movizland.com/uploads/1517412175296.png"','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="both"  \n  ')
 				block = block.replace('سيرفرات التحميل','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="download"  \n  ')
 				block = block.replace('روابط التحميل','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="download"  \n  ')
 				block = block.replace('سيرفرات المشاهد','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="watch"  \n  ')
-				block = block.replace('زوابط المشاهد','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="watch"  \n  ')
+				block = block.replace('روابط المشاهد','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="watch"  \n  ')
 				links_blocks = re.findall('(src="/uploads/13721411411.png".*?href="http://e5tsar.com/\d+".*?src="/uploads/13721411411.png")',block,re.DOTALL)
 				for link_block in links_blocks:
 					#xbmcgui.Dialog().ok('',str(link_block))
@@ -186,14 +193,13 @@ def PLAY(url):
 						linkLIST.append(link)
 	linkLIST = list(set(linkLIST))
 	# mobile_watch_link
-	url3 = urls[0].replace(website0a,website0b)
-	#xbmcgui.Dialog().ok(url3,str(urls))
+	url3 = url2.replace(website0a,website0b)
 	html = openURL_cached(LONG_CACHE,url3,'',headers,'','MOVIZLAND-PLAY-3rd')
 	id2 = re.findall('" href="http://moshahda\..*?/embedM-(\w+)-.*?.html',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(url3,str(id2))
 	if id2:
 		mobile_watch_link = 'http://moshahda.online/' + id2[0] + '.html'
-		if mobile_watch_link+'?name=Main' not in linkLIST:
+		if mobile_watch_link not in links:
 			linkLIST.append(mobile_watch_link+'?name=Mobile')
 	if len(linkLIST)==0:
 		xbmcgui.Dialog().ok('مشكلة','غير قادر على ايجاد ملف الفيديو المناسب')

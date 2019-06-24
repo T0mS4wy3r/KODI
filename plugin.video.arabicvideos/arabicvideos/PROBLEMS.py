@@ -13,6 +13,7 @@ def MAIN(mode):
 		addDir('[COLOR FFC89008]8.  [/COLOR]'+'لماذا يوجد سيرفرات مجهولة','',156)
 		addDir('[COLOR FFC89008]9.  [/COLOR]'+'ما هي السيرفرات العامة والخاصة','',157)
 		addDir('[COLOR FFC89008]10. [/COLOR]'+'اين مواقع الافلام والمسلسلات الاجنبية','',154)
+		addDir('[COLOR FFC89008]11. [/COLOR]'+'ما معنى هذه العلامات ,'+escapeUNICODE('\u02d1')+';','',191)
 		xbmcplugin.endOfDirectory(addon_handle)
 
 	elif mode==151:
@@ -70,6 +71,9 @@ def MAIN(mode):
 		message2 += '\n\n' + 'قصير المدى للصفحات التي تتغير دائما ومدته ' + str(SHORT_CACHE/60/60) + ' ساعة'
 		xbmcgui.Dialog().textviewer('ما هو الكاش المستخدم في البرنامج',message2)
 
+	elif mode==191:
+		message = 'الفاصلة تعني مجلد بنفس اسمه الاصلي والنقطة تعني ان الاسم الاصلي تم تعديله وفاصلة ونقطة تعنى مجلد وتم تعديل اسمه وبدون علامة تعني ملف بنفس اسمه الاصلي'
+		xbmcgui.Dialog().ok('ما معنى هذه العلامات ,'+escapeUNICODE('\u02d1')+';',message)
 	return
 		
 

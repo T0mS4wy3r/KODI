@@ -73,8 +73,8 @@ def FILTERS_MENU(link):
 		for url,title in items:
 			ignoreLIST = ['- الكل -','[R]']
 			if any(value in title for value in ignoreLIST): continue
-			if '/movies/' in url: title = 'افلام ' + title
-			elif '/tv/' in url: title = 'مسلسلات ' + title
+			if '/movies/' in url: title = '_MOD_' + 'افلام ' + title
+			elif '/tv/' in url: title = '_MOD_' + 'مسلسلات ' + title
 			addDir(menu_name+title,website0a+url,121)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return

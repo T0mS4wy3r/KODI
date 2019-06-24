@@ -31,6 +31,8 @@ def MENU():
 	addDir(menu_name+'كتب',website0a+'/category/291',132,'','1')
 	addDir(menu_name+'تعلم الفارسية',website0a+'/category/88',132,'','1')
 	addDir(menu_name+'ارشيف البرامج',website0a+'/category/1279',132,'','1')
+	xbmcplugin.endOfDirectory(addon_handle)
+	return
 	"""
 	html = openURL_cached(REGULAR_CACHE,website0a,'','','','ALKAWTHAR-MENU-1st')
 	html_blocks=re.findall('dropdown-menu(.*?)dropdown-toggle',html,re.DOTALL)
@@ -47,8 +49,6 @@ def MENU():
 		elif '/conductor' not in url:
 			addDir(menu_name+title,url,131,'','1')
 	"""
-	xbmcplugin.endOfDirectory(addon_handle)
-	return
 
 """
 def TITLES(url):
@@ -115,7 +115,7 @@ def EPISODES(url,page):
 			title = title.replace('\r\n','')
 			title = title.strip(' ')
 			if 'مسلسل' in name and 'حلقة' in title and 'مسلسل' not in title:
-				title = name + ' - ' + title
+				title = '_MOD_' + name + ' - ' + title
 			link = website0a + link
 			if category=='628':
 				addDir(menu_name+title,link,133,img,'1')
@@ -130,7 +130,7 @@ def EPISODES(url,page):
 				title = title.strip(' ')
 				addLink(menu_name+title,link,134,img)
 		elif '/category/628' in html:
-				title = 'ملف التشغيل - ' + name
+				title = '_MOD_' + 'ملف التشغيل - ' + name
 				addLink(menu_name+title,url,134)
 		else:
 			items = re.findall('id="Categories.*?href=\'(.*?)\'',html,re.DOTALL)

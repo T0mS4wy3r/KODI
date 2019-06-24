@@ -59,7 +59,7 @@ def ITEMS(url):
 		elif 'الحلقة' in title and '/episode/' in link:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode:
-				title = '_MOD_'+episode[0]
+				title = '_MOD_' + episode[0]
 				if title not in allTitles:
 					addDir(menu_name+title,link,113,img)
 					allTitles.append(title)
@@ -98,10 +98,8 @@ def EPISODES(url):
 			if sequence: itemsNEW.append([link,int(sequence[0])])
 			#xbmcgui.Dialog().ok(link.split('/')[-1],sequence[0])
 		#name = xbmc.getInfoLabel('ListItem.Label')
-		if itemsNEW:
-			items = sorted(itemsNEW, reverse=True, key=lambda key: key[1])
-		else:
-			items = sorted(items, reverse=True, key=lambda key: key[0])
+		if itemsNEW: items = sorted(itemsNEW, reverse=True, key=lambda key: key[1])
+		else: items = sorted(items, reverse=True, key=lambda key: key[0])
 		for link,title in items:
 			title = link.split('/')[-1].replace('-',' ')
 			addLink(menu_name+title,link,112)

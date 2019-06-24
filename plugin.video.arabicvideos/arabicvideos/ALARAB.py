@@ -91,12 +91,12 @@ def TITLES(url):
 		title = title.replace('على العرب','')
 		title = title.replace('مباشرة','')
 		title = title.strip(' ').replace('  ',' ').replace('  ',' ')
+		title = '_MOD_' + title
 		title2 = title
 		if '/q/' in url and ('الحلقة' in title or 'الحلقه' in title):
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode: title2 = episode[0]
 			#if 'مسلسل' not in title2: title2 = 'مسلسل '+title2
-			title2 = '_MOD_'+title2
 		if title2 not in allTitles:
 			allTitles.append(title2)
 			#xbmc.log(title2, level=xbmc.LOGNOTICE)
@@ -128,13 +128,13 @@ def EPISODES(url):
 def EPISODES_OLD(url):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-EPISODES_OLD-1st')
 	html_blocks = re.findall('banner-right(.*?)classic-channel',html,re.DOTALL)
-	xbmcgui.Dialog().ok(url,'step 2')
+	#xbmcgui.Dialog().ok(url,'step 2')
 	block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)".*?>(.*?)<',block,re.DOTALL)
-	xbmcgui.Dialog().ok(url,'step 3')
+	#xbmcgui.Dialog().ok(url,'step 3')
 	items = sorted(items, reverse=True, key=lambda key: key[1])
 	#name = xbmc.getInfoLabel('ListItem.Label')
-	xbmcgui.Dialog().ok(url,'step 4')
+	#xbmcgui.Dialog().ok(url,'step 4')
 	allTitles = []
 	for img,link,title in items:
 		if title not in allTitles:
@@ -142,7 +142,7 @@ def EPISODES_OLD(url):
 			title = title.strip(' ')
 			addLink(menu_name+'مسلسل '+title,link,12,img)
 			allTitles.append(title)
-	xbmcgui.Dialog().ok(url,'step 5')
+	#xbmcgui.Dialog().ok(url,'step 5')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 

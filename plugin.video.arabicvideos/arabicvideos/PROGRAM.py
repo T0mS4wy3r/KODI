@@ -132,43 +132,45 @@ def GLOBAL_SEARCH(search=''):
 	return
 
 def VERSION():
-	#xbmcgui.Dialog().notification('جاري طلب الارقام','','',2000)
-	threads = CustomThread()
-	threads.start_new_thread('1',KODI_VERSION)
 	#   http://www.kproxy.com
 	#   http://hideme.be
 	#   http://www.apirequest.io
 	#   url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
-	#   url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
-	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
-	html = openURL_KPROXY(url,'',{ 'User-Agent' : '' },'','PROGRAM-VERSION-1st')
-	latest_ADDON_VER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
-	current_ADDON_VER = xbmc.getInfoLabel('System.AddonVersion(plugin.video.arabicvideos)')
-	latest_REPO_VER = re.findall('repository.emad" name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]
-	current_REPO_VER = xbmc.getInfoLabel('System.AddonVersion(repository.emad)')
-	if latest_ADDON_VER > current_ADDON_VER:
-		message1 =  'الرجاء تحديث البرنامج لحل المشاكل'
-		message3 =  '\n\n' + 'جرب اغلاق كودي وتشغيله وانتظر التحديث الاوتوماتيكي'
-	else:
-		message1 = 'لا توجد اي تحديثات للبرنامج حاليا'
-		message3 =  '\n\n' + 'الرجاء ابلاغ المبرمج عن اي مشكلة تواجهك'
-	if current_REPO_VER=='': current_REPO_VER='لا يوجد'
-	else: current_REPO_VER = ' ' + current_REPO_VER
-	message2 = 'الاصدار الاخير للبرنامج المتوفر الان هو :   ' + latest_ADDON_VER
-	message2 +=  '\n' + 'الاصدار الذي انت تستخدمه للبرنامج هو :   ' + current_ADDON_VER
-	message2 += '\n' + 'الاصدار الاخير لمخزن عماد المتوفر الان هو :   ' + latest_REPO_VER
-	message2 +=  '\n' + 'الاصدار الذي انت تستخدمه لمخزن عماد هو :  ' + current_REPO_VER
-	message3 +=  '\n\n' + 'علما ان التحديث الاوتوماتيكي لا يعمل اذا لم يكن لديك في كودي مخزن عماد EMAD Repository'
-	message3 +=  '\n\n' + 'ملفات التنصيب مع التعليمات متوفرة على هذا الرابط'
-	message3 +=  '\n' + 'https://github.com/emadmahdi/KODI'
-	xbmcgui.Dialog().textviewer(message1,message2+message3)
+	#	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
+	#xbmcgui.Dialog().notification('جاري طلب الارقام','','',2000)
+	def dummyFunc():
+		url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
+		html = openURL_cached(NO_CACHE,url,'','','','PROGRAM-VERSION-1st')
+		latest_ADDON_VER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
+		current_ADDON_VER = xbmc.getInfoLabel('System.AddonVersion(plugin.video.arabicvideos)')
+		latest_REPO_VER = re.findall('name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]
+		current_REPO_VER = xbmc.getInfoLabel('System.AddonVersion(repository.emad)')
+		if latest_ADDON_VER > current_ADDON_VER:
+			message1 =  'الرجاء تحديث البرنامج لحل المشاكل'
+			message3 =  '\n\n' + 'جرب اغلاق كودي وتشغيله وانتظر التحديث الاوتوماتيكي'
+		else:
+			message1 = 'لا توجد اي تحديثات للبرنامج حاليا'
+			message3 =  '\n\n' + 'الرجاء ابلاغ المبرمج عن اي مشكلة تواجهك'
+		if current_REPO_VER=='': current_REPO_VER='لا يوجد'
+		else: current_REPO_VER = ' ' + current_REPO_VER
+		message2 = 'الاصدار الاخير للبرنامج المتوفر الان هو :   ' + latest_ADDON_VER
+		message2 +=  '\n' + 'الاصدار الذي انت تستخدمه للبرنامج هو :   ' + current_ADDON_VER
+		message2 += '\n' + 'الاصدار الاخير لمخزن عماد المتوفر الان هو :   ' + latest_REPO_VER
+		message2 +=  '\n' + 'الاصدار الذي انت تستخدمه لمخزن عماد هو :  ' + current_REPO_VER
+		message3 +=  '\n\n' + 'علما ان التحديث الاوتوماتيكي لا يعمل اذا لم يكن لديك في كودي مخزن عماد EMAD Repository'
+		message3 +=  '\n\n' + 'ملفات التنصيب مع التعليمات متوفرة على هذا الرابط'
+		message3 +=  '\n' + 'https://github.com/emadmahdi/KODI'
+		xbmcgui.Dialog().textviewer(message1,message2+message3)
+	threads = CustomThread()
+	threads.start_new_thread('1',dummyFunc)
+	KODI_VERSION()
 	threads.wait_finishing_all_threads()
 	return ''
 
 def RANDOM():
 	headers = { 'User-Agent' : '' }
 	url = 'https://www.bestrandoms.com/random-arabic-words'
-	payload = { 'quantity' : '5' }
+	payload = { 'quantity' : '4' }
 	data = urllib.urlencode(payload)
 	#xbmcgui.Dialog().ok('',str(data))
 	html = openURL_KPROXY(url,data,headers,'','PROGRAM-RANDOM-1st')
@@ -181,12 +183,14 @@ def RANDOM():
 		engLIST.append(engWORD.lower())
 	list = ['كلمات عشوائية عربية','كلمات عشوائية انكليزية']
 	while True:
-		selection = xbmcgui.Dialog().select('اختر اللغة:', list)
-		if selection == -1: return
-		elif selection==0: list2 = arbLIST
-		else: list2 = engLIST
+		#selection = xbmcgui.Dialog().select('اختر اللغة:', list)
+		#if selection == -1: return
+		#elif selection==0: list2 = arbLIST
+		#else: list2 = engLIST
+		list2 = arbLIST + engLIST
 		selection = xbmcgui.Dialog().select('اختر كلمة للبحث عنها:', list2)
 		if selection != -1: break
+		elif selection == -1: return
 	search = list2[selection]
 	GLOBAL_SEARCH(search)
 	return
@@ -201,9 +205,11 @@ def KODI_VERSION():
 	#   https://filehippo.com/download_kodi
 	#   https://kodi.en.softonic.com
 	#   https://play.google.com/store/apps/details?id=org.xbmc.kodi
-	url = 'https://xbmc.en.uptodown.com/android'
-	html = openURL_KPROXY(url,'',{ 'User-Agent' : '' },'','PROGRAM-KODI_VERSION-1st')
-	latest_KODI_VER = re.findall('softwareVersion>(.*?)<',html,re.DOTALL)[0]
+	#	https://xbmc.en.uptodown.com/android
+	#	http://mirror.math.princeton.edu/pub/xbmc/releases/windows/win64
+	url = 'http://mirrors.mit.edu/kodi/releases/windows/win64'
+	html = openURL_cached(NO_CACHE,url,'','','','PROGRAM-KODI_VERSION-1st')
+	latest_KODI_VER = re.findall('href="kodi-(.*?)-',html,re.DOTALL)[-1]
 	current_KODI_VER = xbmc.getInfoLabel( "System.BuildVersion" ).split(' ')[0]
 	message4 = 'الاصدار الاخير لكودي المتوفر الان هو :   ' + latest_KODI_VER
 	message4 +=  '\n' + 'الاصدار الذي انت تستخدمه لكودي هو :   ' + current_KODI_VER

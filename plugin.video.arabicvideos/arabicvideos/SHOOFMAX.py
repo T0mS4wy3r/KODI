@@ -112,9 +112,9 @@ def EPISODES(url):
 	#img = xbmc.getInfoLabel( "ListItem.Thumb" )
 	name1 = 'مسلسل '
 	name2 = ' - الحلقة '
-        for episode in range(int(episodes_count),0,-1):
+	for episode in range(int(episodes_count),0,-1):
 		link = url + '?ep=' + str(episode)
-		title = name1 + name + name2 + str(episode)
+		title = '_MOD_' + name1 + name + name2 + str(episode)
 		addLink(menu_name+title,link,53,img)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
@@ -219,12 +219,12 @@ def SEARCH(search=''):
 			url = website0a + link
 			if '/program/' in url:
 				if '?ep=' in url:
-					title = 'مسلسل '+title.encode('utf8')
+					title = '_MOD_' + 'مسلسل '+title.encode('utf8')
 					url = url.replace('?ep=1','?ep=0')
 					url = url + '=' + quote(title) + '=' + img
 					addDir(menu_name+title,url,52,img)
 				else:
-					title = 'فيلم '+title.encode('utf8')
+					title = '_MOD_' + 'فيلم '+title.encode('utf8')
 					addLink(menu_name+title,url,53,img)
 	xbmcplugin.endOfDirectory(addon_handle)
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')

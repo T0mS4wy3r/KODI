@@ -102,9 +102,9 @@ def addDir(name,url='',mode='',iconimage='',page='',text=''):
 	if iconimage=='': iconimage = icon
 	#xbmc.log('['+addon_id+']:  name:['+name+']', level=xbmc.LOGNOTICE)
 	name2 = re.findall('&&_(\D\D\w)__MOD_(.*?)&&','&&'+name+'&&',re.DOTALL)
-	if name2: name = ';[COLOR FFC89008]'+name2[0][0]+'  [/COLOR]'+name2[0][1]
+	if name2: name = ';[COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
 	name2 = re.findall('&&_(\D\D\w)_(.*?)&&','&&'+name+'&&',re.DOTALL)
-	if name2: name = ',[COLOR FFC89008]'+name2[0][0]+'  [/COLOR]'+name2[0][1]
+	if name2: name = ',[COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
 	if url!='': u = u + '&url=' + quote(url)
 	#xbmcgui.Dialog().ok(quote(url),'addDir')
@@ -119,8 +119,10 @@ def addDir(name,url='',mode='',iconimage='',page='',text=''):
 
 def addLink(name,url,mode,iconimage='',duration='',text=''):
 	if iconimage=='': iconimage = icon
+	name2 = re.findall('&&_(\D\D\w)__MOD_(.*?)&&','&&'+name+'&&',re.DOTALL)
+	if name2: name = escapeUNICODE('\u02d1')+'[COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
 	name2 = re.findall('&&_(\D\D\w)_(.*?)&&','&&'+name+'&&',re.DOTALL)
-	if name2: name = '[COLOR FFC89008] '+name2[0][0]+'  [/COLOR]'+name2[0][1]
+	if name2: name = ' [COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
 	if 'IsPlayable=no' in text: IsPlayable = 'no'
 	else: IsPlayable='yes'
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
