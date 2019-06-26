@@ -39,6 +39,7 @@ def CATEGORIES(url,select=''):
 			block= html_blocks[0]
 			items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 			for link,name in items:
+				if 'كليبات مضحكة' in name: continue
 				url = website0a + link
 				name = name.strip(' ')
 				addDir(menu_name+name,url,32)
@@ -151,16 +152,16 @@ def SEARCH(search,page):
 		selection = xbmcgui.Dialog().select('اختر النوع المناسب:', nameLIST)
 		if selection == -1 : return ''
 		type = typeLIST[selection]
-	else:
-		page,type = page.split('/')
-	payload = { 'query' : new_search  , 'searchDomain' : type , 'from' : page }
+	else: page,type = page.split('/')
+	payload = { 'query':new_search , 'searchDomain':type }
+	if page!='1': payload['from'] = page
 	data = urllib.urlencode(payload)
 	html = openURL_cached(REGULAR_CACHE,website0a+'/search',data,headers,'','PANET-SEARCH-1st')
+	#xbmc.log(str(html), level=xbmc.LOGNOTICE)
 	items=re.findall('title":"(.*?)".*?link":"(.*?)"',html,re.DOTALL)
 	if items:
 		for title,link in items:
 			url = website0a + link.replace('\/','/')
-			#xbmcgui.Dialog().ok(title, url.split('/')[-1]   )
 			if '/movies/' in url: addLink(menu_name+'فيلم '+title,url,33)
 			elif '/series/' in url: addDir(menu_name+'مسلسل '+title,url+'/1',32)
 	count=re.findall('"total":(.*?)}',html,re.DOTALL)

@@ -135,12 +135,12 @@ def VERSION():
 	#   http://www.kproxy.com
 	#   http://hideme.be
 	#   http://www.apirequest.io
+	#	url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
 	#   url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
-	#	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
 	#xbmcgui.Dialog().notification('جاري طلب الارقام','','',2000)
 	def dummyFunc():
-		url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
-		html = openURL_cached(NO_CACHE,url,'','','','PROGRAM-VERSION-1st')
+		url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
+		html = openURL_KPROXY(url,'','','','PROGRAM-VERSION-1st')
 		latest_ADDON_VER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
 		current_ADDON_VER = xbmc.getInfoLabel('System.AddonVersion(plugin.video.arabicvideos)')
 		latest_REPO_VER = re.findall('name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]
@@ -170,7 +170,7 @@ def VERSION():
 def RANDOM():
 	headers = { 'User-Agent' : '' }
 	url = 'https://www.bestrandoms.com/random-arabic-words'
-	payload = { 'quantity' : '4' }
+	payload = { 'quantity' : '5' }
 	data = urllib.urlencode(payload)
 	#xbmcgui.Dialog().ok('',str(data))
 	html = openURL_KPROXY(url,data,headers,'','PROGRAM-RANDOM-1st')

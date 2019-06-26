@@ -3,7 +3,7 @@
 
 
 
-<addon id="plugin.video.arabicvideos" name="Arabic Videos" version="5.2.2" provider-name="EMAD MAHDI">
+<addon id="plugin.video.arabicvideos" name="Arabic Videos" version="5.2.3" provider-name="EMAD MAHDI">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.requests" version="2.12.4"/>
@@ -18,6 +18,23 @@
 			<description lang="en">Watch from a huge selection of Arabic Videos ...</description>
 			<disclaimer lang="en">The author does not host or distribute any of the content displayed by this add-on. ArabicVideos doesn’t host any content on it own server and just linking to or embedding content that was uploaded to popular Online Video hosting sites like dailymotion.com, Youtube.com, Google Drive, ZShare.net, cloudy, netu.tv and such sites. All trademarks, Videos, trade names, service marks, copyrighted work, logos referenced herein belong to their respective owners/companies. ArabicVideos is not responsible for what other people upload to 3rd party sites. We urge all copyright owners, to recognize that the links contained within this site are located somewhere else on the web or video embedded are from other various site like included above!. If you have any legal issues please contact appropriate media file owners/hosters.</disclaimer>
 			<platform>all</platform>
+	</extension>
+</addon>
+
+
+
+<addon id="repository.emad" name="EMAD Repository" version="1.3.1" provider-name="EMAD MAHDI">
+	<extension point="xbmc.addon.repository" name="EMAD Repository">
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/emadmahdi/KODI/master</datadir>
+		</dir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Install Add-ons from EMAD</summary>
+		<description lang="en">Download and install add-ons from EMAD</description>
+		<platform>all</platform>
 	</extension>
 </addon>
 
@@ -286,23 +303,6 @@
 			<screenshot>_screenshots/screenshot-10.jpg</screenshot>
 			<screenshot>_screenshots/screenshot-11.jpg</screenshot>
 		</assets>
-	</extension>
-</addon>
-
-
-
-<addon id="repository.emad" name="EMAD Repository" version="1.3.0" provider-name="EMAD MAHDI">
-	<extension point="xbmc.addon.repository" name="EMAD Repository">
-		<dir>
-			<info compressed="false">http://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml</info>
-			<checksum>http://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml.md5</checksum>
-			<datadir zip="true">http://raw.githubusercontent.com/emadmahdi/KODI/master</datadir>
-		</dir>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Install Add-ons from EMAD</summary>
-		<description lang="en">Download and install add-ons from EMAD</description>
-		<platform>all</platform>
 	</extension>
 </addon>
 
