@@ -69,8 +69,6 @@ New video plugin for KODI that provide Arabic video contents from the following 
 <br />
 <a href="http://www.youtube.com/watch?v=0fDi_7l_1Yw">4. &nbsp; مقطع يوتيوب باللغة العربية يوضح طريقة تنزيل وتنصيب واستخدام هذه الاضافة على كودي - شكرا للاخ هشام</a>
 <br />
-<a href="http://www.youtube.com/watch?v=_w58WScaObk">5. &nbsp; مقطع يوتيوب باللغة الانكليزية يوضح طريقة تنزيل وتنصيب واستخدام هذه الاضافة على كودي - شكرا للاخ هشام</a>
-<br />
 <br />
 <br />
 <br />
