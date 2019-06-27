@@ -45,7 +45,7 @@ page=urllib2.unquote(args['page'])
 if mode==-1:
 	#addLink('Testing - watched enabled','',179,'','','yes','','','IsPlayable=yes')
 	#addLink('Testing - watched disabled','',179,'','','no','','','IsPlayable=no')
-	addLink('ابلاغ المبرمج عن مشكلة'+'  .1','',2,'','','IsPlayable=no,problem=yes')
+	addLink('ارسال مشكلة الى المبرمج'+'  .1','',2,'','','IsPlayable=no,problem=yes')
 	addLink('الاصدار الاخير والتحديثات'+'  .2','',7,'','','IsPlayable=no')
 	addDir('بحث في جميع مواقع البرنامج'+'  .3','',6)
 	addDir('مشاهدة فيدوهات عشوائية'+'  .4','',8)

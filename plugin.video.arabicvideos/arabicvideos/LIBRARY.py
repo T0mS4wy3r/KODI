@@ -145,7 +145,7 @@ def addLink(name,url,mode,iconimage='',duration='',text=''):
 def openURL_KPROXY(url,data='',headers='',showDialogs='',source=''):
 	#xbmcgui.Dialog().ok(url,html)
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
-	html = openURL_cached(NO_CACHE,url,data,headers,showDialogs,'openURL_KPROXY')
+	html = openURL(url,data,headers,showDialogs,source)
 	if '___Error___' in html:
 		try:
 			import requests
@@ -157,13 +157,13 @@ def openURL_KPROXY(url,data='',headers='',showDialogs='',source=''):
 			headers2 = { 'Cookie' : cookies2 }
 			payload2 = { 'page' : quote(url) }
 			data2 = urllib.urlencode(payload2)
-			html = openURL_cached(NO_CACHE,'http://www.kproxy.com/doproxy.jsp',data2,headers2)
-			proxyURL = re.findall('url=(.*?)"',html,re.DOTALL)
-			proxyURL = proxyURL[0]
-			headers3 = headers
-			try: headers3['Cookie'] = headers['Cookie']+';'+ cookies2
+			html = openURL('http://www.kproxy.com/doproxy.jsp',data2,headers2,source)
+			proxyURL = re.findall('url=(.*?)"',html,re.DOTALL)[0]
+			if headers=='': headers3 = {}
+			else: headers3 = headers
+			try: headers3['Cookie'] = headers3['Cookie']+';'+ cookies2
 			except: headers3['Cookie'] = cookies2
-			html = openURL_cached(NO_CACHE,proxyURL,data,headers3,showDialogs,source)
+			html = openURL(proxyURL,data,headers3,showDialogs,source)
 		except:
 			xbmcgui.Dialog().ok('مشكلة من الموقع الاصلي',page_error)
 			xbmc.log('['+addon_id+']:   Error opening kproxy:   [ '+url+' ]', level=xbmc.LOGNOTICE)
@@ -174,8 +174,7 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 	#t1 = time.time()
 	xbmc.log('['+addon_id+']:   Opening page:   [ '+url+' ]', level=xbmc.LOGNOTICE)
 	#xbmcgui.Dialog().ok(unquote(url),source+'     cache(hours)='+str(cacheperiod/60/60))
-	if cacheperiod==0:
-		return openURL(url,data,headers,showDialogs,source)
+	if cacheperiod==0: return openURL(url,data,headers,showDialogs,source)
 	#nowTEXT = time.ctime(now)
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
@@ -239,7 +238,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 				yes = xbmcgui.Dialog().yesno('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
 				if yes: message = ' \\n\\n' + KEYBOARD('Write a message   اكتب رسالة')
 		if send=='yes': SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
-	if '___Error___' in html and 'RESOLVERS' not in source and source not in ['openURL_KPROXY','PROGRAM-HTTPS-1st','LIBRARY-PLAY_VIDEO-1st']:
+	if '___Error___' in html and 'RESOLVERS' not in source and source not in ['PROGRAM-HTTPS-1st','LIBRARY-PLAY_VIDEO-1st','PROGRAM-VERSION-1st']:
 		if 'https://' in url and source in ['PROGRAM-HTTPS-1st']:
 			xbmcgui.Dialog().ok('الاتصال المشفر',https_problem)
 		else:
@@ -361,8 +360,8 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	return result
 
 def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
-	if 'logs=yes' in text: logs='yes'
-	else: logs='no'
+	if 'problem=yes' in text: problem='yes'
+	else: problem='no'
 	sendit,html = 1,''
 	if showDialogs=='yes':
 		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
@@ -381,7 +380,7 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 		if source != '': message += ' :\\nSource: ' + source
 		message += ' :\\n'
 		logfileNEW = ''
-		if logs=='yes':
+		if problem=='yes':
 			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
 			logfile=file(logfile, 'rb')
 			logfile.seek(-45000, os.SEEK_END)
@@ -400,6 +399,8 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 				xbmcgui.Dialog().ok('Failed sending the message','خطأ وفشل في ارسال الرسالة')
 			else:
 				xbmcgui.Dialog().ok('Message sent','تم ارسال الرسالة بنجاح')
+	else:
+		xbmcgui.Dialog().ok('تم الغاء الارسال','')
 	return html
 
 def dummyClientID(length):

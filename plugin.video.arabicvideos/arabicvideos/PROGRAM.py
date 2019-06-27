@@ -57,24 +57,32 @@ def FIX_KEYBOARD(mode,text):
 
 def SEND_MESSAGE(text=''):
 	if 'problem=yes' in text: problem='yes'
-	else: problem='no'
+	else:
+		problem='no'
+		yes = xbmcgui.Dialog().yesno('هل لديك مشكلة تريد ابلاغ المبرمج عنها ؟','','','','كلا','نعم')
+		if yes==1: problem='yes'
 	if problem=='yes':
-		logs = xbmcgui.Dialog().yesno('ارسال سجل الاخطاء','هل توافق على ارسال ال 300 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع معرفة المشكلة واصلاحها اذا كانت المشكلة من البرنامج وليست من المواقع الاصلية','','','كلا','نعم')
-		if logs==1:
+		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بارسال ال 300 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع المبرمج معرفة المشكلة واصلاحها','','','كلا','نعم')
+		if logs==0:
+			xbmcgui.Dialog().ok('تم الغاء الارسال','')
+			return ''
+		"""
+		else:
 			text += 'logs=yes'
 			yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','قبل ارسال سجل الاخطاء الى المبرمج عليك ان تقوم بتشغيل الفيديو او الرابط الذي يعطيك المشكلة لكي يتم تسجيل المشكلة في سجل الاخطاء. هل تريد الارسال الان ؟','','','كلا','نعم')
 			if yes==0:
 				xbmcgui.Dialog().ok('تم الغاء الارسال','')
 				return ''
-		else: text += 'logs=no'
-		xbmcgui.Dialog().ok('المبرمج لا يعلم الغيب','اذا كانت لديك مشكلة فاذن أقرأ قسم المشاكل والحلول واذا لم تجد الحل هناك فاذن اكتب رسالة عن المكان والوقت والحال الذي حدثت فيه المشكلة وحاول كتابة جميع التفاصيل لان المبرمج لا يعلم الغيب')
-		xbmcgui.Dialog().ok('عنوان الايميل','اذا كنت تريد ان تسأل وتحتاج جواب من المبرمج فاذن يجب عليك اضافة عنوان البريد الالكتروني email الخاص بك الى رسالتك لانها الطريقة الوحيدة للوصول اليك')
+		xbmcgui.Dialog().ok('المبرمج لا يعلم الغيب','اذا كانت لديك مشكلة فالرجاء قراءة قسم المشاكل والاسئلة واذا لم تجد الحل هناك فحاول كتابة جميع تفاصيل المشكلة لان المبرمج لا يعلم الغيب')
+		"""
+	xbmcgui.Dialog().ok('email address عنوان الايميل','اذا كنت تحتاج جواب من المبرمج فيجب عليك اضافة عنوان بريدك الالكتروني الى الرسالة')
 	search = KEYBOARD('Write a message   اكتب رسالة')
 	if search == '':
 		xbmcgui.Dialog().ok('تم الغاء الارسال','')
 		return ''
 	message = search
 	subject = 'Message: From Arabic Videos'
+	text = 'problem='+problem
 	result = SEND_EMAIL(subject,message,'yes','','EMAIL-FROM-USERS',text)
 	#	url = 'my API and/or SMTP server'
 	#	payload = '{"api_key":"MY API KEY","to":["me@email.com"],"sender":"me@email.com","subject":"From Arabic Videos","text_body":"'+message+'"}'
