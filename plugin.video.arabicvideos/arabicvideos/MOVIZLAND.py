@@ -32,22 +32,16 @@ def MENU():
 
 def ITEMS(url,type=''):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','MOVIZLAND-ITEMS-1st')
-	#xbmc.log(url, level=xbmc.LOGNOTICE)
-	if type=='latest-movies': 
-		block = re.findall('class="titleSection">أحدث الأفلام</h1>(.*?)<h1',html,re.DOTALL)[0]
-	elif type=='box-office':
-		block = re.findall('class="titleSection">بوكس اوفيس موفيز لاند</h1>(.*?)<h1',html,re.DOTALL)[0]
-	elif type=='tv':
-		block = re.findall('class="titleSection">تليفزيون موفيز لاند</h1>(.*?)class="paging"',html,re.DOTALL)[0]
-	elif type=='top-views':
-		block = re.findall('btn-1 btn-absoly(.*?)btn-2 btn-absoly',html,re.DOTALL)[0]
-	elif type=='top-movies':
-		block = re.findall('btn-2-overlay(.*?)<style>',html,re.DOTALL)[0]
+	#xbmc.log(html, level=xbmc.LOGNOTICE)
+	if type=='latest-movies': block = re.findall('class="titleSection">أحدث الأفلام</h1>(.*?)<h1',html,re.DOTALL)[0]
+	elif type=='box-office': block = re.findall('class="titleSection">بوكس اوفيس موفيز لاند</h1>(.*?)<h1',html,re.DOTALL)[0]
+	elif type=='top-movies': block = re.findall('btn-2-overlay(.*?)<style>',html,re.DOTALL)[0]
+	elif type=='top-views': block = re.findall('btn-1 btn-absoly(.*?)btn-2 btn-absoly',html,re.DOTALL)[0]
+	elif type=='tv': block = re.findall('class="titleSection">تليفزيون موفيز لاند</h1>(.*?)class="paging"',html,re.DOTALL)[0]
 	else: block = html
 	if type in ['top-views','top-movies']:
 		items = re.findall('style="background-image:url\(\'(.*?)\'.*?href="(.*?)".*?href="(.*?)".*?bottom-title.*?>(.*?)<',block,re.DOTALL)
-	else:
-		items = re.findall('height="3[0-9]+" src="(.*?)".*?bottom-title.*?href=.*?>(.*?)<.*?href="(.*?)".*?href="(.*?)"',block,re.DOTALL)
+	else: items = re.findall('height="3[0-9]+" src="(.*?)".*?bottom-title.*?href=.*?>(.*?)<.*?href="(.*?)".*?href="(.*?)"',block,re.DOTALL)
 	allTitles = []
 	itemLIST = ['فيلم','الحلقة','الحلقه','عرض','Raw','SmackDown','اعلان','اجزاء']
 	for img,var1,var2,var3 in items:

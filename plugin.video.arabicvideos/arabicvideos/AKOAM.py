@@ -23,6 +23,7 @@ def MENU():
 	#addDir(menu_name+'الاخبار',website0a,72,'','','news')
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات']
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
+	#xbmcgui.Dialog().textviewer('',html)
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#if not html_blocks:
 	#	xbmc.sleep(2000)

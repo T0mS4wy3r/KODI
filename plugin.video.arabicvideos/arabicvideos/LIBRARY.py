@@ -92,11 +92,12 @@ now = time.time()
 page_error = 'الصفحة غير متوفرة الان ... قد يكون الموقع الاصلي غير متوفر الان او هذه الصفحة قد تغيرت والمبرمج لا يعرف ... الرجاء المحاولة لاحقا او ابلاغ المبرمج بالمشكلة'
 https_problem = 'مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة'
 
-def DELETE_WEBCACHE():
+def DELETE_DATABASE_FILES():
 	for filename in os.listdir(addoncachefolder):
 		if 'webcache_' in filename and '_.db' in filename:
 			filename = os.path.join(addoncachefolder,filename)
 			os.remove(filename)
+	return ''
 
 def addDir(name,url='',mode='',iconimage='',page='',text=''):
 	if iconimage=='': iconimage = icon
@@ -222,8 +223,8 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		code = str(error.reason[0])
 		reason = str(error.reason[1])
 	if code!='200':
-		if 'google-analytics' not in url:
-			xbmc.log('['+addon_id+']:   Open URL Error:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
+		#if 'google-analytics' not in url:
+		#	xbmc.log('['+addon_id+']:   Open URL Error:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
 		message,send,showDialogs = '','no','no'
 		html = '___Error___ {}: {!r}'.format(code, reason)
 		if 'google-analytics' in url: send = showDialogs
@@ -238,13 +239,12 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 				yes = xbmcgui.Dialog().yesno('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
 				if yes: message = ' \\n\\n' + KEYBOARD('Write a message   اكتب رسالة')
 		if send=='yes': SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
-	if '___Error___' in html and 'RESOLVERS' not in source and source not in ['PROGRAM-HTTPS-1st','LIBRARY-PLAY_VIDEO-1st','PROGRAM-VERSION-1st']:
-		if 'https://' in url and source in ['PROGRAM-HTTPS-1st']:
-			xbmcgui.Dialog().ok('الاتصال المشفر',https_problem)
-		else:
-			xbmcgui.Dialog().ok('مشكلة من الموقع الاصلي',page_error)
-		xbmc.log('['+addon_id+']:   Error opening page:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
-		raise Exception('Page not found requested by:   '+source)
+		if 'RESOLVERS' not in source and source not in ['PROGRAM-HTTPS-1st','LIBRARY-PLAY_VIDEO-1st','PROGRAM-VERSION-1st']:
+			if 'https://' in url and source in ['PROGRAM-HTTPS-1st']:
+				xbmcgui.Dialog().ok('الاتصال المشفر',https_problem)
+			else: xbmcgui.Dialog().ok('مشكلة من الموقع الاصلي',page_error)
+			#xbmcgui.Dialog().ok('',html)
+			raise Exception('['+addon_id+']:   Error opening page:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]')
 	return html
 
 def quote(url):
@@ -365,6 +365,9 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 	sendit,html = 1,''
 	if showDialogs=='yes':
 		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
+		if sendit==0: 
+			xbmcgui.Dialog().ok('تم الغاء الارسال','تم الغاء الارسال بناء على طلبك')
+			return ''
 	if sendit==1:
 		addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 		kodiVersion = xbmc.getInfoLabel( "System.BuildVersion" )	
@@ -399,8 +402,6 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 				xbmcgui.Dialog().ok('Failed sending the message','خطأ وفشل في ارسال الرسالة')
 			else:
 				xbmcgui.Dialog().ok('Message sent','تم ارسال الرسالة بنجاح')
-	else:
-		xbmcgui.Dialog().ok('تم الغاء الارسال','')
 	return html
 
 def dummyClientID(length):

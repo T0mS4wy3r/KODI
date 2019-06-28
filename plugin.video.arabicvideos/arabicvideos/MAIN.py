@@ -10,7 +10,7 @@ xbmc.log('['+addon_id+']:   Started menu item:  Label:[ '+menulabel+' ]   Path:[
 if not os.path.exists(addoncachefolder):
 	os.makedirs(addoncachefolder)
 if not os.path.exists(dbfile):
-	DELETE_WEBCACHE()
+	DELETE_DATABASE_FILES()
 	newdb = True
 else: newdb = False
 

@@ -18,9 +18,9 @@ def ITEMS(type):
 	html = openURL_cached(LONG_CACHE,website0a,data,'','','TV-ITEMS-1st')
 	#html = html.replace('\r','')
 	#xbmcgui.Dialog().ok(html,html)
-	file = open('s:/emad.html', 'w')
-	file.write(html)
-	file.close()
+	#file = open('s:/emad.html', 'w')
+	#file.write(html)
+	#file.close()
 	items = re.findall('(.*?):(.*?):(.*?):(.*?)[\r\n]+',html,re.DOTALL)
 	if 'Not Allowed' in html:
 		addLink(menu_name+'للأسف لا توجد قنوات تلفزونية لك','',9999)

@@ -19,8 +19,11 @@ def MAIN(mode,text=''):
 def DELETE_CACHE():
 	import PROBLEMS
 	PROBLEMS.MAIN(190)
-	yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','الكاش مهم لتسريع عمل البرنامج ومسحه يسبب اعادة طلب جميع الصفحات من الانترنيت عند الحاجة اليها. هل متأكد وتريد مسح جميع الكاش ؟','','','كلا','نعم')
-	if yes==1: DELETE_WEBCACHE()
+	yes = xbmcgui.Dialog().yesno('هل متأكد وتريد مسح جميع الكاش ؟','الكاش مهم لتسريع عمل البرنامج ومسحه يسبب اعادة طلب جميع الصفحات من الانترنيت عند الحاجة اليها. وهذا قد يحل مشاكل بعض المواقع','','','كلا','نعم')
+	if yes==1: 
+		DELETE_DATABASE_FILES()
+		xbmcgui.Dialog().ok('تم مسح كاش البرنامج بالكامل','اذا كانت عندك مشكلة في احد المواقع فجرب الموقع الان ... واذا المشكلة مستمرة فاذن ارسل المشكلة الى المبرمج')
+	return ''
 
 def HTTPS_TEST():
 	worked = HTTPS(True)
@@ -62,9 +65,14 @@ def SEND_MESSAGE(text=''):
 		yes = xbmcgui.Dialog().yesno('هل لديك مشكلة تريد ابلاغ المبرمج عنها ؟','','','','كلا','نعم')
 		if yes==1: problem='yes'
 	if problem=='yes':
+		yes = xbmcgui.Dialog().yesno('هل جربت مسح كاش البرنامج ولم تحل المشكلة ؟','في بعض الاحيان تكون المشكلة بسبب صفحة مخزنة في كاش البرنامج وعند مسح الكاش تعود الصفحة للعمل بصورة طبيعية','','','كلا','نعم')
+		if yes==0: 
+			DELETE_DATABASE_FILES()
+			xbmcgui.Dialog().ok('تم مسح كاش البرنامج بالكامل','اذا كانت عندك مشكلة في احد المواقع فجرب الموقع الان ... واذا المشكلة مستمرة فاذن ارسل المشكلة الى المبرمج')
+			return ''
 		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بارسال ال 300 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع المبرمج معرفة المشكلة واصلاحها','','','كلا','نعم')
 		if logs==0:
-			xbmcgui.Dialog().ok('تم الغاء الارسال','')
+			xbmcgui.Dialog().ok('تم الغاء الارسال','للأسف بدون سجل الاخطاء المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
 			return ''
 		"""
 		else:
@@ -78,7 +86,7 @@ def SEND_MESSAGE(text=''):
 	xbmcgui.Dialog().ok('email address عنوان الايميل','اذا كنت تحتاج جواب من المبرمج فيجب عليك اضافة عنوان بريدك الالكتروني الى الرسالة')
 	search = KEYBOARD('Write a message   اكتب رسالة')
 	if search == '':
-		xbmcgui.Dialog().ok('تم الغاء الارسال','')
+		xbmcgui.Dialog().ok('تم الغاء الارسال','تم الغاء الارسال لانك لم تكتب اي شيء')
 		return ''
 	message = search
 	subject = 'Message: From Arabic Videos'
@@ -165,7 +173,7 @@ def VERSION():
 		message2 +=  '\n' + 'الاصدار الذي انت تستخدمه للبرنامج هو :   ' + current_ADDON_VER
 		message2 += '\n' + 'الاصدار الاخير لمخزن عماد المتوفر الان هو :   ' + latest_REPO_VER
 		message2 +=  '\n' + 'الاصدار الذي انت تستخدمه لمخزن عماد هو :  ' + current_REPO_VER
-		message3 +=  '\n\n' + 'علما ان التحديث الاوتوماتيكي لا يعمل اذا لم يكن لديك في كودي مخزن عماد EMAD Repository'
+		message3 +=  '\n\n' + 'لكي يعمل التحديث الاوتوماتيكي يجب ان يكون لديك في كودي مخزن عماد EMAD Repository'
 		message3 +=  '\n\n' + 'ملفات التنصيب مع التعليمات متوفرة على هذا الرابط'
 		message3 +=  '\n' + 'https://github.com/emadmahdi/KODI'
 		xbmcgui.Dialog().textviewer(message1,message2+message3)
@@ -209,15 +217,12 @@ def CLOSED():
 
 def KODI_VERSION():
 	#	https://kodi.tv/download/849
-	#   https://xbmc.en.uptodown.com/android
-	#   https://filehippo.com/download_kodi
-	#   https://kodi.en.softonic.com
 	#   https://play.google.com/store/apps/details?id=org.xbmc.kodi
-	#	https://xbmc.en.uptodown.com/android
 	#	http://mirror.math.princeton.edu/pub/xbmc/releases/windows/win64
-	url = 'http://mirrors.mit.edu/kodi/releases/windows/win64'
+	#	http://mirrors.mit.edu/kodi/releases/windows/win64'
+	url = 'http://mirrors.kodi.tv/releases/windows/win64/'
 	html = openURL_cached(NO_CACHE,url,'','','','PROGRAM-KODI_VERSION-1st')
-	latest_KODI_VER = re.findall('href="kodi-(.*?)-',html,re.DOTALL)[-1]
+	latest_KODI_VER = re.findall('href="kodi-(.*?)-',html,re.DOTALL)[0]
 	current_KODI_VER = xbmc.getInfoLabel( "System.BuildVersion" ).split(' ')[0]
 	message4 = 'الاصدار الاخير لكودي المتوفر الان هو :   ' + latest_KODI_VER
 	message4 +=  '\n' + 'الاصدار الذي انت تستخدمه لكودي هو :   ' + current_KODI_VER
