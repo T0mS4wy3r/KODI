@@ -71,7 +71,7 @@ if mode==-1:
 	addDir('18.  [COLOR FFC89008]HLA   [/COLOR]'+'موقع هلا سيما (مشفر)','',80)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	addDir('19.  [COLOR FFC89008]TV1   [/COLOR]'+'قنوات تلفزونية','',100)
-	addDir('20.  [COLOR FFC89008]TV2   [/COLOR]'+'قنوات تلفزونية خاصة','',101)
+	addDir('20.  [COLOR FFC89008]TV2   [/COLOR]'+'قنوات تلفزونية للفحص','',101)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	addLink('ـMessage to developer    رسالة الى المبرمج'+'  .21','',2,'','','IsPlayable=no,problem=no')
 	addDir('ـProblems & Questions    مشاكل وأسئلة'+'  .22','',150)

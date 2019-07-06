@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://4helal.tv'
+website0a = 'https://hd.4helal.tv'
+#website0a = 'https://4helal.tv'
+#website0a = 'https://www.4helal.tv'
+
 script_name='HELAL'
 headers = { 'User-Agent' : '' }
 menu_name='_HEL_'
@@ -41,7 +44,6 @@ def ITEMS(url):
 	if '/search.php' in url:
 		parts = url.split('?')
 		url,search = parts
-		search = search.replace('%20',' ')
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 't' : search }
 		data = urllib.urlencode(payload)
@@ -151,7 +153,7 @@ def LATEST():
 def SEARCH(search=''):
 	if search=='': search = KEYBOARD()
 	if search == '': return
-	search = search.replace(' ','%20')
+	search = search.replace(' ','+')
 	url = website0a + '/search.php?'+search
 	ITEMS(url)
 	return

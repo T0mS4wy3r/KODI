@@ -2,7 +2,9 @@
 from LIBRARY import *
 import requests
 
-website0a = 'https://egy1.best'
+website0a = 'https://egy.best'
+#website0a = 'https://egy1.best'
+#website0a = 'https://egybest1.com'
 headers = { 'User-Agent' : '' }
 script_name = 'EGYBEST'
 menu_name='_EGB_'
@@ -23,7 +25,7 @@ def MAIN_MENU():
 	#xbmcgui.Dialog().ok(website0a, html)
 	html_blocks=re.findall('id="menu"(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
-	items=re.findall('<a href="(https://egy1.best/.*?)".*?></i>(.*?)<',block,re.DOTALL)
+	items=re.findall('<a href="(https://egy.best/.*?)".*?></i>(.*?)<',block,re.DOTALL)
 	for url,title in reversed(items):
 		if '/my/' not in url:
 			addDir(menu_name+title,website0a+url,121)

@@ -78,7 +78,7 @@ def PLAY_LINK(url,script_name):
 			titleLIST[0].shutdown()
 	else:
 		result = 'unresolved'
-		videofiletype = re.findall('(.mp4|.m3u|.m3u8|.mpd|.mkv)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
+		videofiletype = re.findall('(.ts|.mp4|.m3u|.m3u8|.mpd|.mkv|.flv|.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
 		if videofiletype: result = PLAY_VIDEO(url,script_name,'yes')
 	return result
 	#title = xbmc.getInfoLabel( "ListItem.Label" )
@@ -724,6 +724,7 @@ def YOUTUBE(url):
 			import youtube_signature.json_script_engine
 			cypher = youtube_signature.cipher.Cipher()
 			cypher._object_cache = {}
+			#xbmcgui.Dialog().ok('',jshtml)
 			json_script = cypher._load_javascript(jshtml)
 			json_script_cached = str(json_script)
 	#xbmc.log(jsfile,level=xbmc.LOGNOTICE)
@@ -846,12 +847,16 @@ def YOUTUBE(url):
 	if mpdvideoTitleLIST: selectMenu.append('mpd انت تختار دقة الصورة ودقة الصوت') ; choiceMenu.append('mpd')
 	if videoTitleLIST: selectMenu.append('صورة فقط بدون صوت') ; choiceMenu.append('video')
 	if audioTitleLIST: selectMenu.append('صوت فقط بدون صورة') ; choiceMenu.append('audio')
+	if dashURL!='': selectMenu.append('mpd صورة وصوت دقة اوتوماتيك') ; choiceMenu.append('dash')
 	need_mpd_server = False
 	while True:
 		selection = xbmcgui.Dialog().select('اختر النوع المناسب:', selectMenu)
 		if selection==-1: break
 		choice = choiceMenu[selection]
-		if choice in ['audio','video','muxed']:
+		if choice=='dash':
+			finalURL = dashURL
+			break
+		elif choice in ['audio','video','muxed']:
 			if choice=='muxed': titleLIST,dictLIST = muxedTitleLIST,muxedDictLIST
 			elif choice=='video': titleLIST,dictLIST = videoTitleLIST,videoDictLIST
 			elif choice=='audio': titleLIST,dictLIST = audioTitleLIST,audioDictLIST
@@ -868,7 +873,7 @@ def YOUTUBE(url):
 					audioDICT = audioDictLIST[selection]
 					need_mpd_server = True
 					break
-		else:
+		elif choice=='all':
 			selection = xbmcgui.Dialog().select('اختر الملف المناسب:', allTitleLIST)
 			if selection!=-1:
 				if dashURL!='' and selection==len(allTitleLIST)-1:

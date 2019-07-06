@@ -301,6 +301,8 @@ def KEYBOARD(label='Search'):
 	return new_search
 
 def PLAY_VIDEO(url3,website='',showWatched='yes'):
+	#showWatched = 'no'
+	#url3 = 's:\emad.m3u8'
 	result = 'canceled0'
 	if len(url3)==2: url,subtitle = url3
 	else: url,subtitle = url3,''
@@ -315,25 +317,34 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 			xbmcgui.Dialog().ok('الاتصال مشفر','مشكلة ... هذا الفيديو يحتاج الى اتصال مشفر (ربط مشفر) ولكن للأسف الاتصال المشفر لا يعمل على جهازك')
 			return 'https'
 	play_item = xbmcgui.ListItem(path=url)
+	play_item.setProperty('inputstreamaddon', '')
+	play_item.setMimeType('mime/x-type')
 	myplayer = CustomePlayer()
+	videofiletype = re.findall('(.ts|.mp4|.m3u|.m3u8|.mpd|.mkv|.flv|.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
+	if videofiletype: videofiletype = videofiletype[0][0]
+	else: videofiletype = ''
+	if videofiletype=='.ts':
+		#when set to "False" it makes glarabTV fails and make WS2TV opens fast
+		play_item.setContentLookup(False)
+	if videofiletype=='.mpd' or '/dash/' in url:
+		play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
+		play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
+	if subtitle!='':
+		play_item.setSubtitles([subtitle])
+		#xbmc.log('['+addon_id+']:  Added subtitle to video: ['+subtitle+']', level=xbmc.LOGNOTICE)
 	if showWatched=='yes':
 		#title = xbmc.getInfoLabel('ListItem.Title')
 		#label = xbmc.getInfoLabel('ListItem.Label')
 		#play_item.setInfo( "video", { "Title": label } )
 		#play_item.setPath(url)
 		#play_item.setInfo('Video', {'duration': 3600})
-		if '.mpd' in url or '/dash/' in url:
-			play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
-			play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
-		if subtitle!='':
-			play_item.setSubtitles([subtitle])
-			#xbmc.log('['+addon_id+']:  Added subtitle to video: ['+subtitle+']', level=xbmc.LOGNOTICE)
 		xbmcplugin.setResolvedUrl(addon_handle, True, play_item)
-		#xbmc.Player().play(url,play_item)
 	else:
 		label = xbmc.getInfoLabel('ListItem.Label')
 		play_item.setInfo( "video", { "Title": label } )
 		myplayer.play(url,play_item)
+		#xbmc.Player().play(url,play_item)
+	play_item.setContentLookup(False)
 	#logfilename = xbmc.translatePath('special://logpath')+'kodi.log'
 	timeout,step,result = 60,2,'tried'
 	for i in range(0,timeout,step):
@@ -492,6 +503,14 @@ class CustomThread:
 		self.resultsDICT[id] = func(*args)
 		self.statusDICT[id] = 'finished'
 
+"""
+def EXTRACT_AV_M3U8(url):
+	html = openURL_cached(SHORT_CACHE,url,'',headers,'','LIBRARY-EXTRACT_AV_M3U8-1st')
+	audio = re.findall('URI="(.*?)"',html,re.DOTALL)[0]
+	videos = re.findall('RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
+	for resolution,link in videos:
+		pass
+"""
 
 
 

@@ -11,7 +11,7 @@ def MAIN(mode,url,text):
 	elif mode==141: TITLES(url)
 	elif mode==142: PLAYLIST_ITEMS(url)
 	elif mode==143: result = PLAY(url)
-	elif mode==144: SETTINGS()
+	#elif mode==144: SETTINGS()
 	elif mode==145: CHANNEL_MENU(url)
 	elif mode==146: CHANNEL_ITEMS(url)
 	elif mode==149: SEARCH(text)
@@ -48,24 +48,27 @@ def PLAY(url):
 	return result
 
 def PLAYLIST_ITEMS(url):
+	html_blocks = []
 	if 'browse_ajax' in url:
 		html = openURL_cached(REGULAR_CACHE,url,'','','','YOUTUBE-PLAYLIST_ITEMS-1st')
 		html = CLEAN_AJAX(html)
 		html_blocks = [html]
-	else:
-		id = url.split('list=')[1]
+	elif 'list=' in url and 'index=' not in url:
+		id = url.split('list=')[1].split('&')[0]
 		url2 = website0a+'/playlist?list='+id
 		html = openURL_cached(REGULAR_CACHE,url2,'','','','YOUTUBE-PLAYLIST_ITEMS-2nd')
 		html_blocks = re.findall('class="pl-video-table(.*?)footer-container',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(url,url)
+	#xbmcgui.Dialog().ok(url2,id)
 	if html_blocks:
 		block = html_blocks[0]
-		items = re.findall('data-title="(.*?)".*?href="(.*?)".*?data-thumb="(.*?)"',block,re.DOTALL)
-		for title,link,img in items:
+		items = re.findall('data-title="(.*?)".*?href="(.*?)".*?data-thumb="(.*?)".*?video-time(.*?)</div></td></tr>',block,re.DOTALL)
+		for title,link,img,duration in items:
+			if 'timestamp' in duration: duration = re.findall('timestamp.*?><.*?>(.*?)<',duration,re.DOTALL)[0]
+			else: duration=''
 			title = title.replace('\n','')
 			title = unescapeHTML(title)
 			link = website0a+link
-			addLink(menu_name+title,link,143,img)
+			addLink(menu_name+title,link,143,img,duration)
 		html_blocks = re.findall('items-load-more-button(.*?)load-more-loading',html,re.DOTALL)
 		if html_blocks:
 			block = html_blocks[0]
@@ -77,13 +80,13 @@ def PLAYLIST_ITEMS(url):
 	return
 
 def PLAYLIST_ITEMS_PLAYER(url):
+	#url = 'https://www.youtube.com/watch?v=qCO4suk-pUY&list=RDQMvzOL1FJ97vc&start_radio=1'
 	#xbmcgui.Dialog().ok(url,'')
 	html = openURL_cached(REGULAR_CACHE,url,'','','','YOUTUBE-PLAYLIST_ITEMS_PLAYER-1st')
 	html_blocks = re.findall('playlist-videos-container(.*?)watch7-container',html,re.DOTALL)
 	block = html_blocks[0]
 	items1 = re.findall('data-video-title="(.*?)".*?href="(.*?)"',block,re.DOTALL)
 	items2 = re.findall('data-thumbnail-url="(.*?)"',block,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(len(items1)),str(len(items2)))
 	i = 0
 	for title,link in items1:
 		title = title.replace('\n','')
@@ -92,6 +95,7 @@ def PLAYLIST_ITEMS_PLAYER(url):
 		link = website0a+link
 		addLink(menu_name+title,link,143,img)
 		i = i+1
+	addDir(menu_name+'صفحة اخرى',link,142)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -113,18 +117,16 @@ def CHANNEL_ITEMS(url):
 		block = html_blocks[0]
 		items = re.findall('yt-lockup-thumbnail.*?href="(.*?)".*?src="(.*?)"(.*?)sessionlink.*?title="(.*?)"',block,re.DOTALL)
 		for link,img,count,title in items:
-			if 'video-count-label' in count:
-				count = ' '+re.findall('video-count-label.*?(\d+).*?</',count,re.DOTALL)[0]
+			if 'video-time' in count: duration = re.findall('video-time.*?><.*?>(.*?)<',count,re.DOTALL)[0]
+			else: duration=''
+			if 'video-count-label' in count: count = ' '+re.findall('video-count-label.*?(\d+).*?</',count,re.DOTALL)[0]
 			else: count=''
 			title = title.replace('\n','')
 			link = website0a+link
 			title = unescapeHTML(title)
-			if 'list=' in link:
-				addDir(menu_name+'LIST'+count+':  '+title,link,142,img)
-			elif '/channel/' in link:
-				addDir(menu_name+'CHNL:  '+title,link,145,img)
-			else:
-				addLink(menu_name+title,link,143,img)
+			if 'list=' in link: addDir(menu_name+'LIST'+count+':  '+title,link,142,img)
+			elif '/channel/' in link: addDir(menu_name+'CHNL:  '+title,link,145,img)
+			else: addLink(menu_name+title,link,143,img,duration)
 		html_blocks = re.findall('items-load-more-button(.*?)load-more-loading',html,re.DOTALL)
 		if html_blocks:
 			block = html_blocks[0]
@@ -157,6 +159,8 @@ def TITLES(url):
 		else:
 			count2 = re.findall('<li>(\d+) video',count2,re.DOTALL)
 			if count2: counts = ' ' + count2[0]
+		if 'video-time' in count: duration = re.findall('video-time.*?>(.*?)<',count,re.DOTALL)[0]
+		else: duration=''
 		if 'http' not in img: img = 'https:'+img
 		if 'http' not in link: link = website0a+link
 		if '\n' in paid: title = '$$:  '+title
@@ -165,7 +169,7 @@ def TITLES(url):
 		if 'list=' in link: addDir(menu_name+'LIST'+counts+':  '+title,link,142,img)
 		elif '/channel/' in link: addDir(menu_name+'CHNL'+counts+':  '+title,link,145,img)
 		elif '/user/' in link: addDir(menu_name+'USER'+counts+':  '+title,link,145,img)
-		else: addLink(menu_name+title,link,143,img)
+		else: addLink(menu_name+title,link,143,img,duration)
 	html_blocks = re.findall('search-pager(.*?)footer-container',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -174,12 +178,14 @@ def TITLES(url):
 			addDir(menu_name+'صفحة '+title,website0a+link,141)
 	xbmcplugin.endOfDirectory(addon_handle)
 
+"""
 def SETTINGS():
 	text1 = 'هذا الموقع يستخدم اضافة يوتيوب ولا يعمل بدونه'
 	text2 = 'لعرض فيدوهات يوتيوب تحتاج ان تتأكد ان تضبيطات واعدادت يوتويب صحيحة'
 	xbmcgui.Dialog().ok(text1,text2)
 	xbmc.executebuiltin('Addon.OpenSettings(plugin.video.youtube)', True)
 	return
+"""
 
 def SEARCH(search):
 	if search=='': search = KEYBOARD()
