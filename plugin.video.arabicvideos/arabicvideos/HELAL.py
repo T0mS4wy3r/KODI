@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://hd.4helal.tv'
+website0a = 'https://4helal.net'
+#website0a = 'https://hd.4helal.tv'
 #website0a = 'https://4helal.tv'
 #website0a = 'https://www.4helal.tv'
 
@@ -21,17 +22,26 @@ def MAIN(mode,url,text):
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',99)
 	addDir(menu_name+'المضاف حديثا','',94)
-	addDir(menu_name+'جديد الموقع',website0a,91)
+	addDir(menu_name+'الأحدث',website0a+'/?type=latest',91)
+	addDir(menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
+	addDir(menu_name+'الأكثر مشاهدة',website0a+'/?type=view',91)
+	addDir(menu_name+'المثبت',website0a+'/?type=pin',91)
+	addDir(menu_name+'جديد الافلام',website0a+'/?type=newMovies',91)
+	addDir(menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
+	addLink('[COLOR FFC89008]=============[/COLOR]','',9999,'','','IsPlayable=no')
+	#addDir(menu_name+'جديد الموقع',website0a,91)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
-	html_blocks = re.findall('mainmenu(.*?)nav',html,re.DOTALL)
 	#upper menu
-	block1 = html_blocks[0]
-	html_blocks = re.findall('class="f-cats(.*?)div',html,re.DOTALL)
+	html_blocks = re.findall('class="mainmenu(.*?)nav',html,re.DOTALL)
+	if html_blocks: block1 = html_blocks[0]
+	else: block1 = ''
 	#bottom menu
-	block2 = html_blocks[0].replace('</a></li>',' أخرى</a></li>')
+	html_blocks = re.findall('class="f-cats(.*?)div',html,re.DOTALL)
+	if html_blocks: block2 = html_blocks[0].replace('</a></li>',' أخرى</a></li>')
+	else: block2 = ''
+	#xbmcgui.Dialog().ok(block,str(items))
 	block = block1 + block2
 	items = re.findall('<li><a href="(.*?)".*?>(.*?)<',block,re.DOTALL)
-	#xbmcgui.Dialog().ok(block,str(items))
 	ignoreLIST = ['افلام للكبار فقط']
 	for link,title in items:
 		title = title.strip(' ')
@@ -51,7 +61,8 @@ def ITEMS(url):
 	else:
 		headers = { 'User-Agent' : '' }
 		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-ITEMS-2nd')
-	html_blocks = re.findall('movies-items(.*?)pagination',html,re.DOTALL)
+	#xbmcgui.Dialog().ok('',str(html))
+	html_blocks = re.findall('id="movies-items(.*?)class="f-cats',html,re.DOTALL)
 	if html_blocks: block = html_blocks[0]
 	else: block = ''
 	items = re.findall('background-image:url\((.*?)\).*?href="(.*?)".*?movie-title">(.*?)<',block,re.DOTALL)
@@ -64,11 +75,9 @@ def ITEMS(url):
 				if title not in allTitles:
 					addDir(menu_name+title,link,95,img)
 					allTitles.append(title)
-		elif '/video/' in link:
-			addLink(menu_name+title,link,92,img)
-		else:
-			addDir(menu_name+title,link,91,img)
-	html_blocks = re.findall('pagination(.*?)</div>',html,re.DOTALL)
+		elif '/video/' in link: addLink(menu_name+title,link,92,img)
+		else: addDir(menu_name+title,link,91,img)
+	html_blocks = re.findall('class="pagination(.*?)div',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('<a href="(.*?)".*?>(.*?)<',block,re.DOTALL)
@@ -81,7 +90,7 @@ def ITEMS(url):
 
 def EPISODES(url):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-EPISODES-1st')
-	html_blocks = re.findall('episodes-panel(.*?)</div>',html,re.DOTALL)
+	html_blocks = re.findall('id="episodes-panel(.*?)div',html,re.DOTALL)
 	block = html_blocks[0]
 	img = re.findall('image":.*?"(.*?)"',html,re.DOTALL)[0]
 	name = re.findall('itemprop="title">(.*?)<',html,re.DOTALL)
@@ -102,15 +111,15 @@ def PLAY(url):
 	if any(value in html for value in adultLIST):
 		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
 		return
-	html_blocks = re.findall('links-panel(.*?)div',html,re.DOTALL)
+	html_blocks = re.findall('id="links-panel(.*?)div',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)"',block,re.DOTALL)
 		for link in items:
 			linkLIST.append(link)
-	html_blocks = re.findall('nav-tabs(.*?)video-panel-more',html,re.DOTALL)
+	html_blocks = re.findall('nav-tabs"(.*?)video-panel-more',html,re.DOTALL)
 	block = html_blocks[0]
-	items = re.findall('ajax-file-id.*?value="(.*?)"',block,re.DOTALL)
+	items = re.findall('id="ajax-file-id.*?value="(.*?)"',block,re.DOTALL)
 	id = items[0]
 	#xbmcgui.Dialog().ok('',id)
 	items = re.findall('data-server-src="(.*?)"',block,re.DOTALL)
@@ -139,14 +148,12 @@ def PLAY(url):
 
 def LATEST():
 	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','HELAL-LATEST-1st')
-	html_blocks = re.findall('index-last-movie(.*?)index-slider-movie',html,re.DOTALL)
+	html_blocks = re.findall('id="index-last-movie(.*?)id="index-slider-movie',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)" title="(.*?)"',block,re.DOTALL)
 	for img,link,title in items:
-		if '/video/' in link:
-			addLink(menu_name+title,link,92,img)
-		else:
-			addDir(menu_name+title,link,91,img)
+		if '/video/' in link: addLink(menu_name+title,link,92,img)
+		else: addDir(menu_name+title,link,91,img)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 

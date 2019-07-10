@@ -157,12 +157,11 @@ def PLAY(url):
 		else:
 			server = 'main server'
 			url = origin_link + link
-		html = openURL_cached(LONG_CACHE,url,'','','','SHOOFMAX-PLAY-2nd')
-		items = re.findall('RESOLUTION=(.*?),.*?\n(.*?m3u8)',html,re.DOTALL)
-		for quality,link in items:
-			url2 = url.replace('variant.m3u8','') + link
-			items_url.append(url2)
-			items_name.append('m3u8: '+server+' '+quality)
+		if '.m3u8' in url:
+			titleLIST,linkLIST = M3U8_RESOLUTIONS(url)
+			for i in range(len(titleLIST)):
+				items_url.append(linkLIST[i])
+				items_name.append('m3u8: '+server+' '+titleLIST[i])
 	selection = xbmcgui.Dialog().select('Select Video Quality:', items_name)
 	if selection == -1 : return
 	url = items_url[selection]

@@ -10,21 +10,25 @@ def MAIN(mode,url,text):
 	if mode==140: MENU()
 	elif mode==141: TITLES(url)
 	elif mode==142: PLAYLIST_ITEMS(url)
-	elif mode==143: result = PLAY(url)
+	elif mode==143: result = PLAY(url,text)
 	#elif mode==144: SETTINGS()
 	elif mode==145: CHANNEL_MENU(url)
 	elif mode==146: CHANNEL_ITEMS(url)
+	elif mode==147: LIVE_ARABIC()
+	elif mode==148: LIVE_ENGLISH()
 	elif mode==149: SEARCH(text)
 	return result
 
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',149)
-	addDir(menu_name+'مسلسلات عربية','https://www.youtube.com/results?search_query=مسلسل&sp=EgIQAw%253D%253D',141)
-	addDir(menu_name+'افلام عربية','https://www.youtube.com/results?search_query=فيلم',141)
-	addDir(menu_name+'مسرحيات عربية','https://www.youtube.com/results?search_query=مسرحية',141)
-	addDir(menu_name+'مسلسلات اجنبية','https://www.youtube.com/results?search_query=series&sp=EgIQAw%253D%253D',141)
-	addDir(menu_name+'افلام اجنبية','https://www.youtube.com/results?search_query=movie',141)
-	addDir(menu_name+'مسلسلات كارتون','https://www.youtube.com/results?search_query=كارتون&sp=EgIQAw%253D%253D',141)
+	addDir(menu_name+'قنوات عربية بث مباشر','',147)
+	addDir(menu_name+'قنوات أجنبية بث مباشر','',148)
+	addDir(menu_name+'مسلسلات عربية',website0a+'/results?search_query=مسلسل&sp=EgIQAw%253D%253D',141)
+	addDir(menu_name+'افلام عربية',website0a+'/results?search_query=فيلم',141)
+	addDir(menu_name+'مسرحيات عربية',website0a+'/results?search_query=مسرحية',141)
+	addDir(menu_name+'مسلسلات اجنبية',website0a+'/results?search_query=series&sp=EgIQAw%253D%253D',141)
+	addDir(menu_name+'افلام اجنبية',website0a+'/results?search_query=movie',141)
+	addDir(menu_name+'مسلسلات كارتون',website0a+'/results?search_query=كارتون&sp=EgIQAw%253D%253D',141)
 	#addDir(menu_name+'اعدادات اضافة يوتيوب','',144)
 	xbmcplugin.endOfDirectory(addon_handle)
 	#yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
@@ -35,7 +39,19 @@ def MENU():
 	#	#xbmc.executebuiltin('RunAddon(plugin.video.youtube)')
 	return
 
-def PLAY(url):
+def LIVE_ARABIC():
+	TITLES(website0a+'/results?search_query=قناة+بث&sp=EgJAAQ%3D%3D')
+
+def LIVE_ENGLISH():
+	TITLES(website0a+'/results?search_query=tv&sp=EgJAAQ%253D%253D')
+
+def CHANNEL_MENU(url):
+	addDir(menu_name+'Videos',url+'/videos',146)
+	addDir(menu_name+'Playlists',url+'/playlists',146)
+	addDir(menu_name+'Channels',url+'/channels',146)
+	xbmcplugin.endOfDirectory(addon_handle)
+
+def PLAY(url,text):
 	#url = url+'&'
 	#items = re.findall('v=(.*?)&',url,re.DOTALL)
 	#id = items[0]
@@ -44,7 +60,7 @@ def PLAY(url):
 	#PLAY_VIDEO(link,script_name)
 	linkLIST = [url]
 	import RESOLVERS
-	result = RESOLVERS.PLAY(linkLIST,script_name)
+	result = RESOLVERS.PLAY(linkLIST,script_name,text)
 	return result
 
 def PLAYLIST_ITEMS(url):
@@ -99,24 +115,19 @@ def PLAYLIST_ITEMS_PLAYER(url):
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def CHANNEL_MENU(url):
-	addDir(menu_name+'Videos',url+'/videos',146)
-	addDir(menu_name+'Playlists',url+'/playlists',146)
-	addDir(menu_name+'Channels',url+'/channels',146)
-	xbmcplugin.endOfDirectory(addon_handle)
-
 def CHANNEL_ITEMS(url):
 	#xbmcgui.Dialog().ok(url,'')
 	html = openURL_cached(REGULAR_CACHE,url,'','','','YOUTUBE-CHANNEL_ITEMS-1st')
 	if 'browse_ajax' in url:
 		html = CLEAN_AJAX(html)
 		html_blocks = [html]
-	else:
-		html_blocks = re.findall('branded-page-v2-subnav-container(.*?)footer-container',html,re.DOTALL)
+	else: html_blocks = re.findall('branded-page-v2-subnav-container(.*?)footer-container',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
-		items = re.findall('yt-lockup-thumbnail.*?href="(.*?)".*?src="(.*?)"(.*?)sessionlink.*?title="(.*?)"',block,re.DOTALL)
-		for link,img,count,title in items:
+		items = re.findall('yt-lockup-thumbnail.*?href="(.*?)".*?src="(.*?)"(.*?)sessionlink.*?title="(.*?)"(.*?)yt-lockup-notifications',block,re.DOTALL)
+		for link,img,count,title,live in items:
+			if '>Live now<' in live: live = 'LIVE:  '
+			else: live = ''
 			if 'video-time' in count: duration = re.findall('video-time.*?><.*?>(.*?)<',count,re.DOTALL)[0]
 			else: duration=''
 			if 'video-count-label' in count: count = ' '+re.findall('video-count-label.*?(\d+).*?</',count,re.DOTALL)[0]
@@ -126,6 +137,7 @@ def CHANNEL_ITEMS(url):
 			title = unescapeHTML(title)
 			if 'list=' in link: addDir(menu_name+'LIST'+count+':  '+title,link,142,img)
 			elif '/channel/' in link: addDir(menu_name+'CHNL:  '+title,link,145,img)
+			elif live!='': addLink(menu_name+live+title,link,143,img,'','IsPlayable=no')
 			else: addLink(menu_name+title,link,143,img,duration)
 		html_blocks = re.findall('items-load-more-button(.*?)load-more-loading',html,re.DOTALL)
 		if html_blocks:
@@ -139,8 +151,10 @@ def CHANNEL_ITEMS(url):
 def TITLES(url):
 	html = openURL_cached(REGULAR_CACHE,url,'','','','YOUTUBE-TITLES-1st')
 	html_blocks = re.findall('(yt-lockup-tile.*?)footer-container',html,re.DOTALL)
-	block = html_blocks[0]
-	items = re.findall('yt-lockup-tile.*?(src|thumb)="(.*?)"(.*?)href="(.*?)".*?title="(.*?)"(.*?)</div></div></div>(.*?)</li>',block,re.DOTALL)
+	if html_blocks:
+		block = html_blocks[0]
+		items = re.findall('yt-lockup-tile.*?(src|thumb)="(.*?)"(.*?)href="(.*?)".*?title="(.*?)"(.*?)</div></div></div>(.*?)</li>',block,re.DOTALL)
+	else: items = []
 	#xbmcgui.Dialog().ok(str(block.count('yt-lockup-tile')),str(len(items)))
 	#with open('S:\emad3.html', 'w') as f: f.write(block)
 	for dummy,img,count,link,title,count2,paid in items:
@@ -153,22 +167,25 @@ def TITLES(url):
 		img2 = re.findall('thumb="(.*?)"',count,re.DOTALL)
 		if img2: img = img2[0]
 		counts = ''
+		if '\n' in paid: title = '$$:  '+title
+		if 'video-time' in count: duration = re.findall('video-time.*?>(.*?)<',count,re.DOTALL)[0]
+		else: duration = ''
+		if '>Live now<' in count2: live = 'LIVE:  '
+		else: live = ''
 		if 'video-count-label' in count:
 			count = re.findall('video-count-label.*?(\d+).*?</',count,re.DOTALL)
 			if count: counts = ' ' + count[0]
 		else:
 			count2 = re.findall('<li>(\d+) video',count2,re.DOTALL)
 			if count2: counts = ' ' + count2[0]
-		if 'video-time' in count: duration = re.findall('video-time.*?>(.*?)<',count,re.DOTALL)[0]
-		else: duration=''
 		if 'http' not in img: img = 'https:'+img
 		if 'http' not in link: link = website0a+link
-		if '\n' in paid: title = '$$:  '+title
 		title = title.replace('\n','')
 		title = unescapeHTML(title)
 		if 'list=' in link: addDir(menu_name+'LIST'+counts+':  '+title,link,142,img)
 		elif '/channel/' in link: addDir(menu_name+'CHNL'+counts+':  '+title,link,145,img)
 		elif '/user/' in link: addDir(menu_name+'USER'+counts+':  '+title,link,145,img)
+		elif live!='': addLink(menu_name+live+title,link,143,img,'','IsPlayable=no')
 		else: addLink(menu_name+title,link,143,img,duration)
 	html_blocks = re.findall('search-pager(.*?)footer-container',html,re.DOTALL)
 	if html_blocks:

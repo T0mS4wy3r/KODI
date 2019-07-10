@@ -393,14 +393,14 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 		if url != '': message += ' :\\nURL: ' + url
 		if source != '': message += ' :\\nSource: ' + source
 		message += ' :\\n'
-		logfileNEW = ''
 		if problem=='yes':
+			if showDialogs=='yes': xbmcgui.Dialog().notification('جاري الارسال','الرجاء الانتظار')
 			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
-			logfile=file(logfile, 'rb')
-			logfile.seek(-45000, os.SEEK_END)
-			logfile = logfile.read().splitlines()
-			#xbmcgui.Dialog().ok(logfile,str(len(logfile)))
-			logfileNEW = '\n'.join(logfile[-300:])
+			f = open(logfile,'rb')
+			size = os.path.getsize(logfile)
+			if size>60000: f.seek(-60000, os.SEEK_END)
+			data = f.readlines()
+			logfileNEW = ''.join(data[-300:])
 			import base64
 			logfileNEW = base64.b64encode(logfileNEW)
 		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
@@ -410,10 +410,32 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 		result = html[0:6]
 		if showDialogs=='yes':
 			if result == 'Error ':
+				xbmcgui.Dialog().notification('فشل في الارسال','للأسف')
 				xbmcgui.Dialog().ok('Failed sending the message','خطأ وفشل في ارسال الرسالة')
 			else:
+				xbmcgui.Dialog().notification('بنجاح','تم الارسال')
 				xbmcgui.Dialog().ok('Message sent','تم ارسال الرسالة بنجاح')
 	return html
+
+def M3U8_RESOLUTIONS(url,headers=''):
+	html = openURL_cached(SHORT_CACHE,url,'',headers,'','LIBRARY-GET_M3U8_RESOLUTIONS-1st')
+	items = re.findall('RESOLUTION=\d+[x|X](\d+).*?\n(.*?)\n',html,re.DOTALL)
+	#xbmcgui.Dialog().ok(url,str(items))
+	items = set(items)
+	items = sorted(items, reverse=True, key=lambda key: int(key[0]))
+	if items:
+		titleLIST,linkLIST = [],[]
+		for resolution,link in items:
+			if 'http' not in link: link = url.rsplit('/',1)[0] + '/' + link
+			titleLIST.append(resolution)
+			linkLIST.append(link)
+		#z = zip(titleLIST,linkLIST)
+		#z = set(z)
+		#z = sorted(z, reverse=True, key=lambda key: key[0])
+		#titleLIST,linkLIST = zip(*z)
+		#titleLIST,linkLIST = list(titleLIST),list(linkLIST)
+	else: titleLIST,linkLIST = [url],[url]
+	return titleLIST,linkLIST
 
 def dummyClientID(length):
 	#import uuid
@@ -503,14 +525,6 @@ class CustomThread:
 		self.resultsDICT[id] = func(*args)
 		self.statusDICT[id] = 'finished'
 
-"""
-def EXTRACT_AV_M3U8(url):
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','LIBRARY-EXTRACT_AV_M3U8-1st')
-	audio = re.findall('URI="(.*?)"',html,re.DOTALL)[0]
-	videos = re.findall('RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
-	for resolution,link in videos:
-		pass
-"""
 
 
 

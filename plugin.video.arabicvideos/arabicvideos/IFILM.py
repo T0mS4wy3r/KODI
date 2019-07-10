@@ -18,6 +18,7 @@ def MAIN(mode,url,page,text):
 	elif mode==24: PLAY(url)
 	elif mode==25: MUSIC_MENU(url)
 	elif mode==27: LIVE(url)
+	elif mode==28: LIVE_MENU()
 	elif mode==29: SEARCH(url,text)
 	return
 
@@ -26,6 +27,14 @@ def LANGUAGE_MENU():
 	addDir(menu_name+'English',website0b,21,'','101')
 	addDir(menu_name+'فارسى',website0c,21,'','101')
 	addDir(menu_name+'فارسى 2',website0d,21,'','101')
+	xbmcplugin.endOfDirectory(addon_handle)
+	return
+
+def LIVE_MENU():
+	addDir(menu_name+'عربي',website0a,27)
+	addDir(menu_name+'English',website0b,27)
+	addDir(menu_name+'فارسى',website0c,27)
+	addDir(menu_name+'فارسى 2',website0d,27)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 

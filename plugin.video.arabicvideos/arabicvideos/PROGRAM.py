@@ -13,7 +13,9 @@ def MAIN(mode,text=''):
 	elif mode==7: VERSION()
 	elif mode==8: RANDOM()
 	elif mode==9: DELETE_CACHE()
+	elif mode==170: TV_CHANNELS()
 	elif mode==179: TESTINGS()
+	
 	return
 
 def DELETE_CACHE():
@@ -73,6 +75,10 @@ def SEND_MESSAGE(text=''):
 		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بارسال ال 300 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع المبرمج معرفة المشكلة واصلاحها','','','كلا','نعم')
 		if logs==0:
 			xbmcgui.Dialog().ok('تم الغاء الارسال','للأسف بدون سجل الاخطاء المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
+			return ''
+		logs2 = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هل قمت قبل قليل بتشغيل الفيديو او الرابط الذي اعطاك المشكلة لكي يتم تسجيل هذه المشكلة في سجل الاخطاء قبل ارساله للمبرمج','','','كلا','نعم')
+		if logs2==0:
+			xbmcgui.Dialog().ok('تم الغاء الارسال','للأسف بدون تسجيل المشكلة في سجل الاخطاء فان المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
 			return ''
 		"""
 		else:
@@ -144,6 +150,19 @@ def GLOBAL_SEARCH(search=''):
 	addDir('12.  [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب مشفر','',99,'','',search)
 	addDir('13.  [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو مشفر','',119,'','',search)
 	addDir('14.  [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما مشفر','',89,'','',search)
+	xbmcplugin.endOfDirectory(addon_handle)
+	return
+
+def TV_CHANNELS():
+	addDir('1.  [COLOR FFC89008]TV0   [/COLOR]'+'قنوات من مواقعها الاصلية','',100)
+	addDir('2.  [COLOR FFC89008]YUT  [/COLOR]'+'قنوات عربية من يوتيوب','',147)
+	addDir('3.  [COLOR FFC89008]YUT  [/COLOR]'+'قنوات اجنبية من يوتيوب','',148)
+	addDir('4.  [COLOR FFC89008]IFL    [/COLOR]'+'من موقع قناة اي فيلم','',28)
+	#addDir('5.  [COLOR FFC89008]MRF  [/COLOR]'+'من موقع قناة المعارف','',41)
+	#addDir('6.  [COLOR FFC89008]KWT  [/COLOR]'+'من موقع قناة الكوثر','',135)
+	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	addDir('5.  [COLOR FFC89008]TV1   [/COLOR]'+'قنوات تلفزونية خاصة','',101)
+	addDir('6.  [COLOR FFC89008]TV2   [/COLOR]'+'قنوات تلفزونية للفحص','',102)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
