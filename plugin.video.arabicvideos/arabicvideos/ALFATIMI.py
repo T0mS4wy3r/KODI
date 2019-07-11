@@ -83,7 +83,7 @@ def PLAY(url):
 		url = EPISODES(url)
 	html = openURL_cached(LONG_CACHE,url,'','','','ALFATIMI-PLAY-1st')
 	items = re.findall('playlistfile:"(.*?)"',html,re.DOTALL)
-	url = items[0]#+'|User-Agent=|'
+	url = items[0]
 	if 'http' not in url: url = 'http:'+url
 	#xbmcgui.Dialog().ok(url,'')
 	PLAY_VIDEO(url,script_name)

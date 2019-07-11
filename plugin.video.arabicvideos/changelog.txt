@@ -1,4 +1,8 @@
 ﻿
+v5.5.0	2019-07-11
+Disabled ssl certificate verification for videos & pages
+
+
 v5.4.0	2019-07-10
 Added free tv channels
 Added live youtube & m3u8 support

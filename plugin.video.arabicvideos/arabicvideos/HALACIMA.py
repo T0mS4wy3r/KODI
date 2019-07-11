@@ -39,8 +39,7 @@ def ITEMS(url,html='',type='',page='0'):
 	page = int(page)
 	headers = { 'User-Agent' : '' }
 	if type=='':
-		if html=='':
-			html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HALACIMA-ITEMS-1st')
+		if html=='': html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HALACIMA-ITEMS-1st')
 		html_blocks = re.findall('art_list(.*?)col-md-12',html,re.DOTALL)
 		if html_blocks: block = html_blocks[0]
 		else: block = ''
@@ -52,7 +51,7 @@ def ITEMS(url,html='',type='',page='0'):
 		data = urllib.urlencode(payload)
 		block = openURL_cached(REGULAR_CACHE,url2,data,headers,'','HALACIMA-ITEMS-2nd')
 	items = re.findall('href="(.*?)".*?data-src="(.*?)".*?class="desc">(.*?)<',block,re.DOTALL)
-	allTitles = []
+	allTitles,allLinks = [],[]
 	for link,img,title in items:
 		title = title.replace('\n','')
 		if 'الحلقة' in title and '/category/' in url and 'برامج-وتلفزة' not in url:
@@ -75,12 +74,14 @@ def ITEMS(url,html='',type='',page='0'):
 		title = title.strip(' -')
 		title = title.strip(' ')
 		title = unescapeHTML(title)
-		if title not in allTitles:
-			allTitles.append(title)
-			if '/article/' in link:
-				addLink(menu_name+title,link,82,img)
-			else:
-				addDir(menu_name+title,link,81,img)
+		allTitles.append(title)
+		allLinks.append(link)
+	z = zip(allTitles,allLinks)
+	z = set(z)
+	#z = sorted(z, reverse=True, key=lambda key: key[0])
+	for title,link in z:
+		if '/article/' in link: addLink(menu_name+title,link,82,img)
+		else: addDir(menu_name+title,link,81,img)
 	html_blocks = re.findall('pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]

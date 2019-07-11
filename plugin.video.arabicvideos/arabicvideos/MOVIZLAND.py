@@ -189,10 +189,12 @@ def PLAY(url):
 	# mobile_watch_link
 	url3 = url2.replace(website0a,website0b)
 	html = openURL_cached(LONG_CACHE,url3,'',headers,'','MOVIZLAND-PLAY-3rd')
-	id2 = re.findall('" href="http://moshahda\..*?/embedM-(\w+)-.*?.html',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(url3,str(id2))
-	if id2:
-		mobile_watch_link = 'http://moshahda.online/' + id2[0] + '.html'
+	items = re.findall('" href="(.*?)"',html,re.DOTALL)
+	#id2 = re.findall('" href="(http://moshahda\..*?/embedM-(\w+)-.*?.html)',html,re.DOTALL)
+	#if id2:
+	if items:
+		#mobile_watch_link = 'http://moshahda.online/' + id2[-1] + '.html'
+		mobile_watch_link = items[-1]
 		if mobile_watch_link not in links:
 			linkLIST.append(mobile_watch_link+'?name=Mobile')
 	if len(linkLIST)==0:

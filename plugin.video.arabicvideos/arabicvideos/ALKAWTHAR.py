@@ -172,7 +172,7 @@ def PLAY(url):
 def LIVE():
 	html = openURL_cached(LONG_CACHE,website0a+'/live','','','','ALKAWTHAR-LIVE-1st')
 	items = re.findall('file: "(.*?)"',html,re.DOTALL)
-	url = items[0]#+'|User-Agent=|'
+	url = items[0]
 	PLAY_VIDEO(url,script_name,'no')
 	return
 

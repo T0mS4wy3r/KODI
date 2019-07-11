@@ -14,6 +14,7 @@ def MAIN(mode,text=''):
 	elif mode==8: RANDOM()
 	elif mode==9: DELETE_CACHE()
 	elif mode==170: TV_CHANNELS()
+	elif mode==171: SSL_WARNING()
 	elif mode==179: TESTINGS()
 	
 	return
@@ -28,8 +29,8 @@ def DELETE_CACHE():
 	return ''
 
 def HTTPS_TEST():
-	worked = HTTPS(True)
-	if not worked:
+	working = HTTPS(True)
+	if not working:
 		import PROBLEMS
 		PROBLEMS.MAIN(152)
 
@@ -72,7 +73,7 @@ def SEND_MESSAGE(text=''):
 			DELETE_DATABASE_FILES()
 			xbmcgui.Dialog().ok('تم مسح كاش البرنامج بالكامل','اذا كانت عندك مشكلة في احد المواقع فجرب الموقع الان ... واذا المشكلة مستمرة فاذن ارسل المشكلة الى المبرمج')
 			return ''
-		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بارسال ال 300 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع المبرمج معرفة المشكلة واصلاحها','','','كلا','نعم')
+		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بارسال ال 400 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع المبرمج معرفة المشكلة واصلاحها','','','كلا','نعم')
 		if logs==0:
 			xbmcgui.Dialog().ok('تم الغاء الارسال','للأسف بدون سجل الاخطاء المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
 			return ''
@@ -89,7 +90,7 @@ def SEND_MESSAGE(text=''):
 				return ''
 		xbmcgui.Dialog().ok('المبرمج لا يعلم الغيب','اذا كانت لديك مشكلة فالرجاء قراءة قسم المشاكل والاسئلة واذا لم تجد الحل هناك فحاول كتابة جميع تفاصيل المشكلة لان المبرمج لا يعلم الغيب')
 		"""
-	xbmcgui.Dialog().ok('email address عنوان الايميل','اذا كنت تحتاج جواب من المبرمج فيجب عليك اضافة عنوان بريدك الالكتروني الى الرسالة')
+	xbmcgui.Dialog().ok('ملاحظة مهمة','اكتب الان رسالة الى المبرمج واذا كنت تحتاج جواب من المبرمج فلا تنسى اضافة عنوان بريدك الالكتروني الى الرسالة')
 	search = KEYBOARD('Write a message   اكتب رسالة')
 	if search == '':
 		xbmcgui.Dialog().ok('تم الغاء الارسال','تم الغاء الارسال لانك لم تكتب اي شيء')
@@ -134,35 +135,35 @@ def GLOBAL_SEARCH(search=''):
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.lower()
-	addDir('1.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - موقع يوتيوب مشفر','',149,'','',search)
-	addDir('2.  [COLOR FFC89008]SHF  [/COLOR]'+search+' - موقع شوف ماكس مشفر','',59,'','',search)
-	addDir('3.  [COLOR FFC89008]KLA  [/COLOR]'+search+' - موقع كل العرب مشفر','',19,'','',search)
+	addDir('1.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - موقع يوتيوب','',149,'','',search)
+	addDir('2.  [COLOR FFC89008]SHF  [/COLOR]'+search+' - موقع شوف ماكس','',59,'','',search)
+	addDir('3.  [COLOR FFC89008]KLA  [/COLOR]'+search+' - موقع كل العرب','',19,'','',search)
 	addDir('4.  [COLOR FFC89008]PNT  [/COLOR]'+search+' - موقع بانيت','',39,'','',search)
 	addDir('5.  [COLOR FFC89008]IFL    [/COLOR]'+search+' - موقع قناة اي فيلم','',29,'','',search)
 	addDir('6.  [COLOR FFC89008]KWT  [/COLOR]'+search+' - موقع قناة الكوثر','',139,'','',search)
 	addDir('7.  [COLOR FFC89008]MRF  [/COLOR]'+search+' - موقع قناة المعارف','',49,'','',search)
 	addDir('8.  [COLOR FFC89008]FTM  [/COLOR]'+search+' - موقع المنبر الفاطمي','',69,'','',search)
-	addDir('9.  [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست مشفر','',5,'','',search)  # 129
+	#addDir('9.  [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',5,'','',search)  # 129
 	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
-	addDir('10.  [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند مشفر','',189,'','',search)
-	addDir('11.  [COLOR FFC89008]AKM  [/COLOR]'+search+' - موقع اكوام مشفر','',79,'','',search)
+	addDir('9.   [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند','',189,'','',search)
+	addDir('10.  [COLOR FFC89008]AKM  [/COLOR]'+search+' - موقع اكوام','',79,'','',search)
 	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
-	addDir('12.  [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب مشفر','',99,'','',search)
-	addDir('13.  [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو مشفر','',119,'','',search)
-	addDir('14.  [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما مشفر','',89,'','',search)
+	addDir('11.  [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
+	addDir('12.  [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
+	addDir('13.  [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',89,'','',search)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def TV_CHANNELS():
-	addDir('1.  [COLOR FFC89008]TV0   [/COLOR]'+'قنوات من مواقعها الاصلية','',100)
+	addDir('1.  [COLOR FFC89008]TV0  [/COLOR]'+'قنوات من مواقعها الاصلية','',100)
 	addDir('2.  [COLOR FFC89008]YUT  [/COLOR]'+'قنوات عربية من يوتيوب','',147)
 	addDir('3.  [COLOR FFC89008]YUT  [/COLOR]'+'قنوات اجنبية من يوتيوب','',148)
 	addDir('4.  [COLOR FFC89008]IFL    [/COLOR]'+'من موقع قناة اي فيلم','',28)
 	#addDir('5.  [COLOR FFC89008]MRF  [/COLOR]'+'من موقع قناة المعارف','',41)
 	#addDir('6.  [COLOR FFC89008]KWT  [/COLOR]'+'من موقع قناة الكوثر','',135)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addDir('5.  [COLOR FFC89008]TV1   [/COLOR]'+'قنوات تلفزونية خاصة','',101)
-	addDir('6.  [COLOR FFC89008]TV2   [/COLOR]'+'قنوات تلفزونية للفحص','',102)
+	addDir('5.  [COLOR FFC89008]TV1  [/COLOR]'+'قنوات تلفزونية خاصة','',101)
+	addDir('6.  [COLOR FFC89008]TV2  [/COLOR]'+'قنوات تلفزونية للفحص','',102)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -232,6 +233,12 @@ def RANDOM():
 
 def CLOSED():
 	xbmcgui.Dialog().ok('الموقع الاصلي للأسف مغلق','')
+	return
+
+def SSL_WARNING():
+	xbmcgui.Dialog().ok('تحذير مهم','البرنامج لا يفحص شهادة التشفير عند الاتصال بالمواقع المشفرة ولهذا في حال وجود شهادة غير صحيحة او منتهية الصلاحية او مزيفة فان هذا لن يوقف الربط المشفر ولن يوقف عمل البرنامج')
+	import PROBLEMS
+	PROBLEMS.MAIN(193)
 	return
 
 def KODI_VERSION():

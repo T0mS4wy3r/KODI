@@ -132,7 +132,7 @@ def EPISODES(url):
 			if size==1:
 				selection = 0
 			else:
-				selection = xbmcgui.Dialog().select(str(size)+'اختر الفيديو المناسب:', titleLIST)
+				selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', titleLIST)
 				if selection == -1: return
 			PLAY(url+'?ep='+str(1+episodeLIST[size-selection-1]))
 		else:

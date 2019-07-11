@@ -62,7 +62,7 @@ def ITEMS(url):
 		headers = { 'User-Agent' : '' }
 		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-ITEMS-2nd')
 	#xbmcgui.Dialog().ok('',str(html))
-	html_blocks = re.findall('id="movies-items(.*?)class="f-cats',html,re.DOTALL)
+	html_blocks = re.findall('id="movies-items(.*?)class="clear',html,re.DOTALL)
 	if html_blocks: block = html_blocks[0]
 	else: block = ''
 	items = re.findall('background-image:url\((.*?)\).*?href="(.*?)".*?movie-title">(.*?)<',block,re.DOTALL)
@@ -124,6 +124,7 @@ def PLAY(url):
 	#xbmcgui.Dialog().ok('',id)
 	items = re.findall('data-server-src="(.*?)"',block,re.DOTALL)
 	for link in items:
+		if 'http' not in link: link = 'http:' + link
 		link = unquote(link)
 		linkLIST.append(link)
 	"""

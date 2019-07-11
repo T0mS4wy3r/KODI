@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
-import requests
 
-website0a = 'https://egy.best'
+#website0a = 'https://egy.best'
 #website0a = 'https://egy1.best'
-#website0a = 'https://egybest1.com'
+website0a = 'https://egybest1.com'
 headers = { 'User-Agent' : '' }
 script_name = 'EGYBEST'
 menu_name='_EGB_'
@@ -19,16 +18,20 @@ def MAIN(mode,url,page,text):
 	return
 
 def MAIN_MENU():
-	addDir(menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
+	#addDir(menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
 	addDir(menu_name+'بحث في الموقع','',129)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBEST-MAIN_MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
 	html_blocks=re.findall('id="menu"(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
-	items=re.findall('<a href="(https://egy.best/.*?)".*?></i>(.*?)<',block,re.DOTALL)
-	for url,title in reversed(items):
-		if '/my/' not in url:
-			addDir(menu_name+title,website0a+url,121)
+	items=re.findall('<a href="(.*?)".*?[1/][i"]>(.*?)</a',block,re.DOTALL)
+	for link,title in items:
+		if 'torrent' not in link: addDir(menu_name+title,link,122)
+	html_blocks=re.findall('class="card(.*?)</div>',html,re.DOTALL)
+	block = html_blocks[0]
+	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
+	for link,title in items:
+		if 'torrent' not in link: addDir(menu_name+title,link,122)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -154,7 +157,7 @@ def PLAY(url):
 	EGUDI, EGUSID, EGUSS = GET_PLAY_TOKENS()
 	if EGUDI=='': return
 	headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
-	response = requests.request('GET', url, headers=headers, allow_redirects=False)
+	response = openURL_requests('GET', url, '', headers, False,'','EGYBEST-PLAY-2nd')
 	html = response.text
 	#xbmcgui.Dialog().ok(url,html)
 	items = re.findall('#EXT-X-STREAM.*?RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
@@ -169,7 +172,7 @@ def PLAY(url):
 		datacall = datacallLIST[selection]
 		url = website0a + '/api?call=' + datacall
 		headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
-		response = requests.request('GET', url, headers=headers, allow_redirects=False)
+		response = openURL_requests('GET', url, '', headers, False,'','EGYBEST-PLAY-3rd')
 		html = response.text
 		#xbmcgui.Dialog().ok(url,html)
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
@@ -178,7 +181,7 @@ def PLAY(url):
 
 		#url = website0a + '/api?call=' + datacall
 		#headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
-		#response = requests.request('GET', url, headers=headers, allow_redirects=False)
+		#response = openURL_requests('GET', url, '', headers, False,'','EGYBEST-PLAY-4th')
 		#html = response.text
 		#xbmc.log(escapeUNICODE(html), level=xbmc.LOGNOTICE)
 		#items = re.findall('"url":"(.*?)"',html,re.DOTALL)
@@ -226,7 +229,7 @@ def GET_PLAY_TOKENS():
 
 	if EGUDI!='':
 		headers = { 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
-		response = requests.request('GET', website0a, headers=headers, allow_redirects=False)
+		response = openURL_requests('GET', website0a, '', headers, False,'','EGYBEST-GET_PLAY_TOKENS-1st')
 		register = re.findall('ssl.egexa.com\/register',response.text,re.DOTALL)
 		if register:
 			settings.setSetting('egybest.EGUDI','')
@@ -236,8 +239,6 @@ def GET_PLAY_TOKENS():
 			#xbmcgui.Dialog().ok('no new login needed, you were already logged in','')
 			return [ EGUDI, EGUSID, EGUSS ]
 
-	import random
-	import string
 	char_set = string.ascii_uppercase + string.digits + string.ascii_lowercase
 	randomString = ''.join(random.sample(char_set*15, 15))
 
@@ -258,7 +259,7 @@ def GET_PLAY_TOKENS():
 	#'Cookie': "PSSID="+PSSID+"; JS_TIMEZONE_OFFSET=18000",
 	'Referer': 'https://ssl.egexa.com/login/?domain='+website0a.split('//')[1]+'&url=ref'
 	}
-	response = requests.request('POST', url, data=payload, headers=headers, allow_redirects=False)
+	response = openURL_requests('POST', url, payload, headers, False,'','EGYBEST-GET_PLAY_TOKENS-2nd')
 	cookies = response.cookies.get_dict()
 	#xbmc.log(response.text, level=xbmc.LOGNOTICE)
 
@@ -277,7 +278,7 @@ def GET_PLAY_TOKENS():
 	xbmc.sleep(1000)
 	url = "https://ssl.egexa.com/finish/"
 	headers = { 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
-	response = requests.request('GET', url, headers=headers, allow_redirects=True)
+	response = openURL_requests('GET', url, '', headers, True,'','EGYBEST-GET_PLAY_TOKENS-3rd')
 	cookies = response.cookies.get_dict()
 	#xbmcgui.Dialog().ok(str(response.text),str(cookies))
 	EGUDI = cookies['EGUDI']

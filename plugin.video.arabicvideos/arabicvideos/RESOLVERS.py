@@ -150,16 +150,16 @@ def RESOLVABLE(url):
 	elif 'arabloads'	in server:	known = 'arabloads'
 	elif 'archive'		in server:	known = 'archive'
 	elif 'catch.is'	 	in server:	known = 'catch'
-	#elif 'estream'	 	in server:	known = 'estream'
 	elif 'filerio'		in server:	known = 'filerio'
+	#elif 'estream'	 	in server:	known = 'estream'
 	#elif 'gounlimited'	in server:	known = 'gounlimited'
-	elif 'govid'		in server:	known = 'govid'
 	#elif 'intoupload' 	in server:	known = 'intoupload'
+	#elif 'thevideo'		in server:	known = 'thevideo'
+	elif 'govid'		in server:	known = 'govid'
 	elif 'liivideo' 	in server:	known = 'liivideo'
 	elif 'mp4upload'	in server:	known = 'mp4upload'
 	elif 'publicvideohost' in server:	known = 'publicvideohost'
 	elif 'rapidvideo' 	in server:	known = 'rapidvideo'
-	elif 'thevideo'		in server:	known = 'thevideo'
 	elif 'top4top'		in server:	known = 'top4top'
 	elif 'upbom' 		in server:	known = 'upbom'
 	elif 'uppom' 		in server:	known = 'uppom'
@@ -167,13 +167,13 @@ def RESOLVABLE(url):
 	elif 'uptostream'	in server:	known = 'uptostream'
 	elif 'uqload' 		in server:	known = 'uqload'
 	elif 'vcstream' 	in server:	known = 'vcstream'
-	#elif 'vev.io'	 	in server:	known = 'vev'
 	elif 'vidbob'		in server:	known = 'vidbob'
+	#elif 'vev.io'	 	in server:	known = 'vev'
 	#elif 'playr.4helal'in server:	private = 'helal'
 	#elif 'vidbom'		in server:	known = 'vidbom'
 	#elif 'vidhd' 		in server:	known = 'vidhd'
-	elif 'vidoza' 		in server:	known = 'vidoza'
 	#elif 'vidshare' 	in server:	known = 'vidshare'
+	elif 'vidoza' 		in server:	known = 'vidoza'
 	elif 'watchvideo' 	in server:	known = 'watchvideo'
 	elif 'wintv.live'	in server:	known = 'wintv.live'
 	elif 'youtu'	 	in server:	private = 'youtube'
@@ -242,15 +242,15 @@ def RESOLVE(url):
 	elif 'archive'		in server: titleLIST,linkLIST = ARCHIVE(url2)
 	elif 'catch.is'	 	in server: titleLIST,linkLIST = CATCHIS(url2)
 	#elif 'estream'	 	in server: titleLIST,linkLIST = ESTREAM(url2)
-	elif 'filerio'		in server: titleLIST,linkLIST = FILERIO(url2)
 	#elif 'gounlimited'	in server: titleLIST,linkLIST = GOUNLIMITED(url2)
-	elif 'govid'		in server: titleLIST,linkLIST = GOVID(url2)
 	#elif 'intoupload' 	in server: titleLIST,linkLIST = INTOUPLOAD(url2)
+	#elif 'thevideo'		in server: titleLIST,linkLIST = THEVIDEO(url2)
+	elif 'filerio'		in server: titleLIST,linkLIST = FILERIO(url2)
+	elif 'govid'		in server: titleLIST,linkLIST = GOVID(url2)
 	elif 'liivideo' 	in server: titleLIST,linkLIST = LIIVIDEO(url2)
 	elif 'mp4upload'	in server: titleLIST,linkLIST = MP4UPLOAD(url2)
 	elif 'publicvideohost' in server: titleLIST,linkLIST = PUBLICVIDEOHOST(url2)
 	elif 'rapidvideo' 	in server: titleLIST,linkLIST = RAPIDVIDEO(url2)
-	elif 'thevideo'		in server: titleLIST,linkLIST = THEVIDEO(url2)
 	elif 'top4top'		in server: titleLIST,linkLIST = TOP4TOP(url2)
 	elif 'upbom' 		in server: titleLIST,linkLIST = UPBOM(url2)
 	elif 'uppom' 		in server: titleLIST,linkLIST = UPBOM(url2)
@@ -258,13 +258,13 @@ def RESOLVE(url):
 	elif 'uptostream'	in server: titleLIST,linkLIST = UPTO(url2)
 	elif 'uqload' 		in server: titleLIST,linkLIST = UQLOAD(url2)
 	elif 'vcstream' 	in server: titleLIST,linkLIST = VCSTREAM(url2)
+	elif 'vidbob'		in server: titleLIST,linkLIST = VIDBOB(url2)
 	#elif 'vev.io'	 	in server: titleLIST,linkLIST = VEVIO(url2)
 	#elif 'playr.4helal'	in server: titleLIST,linkLIST = HELAL(url2)
-	elif 'vidbob'		in server: titleLIST,linkLIST = VIDBOB(url2)
 	#elif 'vidbom'		in server: titleLIST,linkLIST = VIDBOM(url2)
 	#elif 'vidhd' 		in server: titleLIST,linkLIST = VIDHD(url2)
-	elif 'vidoza' 		in server: titleLIST,linkLIST = VIDOZA(url2)
 	#elif 'vidshare' 	in server: titleLIST,linkLIST = VIDSHARE(url2)
+	elif 'vidoza' 		in server: titleLIST,linkLIST = VIDOZA(url2)
 	elif 'watchvideo' 	in server: titleLIST,linkLIST = WATCHVIDEO(url2)
 	elif 'wintv.live'	in server: titleLIST,linkLIST = WINTVLIVE(url2)
 	elif 'youtu'		in server: titleLIST,linkLIST = YOUTUBE(url2)
@@ -371,7 +371,7 @@ def MOVIZLAND(link):
 			if '.m3u8' in link:
 				titleLISTtemp,linkLISTtemp = M3U8_RESOLUTIONS(link)
 				linkLIST = linkLIST + linkLISTtemp
-				if linkLIST==titleLISTtemp: titleLIST.append(' سيرفر خاص '+'m3u8 '+name2)
+				if titleLISTtemp[0]=='-1': titleLIST.append(' سيرفر خاص '+'m3u8 '+name2)
 				else:
 					for title in titleLISTtemp:
 						titleLIST.append(' سيرفر خاص '+'m3u8 '+name2+' '+title)
@@ -444,8 +444,7 @@ def SHAHID4U(link):
 
 def AKOAM(link):
 	# http://go.akoam.net/5cf68c23e6e79
-	import requests
-	response = requests.request('GET', link, data='', headers='')
+	response = openURL_requests('GET', link, '', '', True,'','RESOLVERS-AKOAM-1st')
 	html = response.text
 	cookies = response.cookies.get_dict()
 	cookie = cookies['golink']
@@ -458,35 +457,39 @@ def AKOAM(link):
 		url = 'http://catch.is/'+id
 		titleLIST,linkLIST = CATCHIS(url)
 	else:
-		response = requests.request('GET', 'https://akoam.net/', headers='', data='', allow_redirects=False)
+		response = openURL_requests('GET', 'https://akoam.net/', '', '', False,'','RESOLVERS-AKOAM-2nd')
 		relocateURL = response.headers['Location']
 		url = url.replace('https://akoam.net/',relocateURL)
 		headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' , 'Referer':url }
-		response = requests.request('POST', url, headers=headers, data='', allow_redirects=False)
+		response = openURL_requests('POST', url, '', headers, False,'','RESOLVERS-AKOAM-3rd')
 		html = response.text
+		#xbmc.log(html, level=xbmc.LOGNOTICE)
+		#xbmcgui.Dialog().ok(url,html)
 		items = re.findall('direct_link":"(.*?)"',html,re.DOTALL|re.IGNORECASE)
 		if not items:
 			items = re.findall('<iframe.*?src="(.*?)"',html,re.DOTALL|re.IGNORECASE)
 			if not items:
 				items = re.findall('<embed.*?src="(.*?)"',html,re.DOTALL|re.IGNORECASE)
-		url2 = items[0].replace('\/','/')
-		url2 = url2.rstrip('/')
-		if 'http' not in url2: url2 = 'http:' + url2
-		#xbmcgui.Dialog().ok(link,url2)
-		if 'name=' in link: titleLIST,linkLIST = RESOLVE(url2)
-		else: titleLIST,linkLIST = ['ملف التحميل'],[url2]
-		"""
-		splits = url.split('/')
-		server = '/'.join(splits[0:3])
-		hash_data = url.split('/')[4]
-		watch_title = url.split('/')[-1]
-		url3 = server + '/watching/'+hash_data+'/'+watch_title
-		response = requests.request('GET', url3, headers='', data='', allow_redirects=False)
-		html = response.text
-		url3 = re.findall('file: "(.*?)"',html,re.DOTALL|re.IGNORECASE)[0]
-		titles2,urls2 = ['ملف المشاهدة المباشرة'],[url3]
-		titleLIST,linkLIST = titleLIST+titles2,linkLIST+urls2
-		"""
+		if items:
+			url2 = items[0].replace('\/','/')
+			url2 = url2.rstrip('/')
+			if 'http' not in url2: url2 = 'http:' + url2
+			#xbmcgui.Dialog().ok(link,url2)
+			if 'name=' in link: titleLIST,linkLIST = RESOLVE(url2)
+			else: titleLIST,linkLIST = ['ملف التحميل'],[url2]
+			"""
+			splits = url.split('/')
+			server = '/'.join(splits[0:3])
+			hash_data = url.split('/')[4]
+			watch_title = url.split('/')[-1]
+			url3 = server + '/watching/'+hash_data+'/'+watch_title
+			response = openURL_requests('GET', url3, '', '', False,'','RESOLVERS-AKOAM-4th')
+			html = response.text
+			url3 = re.findall('file: "(.*?)"',html,re.DOTALL|re.IGNORECASE)[0]
+			titles2,urls2 = ['ملف المشاهدة المباشرة'],[url3]
+			titleLIST,linkLIST = titleLIST+titles2,linkLIST+urls2
+			"""
+		else: return [],[]
 	return titleLIST,linkLIST
 
 def RAPIDVIDEO(url):
@@ -786,12 +789,12 @@ def YOUTUBE(url):
 			elif type2=='video':
 				type2 = 'Video'
 				bitrate = int(dict['bitrate'])
-				#quality2 = str(bitrate/1000)+'kbps  '+dict['quality_label']+'  '+dict['size']+'  '+dict['fps']+'fps'
-				quality2 = dict['size'].split('x')[1]+'  '+str(bitrate/1000)+'kbps  '+dict['fps']+'fps'
+				#quality2 = str(bitrate/1024)+'kbps  '+dict['quality_label']+'  '+dict['size']+'  '+dict['fps']+'fps'
+				quality2 = dict['size'].split('x')[1]+'  '+str(bitrate/1024)+'kbps  '+dict['fps']+'fps'
 			elif type2=='audio':
 				type2 = 'Audio'
 				bitrate = int(dict['bitrate'])
-				quality2 = str(bitrate/1000)+'kbps  '+str(int(dict['audio_sample_rate'])/1000)+'khz  '+dict['audio_channels']+'ch'
+				quality2 = str(bitrate/1024)+'kbps  '+str(int(dict['audio_sample_rate'])/1000)+'khz  '+dict['audio_channels']+'ch'
 		except: pass
 		title = type2+':  '+filetype+'  '+quality2+'  ('+codec+','+dict['itag']+')'
 		dict['title'] = title
@@ -826,7 +829,8 @@ def YOUTUBE(url):
 			dict['filetype'] = 'm3u8'
 			dict['quality'] = title
 			dict['url'] = link
-			dict['title'] = dict['type2']+':  '+dict['filetype']+'  '+dict['quality']
+			if title=='-1': dict['title'] = dict['type2']+':  '+dict['filetype']+'  '+'دقة اوتوماتيكية'
+			else: dict['title'] = dict['type2']+':  '+dict['filetype']+'  '+dict['quality']
 			dict['sort'] = 9
 			streams2.append(dict)
 	streams2 = sorted(streams2, reverse=True, key=lambda key: int(key['quality']))
@@ -857,9 +861,9 @@ def YOUTUBE(url):
 	#	if dict['bitrate']>highest: highest,highestAudioDICT = dict['bitrate'],dict
 	#audiodict = highestAudioDICT
 	for audiodict in mpdaudioDictLIST:
-		audioBitrate = int(audiodict['bitrate']/1000)
+		audioBitrate = int(audiodict['bitrate']/1024)
 		for videodict in mpdvideoDictLIST:
-			videoBitrate = int(videodict['bitrate']/1000)
+			videoBitrate = int(videodict['bitrate']/1024)
 			title = videodict['title'].replace('Video:  '+videodict['filetype'],'mpd')+'('+audiodict['title'].split('(',1)[1]
 			title = title.replace(str(videoBitrate)+'kbps',str(videoBitrate+audioBitrate)+'kbps')
 			allTitleLIST.append(title)
@@ -1023,7 +1027,7 @@ def VIDBOB(url):
 		if '.m3u8' in link:
 			titleLISTtemp,linkLISTtemp = M3U8_RESOLUTIONS(link)
 			linkLIST = linkLIST + linkLISTtemp
-			if linkLISTtemp==titleLISTtemp: titleLIST.append('سيرفر خاص'+'   m3u8')
+			if titleLISTtemp[0]=='-1': titleLIST.append('سيرفر خاص'+'   m3u8')
 			else:
 				for title in titleLISTtemp:
 					titleLIST.append('سيرفر خاص'+'   m3u8   '+title)
@@ -1056,7 +1060,7 @@ def GOVID(url):
 		link = items[0]
 		if '.m3u8' in link:
 			titleLISTtemp,linkLIST = M3U8_RESOLUTIONS(link)
-			if linkLIST==titleLISTtemp: titleLIST.append('سيرفر خاص'+'   m3u8')
+			if titleLISTtemp[0]=='-1': titleLIST.append('سيرفر خاص'+'   m3u8')
 			else:
 				for title in titleLISTtemp:
 					titleLIST.append('سيرفر خاص'+'   m3u8   '+title)
@@ -1117,25 +1121,13 @@ def ZIPPYSHARE(url):
 		return [url],[url]
 	else: return [],[]
 
-def THEVIDEO(url):
-	url = url.replace('embed-','')
-	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-THEVIDEO-1st')
-	items = re.findall('direct link" value="(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(items),html)
-	if items:
-		link = items[0].rstrip('/')
-		title,url = VEVIO(link)
-		return title,url
-	else: return [],[]
-
 def MP4UPLOAD(url):
 	url = url.replace('embed-','')
 	url = url.replace('.html','')
 	id = url.split('/')[-1]
 	headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 	payload = { "id":id , "op":"download2" }
-	import requests
-	request = requests.request('POST', url, headers=headers, data=payload, allow_redirects=False)
+	request = openURL_requests('POST', url, payload, headers, False,'','RESOLVERS-MP4UPLOAD-1st')
 	url = request.headers['Location']
 	if url!='':
 		return [url],[url]
@@ -1189,6 +1181,18 @@ def ESTREAM(url):
 #	NOT WORKING ANYMORE
 #####################################################
 """
+def THEVIDEO_PROBLEM(url):
+	# https://thevideo.me/embed-xldtqj5deiyj-780x439.html
+	url = url.replace('embed-','')
+	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-THEVIDEO-1st')
+	items = re.findall('direct link" value="(.*?)"',html,re.DOTALL)
+	#xbmcgui.Dialog().ok(str(items),html)
+	if items:
+		link = items[0].rstrip('/')
+		title,url = VEVIO(link)
+		return title,url
+	else: return [],[]
+
 def HELAL_PROBLEM(url):
 	# https://playr.4helal.tv/4qlqt9d3813e
 	headers = { 'User-Agent' : '' }

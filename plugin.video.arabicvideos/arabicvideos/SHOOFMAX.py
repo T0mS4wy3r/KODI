@@ -159,9 +159,13 @@ def PLAY(url):
 			url = origin_link + link
 		if '.m3u8' in url:
 			titleLIST,linkLIST = M3U8_RESOLUTIONS(url)
-			for i in range(len(titleLIST)):
-				items_url.append(linkLIST[i])
-				items_name.append('m3u8: '+server+' '+titleLIST[i])
+			if titleLIST[0]=='-1':
+				items_url.append(url)
+				items_name.append('m3u8: '+server)
+			else:
+				for i in range(len(titleLIST)):
+					items_url.append(linkLIST[i])
+					items_name.append('m3u8: '+server+' '+titleLIST[i])
 	selection = xbmcgui.Dialog().select('Select Video Quality:', items_name)
 	if selection == -1 : return
 	url = items_url[selection]
@@ -197,8 +201,7 @@ def SEARCH(search=''):
 	if search == '': return
 	#xbmcgui.Dialog().ok(search,search)
 	new_search = search.replace(' ','%20')
-	import requests
-	response = requests.request('GET', website0a, data='', headers='')
+	response = openURL_requests('GET', website0a, '', '', True,'','SHOOFMAX-SEARCH-1st')
 	html = response.text
 	cookies = response.cookies.get_dict()
 	cookie = cookies['session']
@@ -207,7 +210,7 @@ def SEARCH(search=''):
 	payload = '_csrf=' + csrf + '&q=' + quote(new_search)
 	headers = { 'content-type':'application/x-www-form-urlencoded' , 'cookie':'session='+cookie }
 	url = website0a + "/search"
-	response = requests.request('POST', url, data=payload, headers=headers)
+	response = openURL_requests('POST', url, payload, headers, True,'','SHOOFMAX-SEARCH-2nd')
 	html = response.text
 	html_blocks = re.findall('general-body(.*?)search-bottom-padding',html,re.DOTALL)
 	block = html_blocks[0]
