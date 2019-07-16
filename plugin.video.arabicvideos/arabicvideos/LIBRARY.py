@@ -97,7 +97,7 @@ now = time.time()
 #REGULAR_CACHE = 0
 #SHORT_CACHE = 0
 
-page_error = 'الصفحة غير متوفرة الان ... قد يكون الموقع الاصلي غير متوفر الان او هذه الصفحة قد تغيرت والمبرمج لا يعرف ... الرجاء المحاولة لاحقا او ابلاغ المبرمج بالمشكلة'
+page_error = 'الاسباب: قد تكون الانترنيت مفصولة او الربط المشفر لا يعمل او الموقع الاصلي غير متوفر او الموقع غير هذه الصفحة ـ جرب مسح الكاش او ارسل سجل الاخطاء للمبرمج او جرب هذه الصفحة لاحقا'
 https_problem = 'مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة'
 
 def DELETE_DATABASE_FILES():
@@ -141,10 +141,10 @@ def addLink(name,url,mode,iconimage='',duration='',text=''):
 	listitem=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
 	listitem.setProperty('fanart_image', fanart)
 	listitem.setInfo('Video', {'mediatype': 'video'})
-	if duration != '' :
-		if len(duration)<=2 : duration = '00:' + duration
-		if len(duration)<=5 : duration = '00:' + duration
-		duration = sum(x * int(t) for x, t in zip([3600,60,1], duration.split(":"))) 	
+	if duration!='':
+		duration = '0:0:0:0:0:' + duration
+		dummy,days,hours,minutes,seconds = duration.rsplit(':',4)
+		duration = int(days)*86400+int(hours)*3600+int(minutes)*60+int(seconds)
 		listitem.setInfo('Video', {'duration': duration})
 	if IsPlayable=='yes': listitem.setProperty('IsPlayable', 'true')
 	xbmcplugin.setContent(addon_handle, 'videos')
@@ -173,8 +173,8 @@ def openURL_KPROXY(url,data='',headers='',showDialogs='',source=''):
 			except: headers3['Cookie'] = cookies2
 			html = openURL(proxyURL,data,headers3,showDialogs,source)
 		except:
-			xbmcgui.Dialog().ok('مشكلة من الموقع الاصلي',page_error)
 			xbmc.log('['+addon_id+']:  Error: Failed opening kproxy:   [ '+url+' ]', level=xbmc.LOGERROR)
+			xbmcgui.Dialog().ok('فشل في سحب الصفحة من الانترنيت',page_error)
 			raise Exception('Page not found requested by:   '+source)
 	return html
 
@@ -197,15 +197,21 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 		html = rows[0][0]
 		#html = base64.b64decode(html)
 		html = zlib.decompress(html)
+		conn.close()
 	else:
 		message = 'not found in cache'
+		conn.close()
 		html = openURL(url,data,headers,showDialogs,source)
-		#html2 = base64.b64encode(html)
-		html2 = zlib.compress(html)
-		t = (now+cacheperiod,url,str(data),str(headers),source,sqlite3.Binary(html2))
-		c.execute("INSERT INTO htmlcache VALUES (?,?,?,?,?,?)",t)
-		conn.commit()
-	conn.close()
+		if '___Error___' not in html:
+			conn = sqlite3.connect(dbfile)
+			c = conn.cursor()
+			conn.text_factory = str
+			#html2 = base64.b64encode(html)
+			html2 = zlib.compress(html)
+			t = (now+cacheperiod,url,str(data),str(headers),source,sqlite3.Binary(html2))
+			c.execute("INSERT INTO htmlcache VALUES (?,?,?,?,?,?)",t)
+			conn.commit()
+			conn.close()
 	#t2 = time.time()
 	#xbmcgui.Dialog().notification(message,str(int(t2-t1))+' ms')
 	return html
@@ -221,12 +227,12 @@ def openURL_requests(method,url,data='',headers='',allow_redirects=True,showDial
 		if 'google-analytics' not in url:
 			xbmc.log('['+addon_id+']:   Error: requests Failed opening url:   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
 		if 'RESOLVERS' not in source and 'PROGRAM-HTTPS' not in source and source not in ['LIBRARY-PLAY_VIDEO-1st','PROGRAM-VERSION-1st','PROGRAM-RANDOM-1st']:
-			if 'https://' in url:
-				https_ok = HTTPS(False)
-				if https_ok==False: xbmcgui.Dialog().ok('مشكلة في الاتصال المشفر',https_problem)
-			if 'https://' not in url or https_ok==True:
-				xbmcgui.Dialog().ok('مشكلة من الموقع الاصلي',page_error)
-			raise Exception('Error opening a url')
+			#if 'https://' in url:
+			#	https_ok = HTTPS(False)
+			#	if https_ok==False: xbmcgui.Dialog().ok('مشكلة في الاتصال المشفر',https_problem)
+			#else: 
+			xbmcgui.Dialog().ok('فشل في سحب الصفحة من الانترنيت',page_error)
+			raise Exception('Error opening url')
 	return response
 
 def openURL(url,data='',headers='',showDialogs='',source=''):
@@ -253,10 +259,9 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		code = str(error.reason[0])
 		reason = str(error.reason[1])
 	if code!='200':
-		if 'google-analytics' not in url:
-			xbmc.log('['+addon_id+']:   Error: urllib2 Failed opening url:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
 		message,send,showDialogs = '','no','no'
 		html = '___Error___ {}: {!r}'.format(code, reason)
+		"""	
 		if 'google-analytics' in url: send = showDialogs
 		if showDialogs=='yes':
 			xbmcgui.Dialog().ok('خطأ في الاتصال',html)
@@ -269,13 +274,15 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 				yes = xbmcgui.Dialog().yesno('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
 				if yes: message = ' \\n\\n' + KEYBOARD('Write a message   اكتب رسالة')
 		if send=='yes': SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
+		"""
+		xbmc.log('['+addon_id+']:   Error: urllib2 Failed opening url:   Code:[ '+code+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
 		if 'RESOLVERS' not in source and 'PROGRAM-HTTPS' not in source and source not in ['LIBRARY-PLAY_VIDEO-1st','PROGRAM-VERSION-1st','PROGRAM-RANDOM-1st']:
-			if 'https://' in url:
-				https_ok = HTTPS(False)
-				if https_ok==False: xbmcgui.Dialog().ok('مشكلة في الاتصال المشفر',https_problem)
-			if 'https://' not in url or https_ok==True:
-				xbmcgui.Dialog().ok('مشكلة من الموقع الاصلي',page_error)
-			raise Exception('Error opening a url')
+			#if 'https://' in url:
+			#	https_ok = HTTPS(False)
+			#	if https_ok==False: xbmcgui.Dialog().ok('مشكلة في الاتصال المشفر',https_problem)
+			#else: 
+			xbmcgui.Dialog().ok('فشل في سحب الصفحة من الانترنيت',page_error)
+			raise Exception('Error opening url')
 	return html
 
 def quote(url):
@@ -364,7 +371,9 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	if videofiletype in ['.ts','.mkv','.mp4','.mp3','.flv']:
 		#when set to "False" it makes glarabTV fails and make WS2TV opens fast
 		play_item.setContentLookup(False)
+	if 'rtmp' in url: ENABLE_RTMP(False)
 	if videofiletype=='.mpd' or '/dash/' in url:
+		ENABLE_MPD(False)
 		play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
 		play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
 	if subtitle!='':
@@ -401,15 +410,15 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		result = 'timeout'
 		xbmc.log('['+addon_id+']:   Error: Timeout unknown problem:   [ '+url+' ]'+subtitlemessage, level=xbmc.LOGERROR)
 	if result!='playing': xbmcgui.Dialog().notification('الفيديو لم يعمل','')
-	if 'https://' in url and result in ['failed','timeout']:
-		working = HTTPS(False)
-		if not working:
-			xbmcgui.Dialog().ok('الاتصال مشفر','مشكلة ... هذا الفيديو يحتاج الى اتصال مشفر (ربط مشفر) ولكن للأسف الاتصال المشفر لا يعمل على جهازك')
-			return 'https'
+	#if 'https://' in url and result in ['failed','timeout']:
+	#	working = HTTPS(False)
+	#	if not working:
+	#		xbmcgui.Dialog().ok('الاتصال مشفر','مشكلة ... هذا الفيديو يحتاج الى اتصال مشفر (ربط مشفر) ولكن للأسف الاتصال المشفر لا يعمل على جهازك')
+	#		return 'https'
 	addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 	randomNumber = str(random.randrange(111111111111,999999999999))
 	url2 = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addonVersion+'&av='+addonVersion+'&an=ARABIC_VIDEOS&ea='+website+'&z='+randomNumber
-	openURL(url2,'','','no','LIBRARY-PLAY_VIDEO-1st')
+	html = openURL(url2,'','','no','LIBRARY-PLAY_VIDEO-1st')
 	return result
 
 def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
@@ -440,7 +449,7 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
 			f = open(logfile,'rb')
 			size = os.path.getsize(logfile)
-			if size>99000: f.seek(-99000, os.SEEK_END)
+			if size>300000: f.seek(-300000, os.SEEK_END)
 			data = f.readlines()
 			logfileNEW = ''.join(data[-400:])
 			logfileNEW = base64.b64encode(logfileNEW)
@@ -459,7 +468,7 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 	return html
 
 def M3U8_RESOLUTIONS(url,headers=''):
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','LIBRARY-GET_M3U8_RESOLUTIONS-1st')
+	html = openURL_cached(NO_CACHE,url,'',headers,'','LIBRARY-GET_M3U8_RESOLUTIONS-1st')
 	if 'TYPE=AUDIO' in html: return ['-1'],[url]
 	if 'TYPE=VIDEO' in html: return ['-1'],[url]
 	#if 'TYPE=SUBTITLES' in html: return ['-1'],[url]
@@ -539,14 +548,40 @@ def dummyClientID(length):
 def HTTPS(show=True):
 	if show: html = openURL('https://www.google.com','','','','PROGRAM-HTTPS-1st')
 	else: html = openURL_cached(LONG_CACHE,'https://www.google.com','','','','PROGRAM-HTTPS-2nd')
-	if 'html' in html:
-		worked = True
-		if show: xbmcgui.Dialog().ok('الاتصال المشفر','جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل عندك على كودي ... وعندك كودي قادر على استخدام المواقع المشفرة')
-	else:
+	if '___Error___' in html:
 		worked = False
 		xbmc.log('['+addon_id+']:   HTTPS Failed:   Label:[ '+menulabel+' ]   Path:[ '+menupath+' ]', level=xbmc.LOGNOTICE)
-		if show: xbmcgui.Dialog().ok('الاتصال المشفر',https_problem)
+		if show: xbmcgui.Dialog().ok('فشل في الاتصال المشفر',https_problem)
+	else:
+		worked = True
+		if show: xbmcgui.Dialog().ok('الاتصال المشفر','جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل عندك على كودي ... وعندك كودي قادر على استخدام المواقع المشفرة')
 	return worked
+
+def ENABLE_MPD(showDialogs=True):
+	#result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.adaptive", "enabled":false }}')
+	#xbmcgui.Dialog().ok('',str(result))
+	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)')
+	if enabled==0:
+		yes = xbmcgui.Dialog().yesno('هذه الاضافة عندك غير مفعلة','يجب تفعيل اضافة inputstream.adaptive لكي تعمل عندك فيديوهات نوع mpd فهل تريد تفعيل هذه الاضافة الان ؟','','','كلا','نعم')
+		if yes==1:
+			result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.adaptive", "enabled":true }}')
+			if 'OK' in result: xbmcgui.Dialog().ok('تم التفعيل','')
+			else: xbmcgui.Dialog().ok('التفعيل فشل','اضافة inputstream.adaptive غير موجودة عندك ويجب ان تقوم بتصيبها قبل محاولة تفعيلها')
+	elif showDialogs==True: xbmcgui.Dialog().ok('هذه الاضافة عندك مفعلة','')
+	return
+
+def ENABLE_RTMP(showDialogs=True):
+	#result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.rtmp", "enabled":false }}')
+	#xbmcgui.Dialog().ok('',str(result))
+	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.rtmp)')
+	if enabled==0:
+		yes = xbmcgui.Dialog().yesno('هذه الاضافة عندك غير مفعلة','يجب تفعيل اضافة inputstream.rtmp لكي تعمل عندك فيديوهات نوع rtmp فهل تريد تفعيل هذه الاضافة الان ؟','','','كلا','نعم')
+		if yes==1:
+			result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.rtmp", "enabled":true }}')
+			if 'OK' in result: xbmcgui.Dialog().ok('تم التفعيل','')
+			else: xbmcgui.Dialog().ok('التفعيل فشل','اضافة inputstream.rtmp غير موجودة عندك ويجب ان تقوم بتصيبها قبل محاولة تفعيلها')
+	elif showDialogs==True: xbmcgui.Dialog().ok('هذه الاضافة عندك مفعلة','')
+	return
 
 class CustomePlayer(xbmc.Player):
 	def __init__( self, *args, **kwargs ):

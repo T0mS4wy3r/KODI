@@ -29,21 +29,23 @@ New video plugin for KODI that provide Arabic video contents from the following 
 <br />
 <br />
 <br />
-<a href="http://www.shoofmax.com">1. &nbsp; http://www.shoofmax.com</a><br />
-<a href="http://www.panet.co.il">2. &nbsp; http://www.panet.co.il</a><br />
-<a href="http://www.ifilmtv.com">3. &nbsp; http://www.ifilmtv.com</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Arabic / English / Farsi / Persian<br />
-<a href="http://www.alfatimi.tv">4. &nbsp; http://www.alfatimi.tv</a><br />
-<a href="http://www.almaareftv.com">5. &nbsp; http://www.almaareftv.com</a><br />
-<a href="http://www.alarab.com">6. &nbsp; http://www.alarab.com</a><br />
-<a href="http://www.akoam.net">7. &nbsp; http://www.akoam.net</a><br />
-<a href="http://www.halacima.net">8. &nbsp; http://www.halacima.net</a><br />
-<a href="http://www.4helal.tv">9. &nbsp; http://www.4helal.tv</a><br />
-<a href="http://www.shahid4u.me">10. &nbsp; http://www.shahid4u.me</a><br />
-<a href="http://www.egy.best">11. &nbsp; http://www.egy.best</a><br />
-<a href="http://www.alkawthartv.com">12. &nbsp; http://www.alkawthartv.com</a><br />
-<a href="http://www.youtube.com">13. &nbsp; http://www.youtube.com</a><br />
+<a href="http://shoofmax.com">1. &nbsp; http://shoofmax.com</a><br />
+<a href="http://panet.co.il">2. &nbsp; http://panet.co.il</a><br />
+<a href="http://ifilmtv.com">3. &nbsp; http://ifilmtv.com</a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Arabic / English / Farsi / Persian<br />
+<a href="http://alfatimi.net">4. &nbsp; http://alfatimi.net</a><br />
+<a href="http://almaareftv.com">5. &nbsp; http://almaareftv.com</a><br />
+<a href="http://alarab.com">6. &nbsp; http://alarab.com</a><br />
+<a href="http://akoam.net">7. &nbsp; http://akoam.net</a><br />
+<a href="http://halacima.net">8. &nbsp; http://halacima.net</a><br />
+<a href="http://4helal.net">9. &nbsp; http://4helal.net</a><br />
+<a href="http://shahid4u.net">10. &nbsp; http://shahid4u.net</a><br />
+<a href="http://egy4best.com">11. &nbsp; http://egy4best.com</a><br />
+<a href="http://alkawthartv.com">12. &nbsp; http://alkawthartv.com</a><br />
+<a href="http://youtube.com">13. &nbsp; http://youtube.com</a><br />
 <a href="http://movizland.online">14. &nbsp; http://movizland.online</a><br />
-<a href="http://www.google.com">15. &nbsp; Tv Channels</a><br />
+<a href="http://series4watch.net">15. &nbsp; http://series4watch.net</a><br />
+<a href="http://arablionz.com">16. &nbsp; http://arablionz.com</a><br />
+<a href="http://www.google.com">17. &nbsp; Tv Channels</a><br />
 <br />
 <br />
 <br />

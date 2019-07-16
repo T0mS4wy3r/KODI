@@ -9,14 +9,31 @@ def MAIN(mode,text=''):
 	elif mode==3: DMCA()
 	elif mode==4: HTTPS_TEST()
 	elif mode==5: CLOSED()
-	elif mode==6: GLOBAL_SEARCH(text)
+	elif mode==6: GLOBAL_SEARCH_MENU(text)
 	elif mode==7: VERSION()
 	elif mode==8: RANDOM()
 	elif mode==9: DELETE_CACHE()
-	elif mode==170: TV_CHANNELS()
+	elif mode==170: TV_CHANNELS_MENU()
 	elif mode==171: SSL_WARNING()
+	elif mode==172: TOOLS_MENU()
+	elif mode==173: ENABLE_MPD()
+	elif mode==174: ENABLE_RTMP()
 	elif mode==179: TESTINGS()
-	
+	return
+
+def TOOLS_MENU():
+	addDir('[COLOR FFC89008] 1. [/COLOR]'+'ـ Problems & Questions  مشاكل وأسئلة','',150)
+	addLink('[COLOR FFC89008] 2. [/COLOR]'+'فحص الاصدارات والتحديثات','',7,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 3. [/COLOR]'+'فحص تفعيل فيديوهات mpd ـ','',173,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 4. [/COLOR]'+'فحص تفعيل فيديوهات rtmp ـ','',174,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 5. [/COLOR]'+'فحص اتصال المواقع المشفرة','',4,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 6. [/COLOR]'+'مسح كاش البرنامج','',9,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 7. [/COLOR]'+'ارسال مشكلة الى المبرمج','',2,'','','IsPlayable=no,problem=yes')
+	addLink('[COLOR FFC89008] 8. [/COLOR]'+'رسالة الى المبرمج','',2,'','','IsPlayable=no,problem=no')
+	addLink('[COLOR FFC89008] 9.  [/COLOR]'+'تحذير يخص شهادة التشفير','',171,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008]10. [/COLOR]'+'ـ DMCA  قانون الألفية للملكية الرقمية','',3,'','','IsPlayable=no')
+	#addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def DELETE_CACHE():
@@ -131,10 +148,11 @@ def DMCA():
 	xbmcgui.Dialog().textviewer('Digital Millennium Copyright Act (DMCA)',text)
 	return
 
-def GLOBAL_SEARCH(search=''):
+def GLOBAL_SEARCH_MENU(search=''):
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.lower()
+	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة - قليلة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
 	addDir('1.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - موقع يوتيوب','',149,'','',search)
 	addDir('2.  [COLOR FFC89008]SHF  [/COLOR]'+search+' - موقع شوف ماكس','',59,'','',search)
 	addDir('3.  [COLOR FFC89008]KLA  [/COLOR]'+search+' - موقع كل العرب','',19,'','',search)
@@ -143,18 +161,22 @@ def GLOBAL_SEARCH(search=''):
 	addDir('6.  [COLOR FFC89008]KWT  [/COLOR]'+search+' - موقع قناة الكوثر','',139,'','',search)
 	addDir('7.  [COLOR FFC89008]MRF  [/COLOR]'+search+' - موقع قناة المعارف','',49,'','',search)
 	addDir('8.  [COLOR FFC89008]FTM  [/COLOR]'+search+' - موقع المنبر الفاطمي','',69,'','',search)
-	#addDir('9.  [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',5,'','',search)  # 129
-	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
+	#addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
+	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
 	addDir('9.   [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند','',189,'','',search)
-	addDir('10.  [COLOR FFC89008]AKM  [/COLOR]'+search+' - موقع اكوام','',79,'','',search)
-	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
-	addDir('11.  [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
-	addDir('12.  [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
-	addDir('13.  [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',89,'','',search)
+	addDir('10. [COLOR FFC89008]AKM  [/COLOR]'+search+' - موقع اكوام','',79,'','',search)
+	addDir('11. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست الجديد','',129,'','',search)
+	#addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
+	addLink('[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
+	addDir('12. [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
+	addDir('13. [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',89,'','',search)
+	addDir('14. [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
+	addDir('15. [COLOR FFC89008]ARL  [/COLOR]'+search+' - موقع اراب لايونز','',209,'','',search)
+	addDir('16. [COLOR FFC89008]SFW [/COLOR]'+search+' - موقع سيريس فوروتش','',219,'','',search)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def TV_CHANNELS():
+def TV_CHANNELS_MENU():
 	addDir('1.  [COLOR FFC89008]TV0  [/COLOR]'+'قنوات من مواقعها الاصلية','',100)
 	addDir('2.  [COLOR FFC89008]YUT  [/COLOR]'+'قنوات عربية من يوتيوب','',147)
 	addDir('3.  [COLOR FFC89008]YUT  [/COLOR]'+'قنوات اجنبية من يوتيوب','',148)
@@ -228,7 +250,7 @@ def RANDOM():
 		if selection != -1: break
 		elif selection == -1: return
 	search = list2[selection]
-	GLOBAL_SEARCH(search)
+	GLOBAL_SEARCH_MENU(search)
 	return
 
 def CLOSED():
@@ -250,9 +272,9 @@ def KODI_VERSION():
 	html = openURL_cached(NO_CACHE,url,'','','','PROGRAM-KODI_VERSION-1st')
 	latest_KODI_VER = re.findall('href="kodi-(.*?)-',html,re.DOTALL)[0]
 	current_KODI_VER = xbmc.getInfoLabel( "System.BuildVersion" ).split(' ')[0]
-	message4 = 'الاصدار الاخير لكودي المتوفر الان هو :   ' + latest_KODI_VER
-	message4 +=  '\n' + 'الاصدار الذي انت تستخدمه لكودي هو :   ' + current_KODI_VER
-	xbmcgui.Dialog().ok('كودي',message4)
+	message4a = 'الاصدار الاخير لكودي المتوفر الان هو :   ' + latest_KODI_VER
+	message4b = 'الاصدار الذي انت تستخدمه لكودي هو :   ' + current_KODI_VER
+	xbmcgui.Dialog().ok('كودي',message4a,message4b)
 
 def TESTINGS():
 	url = 'https://intoupload.net/w2j4lomvzopd'

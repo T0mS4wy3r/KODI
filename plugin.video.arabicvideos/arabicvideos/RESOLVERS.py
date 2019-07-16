@@ -137,7 +137,8 @@ def CHECK(url):
 
 def RESOLVABLE(url):
 	url2 = url.lower().split('name=',1)[0].strip('?').strip('/').strip('&')
-	server = url2.split('/')[2]
+	#xbmcgui.Dialog().ok(url,url2)
+	server = url2.split('/')[2].lower()
 	private,known,external,named = '','','',''
 	# private	: سيرفر خاص
 	# known		: سيرفر عام معروف
@@ -145,8 +146,8 @@ def RESOLVABLE(url):
 	# named		: سيرفر عام محدد
 	if   any(value in server for value in doNOTresolveMElist): pass
 	elif 'akoam'		in server and 'name=' not in url: private = 'akoam'
-	elif 'moshahda'		in server:	private = 'Movizland '+url.split('name=')[1]
-	elif 'name=' 		in url:		named = url.split('name=')[1]
+	elif 'moshahda'		in server:	private = 'Movizland '+url.split('name=')[1].lower()
+	elif 'name=' 		in url:		named = url.split('name=')[1].lower()
 	elif 'arabloads'	in server:	known = 'arabloads'
 	elif 'archive'		in server:	known = 'archive'
 	elif 'catch.is'	 	in server:	known = 'catch'
@@ -154,7 +155,7 @@ def RESOLVABLE(url):
 	#elif 'estream'	 	in server:	known = 'estream'
 	#elif 'gounlimited'	in server:	known = 'gounlimited'
 	#elif 'intoupload' 	in server:	known = 'intoupload'
-	#elif 'thevideo'		in server:	known = 'thevideo'
+	#elif 'thevideo'	in server:	known = 'thevideo'
 	elif 'govid'		in server:	known = 'govid'
 	elif 'liivideo' 	in server:	known = 'liivideo'
 	elif 'mp4upload'	in server:	known = 'mp4upload'
@@ -189,8 +190,7 @@ def RESOLVABLE(url):
 		if '__' not in named: result = 'سيرفر عام محدد ' + named
 		else:
 			parts = named.split('__')
-			name = parts[0]
-			type = parts[1]
+			name,type = parts
 			if type=='download': result = 'سيرفر تحميل عام ' + name
 			elif type=='watch': result = 'سيرفر  مشاهدة عام ' + name
 			else: result = 'سيرفر  مشاهدة وتحميل عام  ' + name
@@ -237,6 +237,7 @@ def RESOLVE(url):
 	elif 'moshahda'		in server: titleLIST,linkLIST = MOVIZLAND(url)
 	elif 'akoam'		in server: titleLIST,linkLIST = AKOAM(url)
 	elif 'shahid4u'		in server: titleLIST,linkLIST = SHAHID4U(url2)
+	elif 'arblionz'		in server: titleLIST,linkLIST = ARABLIONZ(url2)
 	elif 'e5tsar'		in server: titleLIST,linkLIST = E5TSAR(url2)
 	elif 'arabloads'	in server: titleLIST,linkLIST = ARABLOADS(url2)
 	elif 'archive'		in server: titleLIST,linkLIST = ARCHIVE(url2)
@@ -244,7 +245,7 @@ def RESOLVE(url):
 	#elif 'estream'	 	in server: titleLIST,linkLIST = ESTREAM(url2)
 	#elif 'gounlimited'	in server: titleLIST,linkLIST = GOUNLIMITED(url2)
 	#elif 'intoupload' 	in server: titleLIST,linkLIST = INTOUPLOAD(url2)
-	#elif 'thevideo'		in server: titleLIST,linkLIST = THEVIDEO(url2)
+	#elif 'thevideo'	in server: titleLIST,linkLIST = THEVIDEO(url2)
 	elif 'filerio'		in server: titleLIST,linkLIST = FILERIO(url2)
 	elif 'govid'		in server: titleLIST,linkLIST = GOVID(url2)
 	elif 'liivideo' 	in server: titleLIST,linkLIST = LIIVIDEO(url2)
@@ -425,21 +426,24 @@ def E5TSAR(url):
 	#xbmcgui.Dialog().ok(items[0],html)
 	return titleLIST,linkLIST
 
-def SHAHID4U(link):
-	# https://tv.shahid4u.net/?postid=126981&serverid=5
+def ARABLIONZ(link):
+	# http://arablionz/?postid=159485&serverid=0
 	parts = re.findall('postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL|re.IGNORECASE)
-	#xbmcgui.Dialog().ok(link,str(parts))
-	postid = parts[0][0]
-	serverid = parts[0][1]
+	postid,serverid = parts[0]
+	url = 'https://arblionz.tv/ajaxCenter?_action=getserver&_post_id='+postid+'&serverid='+serverid
+	headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
+	url2 = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-ARABLIONZ-1st')
+	titleLIST,linkLIST = RESOLVE(url2)
+	return titleLIST,linkLIST
+
+def SHAHID4U(link):
+	# http://shahid4u/?postid=126981&serverid=5
+	parts = re.findall('postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL|re.IGNORECASE)
+	postid,serverid = parts[0]
 	url = 'https://on.shahid4u.net/ajaxCenter?_action=getserver&_post_id='+postid+'&serverid='+serverid
 	headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-SHAHID4U-1st')
-	url2 = html
-	#xbmcgui.Dialog().ok(url2,'')
+	url2 = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-SHAHID4U-1st')
 	titleLIST,linkLIST = RESOLVE(url2)
-	#try: url3 = url2[0]
-	#except: url3 = ''
-	#xbmcgui.Dialog().ok(str(url3),str(html))
 	return titleLIST,linkLIST
 
 def AKOAM(link):

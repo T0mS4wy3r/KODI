@@ -28,7 +28,7 @@ def MENU():
 	addDir(menu_name+'المثبت',website0a+'/?type=pin',91)
 	addDir(menu_name+'جديد الافلام',website0a+'/?type=newMovies',91)
 	addDir(menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
-	addLink('[COLOR FFC89008]=============[/COLOR]','',9999,'','','IsPlayable=no')
+	#addLink('[COLOR FFC89008]=============[/COLOR]','',9999,'','','IsPlayable=no')
 	#addDir(menu_name+'جديد الموقع',website0a,91)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
 	#upper menu

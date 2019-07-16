@@ -1,4 +1,14 @@
 ﻿
+v5.6.0	2019-07-16
+Added ARABLIONZ website
+Added SERIES4WATCH website
+Replaced EGYBEST website with the new egybest
+Added services menu
+Updated the main menu
+Added option to enable mdp & rtmp inputstreams
+Excluded failed urls from caching
+
+
 v5.5.0	2019-07-11
 Disabled ssl certificate verification for videos & pages
 
