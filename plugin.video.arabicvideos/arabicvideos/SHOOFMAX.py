@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://shoofmax.com'
-website0b = 'https://static.shoofmax.com'
 script_name = 'SHOOFMAX'
 menu_name='_SHF_'
+website0a = WEBSITES[script_name][0]
+website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
 	if mode==50: MAIN_MENU()
@@ -201,7 +201,7 @@ def SEARCH(search=''):
 	if search == '': return
 	#xbmcgui.Dialog().ok(search,search)
 	new_search = search.replace(' ','%20')
-	response = openURL_requests('GET', website0a, '', '', True,'','SHOOFMAX-SEARCH-1st')
+	response = openURL_requests_cached(SHORT_CACHE,'GET', website0a, '', '', True,'','SHOOFMAX-SEARCH-1st')
 	html = response.text
 	cookies = response.cookies.get_dict()
 	cookie = cookies['session']
@@ -210,7 +210,7 @@ def SEARCH(search=''):
 	payload = '_csrf=' + csrf + '&q=' + quote(new_search)
 	headers = { 'content-type':'application/x-www-form-urlencoded' , 'cookie':'session='+cookie }
 	url = website0a + "/search"
-	response = openURL_requests('POST', url, payload, headers, True,'','SHOOFMAX-SEARCH-2nd')
+	response = openURL_requests_cached(REGULAR_CACHE,'POST', url, payload, headers, True,'','SHOOFMAX-SEARCH-2nd')
 	html = response.text
 	html_blocks = re.findall('general-body(.*?)search-bottom-padding',html,re.DOTALL)
 	block = html_blocks[0]

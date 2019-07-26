@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://tv.series4watch.online'
-
 script_name='SERIES4WATCH'
 headers = { 'User-Agent' : '' }
 menu_name='_SFW_'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
 	if mode==210: MENU()
-	elif mode==211: ITEMS(url)
+	elif mode==211: TITLES(url)
 	elif mode==212: PLAY(url)
 	elif mode==213: EPISODES(url)
 	elif mode==214: FILTER_MENU(url)
@@ -40,24 +39,24 @@ def MENU():
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def ITEMS(url):
+def TITLES(url):
 	#xbmcgui.Dialog().ok(url,url)
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-TITLES-1st')
 	if 'getposts' in url: block = html
 	else:
 		html_blocks = re.findall('page-content(.*?)tags-cloud',html,re.DOTALL)
 		block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
 	allTitles = []
-	itemLIST = ['مسرحية','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
+	itemLIST = ['مشاهدة','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
 	for img,link,title in items:
 		if '/series/' in link: continue
 		link = unquote(link).strip('/')
 		title = unescapeHTML(title)
 		title = title.strip(' ')
-		if 'مشاهدة' in title or '/film/' in link or any(value in title for value in itemLIST):
+		if '/film/' in link or any(value in title for value in itemLIST):
 			addLink(menu_name+title,link,212,img)
-		elif 'الحلقة' in title and '/episode/' in link:
+		elif '/episode/' in link and 'الحلقة' in title:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode:
 				title = '_MOD_' + episode[0]
@@ -78,33 +77,31 @@ def ITEMS(url):
 	return
 
 def EPISODES(url):
+	episodesCount,items,itemsNEW = -1,[],[]
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-EPISODES-1st')
 	html_blocks = re.findall('ti-list-numbered(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
-		itemsNEW = []
 		blocks = ''.join(html_blocks)
 		items = re.findall('href="(.*?)"',blocks,re.DOTALL)
-		items = set(items)
-		#name = xbmc.getInfoLabel('ListItem.Label')
-		for link in items:
-			link = link.strip('/')
-			title = '_MOD_' + link.split('/')[-1].replace('-',' ')
-			sequence = re.findall('الحلقة-(\d+)',link.split('/')[-1],re.DOTALL)
-			if sequence: sequence = sequence[0]
-			else: sequence = '0'
-			itemsNEW.append([link,title,sequence])
-		items = sorted(itemsNEW, reverse=False, key=lambda key: int(key[2]))
-		if '/season/' in str(items):
-			for link,title,sequence in items:
-				if '/season/' in link:
-					addDir(menu_name+title,link,213)
-		else:
-			for link,title,sequence in items:
-				addLink(menu_name+title,link,212)
+	items.append(url)
+	items = set(items)
+	#name = xbmc.getInfoLabel('ListItem.Label')
+	for link in items:
+		link = link.strip('/')
+		title = '_MOD_' + link.split('/')[-1].replace('-',' ')
+		sequence = re.findall('الحلقة-(\d+)',link.split('/')[-1],re.DOTALL)
+		if sequence: sequence = sequence[0]
+		else: sequence = '0'
+		itemsNEW.append([link,title,sequence])
+	items = sorted(itemsNEW, reverse=False, key=lambda key: int(key[2]))
+	seasonsCount = str(items).count('/season/')
+	episodesCount = str(items).count('/episode/')
+	if seasonsCount>1 and episodesCount>0 and '/season/' not in url:
+		for link,title,sequence in items:
+			if '/season/' in link: addDir(menu_name+title,link,213)
 	else:
-		#name = xbmc.getInfoLabel('ListItem.Label')
-		title = '_MOD_' + url.split('/')[-1].replace('-',' ')
-		addLink(menu_name+title,url,212)
+		for link,title,sequence in items:
+			if '/season/' not in link: addLink(menu_name+title,link,212)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -182,7 +179,7 @@ def SEARCH(search):
 	if search == '': return
 	search = search.replace(' ','+')
 	url = website0a + '/search?s='+search
-	ITEMS(url)
+	TITLES(url)
 	return
 	"""
 	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','SERIES4WATCH-SEARCH-1st')
@@ -198,7 +195,7 @@ def SEARCH(search):
 		if selection == -1 : return
 		category = categoryLIST[selection]
 		url = website0a + '/search?s='+search+'&category='+category
-		ITEMS(url)
+		TITLES(url)
 	else: xbmcplugin.endOfDirectory(addon_handle)
 	return
 	"""

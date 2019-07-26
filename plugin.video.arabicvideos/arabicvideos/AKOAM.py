@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://akoam.net'
 headers = { 'User-Agent' : '' }
 script_name='AKOAM'
 menu_name='_AKM_'
+website0a = WEBSITES[script_name][0]
 noEpisodesLIST = ['فيلم','كليب','العرض الاسبوعي','مسرحية','مسرحيه','اغنية','اعلان','لقاء']
+#xbmcgui.Dialog().ok(website0a,'')
 
 def MAIN(mode,url,text):
 	if mode==70: MENU()
@@ -22,19 +23,20 @@ def MENU():
 	addDir(menu_name+'المزيد',website0a,72,'','','more')
 	#addDir(menu_name+'الاخبار',website0a,72,'','','news')
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات']
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
+	html = openURL_cached(NO_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
 	#xbmcgui.Dialog().textviewer('',html)
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#if not html_blocks:
 	#	xbmc.sleep(2000)
-	#	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKOAM-MENU-2nd')
+	#	html = openURL_cached(NO_CACHE,website0a,'',headers,'','AKOAM-MENU-2nd')
 	#	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
-	block = html_blocks[0]
-	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
-	for link,title in items:
-		if title not in ignoreLIST:
-			addDir(menu_name+title,link,71)
+	if html_blocks:
+		block = html_blocks[0]
+		items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
+		for link,title in items:
+			if title not in ignoreLIST:
+				addDir(menu_name+title,link,71)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -53,7 +55,7 @@ def CATEGORIES(url):
 	return
 
 def TITLES(url,type):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-TITLES-1st')
+	html = openURL_cached(NO_CACHE,url,'',headers,'','AKOAM-TITLES-1st')
 	items = []
 	if type=='featured':
 		html_blocks = re.findall('section_title featured_title(.*?)subjects-crousel',html,re.DOTALL)
@@ -82,7 +84,7 @@ def TITLES(url,type):
 	html_blocks = re.findall('pagination(.*?)</div',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
-		items = re.findall('<li >.*?href=\'(.*?)\'>(.*?)<',block,re.DOTALL)
+		items = re.findall("<li>.*?href='(.*?)'>(.*?)<",block,re.DOTALL)
 		for link,title in items:
 			addDir(menu_name+'صفحة '+title,link,72)
 	xbmcplugin.endOfDirectory(addon_handle)

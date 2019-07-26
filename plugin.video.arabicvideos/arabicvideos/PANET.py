@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'http://www.panet.co.il'
-website0b = 'http://m.panet.co.il'
+#website0a = 'http://m.panet.co.il'
 headers = { 'User-Agent' : '' }
 script_name = 'PANET'
 menu_name='_PNT_'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
 	if mode==30: MENU()

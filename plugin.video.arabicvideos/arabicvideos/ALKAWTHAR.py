@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'http://www.alkawthartv.com'
 script_name = 'ALKAWTHAR'
 menu_name='_KWT_'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
 	if mode==130: MENU()
@@ -189,7 +189,7 @@ def SEARCH(search,page):
 	#xbmcgui.Dialog().ok(str(items), str(items))
 	found = False
 	for link,title in items:
-		#xbmc.log('['+addon_id+']:  الكوثر: [ '+title+' ]', level=xbmc.LOGNOTICE)
+		#xbmc.log('[ '+addon_id+' ]:   الكوثر:[ '+title+' ]', level=xbmc.LOGNOTICE)
 		title = title.replace('<b>','').replace('</b>','')
 		title = title.replace('\xab','').replace('\xbb','')
 		title = title.replace('\xb7','')

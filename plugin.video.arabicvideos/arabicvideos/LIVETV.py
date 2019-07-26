@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-script_name='TV'
-website0a = 'http://emadmahdi.pythonanywhere.com/listplay'
-
+script_name='LIVETV'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url):
 	if mode==100: ITEMS(0)
@@ -17,9 +16,9 @@ def ITEMS(type):
 	client = dummyClientID(32)
 	payload = { 'id' : '' , 'user' : client , 'function' : 'list_'+str(type) }
 	data = urllib.urlencode(payload)
-	#response = openURL_requests('POST', website0a, payload, '', True,'','TV-ITEMS-1st')
+	#response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, '', True,'','LIVETV-ITEMS-1st')
 	#html = response.text
-	html = openURL_cached(LONG_CACHE,website0a,data,'','','TV-ITEMS-1st')
+	html = openURL_cached(LONG_CACHE,website0a,data,'','','LIVETV-ITEMS-1st')
 	#html = html.replace('\r','')
 	#xbmcgui.Dialog().ok(html,html)
 	#file = open('s:/emad.html', 'w')
@@ -34,12 +33,8 @@ def ITEMS(type):
 		#addLink(menu_name+'Unfortunately, no TV channels for you','',9999,'','','IsPlayable=no')
 		#addLink(menu_name+'It is for relatives & friends only','',9999,'','','IsPlayable=no')
 	else:
-		items = set(items)
-		items = sorted(items, reverse=False, key=lambda key: key[0].lower())
-		items = sorted(items, reverse=False, key=lambda key: key[3].lower())
-		for source,server,id2,name,img in items:
-			#if source in ['NT','YU','WS0','RL1','RL2']: continue
-			if source!='URL': name = name + '   [COLOR FFC89008]' + source + '[/COLOR]'
+		for i in range(len(items)):
+			name = items[i][3]
 			start = name[0:3]
 			start = start.replace('al','Al')
 			start = start.replace('El','Al')
@@ -48,6 +43,13 @@ def ITEMS(type):
 			start = start.replace('Al-','Al')
 			start = start.replace('Al ','Al')
 			name = start+name[3:]
+			items[i] = items[i][0],items[i][1],items[i][2],name,items[i][4]
+		items = set(items)
+		items = sorted(items, reverse=False, key=lambda key: key[0].lower())
+		items = sorted(items, reverse=False, key=lambda key: key[3].lower())
+		for source,server,id2,name,img in items:
+			#if source in ['NT','YU','WS0','RL1','RL2']: continue
+			if source!='URL': name = name + '   [COLOR FFC89008]' + source + '[/COLOR]'
 			addLink(menu_name+' '+name,source+';;'+server+';;'+id2,104,img,'','IsPlayable=no')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
@@ -62,26 +64,28 @@ def PLAY(id):
 	elif source=='GA':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playGA' }
-		response = openURL_requests('POST', website0a, payload, headers, True,'','TV-PLAY-1st')
+		response = openURL_requests_cached(NO_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-1st')
 		html = response.text
 		#xbmcgui.Dialog().ok('',html)
+		html = re.findall('\.(.*?)\.',html,re.DOTALL)
+		html = base64.b64decode(html[0])
 		items = re.findall('"lin.*?3":"(.*?)"',html,re.DOTALL)
 		url = items[0].replace('\/','/')
 	elif source=='NT':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playNT' }
-		response = openURL_requests('POST', website0a, payload, headers, False,'','TV-PLAY-2nd')
+		response = openURL_requests_cached(REGULAR_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-2nd')
 		url = response.headers['Location']
 		url = url.replace('%20',' ')
 		url = url.replace('%3D','=')
 		if 'Learn' in id2:
 			url = url.replace('NTNNile','')
 			url = url.replace('learning1','Learning')
-	elif source=='PM':
+	elif source=='PL':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
-		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playPM' }
-		response = openURL_requests('POST', website0a, payload, headers, True,'','TV-PLAY-3rd')
-		response = openURL_requests('POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','TV-PLAY-4th')
+		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playPL' }
+		response = openURL_requests_cached(REGULAR_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-3rd')
+		response = openURL_requests_cached(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-4th')
 		html = response.text
 		items = re.findall('source src="(.*?)"',html,re.DOTALL)
 		url = items[0]
@@ -89,11 +93,11 @@ def PLAY(id):
 		if source=='TA': id2 = id
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'play'+source }
-		response = openURL_requests('POST', website0a, payload, headers, False,'','TV-PLAY-5th')
+		response = openURL_requests_cached(NO_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
 		url = response.headers['Location']
 		if source=='FM':
 			#xbmcgui.Dialog().ok(url,'')
-			response = openURL_requests('GET', url, '', '', False,'','TV-PLAY-6th')
+			response = openURL_requests_cached(NO_CACHE,'GET', url, '', '', False,'','LIVETV-PLAY-6th')
 			url = response.headers['Location']
 			url = url.replace('https','http')
 	result = PLAY_VIDEO(url,script_name,'no')

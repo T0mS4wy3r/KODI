@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'http://alfatimi.tv'
 script_name = 'ALFATIMI'
 menu_name='_FTM_'
+website0a = WEBSITES[script_name][0]
 
 moviesLIST = ['1239','1250','1245','20','1259','218','485','1238','1258','292']
 englishLIST = ['3030','628']
-
 
 def MAIN(mode,url,text):
 	if mode==60: MENU()

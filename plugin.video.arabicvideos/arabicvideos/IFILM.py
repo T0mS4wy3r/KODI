@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'http://ar.ifilmtv.com'
-website0b = 'http://en.ifilmtv.com'
-website0c = 'http://fa.ifilmtv.com'
-website0d = 'http://fa2.ifilmtv.com'
-website1  = 'http://93.190.24.122'
-
 script_name = 'IFILM'
 menu_name='_IFL_'
+website0a = WEBSITES[script_name][0]
+website0b = WEBSITES[script_name][1]
+website0c = WEBSITES[script_name][2]
+website0d = WEBSITES[script_name][3]
+website1  = 'http://93.190.24.122'
 
 def MAIN(mode,url,page,text):
 	if mode==20: LANGUAGE_MENU()

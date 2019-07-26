@@ -4,28 +4,32 @@ from LIBRARY import *
 def MAIN(mode):
 	if mode==150:
 		addDir('[COLOR FFC89008] 1.  [/COLOR]'+'Can\'t see Arabic Text or Letters','',151)
-		addDir('[COLOR FFC89008] 2.  [/COLOR]'+'بعض الفيدوهات بطيئة وتقطع','',158)
-		addDir('[COLOR FFC89008] 3.  [/COLOR]'+'كيف تحل بنفسك مشكلة مؤقته','',192)
-		addDir('[COLOR FFC89008] 4.  [/COLOR]'+'بعض الروابط لا تعمل','',153)
-		addDir('[COLOR FFC89008] 5.  [/COLOR]'+'بعض الروابط بطيئة','',155)
-		addDir('[COLOR FFC89008] 6.  [/COLOR]'+'لماذا يوجد سيرفرات مجهولة','',156)
-		addDir('[COLOR FFC89008] 7.  [/COLOR]'+'ما هي السيرفرات العامة والخاصة','',157)
-		addDir('[COLOR FFC89008] 8.  [/COLOR]'+'ما معنى هذه العلامات بالبرنامج ,'+escapeUNICODE('\u02d1')+';','',191)
-		addDir('[COLOR FFC89008] 9.  [/COLOR]'+'ما هو اخر اصدار لكودي وللبرنامج','',159)
-		addDir('[COLOR FFC89008]10. [/COLOR]'+'ما هو الكاش وكم مقداره بالبرنامج','',190)
-		addDir('[COLOR FFC89008]11. [/COLOR]'+'الفيديوهات نوع mpd لا تعمل','',194)
-		addDir('[COLOR FFC89008]12. [/COLOR]'+'المواقع المشفرة لا تعمل','',152)
-		addDir('[COLOR FFC89008]13. [/COLOR]'+'لماذا لا نفحص شهادة التشفير','',193)
-		addDir('[COLOR FFC89008]14. [/COLOR]'+'اين مواقع الافلام والمسلسلات الاجنبية','',154)
+		addDir('[COLOR FFC89008] 2.  [/COLOR]'+'كيف تجعل جميع المواقع تعمل','',195)
+		addDir('[COLOR FFC89008] 3.  [/COLOR]'+'كيف تحل مشكلة ححب بعض المواقع','',195)
+		addDir('[COLOR FFC89008] 4.  [/COLOR]'+'بعض الفيدوهات بطيئة وتقطع','',158)
+		addDir('[COLOR FFC89008] 5.  [/COLOR]'+'كيف تحل بنفسك مشكلة مؤقته','',192)
+		addDir('[COLOR FFC89008] 6.  [/COLOR]'+'بعض الروابط لا تعمل','',153)
+		addDir('[COLOR FFC89008] 7.  [/COLOR]'+'بعض الروابط بطيئة','',155)
+		addDir('[COLOR FFC89008] 8.  [/COLOR]'+'لماذا يوجد سيرفرات مجهولة','',156)
+		addDir('[COLOR FFC89008] 9.  [/COLOR]'+'ما هي السيرفرات العامة والخاصة','',157)
+		addDir('[COLOR FFC89008]10. [/COLOR]'+'ما معنى هذه العلامات بالبرنامج ,'+escapeUNICODE('\u02d1')+';','',191)
+		addDir('[COLOR FFC89008]11. [/COLOR]'+'ما هو اخر اصدار لكودي وللبرنامج','',159)
+		addDir('[COLOR FFC89008]12. [/COLOR]'+'ما هو الكاش وكم مقداره بالبرنامج','',190)
+		addDir('[COLOR FFC89008]13. [/COLOR]'+'الفيديوهات نوع mpd لا تعمل','',194)
+		addDir('[COLOR FFC89008]14. [/COLOR]'+'المواقع المشفرة لا تعمل','',152)
+		addDir('[COLOR FFC89008]15. [/COLOR]'+'لماذا لا نفحص شهادة التشفير','',193)
+		addDir('[COLOR FFC89008]16. [/COLOR]'+'اين مواقع الافلام والمسلسلات الاجنبية','',154)
 		xbmcplugin.endOfDirectory(addon_handle)
 
 	elif mode==151:
 		message1 = '1.   If you can\'t see Arabic Letters then go to "Kodi Interface Settings" and change the font to "Arial"'
 		message2 = '1.   اذا لم تستطع رؤية الاحرف العربية فغير الخط المستخدم الى "Arial" من اعدادات واجهة كودي'
 		xbmcgui.Dialog().ok('Arabic Problem',message1,message2)
-		message1 = '2.   If you don\'t find "Arial" font in kodi skin then change skin from "Kodi Interface Settings"'
+		message1 = '2.   If you don\'t find "Arial" font in kodi skin then change skin in "Kodi Interface Settings"'
 		message2 = '2.   اذا لم تجد الخط "Arial" فاذن عليك ان تذهب الى اعدادات كودي وتغير واجهة كودي المستخدمة'
 		xbmcgui.Dialog().ok('Font Problem',message1,message2)
+		yes = xbmcgui.Dialog().yesno('Font settings','Do you want to go to "Kodi Interface Settings" now?','هل تريد الذهاب الى لوحة اعدادت واجهة كودي الان؟')
+		if yes==1: xbmc.executebuiltin("ActivateWindow(InterfaceSettings)")
 
 	elif mode==152:
 		message1 = 'بعض المواقع تحتاج ربط مشفر وقد يكون جهازك غير قادر على الربط المشفر او هناك مشكلة في شهادة التشفير الخاصة بكودي عندك علما انه تم فحص البرنامج على كودي الاصدارات'
@@ -93,6 +97,16 @@ def MAIN(mode):
 		import PROGRAM
 		PROGRAM.ENABLE_MPD()
 
+	elif mode==195:
+		message = 'بعض الناس لا تستطيع استخدام كودي للوصول الى جميع مواقع البرنامج وبعض الناس تصل لهذه المواقع فقط باستخدام متصفح الويب Web Browser ـ'
+		message += '\n\n'+'لحل المشكلة قم بعملين:    الأول: أرسل سجل الاخطاء الى المبرمج (من قائمة خدمات البرنامج) واكتب معه اسم بلدك واسم شركة الانترنيت واسماء المواقع التي لا تعمل عندك'
+		message += '\n\n'+'والثاني: جرب استخدام VPN والافضل Proxy وعند البعض الافضل تغيير DNS والاحسن ان يكون في بلد اخر'
+		message += '\n\n'+'بحث جوجل "قائمة بروكسي مجاني" أو "free proxy list"'
+		xbmcgui.Dialog().textviewer('مشكلة عند بعض الناس',message)
+		yes = xbmcgui.Dialog().yesno('فحص جميع مواقع البرنامج','سيقوم البرنامج الان بفحص مواقعه مرتين الاولى بدون اضافة بروكسي والثانية باستخدام البروكسي المجاني الذي سوف تختاره من القائمة التي ستظهر لاحقا. هل تريد الاستمرار؟','','','كلا','نعم')
+		if yes==1:
+			import PROGRAM
+			PROGRAM.TEST_ALL_WEBSITES()
 	return
 		
 

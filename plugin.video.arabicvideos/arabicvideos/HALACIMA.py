@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://www.halacima.net'
 script_name='HALACIMA'
 headers = { 'User-Agent' : '' }
 menu_name='_HLA_'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
 	if mode==80: MENU()
@@ -124,7 +124,7 @@ def PLAY(url):
 	for server in items:
 		payload = { 'Ajax' : '1' , 'art' : artID , 'server' : server }
 		data = urllib.urlencode(payload)
-		threads.start_new_thread(server,linkFUNC)
+		threads.start_new_thread(server,False,linkFUNC)
 	threads.wait_finishing_all_threads()
 	linkLIST = linkLIST + threads.resultsDICT.values()
 	import RESOLVERS

@@ -1,17 +1,15 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://vod.alarab.com'
-
-
-website0b = 'https://vod.alarab.com/view-1/افلام-عربية'
-website0c = 'http://tv.alarab.com'
-website0d = 'http://tv1.alarab.com'
-website0e = 'http://vod.alarab.com/index.php'
+#website0a = 'https://vod.alarab.com/view-1/افلام-عربية'
+#website0a = 'http://tv.alarab.com'
+#website0a = 'http://tv1.alarab.com'
+#website0a = 'http://vod.alarab.com/index.php'
 
 script_name = 'ALARAB'
 headers = { 'User-Agent' : '' }
 menu_name='_KLA_'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
 	if mode==10: MENU()

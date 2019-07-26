@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://www.youtube.com'
 script_name='YOUTUBE'
 menu_name='_YUT_'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
 	result = ''

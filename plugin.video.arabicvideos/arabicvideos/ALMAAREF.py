@@ -1,12 +1,11 @@
 ﻿# -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'http://www.almaareftv.com/old'
-website0b = 'http://www.almaareftv.com'
 script_name = 'ALMAAREF'
 headers = { 'User-Agent' : '' }
 menu_name='_MRF_'
-
+website0a = WEBSITES[script_name][0]
+website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
 	if mode==40: MENU()

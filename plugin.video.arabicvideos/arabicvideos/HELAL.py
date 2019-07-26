@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://4helal.net'
 #website0a = 'https://hd.4helal.tv'
 #website0a = 'https://4helal.tv'
 #website0a = 'https://www.4helal.tv'
@@ -9,6 +8,7 @@ website0a = 'https://4helal.net'
 script_name='HELAL'
 headers = { 'User-Agent' : '' }
 menu_name='_HEL_'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
 	if mode==90: MENU()

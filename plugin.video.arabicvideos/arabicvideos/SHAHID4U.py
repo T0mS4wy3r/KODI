@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://shahid4u.net'
-
 script_name='SHAHID4U'
 headers = { 'User-Agent' : '' }
 menu_name='_SHA_'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
 	if mode==110: MENU()
-	elif mode==111: ITEMS(url)
+	elif mode==111: TITLES(url)
 	elif mode==112: PLAY(url)
 	elif mode==113: EPISODES(url)
 	elif mode==114: FILTER_MENU(url)
@@ -40,24 +39,24 @@ def MENU():
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def ITEMS(url):
+def TITLES(url):
 	#xbmcgui.Dialog().ok(url,url)
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-TITLES-1st')
 	if 'getposts' in url: block = html
 	else:
 		html_blocks = re.findall('page-content(.*?)tags-cloud',html,re.DOTALL)
 		block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
 	allTitles = []
-	itemLIST = ['مسرحية','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
+	itemLIST = ['مشاهدة','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
 	for img,link,title in items:
 		if '/series/' in link: continue
 		link = unquote(link).strip('/')
 		title = unescapeHTML(title)
 		title = title.strip(' ')
-		if 'مشاهدة' in title or '/film/' in link or any(value in title for value in itemLIST):
+		if '/film/' in link or any(value in title for value in itemLIST):
 			addLink(menu_name+title,link,112,img)
-		elif 'الحلقة' in title and '/episode/' in link:
+		elif '/episode/' in link and 'الحلقة' in title:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode:
 				title = '_MOD_' + episode[0]
@@ -78,35 +77,35 @@ def ITEMS(url):
 	return
 
 def EPISODES(url):
+	episodesCount,items,itemsNEW = -1,[],[]
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-EPISODES-1st')
 	html_blocks = re.findall('ti-list-numbered(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		itemsNEW = []
 		blocks = ''.join(html_blocks)
 		items = re.findall('href="(.*?)"',blocks,re.DOTALL)
-		items = set(items)
-		#name = xbmc.getInfoLabel('ListItem.Label')
-		for link in items:
-			link = link.strip('/')
-			title = '_MOD_' + link.split('/')[-1].replace('-',' ')
-			sequence = re.findall('الحلقة-(\d+)',link.split('/')[-1],re.DOTALL)
-			if sequence: sequence = sequence[0]
-			else: sequence = '0'
-			itemsNEW.append([link,title,sequence])
-		items = sorted(itemsNEW, reverse=False, key=lambda key: int(key[2]))
-		if '/season/' in str(items):
-			for link,title,sequence in items:
-				if '/season/' in link:
-					addDir(menu_name+title,link,113)
-		else:
-			for link,title,sequence in items:
-				addLink(menu_name+title,link,112)
+	items.append(url)
+	items = set(items)
+	#name = xbmc.getInfoLabel('ListItem.Label')
+	for link in items:
+		link = link.strip('/')
+		title = '_MOD_' + link.split('/')[-1].replace('-',' ')
+		sequence = re.findall('الحلقة-(\d+)',link.split('/')[-1],re.DOTALL)
+		if sequence: sequence = sequence[0]
+		else: sequence = '0'
+		itemsNEW.append([link,title,sequence])
+	items = sorted(itemsNEW, reverse=False, key=lambda key: int(key[2]))
+	seasonsCount = str(items).count('/season/')
+	episodesCount = str(items).count('/episode/')
+	if seasonsCount>1 and episodesCount>0 and '/season/' not in url:
+		for link,title,sequence in items:
+			if '/season/' in link: addDir(menu_name+title,link,113)
 	else:
-		#name = xbmc.getInfoLabel('ListItem.Label')
-		title = '_MOD_' + url.split('/')[-1].replace('-',' ')
-		addLink(menu_name+title,url,112)
+		for link,title,sequence in items:
+			if '/season/' not in link: addLink(menu_name+title,link,112)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
+
 
 def PLAY(url):
 	linkLIST = []
@@ -226,13 +225,13 @@ def SEARCH(search):
 		category = categoryLIST[selection]
 		url = website0a + '/search?s='+search+'&category='+category
 		#xbmcgui.Dialog().ok(url,url)
-		ITEMS(url)
+		TITLES(url)
 	else: xbmcplugin.endOfDirectory(addon_handle)
 	return
 """
 def FILTER_MENU(url):
-	addDir(menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'',1)
-	addDir(menu_name+'[[   ' + filter + '   ]]',link,122,'',1)
+	addDir(menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,112,'',1)
+	addDir(menu_name+'[[   ' + filter + '   ]]',link,112,'',1)
 	addDir(menu_name+'===========================',link,9999)
 	html = openURL_cached(REGULAR_CACHE,link,'',headers,'','SHAHID4U-FILTER_MENU-1st')
 	html_blocks=re.findall('advanced-search">(.*?)MediaGrid">',html,re.DOTALL)
@@ -249,7 +248,7 @@ def FILTER_SELECT(url):
 		block = html_blocks[0]
 		items=re.findall('small rounded">(.*?)<',block,re.DOTALL)
 		for title in items:
-		addLink(menu_name+'[[   ' + title + '   ]]',link,122,'',1)
+		addLink(menu_name+'[[   ' + title + '   ]]',link,112,'',1)
 """
 
 

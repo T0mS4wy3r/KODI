@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://movizland.online'
-website0b = 'https://m.movizland.online'
 script_name='MOVIZLAND'
 headers = { 'User-Agent' : '' }
 menu_name='_MVZ_'
+website0a = WEBSITES[script_name][0]
+website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
 	if mode==180: MENU()
-	elif mode==181: ITEMS(url,text)
+	elif mode==181: TITLES(url,text)
 	elif mode==182: PLAY(url)
 	elif mode==183: EPISODES(url)
 	elif mode==189: SEARCH(text)
@@ -30,7 +30,7 @@ def MENU():
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def ITEMS(url,type=''):
+def TITLES(url,type=''):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','MOVIZLAND-ITEMS-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	if type=='latest-movies': block = re.findall('class="titleSection">أحدث الأفلام</h1>(.*?)<h1',html,re.DOTALL)[0]
@@ -60,7 +60,7 @@ def ITEMS(url,type=''):
 		if 'الحلقة' in title or 'الحلقه' in title:
 			episode = re.findall('(.*?) (الحلقة|الحلقه) \d+',title,re.DOTALL)
 			if episode:
-				title = episode[0][0]
+				title = '_MOD_' + episode[0][0]
 				if title not in allTitles:
 					addDir(menu_name+title,link,183,img)
 					allTitles.append(title)
@@ -131,7 +131,8 @@ def PLAY(url):
 		if '://vb.movizland.' in link:
 			html = openURL_cached(LONG_CACHE,link,'',headers,'','MOVIZLAND-PLAY-2nd')
 			html = html.decode('windows-1256').encode('utf8')
-			#xbmc.log(html, level=xbmc.LOGNOTICE)</a></div><br /><div align="center">(\*\*\*\*\*\*\*\*|13721411411.png|)
+			#xbmc.log(html, level=xbmc.LOGNOTICE)
+			#</a></div><br /><div align="center">(\*\*\*\*\*\*\*\*|13721411411.png|)
 			html = html.replace('src="http://up.movizland.com/uploads/13721411411.png"','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"')
 			html = html.replace('src="http://up.movizland.online/uploads/13721411411.png"','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"')
 			html = html.replace('</a></div><br /><div align="center">','src="/uploads/13721411411.png"')
@@ -222,6 +223,6 @@ def SEARCH(search):
 	category = categoryLIST[selection]
 	url = website0a + '/?s='+search+'&mcat='+category
 	#xbmcgui.Dialog().ok(url,url)
-	ITEMS(url)
+	TITLES(url)
 	return
 

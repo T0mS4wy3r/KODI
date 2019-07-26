@@ -1,4 +1,18 @@
 ﻿
+v5.7.0	2019-07-26
+Added original old EGYBEST website
+Added functions and menus to handle/explain errors
+Added highest to YOUTUBE menu
+Added release version in main menu
+Added proxy message in main menu
+Added cache for requests
+Added webproxyto & httpsproxy
+Added all websites testing
+Changed all requests to cached
+Fixed YOUTUBE mpd server
+Fixed SHHID4U,ARABLIONZ & SERIES4WATCH items listing
+
+
 v5.6.0	2019-07-16
 Added ARABLIONZ website
 Added SERIES4WATCH website

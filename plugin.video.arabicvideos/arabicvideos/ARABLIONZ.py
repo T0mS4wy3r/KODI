@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-website0a = 'https://arblionz.tv'
-
 script_name='ARABLIONZ'
 headers = { 'User-Agent' : '' }
 menu_name='_ARL_'
+website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
 	if mode==200: MENU()
-	elif mode==201: ITEMS(url)
+	elif mode==201: TITLES(url)
 	elif mode==202: PLAY(url)
 	elif mode==203: EPISODES(url)
 	elif mode==204: FILTER_MENU(url)
@@ -40,24 +39,24 @@ def MENU():
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def ITEMS(url):
+def TITLES(url):
 	#xbmcgui.Dialog().ok(url,url)
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ARABLIONZ-ITEMS-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ARABLIONZ-TITLES-1st')
 	if 'getposts' in url: block = html
 	else:
 		html_blocks = re.findall('page-content(.*?)main-footer',html,re.DOTALL)
 		block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
 	allTitles = []
-	itemLIST = ['مسرحية','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
+	itemLIST = ['مشاهدة','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
 	for img,link,title in items:
 		if '/series/' in link: continue
 		link = unquote(link).strip('/')
 		title = unescapeHTML(title)
 		title = title.strip(' ')
-		if 'مشاهدة' in title or '/film/' in link or any(value in title for value in itemLIST):
+		if '/film/' in link or any(value in title for value in itemLIST):
 			addLink(menu_name+title,link,202,img)
-		elif 'الحلقة' in title and '/episode/' in link:
+		elif '/episode/' in link and 'الحلقة' in title:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode:
 				title = '_MOD_' + episode[0]
@@ -78,33 +77,32 @@ def ITEMS(url):
 	return
 
 def EPISODES(url):
+	episodesCount,items,itemsNEW = -1,[],[]
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ARABLIONZ-EPISODES-1st')
 	html_blocks = re.findall('ti-list-numbered(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		itemsNEW = []
 		blocks = ''.join(html_blocks)
 		items = re.findall('href="(.*?)"',blocks,re.DOTALL)
-		items = set(items)
-		#name = xbmc.getInfoLabel('ListItem.Label')
-		for link in items:
-			link = link.strip('/')
-			title = '_MOD_' + link.split('/')[-1].replace('-',' ')
-			sequence = re.findall('الحلقة-(\d+)',link.split('/')[-1],re.DOTALL)
-			if sequence: sequence = sequence[0]
-			else: sequence = '0'
-			itemsNEW.append([link,title,sequence])
-		items = sorted(itemsNEW, reverse=False, key=lambda key: int(key[2]))
-		if '/season/' in str(items):
-			for link,title,sequence in items:
-				if '/season/' in link:
-					addDir(menu_name+title,link,203)
-		else:
-			for link,title,sequence in items:
-				addLink(menu_name+title,link,202)
+	items.append(url)
+	items = set(items)
+	#name = xbmc.getInfoLabel('ListItem.Label')
+	for link in items:
+		link = link.strip('/')
+		title = '_MOD_' + link.split('/')[-1].replace('-',' ')
+		sequence = re.findall('الحلقة-(\d+)',link.split('/')[-1],re.DOTALL)
+		if sequence: sequence = sequence[0]
+		else: sequence = '0'
+		itemsNEW.append([link,title,sequence])
+	items = sorted(itemsNEW, reverse=False, key=lambda key: int(key[2]))
+	seasonsCount = str(items).count('/season/')
+	episodesCount = str(items).count('/episode/')
+	if seasonsCount>1 and episodesCount>0 and '/season/' not in url:
+		for link,title,sequence in items:
+			if '/season/' in link: addDir(menu_name+title,link,203)
 	else:
-		#name = xbmc.getInfoLabel('ListItem.Label')
-		title = '_MOD_' + url.split('/')[-1].replace('-',' ')
-		addLink(menu_name+title,url,202)
+		for link,title,sequence in items:
+			if '/season/' not in link: addLink(menu_name+title,link,202)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -193,7 +191,7 @@ def SEARCH(search):
 		if selection == -1 : return
 		category = categoryLIST[selection]
 		url = website0a + '/search?s='+search+'&category='+category
-		ITEMS(url)
+		TITLES(url)
 	else: xbmcplugin.endOfDirectory(addon_handle)
 	return
 
