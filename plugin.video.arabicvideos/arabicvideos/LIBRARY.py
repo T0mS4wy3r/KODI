@@ -144,7 +144,7 @@ def SHOW_ERRORS(code=-1,reason=''):
 
 def EXIT_IF_SOURCE(source,code,reason):
 	NO_EXIT_LIST = [ 'LIBRARY-PLAY_VIDEO-1st'
-					,'LIBRARY-GET_TESTED_PROXIES-1st'
+					,'LIBRARY-CHECK_HTTPS_PROXIES-1st'
 					,'LIBRARY-openURL_PROXY-1st'
 					,'LIBRARY-openURL_HTTPSPROXY-1st'
 					,'LIBRARY-openURL_WEBPROXYTO-1st'
@@ -381,33 +381,32 @@ def openURL_requests(method,url,data='',headers='',allow_redirects=True,showDial
 		EXIT_IF_SOURCE(source,code,reason)
 	return response
 
-def GET_TESTED_PROXIES():
-	#t1 = time.time()
-	#def dummy():
-	#	time.sleep(10)
-	#	return
+def CHECK_HTTPS_PROXIES():
 	headers = { 'User-Agent' : '' }
-	testedPROXIES = {}
+	testedLIST,timingLIST = [],[]
 	threads = CustomThread()
 	for id in PROXIES.keys():
 		proxyname,proxyurl = PROXIES[id]
 		url = 'https://www.google.com?MyProxyUrl='+proxyurl
-		threads.start_new_thread('proxy_'+str(id),False,openURL_cached,NO_CACHE,url,'',headers,'','LIBRARY-GET_TESTED_PROXIES-1st')
-		#xbmcgui.Dialog().notification('',str(id))
-		#threads.start_new_thread(id,True,dummy)
+		threads.start_new_thread('proxy_'+str(id),True,openURL_cached,NO_CACHE,url,'',headers,'','LIBRARY-CHECK_HTTPS_PROXIES-1st')
 	threads.wait_finishing_all_threads()
-	#t2 = time.time()
-	#xbmcgui.Dialog().ok(str(t2-t1),'')
-	#return {}
-	resultsDICT,statusDICT =	threads.resultsDICT,threads.statusDICT
-	for id in resultsDICT.keys():
-		status = statusDICT[id]
+	resultsDICT,finishedLIST =	threads.resultsDICT,threads.finishedLIST
+	elpasedtimeDICT = threads.elpasedtimeDICT
+	for id in finishedLIST:
 		html = resultsDICT[id]
 		if '___Error___' not in html:
+			timingLIST.append(elpasedtimeDICT[id])
 			id = int(id.replace('proxy_',''))
-			proxyname,proxyurl = PROXIES[id]
-			testedPROXIES[id] = (proxyname,proxyurl)
-	return testedPROXIES
+			testedLIST.append(id)
+	for id in PROXIES.keys():
+		html = resultsDICT['proxy_'+str(id)]
+		if '___Error___' in html:
+			name,url = PROXIES[id]
+			xbmc.log('[ '+addon_id+' ]:   Error: CHECK_HTTPS_PROXIES failed testing proxy   id:[ '+str(id)+' ]   name:[ '+name+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+	z = zip(testedLIST,timingLIST)
+	z = sorted(z, reverse=False, key=lambda key: key[1])
+	testedLIST,timingLIST = zip(*z)
+	return testedLIST,timingLIST
 
 # Proxies were taken from http://free-proxy.cz
 PROXIES = {
@@ -455,10 +454,14 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		#ctx.check_hostname = False
 		#ctx.verify_mode = ssl.CERT_NONE
 		#ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-		if '?MyProxyUrl=' not in url:
+		if '?MyProxyUrl=' in url:
+			# if testing proxies then timeout=10
+			if url2=='https://www.google.com':
+				response = urllib2.urlopen(request,timeout=10)
+			else: response = urllib2.urlopen(request,timeout=60)
+		else:
 			ctx = ssl._create_unverified_context()
 			response = urllib2.urlopen(request,timeout=60,context=ctx)
-		else: response = urllib2.urlopen(request,timeout=60)
 		html = response.read()
 		code = response.code
 		response.close
@@ -808,7 +811,7 @@ class CustomePlayer(xbmc.Player):
 		self.status='failed'
 	def onPlayBackStarted(self):
 		self.status='playing'
-		xbmc.sleep(1000)
+		time.sleep(1)
 	def onPlayBackError(self):
 		self.status='failed'
 	def onPlayBackEnded(self):
@@ -816,9 +819,10 @@ class CustomePlayer(xbmc.Player):
 
 class CustomThread():
 	def __init__(self):
-		self.statusDICT,self.resultsDICT = {},{}
-	def start_new_thread(self,id,showNotification,func,*args):
-		if showNotification: xbmcgui.Dialog().notification('',str(id))
+		self.statusDICT,self.resultsDICT,self.elpasedtimeDICT, = {},{},{}
+		self.finishedLIST,self.failedLIST = [],[]
+	def start_new_thread(self,id,showDialogs,func,*args):
+		if showDialogs: xbmcgui.Dialog().notification('',str(id))
 		self.statusDICT[id] = 'running'
 		thread.start_new_thread(self.run,(id,func,args))
 		time.sleep(0.001)
@@ -826,13 +830,17 @@ class CustomThread():
 		while 'running' in self.statusDICT.values():
 			time.sleep(0.100)
 	def run(self,id,func,args):
+		starttime = time.time()
 		try:
 			self.resultsDICT[id] = func(*args)
 			self.statusDICT[id] = 'finished'
+			self.finishedLIST.append(id)
 		except:
 			self.resultsDICT[id] = '___Error___:-1:Threads function fail'
 			self.statusDICT[id] = 'failed'
-
+			self.failedLIST.append(id)
+		finishtime = time.time()
+		self.elpasedtimeDICT[id] = finishtime - starttime
 
 
 

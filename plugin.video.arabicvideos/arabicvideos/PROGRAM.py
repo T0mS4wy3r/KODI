@@ -281,42 +281,44 @@ def KODI_VERSION():
 
 def TEST_ALL_WEBSITES():
 	#xbmcgui.Dialog().notification('جاري فحص','جميع المواقع')
-	websites_keys = WEBSITES.keys()#[0:6]
+	websites_keys = WEBSITES.keys()
 	headers = { 'User-Agent' : '' }
-	def dummyFunc(site,type,proxy_url):
-		if type=='proxy': url = WEBSITES[site][0]+'?MyProxyUrl='+proxy_url
-		else: url = WEBSITES[site][0]
-		#if 'https' in url: html = '___Error___'
-		#else: html = ''
-		if type=='direct': html = openURL_cached(NO_CACHE,url,'',headers,'','PROGRAM-TEST_ALL_WEBSITES-1st')
-		elif type=='proxy': html = openURL_PROXY(url,'',headers,'','PROGRAM-TEST_ALL_WEBSITES-2nd')
-		return html
 	def test_all(type,proxy_url=''):
+		def dummyFunc(site,type,proxy_url):
+			if type=='proxy': url = WEBSITES[site][0]+'?MyProxyUrl='+proxy_url
+			else: url = WEBSITES[site][0]
+			if type=='direct': html = openURL_cached(NO_CACHE,url,'',headers,'','PROGRAM-TEST_ALL_WEBSITES-1st')
+			elif type=='proxy': html = openURL_PROXY(url,'',headers,'','PROGRAM-TEST_ALL_WEBSITES-2nd')
+			#if 'https' in url: html = '___Error___'
+			#else: html = ''
+			return html
 		threads = CustomThread()
 		for site in websites_keys:
 			threads.start_new_thread(type+'_'+site,True,dummyFunc,site,type,proxy_url)
 		threads.wait_finishing_all_threads()
-		return threads.resultsDICT,threads.statusDICT
-	DIRECTdict_result,DIRECTdict_status = test_all('direct')
+		return threads.resultsDICT
+	DIRECTdict_result = test_all('direct')
 	type,messageDIRECT,proxyname = 'direct','',''
 	for site in sorted(websites_keys):
-		status = DIRECTdict_status[type+'_'+site]
 		result = DIRECTdict_result[type+'_'+site]
 		if '___Error___' not in result: messageDIRECT += site.lower()+'  '
 		else: messageDIRECT += '[COLOR FFC89008]'+site.lower()+'[/COLOR]  '
 	if '___Error___' in str(DIRECTdict_result):
-		PROXIES = GET_TESTED_PROXIES()
-		#random.shuffle(PROXIES,random.random)
-		proxies_name = []
-		for id in PROXIES.keys():
-			proxies_name.append(PROXIES[id][0])
+		testedLIST,timingLIST = CHECK_HTTPS_PROXIES()
+		proxies_name,proxies_url = [],[]
+		i = 0
+		for id in testedLIST:
+			proxies_name.append(PROXIES[id][0]+'   '+str(int(1000*timingLIST[i]))+'ms')
+			proxies_url.append(PROXIES[id][1])
+			i += 1
 		selection = xbmcgui.Dialog().select(str(len(proxies_name))+' اختر بروكسي (الأسرع فوق)', proxies_name)
 		if selection == -1: return
-		else: proxyname,proxyurl = PROXIES[selection]
+		else: 
+			proxyname = proxies_name[selection].split('   ')[0]
+			proxyurl = proxies_url[selection]
 		type,messagePROXY = 'proxy',''
-		PROXYdict_result,PROXYdict_status = test_all('proxy',proxyurl)
+		PROXYdict_result = test_all('proxy',proxyurl)
 		for site in sorted(websites_keys):
-			status = PROXYdict_status[type+'_'+site]
 			result = PROXYdict_result[type+'_'+site]
 			if '___Error___' not in result: messagePROXY += site.lower()+'  '
 			else: messagePROXY += '[COLOR FFC89008]'+site.lower()+'[/COLOR]  '

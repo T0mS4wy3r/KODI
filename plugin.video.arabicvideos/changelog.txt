@@ -1,4 +1,8 @@
 ﻿
+v5.7.1	2019-07-26
+Fixed checking proxies sort/response time
+
+
 v5.7.0	2019-07-26
 Added original old EGYBEST website
 Added functions and menus to handle/explain errors
