@@ -62,19 +62,45 @@ def PLAY(id):
 	#try:
 	if source=='URL': url = id2
 	elif source=='GA':
+		#xbmcgui.Dialog().ok(url,html)
+		#xbmc.log(html, level=xbmc.LOGNOTICE)
+		payload = { 'id' : '' , 'user' : dummyClientID(32) , 'function' : 'playGA1' }
+		response = openURL_requests_cached(LONG_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
+		proxies = [0,6,12]
+		for proxyID in proxies:
+			proxyname,proxyurl = RANDOM_HTTPS_PROXY(proxyID)
+			url = response.headers['Location']+'?MyProxyUrl='+proxyurl
+			response = openURL_requests_cached(LONG_CACHE,'GET',url,'','',False,'','LIVETV-PLAY-2nd')
+			cookies = response.cookies.get_dict()
+			if 'ASP.NET_SessionId' in cookies: break
+		session = cookies['ASP.NET_SessionId']
+		#html = response.text
+		#session = re.findall('SessionID = "(.*?)"',html,re.DOTALL)
+		#session = session[0]
+		headers = { 'Cookie' : 'ASP.NET_SessionId='+session }
+		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playGA2' }
+		url = website0a#+'?MyProxyUrl='+proxyurl
+		response = openURL_requests_cached(NO_CACHE,'POST',url,payload,headers,True,'','LIVETV-PLAY-3rd')
+		html = response.text
+		url = re.findall('resp":"(.*?)"',html,re.DOTALL)
+		url = url[0]
+		items = re.findall('http.*?m3u8',url,re.DOTALL)
+		url = url.replace(items[0],'http://38.'+server+'777/'+id2+'_HD.m3u8')
+		"""
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playGA' }
-		response = openURL_requests_cached(NO_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-1st')
+		response = openURL_requests_cached(NO_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-1st')
+		url = response.headers['Location']
 		html = response.text
-		#xbmcgui.Dialog().ok('',html)
 		html = re.findall('\.(.*?)\.',html,re.DOTALL)
 		html = base64.b64decode(html[0])
 		items = re.findall('"lin.*?3":"(.*?)"',html,re.DOTALL)
 		url = items[0].replace('\/','/')
+		"""
 	elif source=='NT':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playNT' }
-		response = openURL_requests_cached(REGULAR_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-2nd')
+		response = openURL_requests_cached(REGULAR_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-4th')
 		url = response.headers['Location']
 		url = url.replace('%20',' ')
 		url = url.replace('%3D','=')
@@ -84,8 +110,8 @@ def PLAY(id):
 	elif source=='PL':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playPL' }
-		response = openURL_requests_cached(REGULAR_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-3rd')
-		response = openURL_requests_cached(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-4th')
+		response = openURL_requests_cached(REGULAR_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-5th')
+		response = openURL_requests_cached(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-6th')
 		html = response.text
 		items = re.findall('source src="(.*?)"',html,re.DOTALL)
 		url = items[0]
@@ -93,11 +119,11 @@ def PLAY(id):
 		if source=='TA': id2 = id
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'play'+source }
-		response = openURL_requests_cached(NO_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
+		response = openURL_requests_cached(NO_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-7th')
 		url = response.headers['Location']
 		if source=='FM':
 			#xbmcgui.Dialog().ok(url,'')
-			response = openURL_requests_cached(NO_CACHE,'GET', url, '', '', False,'','LIVETV-PLAY-6th')
+			response = openURL_requests_cached(NO_CACHE,'GET', url, '', '', False,'','LIVETV-PLAY-8th')
 			url = response.headers['Location']
 			url = url.replace('https','http')
 	result = PLAY_VIDEO(url,script_name,'no')

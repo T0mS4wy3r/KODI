@@ -79,7 +79,7 @@ def FIX_KEYBOARD(mode,text):
 		new2=str(type(keyboard))+' '+keyboard+' '+ttype+' '
 		for i in range(0,len(keyboard),1):
 			new2 += hex(ord(keyboard[i])).replace('0x','')+' '
-		xbmcgui.Dialog().ok(new1,new2)
+		#xbmcgui.Dialog().ok(new1,new2)
 	return
 
 def SEND_MESSAGE(text=''):
@@ -271,7 +271,6 @@ def KODI_VERSION():
 	#	http://mirrors.mit.edu/kodi/releases/windows/win64'
 	url = 'http://mirrors.kodi.tv/releases/windows/win64/'
 	html = openURL_cached(REGULAR_CACHE,url,'','','','PROGRAM-KODI_VERSION-1st')
-	#html = openURL_PROXY(url,'','','','PROGRAM-KODI_VERSION-1st')
 	latest_KODI_VER = re.findall('title="kodi-(.*?)-',html,re.DOTALL)[0]
 	current_KODI_VER = xbmc.getInfoLabel( "System.BuildVersion" ).split(' ')[0]
 	message4a = 'الاصدار الاخير لكودي المتوفر الان هو :   ' + latest_KODI_VER
@@ -288,7 +287,7 @@ def TEST_ALL_WEBSITES():
 			if type=='proxy': url = WEBSITES[site][0]+'?MyProxyUrl='+proxy_url
 			else: url = WEBSITES[site][0]
 			if type=='direct': html = openURL_cached(NO_CACHE,url,'',headers,'','PROGRAM-TEST_ALL_WEBSITES-1st')
-			elif type=='proxy': html = openURL_PROXY(url,'',headers,'','PROGRAM-TEST_ALL_WEBSITES-2nd')
+			elif type=='proxy': html = openURL_HTTPSPROXIES(url,'',headers,'','PROGRAM-TEST_ALL_WEBSITES-2nd')
 			#if 'https' in url: html = '___Error___'
 			#else: html = ''
 			return html
@@ -298,7 +297,7 @@ def TEST_ALL_WEBSITES():
 		threads.wait_finishing_all_threads()
 		return threads.resultsDICT
 	DIRECTdict_result = test_all('direct')
-	type,messageDIRECT,proxyname = 'direct','',''
+	type,messageDIRECT,proxyname,PROXYdict_result = 'direct','','',''
 	for site in sorted(websites_keys):
 		result = DIRECTdict_result[type+'_'+site]
 		if '___Error___' not in result: messageDIRECT += site.lower()+'  '
@@ -330,6 +329,15 @@ def TEST_ALL_WEBSITES():
 	else: message += '\n\n'+'== [COLOR FFC89008]فحص باستخدام بروكسي ببلد وانترنيت مختلفة[/COLOR] =='
 	message += '\n'+messagePROXY.strip(' ')
 	xbmcgui.Dialog().textviewer('فحص جميع مواقع البرنامج',message)
+	direct,proxy = '',''
+	if '___Error___' in str(DIRECTdict_result): direct = 'problem'
+	if '___Error___' in str(PROXYdict_result): proxy = 'problem'
+	if direct=='problem' and proxy!='problem':
+		xbmcgui.Dialog().ok('نتيجة فحص مواقع البرنامج','المشكلة التي عندك في بعض المواقع قد اختفت باستخدام بروكسي وهذا معناه ان المشكلة من طرفك وليست من البرنامج. حاول حل مشكلتك اما باستخدام DNS أو Proxy أو VPN')
+	elif direct=='problem' and proxy=='problem':
+		xbmcgui.Dialog().ok('نتيجة فحص مواقع البرنامج','مشكلتك ظهرت مع بروكسي وبدون بروكسي وسببها اما من الموقع الاصلي أو البرنامج أو البروكسي الذي انت اخترته. جرب اعادة الفحص باختيار بروكسي مختلف وارسل سجل الاخطاء للمبرمج (من قائمة خدمات البرنامج)')		
+	elif direct!='problem':
+		xbmcgui.Dialog().ok('نتيجة فحص مواقع البرنامج','جميع المواقع تعمل عندك بدون مشكلة وهذا معناه ان جهازك لا يحتاج اي تعديلات. فاذا كانت لديك مشكلة في البرنامج فقم بارسال سجل الاخطاء الى المبرمج (من قائمة خدمات البرنامج)')
 	return
 
 def TESTINGS():
@@ -338,7 +346,7 @@ def TESTINGS():
 	try:
 		#resolvable = urlresolver.HostedMediaFile(url).valid_url()
 		link = urlresolver.HostedMediaFile(url).resolve()
-		xbmcgui.Dialog().ok(str(link),url)
+		#xbmcgui.Dialog().ok(str(link),url)
 	except: xbmcgui.Dialog().ok('urlresolver: fail',url)
 	import RESOLVERS
 	titles,urls = RESOLVERS.RESOLVE(url)

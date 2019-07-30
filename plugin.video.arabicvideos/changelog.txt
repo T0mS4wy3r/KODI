@@ -1,4 +1,11 @@
 ﻿
+v5.7.2	2019-07-30
+Added proxies to requests
+Added messages towebsites tests
+Added more https proxies
+Fixed GA
+
+
 v5.7.1	2019-07-26
 Fixed checking proxies sort/response time
 
