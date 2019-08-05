@@ -144,22 +144,28 @@ def PLAY(url):
 	if rating[0] in ['R','TVMA','TV-MA','PG-18','PG-16']:
 		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
 		return
+	"""
 	html_blocks = re.findall('tbody(.*?)tbody',html,re.DOTALL)
 	if not html_blocks:
 		xbmcgui.Dialog().notification('خطأ من الموقع الاصلي','ملف الفيديو غير متوفر')
 		return
 	block = html_blocks[0]
-	items = re.findall('</td> <td>(.*?)<.*?data-call="(.*?)"',block,re.DOTALL)
+	"""
 	qualityLIST = []
-	datacallLIST = []
-	if len(items)>0:
-		for qualtiy,datacall in items:
-			qualityLIST.append ('mp4   '+qualtiy)
-			datacallLIST.append (datacall)
-	watchitem = re.findall('x-mpegURL" src="/api/\?call=(.*?)"',html,re.DOTALL)
-	if not watchitem:
+	linkLIST = []
+	watchitem = re.findall('class="auto-size" src="(.*?)"',html,re.DOTALL)
+	if watchitem:
+		qualityLIST.append('ملف المشاهدة')
+		linkLIST.append(watchitem[0])
+	items = re.findall('</td> <td>(.*?)<.*?data-url="(.*?)"',html,re.DOTALL)
+	for qualtiy,link in items:
+		url = website0a + link # + '&v=1'
+		qualityLIST.append('mp4   '+qualtiy)
+		linkLIST.append(url)
+	if not linkLIST:
 		WARNING()
 		return
+	"""
 	url = website0a + '/api?call=' + watchitem[0]
 	EGUDI, EGUSID, EGUSS = GET_PLAY_TOKENS()
 	if EGUDI=='': return
@@ -168,25 +174,27 @@ def PLAY(url):
 	html = response.text
 	#xbmcgui.Dialog().ok(url,html)
 	items = re.findall('#EXT-X-STREAM.*?RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
-	if len(items)>0:
+	if items:
 		for qualtiy,url in reversed(items):
 			qualityLIST.append ('m3u8   '+qualtiy)
 			datacallLIST.append (url)
-	selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', qualityLIST)
-	if selection == -1 : return
-	url = datacallLIST[selection]
+	"""
+	#selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', qualityLIST)
+	#if selection == -1 : return
+	#url = linkLIST[selection]
+	"""
 	if 'http' not in url:
-		datacall = datacallLIST[selection]
-		url = website0a + '/api?call=' + datacall
+		link = linkLIST[selection]
+		url = website0a + '/api?call=' + link
 		headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 		response = openURL_requests_cached(SHORT_CACHE,'GET', url, '', headers, False,'','EGYBEST-PLAY-3rd')
 		html = response.text
 		#xbmcgui.Dialog().ok(url,html)
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
 		items = re.findall('"url":"(.*?)"',html,re.DOTALL)
-		#datacall = items[0]
+		#link = items[0]
 
-		#url = website0a + '/api?call=' + datacall
+		#url = website0a + '/api?call=' + link
 		#headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 		#response = openURL_requests_cached(SHORT_CACHE,'GET', url, '', headers, False,'','EGYBEST-PLAY-4th')
 		#html = response.text
@@ -201,7 +209,13 @@ def PLAY(url):
 	url = url.replace('\/','/')
 	#xbmc.log(url, level=xbmc.LOGNOTICE)
 	#xbmcgui.Dialog().ok(url,url[-45:])
-	result = PLAY_VIDEO(url,script_name,'yes')
+	"""
+	#WARNING() ; return
+	#result = PLAY_VIDEO(url,script_name,'yes')
+	#if result!='playing': WARNING()
+	#xbmcgui.Dialog().ok(url,'')
+	import RESOLVERS
+	RESOLVERS.PLAY(linkLIST,script_name)
 	return
 
 def GET_USERNAME_PASSWORD():
@@ -298,7 +312,7 @@ def GET_PLAY_TOKENS():
 	return [ EGUDI, EGUSID, EGUSS ]
 
 def WARNING():
-	xbmcgui.Dialog().ok('https://egy.best','هذا الموقع هو موقع ايجي بيست الاصلي وهو قيد الانشاء ولهذا الكثير من الفيدوهات لا تعمل')
+	xbmcgui.Dialog().ok('https://egy.best','هذا الموقع هو موقع ايجي بيست الاصلي وهو قيد الانشاء ولهذا تقريبا جميع الفيدوهات لا تعمل')
 	return
 
 def SEARCH(search):

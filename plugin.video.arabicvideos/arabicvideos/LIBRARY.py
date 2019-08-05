@@ -4,6 +4,7 @@
 # Because they are already included with some other modules
 import xbmcplugin,xbmcgui,xbmcaddon,sys,xbmc,os,re,time,thread # total cost = 0ms
 import zlib,ssl,random,hashlib,base64,string,httplib,cPickle # total cost = 0ms
+import socket,struct # total cost = 0ms
 import urllib		# 160ms
 import urllib2		# 354ms (contains urllib)
 import sqlite3		# 50ms (with threading 71ms)
@@ -21,6 +22,7 @@ import sqlite3		# 50ms (with threading 71ms)
 
 
 
+
 # calculate the average time needed to import a main-module and how many sub-modules will be imported with it
 """
 import sys,time
@@ -28,7 +30,7 @@ totalelpased = 0
 for i in range(20):
 	t1 = time.time()
 	before_import = sys.modules.keys()
-	import cPickle
+	import socket,struct
 	after_import = sys.modules.keys()
 	import_list = list(set(after_import)-set(before_import))
 	for modu in import_list:
@@ -114,6 +116,44 @@ now = time.time()
 #LONG_CACHE = 0
 #REGULAR_CACHE = 0
 #SHORT_CACHE = 0
+
+class CustomePlayer(xbmc.Player):
+	def __init__( self, *args, **kwargs ):
+		self.status = ''
+	def onPlayBackStopped(self):
+		self.status='failed'
+	def onPlayBackStarted(self):
+		self.status='playing'
+		time.sleep(1)
+	def onPlayBackError(self):
+		self.status='failed'
+	def onPlayBackEnded(self):
+		self.status='failed'
+
+class CustomThread():
+	def __init__(self):
+		self.statusDICT,self.resultsDICT,self.elpasedtimeDICT, = {},{},{}
+		self.finishedLIST,self.failedLIST = [],[]
+	def start_new_thread(self,id,showDialogs,func,*args):
+		if showDialogs: xbmcgui.Dialog().notification('',str(id))
+		self.statusDICT[id] = 'running'
+		thread.start_new_thread(self.run,(id,func,args))
+		time.sleep(0.001)
+	def wait_finishing_all_threads(self):
+		while 'running' in self.statusDICT.values():
+			time.sleep(0.100)
+	def run(self,id,func,args):
+		starttime = time.time()
+		try:
+			self.resultsDICT[id] = func(*args)
+			self.statusDICT[id] = 'finished'
+			self.finishedLIST.append(id)
+		except Exception as reason:
+			self.resultsDICT[id] = '___Error___:-1:Threads function "'+func.func_name+'" failed due to '+str(reason)
+			self.statusDICT[id] = 'failed'
+			self.failedLIST.append(id)
+		finishtime = time.time()
+		self.elpasedtimeDICT[id] = finishtime - starttime
 
 def SHOW_ERRORS(code=-1,reason=''):
 	if code in [0,7]:
@@ -240,7 +280,8 @@ def openURL_PROXY(url,data='',headers='',showDialogs='',source=''):
 	return html
 
 def openURL_HTTPSPROXIES(url,data='',headers='',showDialogs='',source=''):
-	if '?MyProxyUrl=' not in url: url = url+'?MyProxyUrl='
+	url2,proxyurl,dnsurl = EXTRACT_URL(url)
+	if proxyurl==None: url = url+'||MyProxyUrl='
 	html = openURL_cached(NO_CACHE,url,data,headers,showDialogs,'LIBRARY-openURL_HTTPSPROXIES-1st')
 	if '___Error___' in html:
 		source = 'LIBRARY-openURL_WEBPROXYTO-2nd'
@@ -307,10 +348,11 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs='',source=''):
 
 def openURL_requests_cached(cacheperiod,method,url,data='',headers='',allow_redirects=True,showDialogs='',source=''):
 	if cacheperiod==0: return openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
+	url2,proxyurl,dnsurl = EXTRACT_URL(url)
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
 	conn.text_factory = str
-	t = (url,str(data),str(headers),str(allow_redirects),source)
+	t = (url2,str(data),str(headers),str(allow_redirects),source)
 	c.execute('SELECT response FROM responsecache WHERE url=? AND data=? AND headers=? AND allow_redirects=? AND source=?', t)
 	rows = c.fetchall()
 	conn.close()
@@ -321,7 +363,7 @@ def openURL_requests_cached(cacheperiod,method,url,data='',headers='',allow_redi
 		response = cPickle.loads(text)
 	else:
 		#message = 'not found in cache'
-		response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
+		response = openURL_requests(method,url2,data,headers,allow_redirects,showDialogs,source)
 		code = response.status_code
 		if code==200 or (code>=300 and code<=399):
 			conn = sqlite3.connect(dbfile)
@@ -329,7 +371,7 @@ def openURL_requests_cached(cacheperiod,method,url,data='',headers='',allow_redi
 			conn.text_factory = str
 			text = cPickle.dumps(response)
 			compressed = zlib.compress(text)
-			t = (now+cacheperiod,url,str(data),str(headers),str(allow_redirects),source,sqlite3.Binary(compressed))
+			t = (now+cacheperiod,url2,str(data),str(headers),str(allow_redirects),source,sqlite3.Binary(compressed))
 			c.execute("INSERT INTO responsecache VALUES (?,?,?,?,?,?,?)",t)
 			conn.commit()
 			conn.close()
@@ -342,11 +384,12 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 	#nowTEXT = time.ctime(now)
 	#xbmc.log('[ '+addon_id+' ]:   openURL_cached opening url   Source:[ '+source+' ]   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
 	if cacheperiod==0: return openURL(url,data,headers,showDialogs,source)
+	url2,proxyurl,dnsurl = EXTRACT_URL(url)
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
 	conn.text_factory = str
 	#conn.text_factory = lambda x: unicode(x, "utf-8", "ignore")
-	t = (url,str(data),str(headers),source)
+	t = (url2,str(data),str(headers),source)
 	c.execute('SELECT html FROM htmlcache WHERE url=? AND data=? AND headers=? AND source=?', t)
 	rows = c.fetchall()
 	#html = repr(rows[0][0])
@@ -358,14 +401,14 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 		html = zlib.decompress(html)
 	else:
 		#message = 'not found in cache'
-		html = openURL(url,data,headers,showDialogs,source)
+		html = openURL(url2,data,headers,showDialogs,source)
 		if '___Error___' not in html:
 			conn = sqlite3.connect(dbfile)
 			c = conn.cursor()
 			conn.text_factory = str
 			#html2 = base64.b64encode(html)
 			compressed = zlib.compress(html)
-			t = (now+cacheperiod,url,str(data),str(headers),source,sqlite3.Binary(compressed))
+			t = (now+cacheperiod,url2,str(data),str(headers),source,sqlite3.Binary(compressed))
 			c.execute("INSERT INTO htmlcache VALUES (?,?,?,?,?,?)",t)
 			conn.commit()
 			conn.close()
@@ -375,9 +418,9 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 
 def openURL_requests(method,url,data='',headers='',allow_redirects=True,showDialogs='',source=''):
 	import requests
-	proxies,url2,timeout = {},url,40
-	if '?MyProxyUrl=' in url:
-		url2,proxyurl = url.split('?MyProxyUrl=')
+	proxies,timeout = {},40
+	url2,proxyurl,dnsurl = EXTRACT_URL(url)
+	if proxyurl!=None:
 		if headers=='': headers = { 'User-Agent' : '' }
 		elif 'User-Agent' not in str(headers): headers['User-Agent'] = ''
 		if proxyurl=='': proxyname,proxyurl = RANDOM_HTTPS_PROXY()
@@ -385,25 +428,31 @@ def openURL_requests(method,url,data='',headers='',allow_redirects=True,showDial
 		# if testing proxies then timeout=10
 		if url2=='https://www.google.com': timeout = 10
 		proxies={"http":proxyurl,"https":proxyurl}
-	response = requests.request(method,url,data=data,headers=headers,verify=False,allow_redirects=allow_redirects,timeout=timeout,proxies=proxies)
+	response = requests.request(method,url2,data=data,headers=headers,verify=False,allow_redirects=allow_redirects,timeout=timeout,proxies=proxies)
 	code = response.status_code
 	reason = requests.status_codes._codes[code][0].replace('_',' ').capitalize()
 	#html = response.text
 	#xbmcgui.Dialog().ok(str(url),str(code))
 	if code!=200 and (code<=300 or code>=399):
+		if code==7 and dnsurl!=None:
+			if dnsurl=='': dnsurl = '8.8.8.8'
+			url = url + '||MyDNSUrl='+dnsurl
+			html = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
+			return html
 		html = '___Error___:'+str(code)+':'+reason
 		if 'google-analytics' not in url:
 			xbmc.log('[ '+addon_id+' ]:   Error: openURL_requests failed opening url   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
 		EXIT_IF_SOURCE(source,code,reason)
 	return response
 
-def CHECK_HTTPS_PROXIES():
+def TEST_HTTPS_PROXIES():
 	headers = { 'User-Agent' : '' }
 	testedLIST,timingLIST = [],[]
 	threads = CustomThread()
-	for id in PROXIES.keys():
+	proxies_keys = PROXIES.keys()
+	for id in proxies_keys:
 		proxyname,proxyurl = PROXIES[id]
-		url = 'https://www.google.com?MyProxyUrl='+proxyurl
+		url = 'https://www.google.com||MyProxyUrl='+proxyurl
 		threads.start_new_thread('proxy_'+str(id),True,openURL_cached,NO_CACHE,url,'',headers,'','LIBRARY-CHECK_HTTPS_PROXIES-1st')
 	threads.wait_finishing_all_threads()
 	resultsDICT,finishedLIST =	threads.resultsDICT,threads.finishedLIST
@@ -414,22 +463,22 @@ def CHECK_HTTPS_PROXIES():
 			timingLIST.append(elpasedtimeDICT[id])
 			id = int(id.replace('proxy_',''))
 			testedLIST.append(id)
-	for id in PROXIES.keys():
+	for id in proxies_keys:
 		html = resultsDICT['proxy_'+str(id)]
 		if '___Error___' in html:
 			name,url = PROXIES[id]
-			xbmc.log('[ '+addon_id+' ]:   Error: CHECK_HTTPS_PROXIES failed testing proxy   id:[ '+str(id)+' ]   name:[ '+name+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
-	z = zip(testedLIST,timingLIST)
-	z = sorted(z, reverse=False, key=lambda key: key[1])
-	testedLIST,timingLIST = zip(*z)
+			if html.count(':')>=2:
+				dummy,code,reason = html.split(':')
+			xbmc.log('[ '+addon_id+' ]:   Error: CHECK_HTTPS_PROXIES failed testing proxy   id:[ '+str(id)+' ]   name:[ '+name+' ]'+'   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+	if testedLIST:
+		z = zip(testedLIST,timingLIST)
+		z = sorted(z, reverse=False, key=lambda key: key[1])
+		testedLIST,timingLIST = zip(*z)
 	return testedLIST,timingLIST
 
-def RANDOM_HTTPS_PROXY(number=''):
-	if number=='':
-		randomNumber = random.randrange(0,len(PROXIES)) # (0,6) means 6 servers
-		proxyname,proxyurl = PROXIES[randomNumber]
-	else:
-		proxyname,proxyurl = PROXIES[number] # 6 means 7th server
+def RANDOM_HTTPS_PROXY(number=None):
+	if number==None: number = random.randrange(0,len(PROXIES)) # (0,6) means 6 servers
+	proxyname,proxyurl = PROXIES[number] # 6 means 7th server
 	return proxyname,proxyurl
 
 # Proxies were taken from http://free-proxy.cz
@@ -456,23 +505,35 @@ PROXIES = {
 		,19:('هونج كونج'		,'http://47.52.29.184:3128')	# HTTPS Hong Kong 476kB/s 100% 1143ms
 		,20:('اميركا كولورادو'	,'http://167.86.89.108:3128')	# HTTPS Colorado  938kB/s 100% 659ms
 		,21:('الصين'			,'http://49.51.155.45:8081')	# HTTPS China			  92.2% 473ms
-		#,22:('البرازيل'		,'http://45.230.215.46:8080')	# HTTPS Brazil	368kB/s 100% 1300ms
+		,22:('مصر'				,'http://41.33.212.68:4145')	# HTTPS
 		#,23:('تركيا'			,'http://45.230.215.46:8080')	# HTTPS China	368kB/s 100% 1300ms
 		}
 
+def EXTRACT_URL(url):
+	items = url.split('||')
+	url2,proxyurl,dnsurl = items[0],None,None
+	for item in items:
+		if 'MyProxyUrl=' in item: proxyurl = item.split('=')[1]
+		elif 'MyDNSUrl=' in item: dnsurl = item.split('=')[1]
+	return url2,proxyurl,dnsurl
+
 def openURL(url,data='',headers='',showDialogs='',source=''):
+	#url = url + '||MyProxyUrl=http://41.33.212.68:4145'
 	if showDialogs=='': showDialogs='yes'
-	html,code,reason = '',200,'OK'
-	proxies,url2,timeout = {},url,40
-	if '?MyProxyUrl=' in url:
-		url2,proxyurl = url.split('?MyProxyUrl=')
+	proxies,timeout = {},40
+	url2,proxyurl,dnsurl = EXTRACT_URL(url)
+	html,code,reason,finalURL = None,None,None,url2
+	if proxyurl!=None:
 		if headers=='': headers = { 'User-Agent' : '' }
 		elif 'User-Agent' not in str(headers): headers['User-Agent'] = ''
 		if proxyurl=='': proxyname,proxyurl = RANDOM_HTTPS_PROXY()
 		proxies = {"http":proxyurl,"https":proxyurl}
-		proxy_handler = urllib2.ProxyHandler(proxies)
-		opener = urllib2.build_opener(proxy_handler)
-		urllib2.install_opener(opener)
+		MyProxyHandler = urllib2.ProxyHandler(proxies)
+	if   proxyurl==None and dnsurl==None: opener = urllib2.build_opener()
+	elif proxyurl!=None and dnsurl==None: opener = urllib2.build_opener(MyProxyHandler)
+	elif proxyurl==None and dnsurl!=None: opener = urllib2.build_opener(MyHTTPSHandler,MyHTTPHandler)
+	elif proxyurl!=None and dnsurl!=None: opener = urllib2.build_opener(MyProxyHandler,MyHTTPSHandler,MyHTTPHandler)
+	urllib2.install_opener(opener)
 	if   data=='' and headers=='': request = urllib2.Request(url2)
 	elif data=='' and headers!='': request = urllib2.Request(url2,headers=headers)
 	elif data!='' and headers=='': request = urllib2.Request(url2,data=data)
@@ -482,26 +543,44 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		#ctx.check_hostname = False
 		#ctx.verify_mode = ssl.CERT_NONE
 		#ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-		if '?MyProxyUrl=' in url:
+		if proxyurl!=None or dnsurl!=None:
 			# if testing proxies then timeout=10
 			if url2=='https://www.google.com': timeout = 10
 			response = urllib2.urlopen(request,timeout=timeout)
 		else:
 			ctx = ssl._create_unverified_context()
 			response = urllib2.urlopen(request,timeout=timeout,context=ctx)
-		html = response.read()
 		code = response.code
+		reason = response.msg
+		html = response.read()
+		# error code
+		#		code = response.code
+		#		code = response.getcode()
+		# final url after all redirects
+		#		finalURL = response.geturl()
+		#		finalURL = response.url
+		# headers & cookies
+		#		headers = response.headers
+		#		headers = response.info()
 		response.close
-	except urllib2.HTTPError as error:
-		code = error.code
-		reason = error.reason
-	except urllib2.URLError as error:
-		code = error.reason[0]
-		reason = error.reason[1]
+	except Exception as e:
+		if hasattr(e,'reason'):
+			if type(e.reason)==str:
+				reason = e.reason
+			else:
+				code = e.reason[0]
+				reason = e.reason[1]
+		if reason==None: reason = 'Unknown error'
+		if code==None:
+			if hasattr(e,'code'): code = e.code
+			else: code = -1
+		if html==None:
+			if hasattr(e,'read'): html = e.read()
+			else: html = '___Error___:'+str(code)+':'+reason
 	if code!=200 and (code<=300 or code>=399):
 		message,send,showDialogs = '','no','no'
 		html = '___Error___:'+str(code)+':'+reason
-		"""	
+		"""
 		if 'google-analytics' in url2: send = showDialogs
 		if showDialogs=='yes':
 			xbmcgui.Dialog().ok('خطأ في الاتصال',html)
@@ -517,6 +596,10 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		"""
 		if 'google-analytics' not in url:
 			xbmc.log('[ '+addon_id+' ]:   Error: openURL failed opening url   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+		if code in [0,7,11001] and dnsurl==None:
+			url = url+'||MyDNSUrl='
+			html = openURL(url,data,headers,showDialogs,source)
+			return html
 		EXIT_IF_SOURCE(source,code,reason)
 	return html
 
@@ -587,7 +670,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	else: videofiletype = ''
 	if videofiletype=='.m3u8':
 		headers = { 'User-Agent' : '' }
-		titleLIST,linkLIST = M3U8_RESOLUTIONS(url,headers)
+		titleLIST,linkLIST = M3U8_EXTRACTOR(url,headers)
 		if len(linkLIST)>1:
 			selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
 			if selection == -1:
@@ -662,6 +745,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	#	if not working:
 	#		xbmcgui.Dialog().ok('الاتصال مشفر','مشكلة ... هذا الفيديو يحتاج الى اتصال مشفر (ربط مشفر) ولكن للأسف الاتصال المشفر لا يعمل على جهازك')
 	#		return 'https'
+	return
 
 def EXIT_PROGRAM(source=''):
 	xbmc.log('[ '+addon_id+' ]:   Exit: Program exited normally   Source:[ '+source+' ]', level=xbmc.LOGNOTICE)
@@ -715,7 +799,7 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 				xbmcgui.Dialog().ok('Message sent','تم ارسال الرسالة بنجاح')
 	return html
 
-def M3U8_RESOLUTIONS(url,headers=''):
+def M3U8_EXTRACTOR(url,headers=''):
 	#headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36' }
 	#url = 'https://vd84.mycdn.me/video.m3u8'
 	#with open('S:\\test2.m3u8', 'r') as f: html = f.read()
@@ -723,32 +807,40 @@ def M3U8_RESOLUTIONS(url,headers=''):
 	if 'TYPE=AUDIO' in html: return ['-1'],[url]
 	if 'TYPE=VIDEO' in html: return ['-1'],[url]
 	#if 'TYPE=SUBTITLES' in html: return ['-1'],[url]
-	items1 = re.findall('RESOLUTION=\d+[x|X](\d+).*?\n(.*?)\n',html+'\n',re.DOTALL)
-	items2 = re.findall('BANDWIDTH=(\d+).*?\n(.*?)\n',html+'\n',re.DOTALL)
-	#xbmcgui.Dialog().ok(url,str(items2))
-	if items1:
-		items1 = set(items1)
-		items1 = sorted(items1, reverse=True, key=lambda key: int(key[0]))
-		titleLIST,linkLIST = [],[]
-		for resolution,link in items1:
-			if 'http' not in link: link = url.rsplit('/',1)[0] + '/' + link
-			titleLIST.append(resolution)
-			linkLIST.append(link)
-	elif items2:
-		items2 = set(items2)
-		items2 = sorted(items2, reverse=True, key=lambda key: int(key[0]))
-		titleLIST,linkLIST = [],[]
-		for bitrate,link in items2:
-			if 'http' not in link: link = url.rsplit('/',1)[0] + '/' + link
-			bitrate = str(int(bitrate)/1024)+' kbps'
-			titleLIST.append(bitrate)
-			linkLIST.append(link)
-	else: titleLIST,linkLIST = ['-1'],[url]
-	#z = zip(titleLIST,linkLIST)
+	titleLIST,linkLIST,qualityLIST = [],[],[]
+	#xbmc.log(item, level=xbmc.LOGNOTICE)
+	lines = re.findall('EXT-X-STREAM-INF:(.*?)[\n\r]+(.*?)[\n\r]+',html+'\n\r',re.DOTALL)
+	if len(lines)<2: return ['-1'],[url]
+	for line,link in lines:
+		lineDICT,title = {},''
+		items = line.split(',')
+		for item in items:
+			if '=' not in item: continue
+			key,value = item.lower().split('=')
+			if key=='resolution':
+				value = 'Res: '+value.split('x')[1]
+			elif key=='average-bandwidth':
+				value = 'AvgBW: '+str(int(value)/1024)+' kbps'
+			elif key=='bandwidth':
+				value = 'BW: '+str(int(value)/1024)+' kbps'
+			lineDICT[key] = value
+		if "'average-bandwidth'" in str(lineDICT):
+			title += lineDICT['average-bandwidth']+'   '
+		elif "'bandwidth'" in str(lineDICT):
+			title += lineDICT['bandwidth']+'   '
+		if "'resolution'" in str(lineDICT):
+			title += lineDICT['resolution']+'   '
+		title = title.strip('   ')
+		if title=='': title = 'Unknown'
+		if 'http' not in link: link = url.rsplit('/',1)[0]+'/'+link
+		quality = re.findall(' (\d+) ',title+' 000 ',re.DOTALL)[0]
+		titleLIST.append(title)
+		linkLIST.append(link)
+		qualityLIST.append(int(quality))
+	z = zip(titleLIST,linkLIST,qualityLIST)
 	#z = set(z)
-	#z = sorted(z, reverse=True, key=lambda key: key[0])
-	#titleLIST,linkLIST = zip(*z)
-	#titleLIST,linkLIST = list(titleLIST),list(linkLIST)
+	z = sorted(z, reverse=True, key=lambda key: key[2])
+	titleLIST,linkLIST,qualityLIST = zip(*z)
 	#selection = xbmcgui.Dialog().select('', titleLIST)
 	#selection = xbmcgui.Dialog().select('', linkLIST)
 	return titleLIST,linkLIST
@@ -836,45 +928,6 @@ def ENABLE_RTMP(showDialogs=True):
 			else: xbmcgui.Dialog().ok('التفعيل فشل','اضافة inputstream.rtmp غير موجودة عندك ويجب ان تقوم بتصيبها قبل محاولة تفعيلها')
 	elif showDialogs==True: xbmcgui.Dialog().ok('هذه الاضافة عندك مفعلة','')
 	return
-
-class CustomePlayer(xbmc.Player):
-	def __init__( self, *args, **kwargs ):
-		self.status = ''
-	def onPlayBackStopped(self):
-		self.status='failed'
-	def onPlayBackStarted(self):
-		self.status='playing'
-		time.sleep(1)
-	def onPlayBackError(self):
-		self.status='failed'
-	def onPlayBackEnded(self):
-		self.status='failed'
-
-class CustomThread():
-	def __init__(self):
-		self.statusDICT,self.resultsDICT,self.elpasedtimeDICT, = {},{},{}
-		self.finishedLIST,self.failedLIST = [],[]
-	def start_new_thread(self,id,showDialogs,func,*args):
-		if showDialogs: xbmcgui.Dialog().notification('',str(id))
-		self.statusDICT[id] = 'running'
-		thread.start_new_thread(self.run,(id,func,args))
-		time.sleep(0.001)
-	def wait_finishing_all_threads(self):
-		while 'running' in self.statusDICT.values():
-			time.sleep(0.100)
-	def run(self,id,func,args):
-		starttime = time.time()
-		try:
-			self.resultsDICT[id] = func(*args)
-			self.statusDICT[id] = 'finished'
-			self.finishedLIST.append(id)
-		except:
-			self.resultsDICT[id] = '___Error___:-1:Threads function fail'
-			self.statusDICT[id] = 'failed'
-			self.failedLIST.append(id)
-		finishtime = time.time()
-		self.elpasedtimeDICT[id] = finishtime - starttime
-
 
 
 
@@ -1017,6 +1070,86 @@ for response in concurrent.futures.as_completed(responcesDICT):
 	#if 'http' not in link: link = 'http:' + link
 	linkLIST.append(links[0])
 """
+
+def RESOLVE_DNS(url,dnsserver='8.8.8.8'):
+	packet = struct.pack(">H", 12049)  # Query Ids (Just 1 for now)
+	packet += struct.pack(">H", 256)  # Flags
+	packet += struct.pack(">H", 1)  # Questions
+	packet += struct.pack(">H", 0)  # Answers
+	packet += struct.pack(">H", 0)  # Authorities
+	packet += struct.pack(">H", 0)  # Additional
+	split_url = url.decode('utf-8').split(".")
+	for part in split_url:
+		parts = part.encode('utf-8')
+		packet += struct.pack("B", len(part))
+		for byte in part:
+			packet += struct.pack("c", byte.encode('utf-8'))
+	packet += struct.pack("B", 0)  # End of String
+	packet += struct.pack(">H", 1)  # Query Type
+	packet += struct.pack(">H", 1)  # Query Class
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	sock.sendto(bytes(packet), (dnsserver, 53))
+	data, addr = sock.recvfrom(1024)
+	sock.close()
+	raw_header = struct.unpack_from(">HHHHHH", data, 0)
+	ancount = raw_header[3]
+	offset = len(url)+18
+	answer = []
+	for _ in range(ancount):
+		offset2 = offset
+		bytes_read = 1
+		jump = False
+		while True:
+			byte = struct.unpack_from(">B", data, offset2)[0]
+			if byte == 0:
+				offset2 += 1
+				break
+			# If the field has the first two bits equal to 1, it's a pointer
+			if byte >= 192:
+				next_byte = struct.unpack_from(">B", data, offset2 + 1)[0]
+				# Compute the pointer
+				offset2 = ((byte << 8) + next_byte - 0xc000) - 1
+				jump = True
+			offset2 += 1
+			if jump == False: bytes_read += 1
+		if jump == True: bytes_read += 1
+		offset = offset + bytes_read
+		aux = struct.unpack_from(">HHIH", data, offset)
+		offset = offset + 10
+		x_type = aux[0]
+		rdlength = aux[3]
+		if x_type == 1: # A type
+			rdata = struct.unpack_from(">"+"B"*rdlength, data, offset)
+			ip = ''
+			for byte in rdata: ip += str(byte) + '.'
+			ip = ip[0:-1]
+			answer.append(ip)
+		if x_type in [1,2,5,6,15,28]: offset = offset + rdlength
+	if not answer: xbmc.log('[ '+addon_id+' ]:   Error: RESOLVE_DNS failed getting ip   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+	return answer
+
+class MyHTTPConnection(httplib.HTTPConnection):
+	def connect(self):
+		ip = RESOLVE_DNS(self.host)
+		if ip: self.host = ip[0]
+		else: xbmc.log('[ '+addon_id+' ]:   Error: MyHTTPConnection failed getting ip   URL:[ '+self.host+' ]', level=xbmc.LOGERROR)
+		self.sock = socket.create_connection((self.host,self.port))
+
+class MyHTTPSConnection(httplib.HTTPSConnection):
+	def connect(self):
+		ip = RESOLVE_DNS(self.host)
+		if ip: self.host = ip[0]
+		else: xbmc.log('[ '+addon_id+' ]:   Error: MyHTTPSConnection failed getting ip   URL:[ '+self.host+' ]', level=xbmc.LOGERROR)
+		self.sock = socket.create_connection((self.host,self.port), self.timeout)
+		self.sock = ssl.wrap_socket(self.sock, self.key_file, self.cert_file)
+
+class MyHTTPHandler(urllib2.HTTPHandler):
+	def http_open(self,req):
+		return self.do_open(MyHTTPConnection,req)
+
+class MyHTTPSHandler(urllib2.HTTPSHandler):
+	def https_open(self,req):
+		return self.do_open(MyHTTPSConnection,req)
 
 
 

@@ -372,7 +372,7 @@ def MOVIZLAND(link):
 		titleLISTtemp,titleLIST,linkLISTtemp,linkLIST,resolutionLIST = [],[],[],[],[]
 		for link,title in items:
 			if '.m3u8' in link:
-				titleLISTtemp,linkLISTtemp = M3U8_RESOLUTIONS(link)
+				titleLISTtemp,linkLISTtemp = M3U8_EXTRACTOR(link)
 				linkLIST = linkLIST + linkLISTtemp
 				if titleLISTtemp[0]=='-1': titleLIST.append(' سيرفر خاص '+'m3u8 '+name2)
 				else:
@@ -828,7 +828,7 @@ def YOUTUBE(url):
 		dict['sort'] = 7
 		streams2.append(dict)
 	if hlsURL!='':
-		titleLISTtemp,linkLISTtemp = M3U8_RESOLUTIONS(hlsURL)
+		titleLISTtemp,linkLISTtemp = M3U8_EXTRACTOR(hlsURL)
 		zippedLIST = zip(titleLISTtemp,linkLISTtemp)
 		for title,link in zippedLIST:
 			dict = {}
@@ -1056,7 +1056,7 @@ def VIDBOB(url):
 	for link,dummy,label in items:
 		link = link.replace('https:','http:')
 		if '.m3u8' in link:
-			titleLISTtemp,linkLISTtemp = M3U8_RESOLUTIONS(link)
+			titleLISTtemp,linkLISTtemp = M3U8_EXTRACTOR(link)
 			linkLIST = linkLIST + linkLISTtemp
 			if titleLISTtemp[0]=='-1': titleLIST.append('سيرفر خاص'+'   m3u8')
 			else:
@@ -1090,7 +1090,7 @@ def GOVID(url):
 	if items:
 		link = items[0]
 		if '.m3u8' in link:
-			titleLISTtemp,linkLIST = M3U8_RESOLUTIONS(link)
+			titleLISTtemp,linkLIST = M3U8_EXTRACTOR(link)
 			if titleLISTtemp[0]=='-1': titleLIST.append('سيرفر خاص'+'   m3u8')
 			else:
 				for title in titleLISTtemp:

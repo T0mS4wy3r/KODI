@@ -55,9 +55,10 @@ page=urllib2.unquote(args['page'])
 if mode==-1:
 	#addLink('Testing - watched enabled','',179,'','','yes','','','IsPlayable=yes')
 	#addLink('Testing - watched disabled','',179,'','','no','','','IsPlayable=no')
-	addLink('[COLOR FFC89008]'+' البرنامج اصدار رقم ('+addonVersion+')  .1 [/COLOR]','',7,'','','IsPlayable=no')
-	addDir('[COLOR FFC89008] 2.  [/COLOR]'+'كيف تجعل جميع المواقع تعمل','',195)
-	addDir('[COLOR FFC89008]ـ Services Menu  قائمة الخدمات  .3 [/COLOR]','',172)
+	addDir('[COLOR FFC89008] 1.  [/COLOR]'+'لماذا لا تعمل جميع المواقع','',195)
+	#addDir('[COLOR FFC89008] 2.  [/COLOR]'+'ـ Services Menu  قائمة الخدمات','',172)
+	addDir('[COLOR FFC89008]ـ Services Menu  قائمة الخدمات  .2 [/COLOR]','',172)
+	addLink('[COLOR FFC89008]'+' البرنامج اصدار رقم ('+addonVersion+')  .3 [/COLOR]','',7,'','','IsPlayable=no')
 	addDir('[COLOR FFC89008] 4.  [/COLOR]'+'قنوات تلفزونية وبث حي','',170)
 	addDir('[COLOR FFC89008] 5.  [/COLOR]'+'بحث بجميع مواقع البرنامج','',6)
 	addDir('[COLOR FFC89008] 6.  [/COLOR]'+'مشاهدة فيدوهات عشوائية','',8)
@@ -137,3 +138,28 @@ if mode in [10,50,70,80,90,110,120,140,180,19,59,79,89,99,119,129,149,189]:
 #xbmc.Player().play()
 
 #xbmc.log('[ '+addon_id+' ]:   Finished menu item   Label:[ '+menulabel+' ]   Path:[ '+menupath+' ]', level=xbmc.LOGNOTICE)
+
+
+
+
+"""
+t1=time.time()
+a,b = TEST_HTTPS_PROXIES()
+t2=time.time()
+xbmcgui.Dialog().ok('testing all proxies',str(t2-t1))
+"""
+
+
+
+"""
+ip = RESOLVE_DNS('emad123.com')
+xbmcgui.Dialog().ok(str(ip),'111')
+
+#url = 'http://www.google.com||MyDNSUrl='
+url = 'http://emad123.com'
+headers = { 'User-Agent' : '' }
+html = openURL(url,'',headers,'','')
+xbmcgui.Dialog().ok(str(len(html)),html)
+"""
+
+

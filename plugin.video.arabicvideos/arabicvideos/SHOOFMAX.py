@@ -158,7 +158,7 @@ def PLAY(url):
 			server = 'main server'
 			url = origin_link + link
 		if '.m3u8' in url:
-			titleLIST,linkLIST = M3U8_RESOLUTIONS(url)
+			titleLIST,linkLIST = M3U8_EXTRACTOR(url)
 			if titleLIST[0]=='-1':
 				items_url.append(url)
 				items_name.append('m3u8: '+server)

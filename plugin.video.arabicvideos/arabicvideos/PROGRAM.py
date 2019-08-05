@@ -24,17 +24,17 @@ def MAIN(mode,text=''):
 
 def TOOLS_MENU():
 	addDir('[COLOR FFC89008]ـ Problems & Questions  قائمة مشاكل وأسئلة  .1 [/COLOR]','',150)
-	addLink('[COLOR FFC89008] 2.  [/COLOR]'+'فحص جميع مواقع البرنامج','',175,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008] 3.  [/COLOR]'+'فحص الاصدار الاخير والتحديثات','',7,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008] 4.  [/COLOR]'+'فحص تفعيل فيديوهات mpd ـ','',173,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008] 5.  [/COLOR]'+'فحص تفعيل فيديوهات rtmp ـ','',174,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008] 6.  [/COLOR]'+'فحص اتصال المواقع المشفرة','',4,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008] 7.  [/COLOR]'+'مسح كاش البرنامج','',9,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008] 8.  [/COLOR]'+'ارسال سجل الاخطاء للمبرمج','',2,'','','IsPlayable=no,problem=yes')
-	addLink('[COLOR FFC89008] 9.  [/COLOR]'+'ابلاغ المبرمج بوجود مشكلة','',2,'','','IsPlayable=no,problem=yes')
-	addLink('[COLOR FFC89008]10. [/COLOR]'+'ارسال رسالة الى المبرمج','',2,'','','IsPlayable=no,problem=no')
-	addLink('[COLOR FFC89008]11. [/COLOR]'+'تحذير يخص شهادة التشفير','',171,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]12. [/COLOR]'+'ـ DMCA  قانون الألفية للملكية الرقمية','',3,'','','IsPlayable=no')
+	#addLink('[COLOR FFC89008] 2.  [/COLOR]'+'فحص جميع مواقع البرنامج','',175,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 2.  [/COLOR]'+'فحص الاصدار الاخير والتحديثات','',7,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 3.  [/COLOR]'+'فحص تفعيل فيديوهات mpd ـ','',173,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 4.  [/COLOR]'+'فحص تفعيل فيديوهات rtmp ـ','',174,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 5.  [/COLOR]'+'فحص اتصال المواقع المشفرة','',4,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 6.  [/COLOR]'+'مسح كاش البرنامج','',9,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008] 7.  [/COLOR]'+'ارسال سجل الاخطاء للمبرمج','',2,'','','IsPlayable=no,problem=yes')
+	addLink('[COLOR FFC89008] 8.  [/COLOR]'+'ابلاغ المبرمج بوجود مشكلة','',2,'','','IsPlayable=no,problem=yes')
+	addLink('[COLOR FFC89008] 9.  [/COLOR]'+'ارسال رسالة الى المبرمج','',2,'','','IsPlayable=no,problem=no')
+	addLink('[COLOR FFC89008]10. [/COLOR]'+'تحذير يخص شهادة التشفير','',171,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008]11. [/COLOR]'+'ـ DMCA  قانون الألفية للملكية الرقمية','',3,'','','IsPlayable=no')
 	#addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
@@ -284,7 +284,7 @@ def TEST_ALL_WEBSITES():
 	headers = { 'User-Agent' : '' }
 	def test_all(type,proxy_url=''):
 		def dummyFunc(site,type,proxy_url):
-			if type=='proxy': url = WEBSITES[site][0]+'?MyProxyUrl='+proxy_url
+			if type=='proxy': url = WEBSITES[site][0]+'||MyProxyUrl='+proxy_url
 			else: url = WEBSITES[site][0]
 			if type=='direct': html = openURL_cached(NO_CACHE,url,'',headers,'','PROGRAM-TEST_ALL_WEBSITES-1st')
 			elif type=='proxy': html = openURL_HTTPSPROXIES(url,'',headers,'','PROGRAM-TEST_ALL_WEBSITES-2nd')
@@ -303,7 +303,7 @@ def TEST_ALL_WEBSITES():
 		if '___Error___' not in result: messageDIRECT += site.lower()+'  '
 		else: messageDIRECT += '[COLOR FFC89008]'+site.lower()+'[/COLOR]  '
 	if '___Error___' in str(DIRECTdict_result):
-		testedLIST,timingLIST = CHECK_HTTPS_PROXIES()
+		testedLIST,timingLIST = TEST_HTTPS_PROXIES()
 		proxies_name,proxies_url = [],[]
 		i = 0
 		for id in testedLIST:
