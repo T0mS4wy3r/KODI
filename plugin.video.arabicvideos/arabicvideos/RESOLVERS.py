@@ -16,7 +16,7 @@ def PLAY(linkLIST,script_name,text=''):
 			else:
 				title = serversLIST[selection]
 				#xbmcgui.Dialog().ok(str(urlLIST[selection]),str(urlLIST[selection]))
-				if 'سيرفر عام مجهول' in title:
+				if 'سيرفر' in title and 'مجهول' in title:
 					import PROBLEMS
 					PROBLEMS.MAIN(156)
 					result = 'unresolved'
@@ -78,7 +78,7 @@ def PLAY_LINK(url,script_name,text=''):
 		"""
 	else:
 		result = 'unresolved'
-		videofiletype = re.findall('(.ts|.mp4|.m3u|.m3u8|.mpd|.mkv|.flv|.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
+		videofiletype = re.findall('(\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
 		if videofiletype: result = PLAY_VIDEO(url,script_name,IsPlayable)
 	return result
 	#title = xbmc.getInfoLabel( "ListItem.Label" )
@@ -191,12 +191,15 @@ def RESOLVABLE(url):
 	elif named!='':
 		if '__' not in named: result = 'سيرفر عام محدد ' + named
 		else:
+			named = named+'__'+'__'
 			parts = named.split('__')
-			name,type = parts
-			if type=='download': result = 'سيرفر تحميل عام ' + name
-			elif type=='watch': result = 'سيرفر  مشاهدة عام ' + name
-			else: result = 'سيرفر  مشاهدة وتحميل عام  ' + name
-	else: result = 'سيرفر مجهول ' + server
+			name,type,filetype,quality = parts[:4]
+			if filetype!='': name = name+' '+filetype
+			if quality!='': name = name+' '+quality
+			if type=='download': result = 'سيرفر تحميل عام '+name
+			elif type=='watch': result = 'سيرفر  مشاهدة عام '+name
+			else: result = 'سيرفر  مشاهدة وتحميل عام  '+name
+	else: result = 'سيرفر مجهول '+server
 	return result
 
 """
@@ -238,8 +241,12 @@ def RESOLVE(url):
 	if any(value in server for value in doNOTresolveMElist): titleLIST,linkLIST = [],[]
 	elif 'moshahda'		in server: titleLIST,linkLIST = MOVIZLAND(url)
 	elif 'akoam'		in server: titleLIST,linkLIST = AKOAM(url)
+	elif 'egy.best'		in server: titleLIST,linkLIST = EGYBEST(url)
+	elif 'vidstream'	in server: titleLIST,linkLIST = VIDSTREAM(url2)
 	elif 'shahid4u'		in server: titleLIST,linkLIST = SHAHID4U(url2)
+	elif 'series4watch'	in server: titleLIST,linkLIST = SERIES4WATCH(url2)
 	elif 'arblionz'		in server: titleLIST,linkLIST = ARABLIONZ(url2)
+	elif 'arablionz'	in server: titleLIST,linkLIST = ARABLIONZ(url2)
 	elif 'e5tsar'		in server: titleLIST,linkLIST = E5TSAR(url2)
 	elif 'arabloads'	in server: titleLIST,linkLIST = ARABLOADS(url2)
 	elif 'archive'		in server: titleLIST,linkLIST = ARCHIVE(url2)
@@ -428,6 +435,64 @@ def E5TSAR(url):
 	#xbmcgui.Dialog().ok(items[0],html)
 	return titleLIST,linkLIST
 
+def SERIES4WATCH(link):
+	# https://series4watch.net/?postid=147043&serverid=5
+	parts = re.findall('postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL|re.IGNORECASE)
+	postid,serverid = parts[0]
+	url = 'https://series4watch.net/ajaxCenter?_action=getserver&_post_id='+postid+'&serverid='+serverid
+	headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
+	url2 = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-SERIES4WATCH-1st')
+	#xbmcgui.Dialog().ok(url,url2)
+	titleLIST,linkLIST = RESOLVE(url2)
+	return titleLIST,linkLIST
+
+def VIDSTREAM(url):
+	# https://vidstream.top/embed/o2RbrN9bqf/?vclid=44711370a2655b3f2d23487cb74c05e5347648e8bb9571dfa7c5d5e4zlllsCGMDslElsMaYXobviuROhYfamfMOhlsEslsWQUlslElsMOcSbzMykqapaqlsEslsxMcGlslElsOGsabiZusOxySMgOpEaucSxiSVGEBOlOouQzsEslsxWdlslElsmmmlRPMMslnfpaqlsEslsCMcGlslElsOEOEEZlEMOuzslh
+	# https://vidstream.top/f/KcLxaW7twB/?vclid=e4f9c370b562664b276ba926964e62cc87d0ae5f1f08bd0c6f427dc5ZLLLZaruvLZLnLZXnXnnTLnrXHsZnZLZoruvLZLnLZXvZfEATHZXomqrgXinfHuqoAqFvnCXLXGHUsZnZLZoBVLZLnLZeeeLRtrrZLcWifpLZnZLZavrlZLnLZrfdwGEzAHRXNdWfeWrXNLZnZLZBUjLZLnLZrXuqEsrmSpfifpLZLN
+	# https://vidstream.top/v/KcLxaW7twB/?vclid=58888a3c0b432423a217819ac7b6b5ebdc5fe250434aec29a2321f5bSVVVXrSGTVXViVXtTXpagMmXtruoSHtOipmGorgoDTijtVtEmQeXiXVXWSGTVXViVXtitiiMViStmeXiXVXWTSCXViVXSpAvEawgmBtLAzpszStLVXiXVXrPYVXViVXsssVBNSSXVRzOpfVXiXVXPQcVXViVXStGoaeSuxfpOpfVXVL
+	titleLIST,linkLIST = [],[]
+	headers = { 'User-Agent':'' }
+	if '/embed/' in url:
+		server = url.split('/')[:3]
+		html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-VIDSTREAM-1st')
+		items = re.findall('source src="(.*?)"',html,re.DOTALL)
+		if items:
+			url2 = server+items[0]
+			titleLIST,linkLIST = M3U8_EXTRACTOR(url2)
+	elif '/f/' in url:
+		# mp4
+		html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-VIDSTREAM-2nd')
+		items = re.findall('<h2>.*?href="(.*?)"',html,re.DOTALL)
+		if items: 
+			url3 = items[0]
+			titleLIST,linkLIST = [''],[url3]
+	elif '/v/' in url:
+		# mp4
+		html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-VIDSTREAM-3rd')
+		items = re.findall('id="video".*?src="(.*?)"',html,re.DOTALL)
+		if items: 
+			url4 = items[0]
+			titleLIST,linkLIST = [''],[url4]
+	return titleLIST,linkLIST
+
+def EGYBEST(url):
+	# https://egy.best/api?call=nAAAUceAUAlAUNbbbbbbbaUlUAUbFQAUAlAUGkmPMsfPyNBUlUAUSReUAlAUuReRSRBpElzAUlUAUguGdPRbgBUAlNhANdNANdNdNbbdNUlUAUPRSAUAlAUNhhlNhNNdAUlUAUPRyAUAlAUNhbUAzhAlfzhlAvfUAd&auth=874ded32a2e3b91d6ae55186274469e2?name=vidstream__watch
+	# https://egy.best/api?call=nAAAUceAUAlAUNbbbbbbbaUlUAUbFQAUAlAUGkmPMsfPyNBUlUAUSReUAlAUuReRSRBpElzAUlUAUguGdPRbgBUAlNhANdNANdNdNbbdNUlUAUPRSAUAlAUNhhlNhNNdAUlUAUPRyAUAlAUNhbUAzhAlfzhlAvfUAd&auth=874ded32a2e3b91d6ae55186274469e2?name=vidstream__download
+	url2 = url.split('name=',1)[0].strip('?').strip('/').strip('&')
+	titleLIST,linkLIST,url3 = [],[],''
+	headers = { 'User-Agent':'' }
+	response = openURL_requests_cached(NO_CACHE,'GET',url2,'',headers,False,'','RESOLVERS-EGYBEST-1st')
+	if 'Location' in response.headers:
+		url3 = response.headers['Location']
+		response = openURL_requests_cached(NO_CACHE,'GET',url3,'',headers,False,'','RESOLVERS-EGYBEST-2nd')
+	if 'Location' in response.headers:
+		url3 = response.headers['Location']
+	if 'http' in url3:
+		if '__watch' in url: url3 = url3.replace('/f/','/v/')
+		titleLIST,linkLIST = VIDSTREAM(url3)
+	return titleLIST,linkLIST
+	#xbmc.log(html, level=xbmc.LOGNOTICE)
+
 def ARABLIONZ(link):
 	# http://arablionz/?postid=159485&serverid=0
 	parts = re.findall('postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL|re.IGNORECASE)
@@ -435,6 +500,7 @@ def ARABLIONZ(link):
 	url = 'https://arblionz.tv/ajaxCenter?_action=getserver&_post_id='+postid+'&serverid='+serverid
 	headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 	url2 = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-ARABLIONZ-1st')
+	#xbmcgui.Dialog().ok(url,url2)
 	titleLIST,linkLIST = RESOLVE(url2)
 	return titleLIST,linkLIST
 
@@ -687,6 +753,9 @@ def YOUTUBE(url):
 	block2,block3,format_block,jshtml = '','','',''
 	subtitleURL,dashURL,hlsURL,finalURL = '','','',''
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-YOUTUBE-2nd')
+	if 'Content Warning' in html:
+		xbmcgui.Dialog().ok('رسالة من الموقع','تحذير بشأن المحتوى','ربما يكون هذا الفيديو غير ملائم لبعض المستخدمين')
+		return [],[]
 	#xbmc.log('===========================================',level=xbmc.LOGNOTICE)
 	#xbmc.log(html,level=xbmc.LOGNOTICE)
 	html = html.replace('\\','')
@@ -828,16 +897,19 @@ def YOUTUBE(url):
 		dict['sort'] = 7
 		streams2.append(dict)
 	if hlsURL!='':
+		xbmc.log(hlsURL, level=xbmc.LOGNOTICE)
 		titleLISTtemp,linkLISTtemp = M3U8_EXTRACTOR(hlsURL)
 		zippedLIST = zip(titleLISTtemp,linkLISTtemp)
 		for title,link in zippedLIST:
 			dict = {}
 			dict['type2'] = 'A+V'
 			dict['filetype'] = 'm3u8'
-			dict['quality'] = title
 			dict['url'] = link
+			if 'Res: ' in title: quality = title.split('Res: ')[1]
+			else: quality = title.split('BW: ')[1].split('kbps')[0]
+			dict['quality'] = quality
 			if title=='-1': dict['title'] = dict['type2']+':  '+dict['filetype']+'  '+'دقة اوتوماتيكية'
-			else: dict['title'] = dict['type2']+':  '+dict['filetype']+'  '+dict['quality']
+			else: dict['title'] = dict['type2']+':  '+dict['filetype']+'  '+dict['quality']+'  '+title
 			dict['sort'] = 9
 			streams2.append(dict)
 	streams2 = sorted(streams2, reverse=True, key=lambda key: int(key['quality']))
@@ -1057,6 +1129,7 @@ def VIDBOB(url):
 		link = link.replace('https:','http:')
 		if '.m3u8' in link:
 			titleLISTtemp,linkLISTtemp = M3U8_EXTRACTOR(link)
+			#xbmcgui.Dialog().ok(str(linkLIST),str(linkLISTtemp))
 			linkLIST = linkLIST + linkLISTtemp
 			if titleLISTtemp[0]=='-1': titleLIST.append('سيرفر خاص'+'   m3u8')
 			else:

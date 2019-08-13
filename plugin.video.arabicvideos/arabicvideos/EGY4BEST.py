@@ -23,7 +23,7 @@ def MAIN(mode,url,page,text):
 
 def MAIN_MENU():
 	#addDir(menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
-	addDir(menu_name+'تحذير','',226)
+	#addDir(menu_name+'تحذير','',226)
 	addDir(menu_name+'بحث في الموقع','',229)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGY4BEST-MAIN_MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
@@ -135,20 +135,33 @@ def TITLES(url,page):
 def PLAY(url):
 	headers = { 'User-Agent' : '' }
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGY4BEST-PLAY-1st')
-	#rating = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
-	#if rating[0] in ['R','TVMA','TV-MA','PG-18','NC-17']:
-	#	xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
-	#	return
+	rating = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
+	if rating[0] in ['R','TVMA','TV-MA','PG-18','NC-17']:
+		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
+		return
 	html_blocks = re.findall('tbody(.*?)tbody',html,re.DOTALL)
 	if not html_blocks:
 		xbmcgui.Dialog().notification('خطأ من الموقع الاصلي','ملف الفيديو غير متوفر')
 		return
 	block = html_blocks[0]
-	linkLIST = re.findall('id="video.*?src="(.*?)',block,re.DOTALL)
+	showUrl = re.findall('id="video".*?src="(.*?)"',block,re.DOTALL)
+	html = openURL_cached(LONG_CACHE,showUrl,'',headers,'','EGY4BEST-PLAY-2nd')
+	items = re.findall('source src="(.*?)" title="(.*?)"',html,re.DOTALL)
+	#titleLIST,linkLIST = zip(*items)
+	titleLIST,linkLIST = [],[]
+	for link,title in items:
+		linkLIST = linkLIST.append(link)
+		titleLIST = titleLIST.append(title)
+	selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', titleLIST)
+	if selection == -1 : return
+	url = linkLIST[selection]
+	PLAY_VIDEO(url,script_name,'yes')
+	return
+	"""
 	import RESOLVERS
 	result = RESOLVERS.PLAY(linkLIST,script_name)
 	if result!='playing': WARNING()
-	return
+	"""
 
 def WARNING():
 	xbmcgui.Dialog().ok('https://egy4best.com','هذا الموقع هو البديل الجديد لموقع ايجي بيست السابق وهو قيد الانشاء ولهذا الكثير من الفيدوهات لا تعمل')
@@ -212,7 +225,7 @@ def FILTERS_MENU_OLD(link):
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def PLAY(url):
+def PLAY_OLD(url):
 	#xbmcgui.Dialog().ok(url, url[-45:])
 	headers = { 'User-Agent' : '' }
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGY4BEST-PLAY-1st')
@@ -277,7 +290,7 @@ def PLAY(url):
 	PLAY_VIDEO(url,script_name,'yes')
 	return
 
-def GET_USERNAME_PASSWORD():
+def GET_USERNAME_PASSWORD_OLD():
 	text = 'هذا الموقع يحتاج اسم دخول وكلمة السر لكي تستطيع تشغيل ملفات الفيديو. للحصول عليهم قم بفتح حساب مجاني من الموقع الاصلي'
 	xbmcgui.Dialog().ok('الموقع الاصلي  '+website0a,text)
 	settings = xbmcaddon.Addon(id=addon_id)
@@ -292,7 +305,7 @@ def GET_USERNAME_PASSWORD():
 		settings.setSetting('egybest.EGUSS','')
 	return
 
-def GET_PLAY_TOKENS():
+def GET_PLAY_TOKENS_OLD():
 	settings = xbmcaddon.Addon(id=addon_id)
 	EGUDI = settings.getSetting('egybest.EGUDI')
 	EGUSID = settings.getSetting('egybest.EGUSID')

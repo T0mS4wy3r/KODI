@@ -4,6 +4,18 @@ from LIBRARY import *
 
 #t1 =time.time()
 
+#response = openURL_requests('GET','http://example.com||MyDNSUrl=')
+#html = response.text
+#xbmcgui.Dialog().ok('',str(html))
+#html = openURL('http://example.com||MyProxyUrl=http://198.50.147.158:3128')
+#xbmcgui.Dialog().ok('',str(html))
+#html = openURL('http://example.com||MyProxyUrl=')
+#xbmcgui.Dialog().ok('',str(html))
+#xbmcgui.Dialog().ok('','shutdown the proxy')
+#html = openURL('https://google.com||MyDNSUrl=')
+#xbmcgui.Dialog().ok('',str(html))
+#html = openURL('http://google.com')
+#xbmcgui.Dialog().ok('',str(html))
 
 newline = '\r                               '
 message = '[ '+addon_id+' ]'
@@ -67,15 +79,15 @@ if mode==-1:
 	addDir(' 8.  [COLOR FFC89008]SHF  [/COLOR]'+'موقع شوف ماكس','',50)
 	addDir(' 9.  [COLOR FFC89008]KLA  [/COLOR]'+'موقع كل العرب','',10)
 	addDir('10. [COLOR FFC89008]PNT  [/COLOR]'+'موقع بانيت','',30)
-	addDir('11. [COLOR FFC89008]IFL    [/COLOR]'+'موقع قناة اي فيلم','',20)
-	addDir('12. [COLOR FFC89008]MRF  [/COLOR]'+'موقع قناة المعارف','',40)
-	addDir('13. [COLOR FFC89008]KWT  [/COLOR]'+'موقع قناة الكوثر','',130)
-	addDir('14. [COLOR FFC89008]FTM  [/COLOR]'+'موقع المنبر الفاطمي','',60)
+	addDir('11. [COLOR FFC89008]EG4  [/COLOR]'+'موقع ايجي فور بيست','',220)    # 220
+	addDir('12. [COLOR FFC89008]IFL    [/COLOR]'+'موقع قناة اي فيلم','',20)
+	addDir('13. [COLOR FFC89008]MRF  [/COLOR]'+'موقع قناة المعارف','',40)
+	addDir('14. [COLOR FFC89008]KWT  [/COLOR]'+'موقع قناة الكوثر','',130)
+	addDir('15. [COLOR FFC89008]FTM  [/COLOR]'+'موقع المنبر الفاطمي','',60)
 	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('15. [COLOR FFC89008]MVZ  [/COLOR]'+'موقع موفيزلاند اونلاين','',180)
-	addDir('16. [COLOR FFC89008]AKM  [/COLOR]'+'موقع اكوام','',70)
-	addDir('17. [COLOR FFC89008]EGB  [/COLOR]'+'موقع ايجي بيست','',120)    # 5
-	addDir('18. [COLOR FFC89008]EG4  [/COLOR]'+'موقع ايجي فور بيست','',220)    # 5
+	addDir('16. [COLOR FFC89008]MVZ  [/COLOR]'+'موقع موفيزلاند اونلاين','',180)
+	addDir('17. [COLOR FFC89008]AKM  [/COLOR]'+'موقع اكوام','',70)
+	addDir('18. [COLOR FFC89008]EGB  [/COLOR]'+'موقع ايجي بيست','',120)    # 5
 	addLink('[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
 	addDir('19. [COLOR FFC89008]HEL  [/COLOR]'+'موقع هلال يوتيوب','',90)
 	addDir('20. [COLOR FFC89008]HLA  [/COLOR]'+'موقع هلا سيما','',80)

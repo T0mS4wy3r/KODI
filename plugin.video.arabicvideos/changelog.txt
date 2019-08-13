@@ -1,8 +1,18 @@
 ﻿
+v5.8.0	2019-08-13
+Added public DNS for requests
+Added SERIES4WATCH resolver
+Added EGYBEST resolver
+Added EGY4BEST playing
+Fixed M3U8 extractor
+Fixed YOUTUBE resolver
+Fixed ARABLIONZ resolving
+
+
 v5.7.3	2019-08-04
 Removed proxies from cached urls
 Added DNS resolving
-Added public DNS for some erorrs
+Added public DNS for openurl
 Canceled proxy test
 Fixed m3u8 extractor
 Added messageس about blocking

@@ -22,8 +22,8 @@ def MAIN(mode,url,page,text):
 	return
 
 def MAIN_MENU():
-	addDir(menu_name+'تحذير','',126)
-	addDir(menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
+	#addDir(menu_name+'تحذير','',126)
+	#addDir(menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
 	addDir(menu_name+'بحث في الموقع','',129)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBEST-MAIN_MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
@@ -151,20 +151,27 @@ def PLAY(url):
 		return
 	block = html_blocks[0]
 	"""
-	qualityLIST = []
 	linkLIST = []
 	watchitem = re.findall('class="auto-size" src="(.*?)"',html,re.DOTALL)
 	if watchitem:
-		qualityLIST.append('ملف المشاهدة')
-		linkLIST.append(watchitem[0])
+		url2 = watchitem[0]
+		import RESOLVERS
+		titleLIST,linkLIST = RESOLVERS.VIDSTREAM(url2)
+		if len(linkLIST)>0:
+			z = zip(titleLIST,linkLIST)
+			for title,link in z:
+				if 'Res: ' in title: quality = title.split('Res: ')[1]
+				else: quality = title.split('BW: ')[1].split('kbps')[0]
+				linkLIST.append(link+'?name=vidstream__watch__m3u8__'+quality)
+		else: linkLIST.append(url2+'?name=vidstream__watch__m3u8')
 	items = re.findall('</td> <td>(.*?)<.*?data-url="(.*?)"',html,re.DOTALL)
-	for qualtiy,link in items:
+	for quality,link in items:
 		url = website0a + link # + '&v=1'
-		qualityLIST.append('mp4   '+qualtiy)
-		linkLIST.append(url)
-	if not linkLIST:
-		WARNING()
-		return
+		linkLIST.append(url+'?name=vidstream__download__mp4__'+quality)
+		linkLIST.append(url+'?name=vidstream__watch__mp4__'+quality)
+	#if not linkLIST:
+	#	WARNING()
+	#	return
 	"""
 	url = website0a + '/api?call=' + watchitem[0]
 	EGUDI, EGUSID, EGUSS = GET_PLAY_TOKENS()
@@ -214,7 +221,7 @@ def PLAY(url):
 	#result = PLAY_VIDEO(url,script_name,'yes')
 	#if result!='playing': WARNING()
 	#xbmcgui.Dialog().ok(url,'')
-	import RESOLVERS
+	#import RESOLVERS
 	RESOLVERS.PLAY(linkLIST,script_name)
 	return
 

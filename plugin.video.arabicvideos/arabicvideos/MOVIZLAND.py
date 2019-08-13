@@ -124,7 +124,7 @@ def PLAY(url):
 		if '://moshahda.' in link:
 			main_watch_link = link
 			if main_watch_link not in links:
-				linkLIST.append(main_watch_link+'?name= Main')
+				linkLIST.append(main_watch_link+'?name=Main')
 				links.append(main_watch_link)	
 	# all_vb_links
 	for link in urls:

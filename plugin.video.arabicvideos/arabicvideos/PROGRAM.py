@@ -255,7 +255,7 @@ def RANDOM():
 	return
 
 def CLOSED():
-	xbmcgui.Dialog().ok('','الموقع الاصلي للأسف مغلق')
+	xbmcgui.Dialog().ok('','المبرمج يحتاج بعض الوقت لاصلاح هذا الموقع')
 	return
 
 def SSL_WARNING():
