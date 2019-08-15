@@ -117,6 +117,10 @@ def MAIN(mode):
 		#if yes==1:
 		#	import PROGRAM
 		#	PROGRAM.TEST_ALL_WEBSITES()
+
+	elif mode==196:
+		xbmcgui.Dialog().ok('هناك طريقتين للتواصل مع المبرمج','الاولى عن طريق ارسال رسالة او مشكلة من قائمة الخدمات ... والافضل الطريقة الثانية وهي فتح موضوع للنقاش عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
+
 	return
 		
 

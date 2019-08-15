@@ -1,4 +1,14 @@
 ﻿
+v5.8.1	2019-08-14
+Fixed EGYBEST headers
+Fixed EGYBEST resolving
+Fixed EGYBEST playing
+Added cloudflare blocking errors
+Added unknown errors
+Added logs of resolving menues
+Added contact menu item
+
+
 v5.8.0	2019-08-13
 Added public DNS for requests
 Added SERIES4WATCH resolver

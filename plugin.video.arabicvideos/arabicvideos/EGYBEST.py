@@ -6,7 +6,7 @@ from LIBRARY import *
 #website0a = 'https://egybest1.com'
 #website0a = 'https://egybest.vip'
 
-headers = { 'User-Agent' : '' }
+headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
 script_name = 'EGYBEST'
 menu_name='_EGB_'
 website0a = WEBSITES[script_name][0]
@@ -138,7 +138,6 @@ def TITLES(url,page):
 
 def PLAY(url):
 	#xbmcgui.Dialog().ok(url, url[-45:])
-	headers = { 'User-Agent' : '' }
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGYBEST-PLAY-1st')
 	rating = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
 	if rating[0] in ['R','TVMA','TV-MA','PG-18','PG-16']:
@@ -151,21 +150,30 @@ def PLAY(url):
 		return
 	block = html_blocks[0]
 	"""
-	linkLIST = []
+	titleLIST,linkLIST = [],[]
 	watchitem = re.findall('class="auto-size" src="(.*?)"',html,re.DOTALL)
+	#xbmcgui.Dialog().ok(url2, str(html2))
+	# https://vidstream.top/embed/o2RbrN9bqf/?vclid=44711370a2655b3f2d23487cb74c05e5347648e8bb9571dfa7c5d5e4zlllsCGMDslElsMaYXobviuROhYfamfMOhlsEslsWQUlslElsMOcSbzMykqapaqlsEslsxMcGlslElsOGsabiZusOxySMgOpEaucSxiSVGEBOlOouQzsEslsxWdlslElsmmmlRPMMslnfpaqlsEslsCMcGlslElsOEOEEZlEMOuzslh
 	if watchitem:
 		url2 = watchitem[0]
-		import RESOLVERS
-		titleLIST,linkLIST = RESOLVERS.VIDSTREAM(url2)
-		if len(linkLIST)>0:
+		server = url2.split('/')[:3]
+		html2 = openURL_cached(NO_CACHE,url2,'',headers,'','EGYBEST-PLAY-2nd')
+		#xbmcgui.Dialog().ok(url2, str(html2.count('404')))
+		items = re.findall('source src="(.*?)"',html2,re.DOTALL)
+		if items:
+			url3 = server+items[0]
+			titleLIST,linkLIST = M3U8_EXTRACTOR(url3)
 			z = zip(titleLIST,linkLIST)
 			for title,link in z:
 				if 'Res: ' in title: quality = title.split('Res: ')[1]
-				else: quality = title.split('BW: ')[1].split('kbps')[0]
+				elif 'BW: ' in title: quality = title.split('BW: ')[1].split('kbps')[0]
+				else: quality = ''
 				linkLIST.append(link+'?name=vidstream__watch__m3u8__'+quality)
-		else: linkLIST.append(url2+'?name=vidstream__watch__m3u8')
+		#else: linkLIST.append(url2+'?name=vidstream__watch__m3u8')
 	items = re.findall('</td> <td>(.*?)<.*?data-url="(.*?)"',html,re.DOTALL)
 	for quality,link in items:
+		#xbmc.log(quality, level=xbmc.LOGNOTICE)
+		quality = quality.strip(' ').split(' ')[-1]
 		url = website0a + link # + '&v=1'
 		linkLIST.append(url+'?name=vidstream__download__mp4__'+quality)
 		linkLIST.append(url+'?name=vidstream__watch__mp4__'+quality)
@@ -186,7 +194,7 @@ def PLAY(url):
 			qualityLIST.append ('m3u8   '+qualtiy)
 			datacallLIST.append (url)
 	"""
-	#selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', qualityLIST)
+	#selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', linkLIST)
 	#if selection == -1 : return
 	#url = linkLIST[selection]
 	"""
@@ -221,7 +229,7 @@ def PLAY(url):
 	#result = PLAY_VIDEO(url,script_name,'yes')
 	#if result!='playing': WARNING()
 	#xbmcgui.Dialog().ok(url,'')
-	#import RESOLVERS
+	import RESOLVERS
 	RESOLVERS.PLAY(linkLIST,script_name)
 	return
 

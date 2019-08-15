@@ -22,6 +22,7 @@ def PLAY(linkLIST,script_name,text=''):
 					result = 'unresolved'
 				else:
 					url = urlLIST[selection]
+					xbmc.log('[ '+addon_id+' ]:   Playing server   Server:[ '+title+' ]   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
 					result = PLAY_LINK(url,script_name,text)
 			if result in ['playing','canceled1'] or len(serversLIST)==1: break
 			elif result in ['failed','timeout','tried']: break
@@ -60,6 +61,8 @@ def PLAY_LINK(url,script_name,text=''):
 			if selection == -1: result = 'canceled2'
 			else:
 				videoURL = linkLIST[selection]
+				title = titleLIST[selection]
+				xbmc.log('[ '+addon_id+' ]:   Playing selection   Selected:[ '+title+' ]   URL:[ '+videoURL+' ]', level=xbmc.LOGNOTICE)
 				#xbmcgui.Dialog().ok('',str(videoURL))
 				if 'moshahda.' in videoURL and 'download_orig' in videoURL:
 					videoURL1,videoURL2 = MOVIZLAND(videoURL)
@@ -242,7 +245,6 @@ def RESOLVE(url):
 	elif 'moshahda'		in server: titleLIST,linkLIST = MOVIZLAND(url)
 	elif 'akoam'		in server: titleLIST,linkLIST = AKOAM(url)
 	elif 'egy.best'		in server: titleLIST,linkLIST = EGYBEST(url)
-	elif 'vidstream'	in server: titleLIST,linkLIST = VIDSTREAM(url2)
 	elif 'shahid4u'		in server: titleLIST,linkLIST = SHAHID4U(url2)
 	elif 'series4watch'	in server: titleLIST,linkLIST = SERIES4WATCH(url2)
 	elif 'arblionz'		in server: titleLIST,linkLIST = ARABLIONZ(url2)
@@ -310,7 +312,7 @@ def SERVERS_cached(linkLIST,script_name=''):
 def SERVERS(linkLIST,script_name=''):
 	serversLIST,urlLIST,unknownLIST,serversDICT = [],[],[],[]
 	linkLIST = list(set(linkLIST))
-	#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', NEWlinkLIST)
+	#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', linkLIST)
 	#if selection == -1 : return ''
 	for link in linkLIST:
 		if link=='': continue
@@ -446,50 +448,31 @@ def SERIES4WATCH(link):
 	titleLIST,linkLIST = RESOLVE(url2)
 	return titleLIST,linkLIST
 
-def VIDSTREAM(url):
-	# https://vidstream.top/embed/o2RbrN9bqf/?vclid=44711370a2655b3f2d23487cb74c05e5347648e8bb9571dfa7c5d5e4zlllsCGMDslElsMaYXobviuROhYfamfMOhlsEslsWQUlslElsMOcSbzMykqapaqlsEslsxMcGlslElsOGsabiZusOxySMgOpEaucSxiSVGEBOlOouQzsEslsxWdlslElsmmmlRPMMslnfpaqlsEslsCMcGlslElsOEOEEZlEMOuzslh
-	# https://vidstream.top/f/KcLxaW7twB/?vclid=e4f9c370b562664b276ba926964e62cc87d0ae5f1f08bd0c6f427dc5ZLLLZaruvLZLnLZXnXnnTLnrXHsZnZLZoruvLZLnLZXvZfEATHZXomqrgXinfHuqoAqFvnCXLXGHUsZnZLZoBVLZLnLZeeeLRtrrZLcWifpLZnZLZavrlZLnLZrfdwGEzAHRXNdWfeWrXNLZnZLZBUjLZLnLZrXuqEsrmSpfifpLZLN
-	# https://vidstream.top/v/KcLxaW7twB/?vclid=58888a3c0b432423a217819ac7b6b5ebdc5fe250434aec29a2321f5bSVVVXrSGTVXViVXtTXpagMmXtruoSHtOipmGorgoDTijtVtEmQeXiXVXWSGTVXViVXtitiiMViStmeXiXVXWTSCXViVXSpAvEawgmBtLAzpszStLVXiXVXrPYVXViVXsssVBNSSXVRzOpfVXiXVXPQcVXViVXStGoaeSuxfpOpfVXVL
-	titleLIST,linkLIST = [],[]
-	headers = { 'User-Agent':'' }
-	if '/embed/' in url:
-		server = url.split('/')[:3]
-		html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-VIDSTREAM-1st')
-		items = re.findall('source src="(.*?)"',html,re.DOTALL)
-		if items:
-			url2 = server+items[0]
-			titleLIST,linkLIST = M3U8_EXTRACTOR(url2)
-	elif '/f/' in url:
-		# mp4
-		html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-VIDSTREAM-2nd')
-		items = re.findall('<h2>.*?href="(.*?)"',html,re.DOTALL)
-		if items: 
-			url3 = items[0]
-			titleLIST,linkLIST = [''],[url3]
-	elif '/v/' in url:
-		# mp4
-		html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-VIDSTREAM-3rd')
-		items = re.findall('id="video".*?src="(.*?)"',html,re.DOTALL)
-		if items: 
-			url4 = items[0]
-			titleLIST,linkLIST = [''],[url4]
-	return titleLIST,linkLIST
-
 def EGYBEST(url):
 	# https://egy.best/api?call=nAAAUceAUAlAUNbbbbbbbaUlUAUbFQAUAlAUGkmPMsfPyNBUlUAUSReUAlAUuReRSRBpElzAUlUAUguGdPRbgBUAlNhANdNANdNdNbbdNUlUAUPRSAUAlAUNhhlNhNNdAUlUAUPRyAUAlAUNhbUAzhAlfzhlAvfUAd&auth=874ded32a2e3b91d6ae55186274469e2?name=vidstream__watch
 	# https://egy.best/api?call=nAAAUceAUAlAUNbbbbbbbaUlUAUbFQAUAlAUGkmPMsfPyNBUlUAUSReUAlAUuReRSRBpElzAUlUAUguGdPRbgBUAlNhANdNANdNdNbbdNUlUAUPRSAUAlAUNhhlNhNNdAUlUAUPRyAUAlAUNhbUAzhAlfzhlAvfUAd&auth=874ded32a2e3b91d6ae55186274469e2?name=vidstream__download
 	url2 = url.split('name=',1)[0].strip('?').strip('/').strip('&')
-	titleLIST,linkLIST,url3 = [],[],''
-	headers = { 'User-Agent':'' }
+	titleLIST,linkLIST,items,url3 = [],[],[],''
+	headers = { 'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
 	response = openURL_requests_cached(NO_CACHE,'GET',url2,'',headers,False,'','RESOLVERS-EGYBEST-1st')
 	if 'Location' in response.headers:
 		url3 = response.headers['Location']
 		response = openURL_requests_cached(NO_CACHE,'GET',url3,'',headers,False,'','RESOLVERS-EGYBEST-2nd')
 	if 'Location' in response.headers:
 		url3 = response.headers['Location']
+	#xbmcgui.Dialog().ok(url3,response.html)
 	if 'http' in url3:
+		# https://vidstream.top/f/KcLxaW7twB/?vclid=e4f9c370b562664b276ba926964e62cc87d0ae5f1f08bd0c6f427dc5ZLLLZaruvLZLnLZXnXnnTLnrXHsZnZLZoruvLZLnLZXvZfEATHZXomqrgXinfHuqoAqFvnCXLXGHUsZnZLZoBVLZLnLZeeeLRtrrZLcWifpLZnZLZavrlZLnLZrfdwGEzAHRXNdWfeWrXNLZnZLZBUjLZLnLZrXuqEsrmSpfifpLZLN
+		# https://vidstream.top/v/KcLxaW7twB/?vclid=58888a3c0b432423a217819ac7b6b5ebdc5fe250434aec29a2321f5bSVVVXrSGTVXViVXtTXpagMmXtruoSHtOipmGorgoDTijtVtEmQeXiXVXWSGTVXViVXtitiiMViStmeXiXVXWTSCXViVXSpAvEawgmBtLAzpszStLVXiXVXrPYVXViVXsssVBNSSXVRzOpfVXiXVXPQcVXViVXStGoaeSuxfpOpfVXVL
 		if '__watch' in url: url3 = url3.replace('/f/','/v/')
-		titleLIST,linkLIST = VIDSTREAM(url3)
+		html = openURL_cached(NO_CACHE,url3,'',headers,'','RESOLVERS-EGYBEST-3rd')
+		if '/f/' in url3: items = re.findall('<h2>.*?href="(.*?)"',html,re.DOTALL)
+		elif '/v/' in url3: items = re.findall('id="video".*?src="(.*?)"',html,re.DOTALL)
+		if items:
+			url3 = items[0]
+			titleLIST,linkLIST = [''],[url3]
+		elif '<h1>404</h1>' in html:
+			xbmcgui.Dialog().ok('https://vidstream.top','سيرفر الفيديو فيه حجب ضد كودي ومصدره من الانترنيت الخاصة بك')
 	return titleLIST,linkLIST
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 
@@ -906,7 +889,8 @@ def YOUTUBE(url):
 			dict['filetype'] = 'm3u8'
 			dict['url'] = link
 			if 'Res: ' in title: quality = title.split('Res: ')[1]
-			else: quality = title.split('BW: ')[1].split('kbps')[0]
+			elif 'BW: ' in title: quality = title.split('BW: ')[1].split('kbps')[0]
+			else: quality = '000'
 			dict['quality'] = quality
 			if title=='-1': dict['title'] = dict['type2']+':  '+dict['filetype']+'  '+'دقة اوتوماتيكية'
 			else: dict['title'] = dict['type2']+':  '+dict['filetype']+'  '+dict['quality']+'  '+title

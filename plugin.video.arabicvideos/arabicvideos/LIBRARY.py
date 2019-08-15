@@ -156,11 +156,17 @@ class CustomThread():
 		self.elpasedtimeDICT[id] = finishtime - starttime
 
 def SHOW_ERRORS(code=-1,reason=''):
-	if code in [0,7]:
-		if code==0: message = 'خطأ رقم صفر: هو خطأ غير معروف'
-		else: message = 'خطأ رقم 7: هو خطأ DNS ومعناه تعذر ترجمة اسم الموقع الى رقمه'
-		message += ' '+'والسبب قد يكون نوع من الحجب لهذا الموقع ولهذا لا يعمل باستخدام كودي. هل تريد معرفة كيف ترفع الحجب؟'
-		yes = xbmcgui.Dialog().yesno('بعض المواقع لا تعمل عندك',message,'','','كلا','نعم')
+	if code==104: xbmcgui.Dialog().ok('لديك خطأ اسبابه كثيرة','يرجى منك التواصل مع المبرمج عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
+	dns = (code in [7,10054,11001])
+	blocked1 = (code in [0,104,10061])
+	blocked2 = ('Blocked by Cloudflare' in reason)
+	if dns or blocked1 or blocked2:
+		block_meessage = 'نوع من الحجب ضد كودي مصدره الانترنيت الخاص بك. هل تريد تفاصيل اكثر؟'
+		if dns:
+			message = 'لديك خطأ DNS ومعناه تعذر ترجمة اسم الموقع الى رقمه'
+			message += ' والسبب قد يكون '+block_meessage
+		else: message = 'هذا الموقع فيه '+block_meessage
+		yes = xbmcgui.Dialog().yesno('بعض المواقع لا تعمل عندك',message,'Error '+str(code)+': '+reason,'','كلا','نعم')
 		if yes==1: import PROBLEMS ; PROBLEMS.MAIN(195)
 	else:
 		yes = xbmcgui.Dialog().yesno('فشل في سحب الصفحة من الانترنيت','Error '+str(code)+': '+reason,'هل تريد معرفة الاسباب والحلول؟','','كلا','نعم')
@@ -172,8 +178,8 @@ def SHOW_ERRORS(code=-1,reason=''):
 			message += '\n'+'أو الموقع الاصلي غير هذه الصفحة والمبرمج لا يعلم'
 			message += '\n\n'+'جرب مسح الكاش (من قائمة خدمات البرنامج)'
 			message += '\n'+'أو أرسل سجل الاخطاء الى المبرمج (من قائمة خدمات البرنامج)'
-			message += '\n'+'أو جرب طرق رفع الحجب (من قائمة البرنامج الرئيسية)'
-			message += '\n'+'أو جرب طلب هذه الصفحة لاحقا'
+			message += '\n'+'أو جرب طرق رفع الحجب (مثلا VPN , Proxy , DNS)'
+			message += '\n'+'أو جرب طلب هذا الموقع لاحقا'
 			xbmcgui.Dialog().textviewer('فشل في سحب الصفحة من الانترنيت',message)
 	return
 
@@ -182,24 +188,27 @@ def SHOW_ERRORS(code=-1,reason=''):
 #ERROR
 #xbmcgui.Dialog().ok('test',blocking_error)
 
+NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
+				,'LIBRARY-openURL_HTTPSPROXIES-1st'
+				,'LIBRARY-openURL_WEBPROXIES-1st'
+				,'LIBRARY-openURL_WEBPROXIES-2nd'
+				,'LIBRARY-openURL_WEBPROXYTO-1st'
+				,'LIBRARY-openURL_WEBPROXYTO-2nd'
+				,'LIBRARY-openURL_KPROXYCOM-1st'
+				,'LIBRARY-openURL_KPROXYCOM-2nd'
+				,'LIBRARY-openURL_KPROXYCOM-3rd'
+				,'LIBRARY-CHECK_HTTPS_PROXIES-1st'
+				,'LIBRARY-GET_M3U8_RESOLUTIONS-1st'
+				,'LIBRARY-PLAY_VIDEO-1st'
+				,'PROGRAM-TEST_ALL_WEBSITES-1st'
+				,'PROGRAM-TEST_ALL_WEBSITES-2nd' ]
+
 def EXIT_IF_SOURCE(source,code,reason):
-	NO_EXIT_LIST = [ 'LIBRARY-PLAY_VIDEO-1st'
-					,'LIBRARY-CHECK_HTTPS_PROXIES-1st'
-					,'LIBRARY-openURL_PROXY-1st'
-					,'LIBRARY-openURL_WEBPROXIES-1st'
-					,'LIBRARY-openURL_WEBPROXIES-2nd'
-					,'LIBRARY-openURL_HTTPSPROXIES-1st'
-					,'LIBRARY-openURL_WEBPROXYTO-1st'
-					,'LIBRARY-openURL_WEBPROXYTO-2nd'
-					,'LIBRARY-openURL_KPROXYCOM-1st'
-					,'LIBRARY-openURL_KPROXYCOM-2nd'
-					,'LIBRARY-openURL_KPROXYCOM-3rd'
-					,'PROGRAM-TEST_ALL_WEBSITES-1st'
-					,'PROGRAM-TEST_ALL_WEBSITES-2nd'
-					,'LIBRARY-GET_M3U8_RESOLUTIONS-1st' ]
-	if 'RESOLVERS' not in source and source not in NO_EXIT_LIST:
+	condition1 = (source not in NO_EXIT_LIST and 'RESOLVERS' not in source)
+	condition2 = ('Blocked by Cloudflare' in reason)
+	if condition1 or condition2:
 		SHOW_ERRORS(code,reason)
-		EXIT_PROGRAM(source)
+		if condition1: EXIT_PROGRAM(source)
 	return
 
 def DELETE_DATABASE_FILES():
@@ -366,8 +375,8 @@ def openURL_requests_cached(cacheperiod,method,url,data='',headers='',allow_redi
 	else:
 		#message = 'not found in cache'
 		response = openURL_requests(method,url2,data,headers,allow_redirects,showDialogs,source)
-		code = response.status_code
-		if code==200 or int(code/100)*100==300:
+		html = response.html
+		if '___Error___' not in html:
 			conn = sqlite3.connect(dbfile)
 			c = conn.cursor()
 			conn.text_factory = str
@@ -406,9 +415,7 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 	else:
 		#message = 'not found in cache'
 		html = openURL(url2,data,headers,showDialogs,source)
-		if '___Error___' in html: code = int(html.split(':')[1])
-		else: code = 200
-		if code==200 or int(code/100)*100==300:
+		if '___Error___' not in html:
 			conn = sqlite3.connect(dbfile)
 			c = conn.cursor()
 			conn.text_factory = str
@@ -447,8 +454,17 @@ def openURL_requests(method,url,data='',headers='',allow_redirects=True,showDial
 	code = response.status_code
 	reason = requests.status_codes._codes[code][0].replace('_',' ').capitalize()
 	#html = response.text
-	if code!=200 and int(code/100)*100!=300:
-		#html = '___Error___:'+str(code)+':'+reason
+	response.html = response.text
+	htmlLower = response.html.lower()
+	condition1 = (code!=200 and int(code/100)*100!=300)
+	condition2 = ('cloudflare ray id:' in htmlLower)
+	condition3 = ('___Error___' in htmlLower)
+	if condition1 or condition2 or condition3:
+		if condition2:
+			reason2 = 'Blocked by Cloudflare'
+			if 'recaptcha' in htmlLower: reason2 += ' using Google reCAPTCHA'
+			reason = reason2+' ( '+reason+' )'
+		response.html = '___Error___:'+str(code)+':'+reason
 		if 'google-analytics' not in url:
 			if code in [7,11001,10054] and dnsurl==None:
 				xbmc.log('[ '+addon_id+' ]:   Error: openURL_requests DNS failed   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
@@ -578,6 +594,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		else:
 			ctx = ssl._create_unverified_context()
 			response = urllib2.urlopen(request,timeout=timeout,context=ctx)
+			#response = urllib2.urlopen(request,timeout=timeout)
 		#urllib2.install_opener(old_opener)
 		code = response.code
 		reason = response.msg
@@ -594,23 +611,37 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		#		headers = response.info()
 	except Exception as e:
 		#xbmc.log(str(dir(e)), level=xbmc.LOGNOTICE)
+		#xbmc.log(str(e), level=xbmc.LOGNOTICE)
 		#xbmcgui.Dialog().ok(e.line,str(e.args))
 		if hasattr(e,'reason'):
-			if type(e.reason)==str:
-				reason = e.reason
-			else:
+			if type(e.reason)!=str:
 				code = e.reason[0]
 				reason = e.reason[1]
-		if reason==None: reason = 'Unknown error'
+			else: reason = e.reason
+		if reason==None:
+			reason = 'Unknown error ( Raised by: '
+			try: reason += e.__class__.__module__
+			except: reason += 'UnknownModule'
+			try: reason += '.'+e.__class__.__name__
+			except: reason += '.UnknownClass'
+			reason += ' )'
 		if code==None:
 			if hasattr(e,'code'): code = e.code
 			else: code = -1
 		if html==None:
 			if hasattr(e,'read'): html = e.read()
 			else: html = '___Error___:'+str(code)+':'+reason
-	if code!=200 and int(code/100)*100!=300:
-		message,send,showDialogs = '','no','no'
+	htmlLower = html.lower()
+	condition1 = (code!=200 and int(code/100)*100!=300)
+	condition2 = ('cloudflare ray id:' in htmlLower)
+	condition3 = ('___Error___' in htmlLower)
+	if condition1 or condition2 or condition3:
+		if condition2:
+			reason2 = 'Blocked by Cloudflare'
+			if 'recaptcha' in htmlLower: reason2 += ' using Google reCAPTCHA'
+			reason = reason2+' ( '+reason+' )'
 		html = '___Error___:'+str(code)+':'+reason
+		message,send,showDialogs = '','no','no'
 		"""
 		if 'google-analytics' in url2: send = showDialogs
 		if showDialogs=='yes':
@@ -783,8 +814,8 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	return
 
 def EXIT_PROGRAM(source=''):
-	xbmc.log('[ '+addon_id+' ]:   Exit: Program exited normally   Source:[ '+source+' ]', level=xbmc.LOGNOTICE)
-	time.sleep(2)
+	xbmc.log('[ '+addon_id+' ]:   Exit: Forced exit   Source:[ '+source+' ]', level=xbmc.LOGNOTICE)
+	time.sleep(0.100)
 	sys.exit()
 	#raise SystemExit
 
@@ -816,9 +847,9 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
 			f = open(logfile,'rb')
 			size = os.path.getsize(logfile)
-			if size>300000: f.seek(-300000, os.SEEK_END)
+			if size>400000: f.seek(-400000, os.SEEK_END)
 			data = f.readlines()
-			logfileNEW = ''.join(data[-400:])
+			logfileNEW = ''.join(data[-500:])
 			logfileNEW = base64.b64encode(logfileNEW)
 		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
 		payload = { 'subject' : quote(subject) , 'message' : quote(message) , 'logfile' : logfileNEW }
@@ -842,10 +873,10 @@ def M3U8_EXTRACTOR(url,headers=''):
 	if 'TYPE=AUDIO' in html: return ['-1'],[url]
 	if 'TYPE=VIDEO' in html: return ['-1'],[url]
 	#if 'TYPE=SUBTITLES' in html: return ['-1'],[url]
-	titleLIST,linkLIST,qualityLIST = [],[],[]
 	#xbmc.log(item, level=xbmc.LOGNOTICE)
+	titleLIST,linkLIST,qualityLIST = [],[],[]
 	lines = re.findall('EXT-X-STREAM-INF:(.*?)[\n\r]+(.*?)[\n\r]+',html+'\n\r',re.DOTALL)
-	if len(lines)<2: return ['-1'],[url]
+	if not lines: return ['-1'],[url]
 	for line,link in lines:
 		lineDICT,title = {},''
 		items = line.split(',')
