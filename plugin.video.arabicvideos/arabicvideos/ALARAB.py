@@ -12,6 +12,7 @@ menu_name='_KLA_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if mode==10: MENU()
 	elif mode==11: TITLES(url)
 	elif mode==12: PLAY(url)
@@ -89,7 +90,7 @@ def TITLES(url):
 		title = title.replace('على العرب','')
 		title = title.replace('مباشرة','')
 		title = title.strip(' ').replace('  ',' ').replace('  ',' ')
-		title = '_MOD_' + title
+		title = '_MOD_'+title
 		title2 = title
 		if '/q/' in url and ('الحلقة' in title or 'الحلقه' in title):
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
@@ -123,6 +124,7 @@ def EPISODES(url):
 	TITLES(url2)
 	return
 
+"""
 def EPISODES_OLD(url):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-EPISODES_OLD-1st')
 	html_blocks = re.findall('banner-right(.*?)classic-channel',html,re.DOTALL)
@@ -143,8 +145,10 @@ def EPISODES_OLD(url):
 	#xbmcgui.Dialog().ok(url,'step 5')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
+"""
 
 def PLAY(url):
+	#xbmcgui.Dialog().ok(url,str(url))
 	linkLIST,titleLIST,videodeliveryID = [],[],[]
 	if '/viewVedio/' in url:
 		id = re.findall('.com/viewVedio/([0-9]+)/',url,re.DOTALL)[0]

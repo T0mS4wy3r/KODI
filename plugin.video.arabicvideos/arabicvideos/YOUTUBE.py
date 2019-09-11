@@ -6,6 +6,7 @@ menu_name='_YUT_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	result = ''
 	if mode==140: MENU()
 	elif mode==141: TITLES(url)

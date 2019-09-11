@@ -7,6 +7,7 @@ menu_name='_SFW_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if mode==210: MENU()
 	elif mode==211: TITLES(url)
 	elif mode==212: PLAY(url)

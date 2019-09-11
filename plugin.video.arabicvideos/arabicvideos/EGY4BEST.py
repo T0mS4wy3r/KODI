@@ -12,6 +12,7 @@ menu_name='_EG4_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if   mode==220: MAIN_MENU()
 	elif mode==221: FILTERS_MENU(url)
 	elif mode==222: TITLES(url,page)

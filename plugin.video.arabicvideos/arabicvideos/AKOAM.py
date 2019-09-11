@@ -6,9 +6,9 @@ script_name='AKOAM'
 menu_name='_AKM_'
 website0a = WEBSITES[script_name][0]
 noEpisodesLIST = ['فيلم','كليب','العرض الاسبوعي','مسرحية','مسرحيه','اغنية','اعلان','لقاء']
-#xbmcgui.Dialog().ok(website0a,'')
 
 def MAIN(mode,url,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if mode==70: MENU()
 	elif mode==71: CATEGORIES(url)
 	elif mode==72: TITLES(url,text)

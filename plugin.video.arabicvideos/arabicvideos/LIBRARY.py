@@ -4,10 +4,11 @@
 # Because they are already included with some other modules
 import xbmcplugin,xbmcgui,xbmcaddon,sys,xbmc,os,re,time,thread # total cost = 0ms
 import zlib,ssl,random,hashlib,base64,string,httplib,cPickle # total cost = 0ms
-import socket,struct # total cost = 0ms
+import socket,struct,traceback # total cost = 0ms
 import urllib		# 160ms
 import urllib2		# 354ms (contains urllib)
 import sqlite3		# 50ms (with threading 71ms)
+
 #import requests   	# 986ms (contains urllib,urllib2,urllib3)
 #import threading	# 54ms (with sqlite3 71ms)
 #import urllib3		# 621ms (contains urllib)
@@ -21,8 +22,6 @@ import sqlite3		# 50ms (with threading 71ms)
 #import BaseHTTPServer		# 44ms
 
 
-
-
 # calculate the average time needed to import a main-module and how many sub-modules will be imported with it
 """
 import sys,time
@@ -30,7 +29,7 @@ totalelpased = 0
 for i in range(20):
 	t1 = time.time()
 	before_import = sys.modules.keys()
-	import socket,struct
+	import traceback
 	after_import = sys.modules.keys()
 	import_list = list(set(after_import)-set(before_import))
 	for modu in import_list:
@@ -79,7 +78,7 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'HALACIMA'		:['https://www.halacima.net']
 			,'HELAL'		:['https://4helal.net']
 			,'IFILM'		:['http://ar.ifilmtv.com','http://en.ifilmtv.com','http://fa.ifilmtv.com','http://fa2.ifilmtv.com']
-			,'LIVETV'		:['http://emadmahdi.pythonanywhere.com/listplay']
+			,'LIVETV'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport']
 			,'MOVIZLAND'	:['https://movizland.online','https://m.movizland.online']
 			,'PANET'		:['http://www.panet.co.il']
 			,'SERIES4WATCH'	:['https://series4watch.net']
@@ -88,9 +87,13 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'YOUTUBE'		:['https://www.youtube.com']
 			}
 
+script_name = 'LIBRARY'
+
 addon_handle = int(sys.argv[1])
-addon_id = sys.argv[0].split('/')[2] 		# plugin.video.arabicvideos
-addon_path = sys.argv[0]+sys.argv[2] 		# plugin://plugin.video.arabicvideos/?mode=12&url=http://test.com
+addon_id = sys.argv[0].split('/')[2]	# plugin.video.arabicvideos
+addon_name = addon_id.split('.')[2]		# arabicvideos
+addon_path = sys.argv[2]				# ?mode=12&url=http://test.com
+#addon_url = sys.argv[0]+addon_path		# plugin://plugin.video.arabicvideos/?mode=12&url=http://test.com
 #addon_path = xbmc.getInfoLabel( "ListItem.FolderPath" )
 addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 
@@ -117,6 +120,11 @@ now = time.time()
 #REGULAR_CACHE = 0
 #SHORT_CACHE = 0
 
+def LOGGING(script_name):
+	function_name = sys._getframe(1).f_code.co_name
+	if function_name=='<module>': function_name = 'MAIN'
+	return '['+addon_name.upper()+'-'+addonVersion+'-'+script_name+'-'+function_name+']   '
+
 class CustomePlayer(xbmc.Player):
 	def __init__( self, *args, **kwargs ):
 		self.status = ''
@@ -131,32 +139,38 @@ class CustomePlayer(xbmc.Player):
 		self.status='failed'
 
 class CustomThread():
-	def __init__(self):
-		self.statusDICT,self.resultsDICT,self.elpasedtimeDICT, = {},{},{}
-		self.finishedLIST,self.failedLIST = [],[]
-	def start_new_thread(self,id,showDialogs,func,*args):
-		if showDialogs: xbmcgui.Dialog().notification('',str(id))
+	statusDICT,resultsDICT,elpasedtimeDICT = {},{},{}
+	finishedLIST,failedLIST = [],[]
+	def __init__(self,showDialogs=False):
+		self.showDialogs = showDialogs
+	def start_new_thread(self,id,func,*args):
+		if self.showDialogs: xbmcgui.Dialog().notification('',str(id))
 		self.statusDICT[id] = 'running'
 		thread.start_new_thread(self.run,(id,func,args))
-		time.sleep(0.001)
+		time.sleep(0.010)
 	def wait_finishing_all_threads(self):
 		while 'running' in self.statusDICT.values():
 			time.sleep(0.100)
+		#print 'all threads finished'
 	def run(self,id,func,args):
 		starttime = time.time()
 		try:
 			self.resultsDICT[id] = func(*args)
 			self.statusDICT[id] = 'finished'
 			self.finishedLIST.append(id)
-		except Exception as reason:
-			self.resultsDICT[id] = '___Error___:-1:Threads function "'+func.func_name+'" failed due to '+str(reason)
+		except Exception as err:
 			self.statusDICT[id] = 'failed'
 			self.failedLIST.append(id)
+			#traceback.print_exc(file=sys.stderr)
+			errortrace = traceback.format_exc()
+			sys.stderr.write(errortrace)
+			self.resultsDICT[id] = '___Error___:-1:Threads function "'+func.func_name+'" failed due to '+str(err)
+			self.resultsDICT[id] += '\n====================\n'+errortrace+'===================='
 		finishtime = time.time()
 		self.elpasedtimeDICT[id] = finishtime - starttime
 
 def SHOW_ERRORS(code=-1,reason=''):
-	if code==104: xbmcgui.Dialog().ok('لديك خطأ اسبابه كثيرة','يرجى منك التواصل مع المبرمج عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
+	#if code==104: xbmcgui.Dialog().ok('لديك خطأ اسبابه كثيرة','يرجى منك التواصل مع المبرمج عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
 	dns = (code in [7,10054,11001])
 	blocked1 = (code in [0,104,10061])
 	blocked2 = ('Blocked by Cloudflare' in reason)
@@ -177,7 +191,7 @@ def SHOW_ERRORS(code=-1,reason=''):
 			message += '\n'+'أو الموقع الاصلي غير متوفر الان'
 			message += '\n'+'أو الموقع الاصلي غير هذه الصفحة والمبرمج لا يعلم'
 			message += '\n\n'+'جرب مسح الكاش (من قائمة خدمات البرنامج)'
-			message += '\n'+'أو أرسل سجل الاخطاء الى المبرمج (من قائمة خدمات البرنامج)'
+			message += '\n'+'أو أرسل سجل الاخطاء والاستخدام الى المبرمج (من قائمة خدمات البرنامج)'
 			message += '\n'+'أو جرب طرق رفع الحجب (مثلا VPN , Proxy , DNS)'
 			message += '\n'+'أو جرب طلب هذا الموقع لاحقا'
 			xbmcgui.Dialog().textviewer('فشل في سحب الصفحة من الانترنيت',message)
@@ -220,7 +234,7 @@ def DELETE_DATABASE_FILES():
 
 def addDir(name,url='',mode='',iconimage='',page='',text=''):
 	if iconimage=='': iconimage = icon
-	#xbmc.log('[ '+addon_id+' ]:   name:[ '+name+' ]', level=xbmc.LOGNOTICE)
+	#xbmc.log(LOGGING(script_name)+'name:['+name+']', level=xbmc.LOGNOTICE)
 	name2 = re.findall('&&_(\D\D\w)__MOD_(.*?)&&','&&'+name+'&&',re.DOTALL)
 	if name2: name = ';[COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
 	name2 = re.findall('&&_(\D\D\w)_(.*?)&&','&&'+name+'&&',re.DOTALL)
@@ -269,7 +283,7 @@ def openURL_WEBPROXIES(url,data='',headers='',showDialogs='',source=''):
 		if '___Error___' in html:
 			reason = 'Web Proxy failed'
 			code = -1
-			xbmc.log('[ '+addon_id+' ]:   Error: openURL_WEBPROXY failed opening url   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+			xbmc.log(LOGGING(script_name)+'Error: failed opening url   Code:['+str(code)+']   Reason:['+reason+']'+'   Source:['+source+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 			EXIT_IF_SOURCE(source,code,reason)
 	return html
 
@@ -284,7 +298,7 @@ def openURL_PROXY(url,data='',headers='',showDialogs='',source=''):
 			if '___Error___' in html:
 				reason = 'Proxy failed'
 				code = -1
-				xbmc.log('[ '+addon_id+' ]:   Error: openURL_PROXY failed opening url   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+				xbmc.log(LOGGING(script_name)+'Error: failed opening url   Code:['+str(code)+']   Reason:['+reason+']'+'   Source:['+source+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 				EXIT_IF_SOURCE(source,code,reason)
 	return html
 
@@ -298,7 +312,7 @@ def openURL_HTTPSPROXIES(url,data='',headers='',showDialogs='',source=''):
 		source = 'LIBRARY-openURL_WEBPROXYTO-2nd'
 		reason = 'HTTPS proxy failed'
 		code = -1
-		xbmc.log('[ '+addon_id+' ]:   Error: openURL_HTTPSPROXIES failed opening url   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+		xbmc.log(LOGGING(script_name)+'Error: failed opening url   Code:['+str(code)+']   Reason:['+reason+']'+'   Source:['+source+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 		html = '___Error___:'+str(code)+':'+reason
 	return html
 
@@ -323,7 +337,7 @@ def openURL_WEBPROXYTO(url,data='',headers='',showDialogs='',source=''):
 		source = 'LIBRARY-openURL_WEBPROXYTO-4th'
 		reason = 'WEBPROXYTO proxy failed'
 		code = -1
-		xbmc.log('[ '+addon_id+' ]:   Error: openURL_WEBPROXYTO failed opening url   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+		xbmc.log(LOGGING(script_name)+'Error: failed opening url   Code:['+str(code)+']   Reason:['+reason+']'+'   Source:['+source+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 		html = '___Error___:'+str(code)+':'+reason
 	return html
 
@@ -353,7 +367,7 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs='',source=''):
 		source = 'LIBRARY-openURL_KPROXYCOM-4th'
 		reason = 'KPROXYCOM proxy failed'
 		code = -1
-		xbmc.log('[ '+addon_id+' ]:   Error: openURL_KPROXYCOM failed opening url   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+		xbmc.log(LOGGING(script_name)+'Error: failed opening url   Code:['+str(code)+']   Reason:['+reason+']'+'   Source:['+source+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 		html = '___Error___:'+str(code)+':'+reason
 	return html
 
@@ -395,7 +409,7 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 	#t1 = time.time()
 	#xbmcgui.Dialog().ok(unquote(url),source+'     cache(hours)='+str(cacheperiod/60/60))
 	#nowTEXT = time.ctime(now)
-	#xbmc.log('[ '+addon_id+' ]:   openURL_cached opening url   Source:[ '+source+' ]   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
+	#xbmc.log(LOGGING(script_name)+'opening url   Source:['+source+']   URL:['+url.encode('utf8')+']', level=xbmc.LOGNOTICE)
 	if cacheperiod==0: return openURL(url,data,headers,showDialogs,source)
 	url2,proxyurl,dnsurl = EXTRACT_URL(url)
 	conn = sqlite3.connect(dbfile)
@@ -430,8 +444,10 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 	return html
 
 def openURL_requests(method,url,data='',headers='',allow_redirects=True,showDialogs='',source=''):
+	#url = url + '||MyProxyUrl=http://188.166.59.17:8118'
 	import requests
 	proxies,timeout = {},40
+	#xbmcgui.Dialog().ok(str(url),'')
 	url2,proxyurl,dnsurl = EXTRACT_URL(url)
 	if dnsurl!=None:
 		import urllib3.util.connection
@@ -451,13 +467,15 @@ def openURL_requests(method,url,data='',headers='',allow_redirects=True,showDial
 		if url2=='https://www.google.com': timeout = 10
 		proxies={"http":proxyurl,"https":proxyurl}
 	response = requests.request(method,url2,data=data,headers=headers,verify=False,allow_redirects=allow_redirects,timeout=timeout,proxies=proxies)
+	try: response.raise_for_status()	
+	except: traceback.print_exc(file=sys.stderr)
 	code = response.status_code
 	reason = requests.status_codes._codes[code][0].replace('_',' ').capitalize()
 	#html = response.text
 	response.html = response.text
 	htmlLower = response.html.lower()
 	condition1 = (code!=200 and int(code/100)*100!=300)
-	condition2 = ('cloudflare ray id:' in htmlLower)
+	condition2 = ('cloudflare' in htmlLower and 'ray id: ' in htmlLower)
 	condition3 = ('___Error___' in htmlLower)
 	if condition1 or condition2 or condition3:
 		if condition2:
@@ -467,23 +485,23 @@ def openURL_requests(method,url,data='',headers='',allow_redirects=True,showDial
 		response.html = '___Error___:'+str(code)+':'+reason
 		if 'google-analytics' not in url:
 			if code in [7,11001,10054] and dnsurl==None:
-				xbmc.log('[ '+addon_id+' ]:   Error: openURL_requests DNS failed   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+				xbmc.log(LOGGING(script_name)+'Error: DNS failed   Code:['+str(code)+']   Reason:['+reason+']'+'   Source:['+source+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 				url = url+'||MyDNSUrl='
 				response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 				return response
 			else:
-				xbmc.log('[ '+addon_id+' ]:   Error: openURL_requests failed opening url   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+				xbmc.log(LOGGING(script_name)+'Error: failed opening url   Code:['+str(code)+']   Reason:['+reason+']'+'   Source:['+source+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 		EXIT_IF_SOURCE(source,code,reason)
 	return response
 
 def TEST_HTTPS_PROXIES():
 	headers = { 'User-Agent' : '' }
 	testedLIST,timingLIST = [],[]
-	threads = CustomThread()
+	threads = CustomThread(True)
 	for id in PROXIES:
 		proxyname,proxyurl = PROXIES[id]
 		url = 'https://www.google.com||MyProxyUrl='+proxyurl
-		threads.start_new_thread('proxy_'+str(id),True,openURL_cached,NO_CACHE,url,'',headers,'','LIBRARY-CHECK_HTTPS_PROXIES-1st')
+		threads.start_new_thread('proxy_'+str(id),openURL_cached,NO_CACHE,url,'',headers,'','LIBRARY-CHECK_HTTPS_PROXIES-1st')
 	threads.wait_finishing_all_threads()
 	resultsDICT,finishedLIST =	threads.resultsDICT,threads.finishedLIST
 	elpasedtimeDICT = threads.elpasedtimeDICT
@@ -499,7 +517,7 @@ def TEST_HTTPS_PROXIES():
 			name,url = PROXIES[id]
 			if html.count(':')>=2:
 				dummy,code,reason = html.split(':')
-			xbmc.log('[ '+addon_id+' ]:   Error: CHECK_HTTPS_PROXIES failed testing proxy   id:[ '+str(id)+' ]   name:[ '+name+' ]'+'   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+			xbmc.log(LOGGING(script_name)+'Error: failed testing proxy   id:['+str(id)+']   name:['+name+']'+'   Code:['+str(code)+']   Reason:['+reason+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 	if testedLIST:
 		z = zip(testedLIST,timingLIST)
 		z = sorted(z, reverse=False, key=lambda key: key[1])
@@ -548,6 +566,7 @@ def EXTRACT_URL(url):
 	return url2,proxyurl,dnsurl
 
 def openURL(url,data='',headers='',showDialogs='',source=''):
+	#url = url + '||MyProxyUrl=http://188.166.59.17:8118'
 	if showDialogs=='': showDialogs='yes'
 	proxies,timeout = {},40
 	url2,proxyurl,dnsurl = EXTRACT_URL(url)
@@ -578,10 +597,13 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 	#old_opener = urllib2._opener
 	urllib2.install_opener(opener)
 	"""
-	if   data=='' and headers=='': request = urllib2.Request(url2)
-	elif data=='' and headers!='': request = urllib2.Request(url2,headers=headers)
-	elif data!='' and headers=='': request = urllib2.Request(url2,data=data)
-	elif data!='' and headers!='': request = urllib2.Request(url2,headers=headers,data=data)
+	if   headers=='': headers = {}
+	if   data=='': request = urllib2.Request(url2,headers=headers)
+	elif data!='': request = urllib2.Request(url2,headers=headers,data=data)
+	#if   data=='' and headers=='': request = urllib2.Request(url2)
+	#elif data=='' and headers!='': request = urllib2.Request(url2,headers=headers)
+	#elif data!='' and headers=='': request = urllib2.Request(url2,data=data)
+	#elif data!='' and headers!='': request = urllib2.Request(url2,headers=headers,data=data)
 	try:
 		#ctx = ssl.create_default_context()
 		#ctx.check_hostname = False
@@ -630,10 +652,10 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 			else: code = -1
 		if html==None:
 			if hasattr(e,'read'): html = e.read()
-			else: html = '___Error___:'+str(code)+':'+reason
+			else: html = '___Error___:'+str(code)+':'+str(reason)
 	htmlLower = html.lower()
 	condition1 = (code!=200 and int(code/100)*100!=300)
-	condition2 = ('cloudflare ray id:' in htmlLower)
+	condition2 = ('cloudflare' in htmlLower and 'ray id: ' in htmlLower)
 	condition3 = ('___Error___' in htmlLower)
 	if condition1 or condition2 or condition3:
 		if condition2:
@@ -658,14 +680,17 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		"""
 		if 'google-analytics' not in url:
 			if code in [7,11001,10054] and dnsurl==None:
-				xbmc.log('[ '+addon_id+' ]:   Error: openURL DNS failed   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+				xbmc.log(LOGGING(script_name)+'Error: DNS failed   Code:['+str(code)+']   Reason:['+reason+']'+'   Source:['+source+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 				url = url+'||MyDNSUrl='
 				html = openURL(url,data,headers,showDialogs,source)
 				return html
 			else:
-				xbmc.log('[ '+addon_id+' ]:   Error: openURL failed opening url   Code:[ '+str(code)+' ]   Reason:[ '+reason+' ]'+'   Source:[ '+source+' ]'+'   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+				xbmc.log(LOGGING(script_name)+'Error: failed opening url   Code:['+str(code)+']   Reason:['+reason+']'+'   Source:['+source+']'+'   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 		EXIT_IF_SOURCE(source,code,reason)
 	return html
+
+def SERVER(url):
+	return '/'.join(url.split('/')[:3])
 
 def quote(url):
 	return urllib2.quote(url,':/')
@@ -728,7 +753,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		url,subtitle,httpd = url3
 		if subtitle!='': subtitlemessage = '   Subtitle:[ '+subtitle+' ]'
 	else: url,subtitle,httpd = url3,'',''
-	xbmc.log('[ '+addon_id+' ]:   Playing video   URL:[ '+url+' ]'+subtitlemessage, level=xbmc.LOGNOTICE)
+	xbmc.log(LOGGING(script_name)+'ٍEntered function   URL:['+url.encode('utf8')+']'+subtitlemessage, level=xbmc.LOGNOTICE)
 	videofiletype = re.findall('(\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
 	if videofiletype: videofiletype = videofiletype[0][0]
 	else: videofiletype = ''
@@ -743,11 +768,12 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		else: selection = 0
 		url = linkLIST[selection]
 		if titleLIST[0]!='-1':
-			xbmc.log('[ '+addon_id+' ]:   Playing selected video   Selection:[ '+titleLIST[selection]+' ]   URL:[ '+url+' ]'+subtitlemessage, level=xbmc.LOGNOTICE)
+			xbmc.log(LOGGING(script_name)+'Selected video  Selection:['+titleLIST[selection]+']   URL:['+url.encode('utf8')+']'+subtitlemessage, level=xbmc.LOGNOTICE)
 	#xbmc.log(str(dir(xbmcplugin.setResolvedUrl)), level=xbmc.LOGNOTICE)
 	#return
 	if 'http' in url: url = url + '|User-Agent=&'
 	if 'https://' in url and '/dash/' not in url: url = url + 'verifypeer=false'
+	xbmc.log(LOGGING(script_name)+'Got final url  URL:['+url.encode('utf8')+']', level=xbmc.LOGNOTICE)
 	play_item = xbmcgui.ListItem(path=url)
 	play_item.setProperty('inputstreamaddon', '')
 	play_item.setMimeType('mime/x-type')
@@ -762,7 +788,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
 	if subtitle!='':
 		play_item.setSubtitles([subtitle])
-		#xbmc.log('[ '+addon_id+' ]:   Added subtitle to video   Subtitle:[ '+subtitle+' ]', level=xbmc.LOGNOTICE)
+		#xbmc.log(LOGGING(script_name)+'Added subtitle to video   Subtitle:['+subtitle+']', level=xbmc.LOGNOTICE)
 	if showWatched=='yes':
 		#title = xbmc.getInfoLabel('ListItem.Title')
 		#label = xbmc.getInfoLabel('ListItem.Label')
@@ -783,18 +809,18 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		result = myplayer.status
 		if result=='playing':
 			xbmcgui.Dialog().notification('الفيديو يعمل','','',500)
-			xbmc.log('[ '+addon_id+' ]:   Success: Video is playing   URL:[ '+url+' ]'+subtitlemessage, level=xbmc.LOGNOTICE)
+			xbmc.log(LOGGING(script_name)+'Success: Video is playing   URL:['+url.encode('utf8')+']'+subtitlemessage, level=xbmc.LOGNOTICE)
 			break
 		elif result=='failed':
 			xbmcgui.Dialog().notification('الفيديو لم يعمل','')
-			xbmc.log('[ '+addon_id+' ]:   Error: Failed playing video   URL:[ '+url+' ]'+subtitlemessage, level=xbmc.LOGERROR)
+			xbmc.log(LOGGING(script_name)+'Error: Failed playing video   URL:['+url.encode('utf8')+']'+subtitlemessage, level=xbmc.LOGERROR)
 			break
 		xbmcgui.Dialog().notification(myplayer.status +'جاري تشغيل الفيديو','باقي '+str(timeout-i)+' ثانية')
 	else:
 		xbmcgui.Dialog().notification('الفيديو لم يعمل','')
 		myplayer.stop()
 		result = 'timeout'
-		xbmc.log('[ '+addon_id+' ]:   Error: Timeout unknown problem   URL:[ '+url+' ]'+subtitlemessage, level=xbmc.LOGERROR)
+		xbmc.log(LOGGING(script_name)+'Error: Timeout unknown problem   URL:['+url.encode('utf8')+']'+subtitlemessage, level=xbmc.LOGERROR)
 	if result=='playing':
 		addonVersion = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 		randomNumber = str(random.randrange(111111111111,999999999999))
@@ -814,7 +840,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	return
 
 def EXIT_PROGRAM(source=''):
-	xbmc.log('[ '+addon_id+' ]:   Exit: Forced exit   Source:[ '+source+' ]', level=xbmc.LOGNOTICE)
+	xbmc.log(LOGGING(script_name)+'Exit: Forced exit   Source:['+source+']', level=xbmc.LOGNOTICE)
 	time.sleep(0.100)
 	sys.exit()
 	#raise SystemExit
@@ -842,14 +868,29 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 		if url != '': message += ' :\\nURL: ' + url
 		if source != '': message += ' :\\nSource: ' + source
 		message += ' :\\n'
+		if showDialogs=='yes': xbmcgui.Dialog().notification('جاري الارسال','الرجاء الانتظار')
+		logfileNEW = ''
 		if problem=='yes':
-			if showDialogs=='yes': xbmcgui.Dialog().notification('جاري الارسال','الرجاء الانتظار')
+			dataNEW,counts = [],0
 			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
+			#logfile = 'S://DOWNLOADS/6ac26462c99fc35816f3532bb17608f4-5.8.1.log'
 			f = open(logfile,'rb')
 			size = os.path.getsize(logfile)
-			if size>400000: f.seek(-400000, os.SEEK_END)
+			if size>600000: f.seek(-600000, os.SEEK_END)
 			data = f.readlines()
-			logfileNEW = ''.join(data[-500:])
+			for line in reversed(data):
+				if "extension '' is not currently supported" in line: continue
+				if 'Checking for Malicious scripts' in line: continue
+				if 'Previous line repeats' in line: continue
+				if 'PVR IPTV Simple Client' in line: continue
+				if 'uses plain HTTP for add-on downloads' in line: continue
+				if 'NOTICE: ADDON:' in line and line.endswith('installed\n'): continue
+				dataNEW.append(line)
+				counts += 1
+				if counts==1000: break
+			dataNEW = reversed(dataNEW)
+			logfileNEW = ''.join(dataNEW)
+			#logfileNEW = ''.join(dataNEW[-1000:])
 			logfileNEW = base64.b64encode(logfileNEW)
 		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
 		payload = { 'subject' : quote(subject) , 'message' : quote(message) , 'logfile' : logfileNEW }
@@ -959,7 +1000,7 @@ def HTTPS(show=True):
 	if '___Error___' in html:
 		worked = False
 		https_problem = 'مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة'
-		xbmc.log('[ '+addon_id+' ]:   HTTPS Failed   Label:[ '+menulabel+' ]   Path:[ '+menupath+' ]', level=xbmc.LOGNOTICE)
+		xbmc.log(LOGGING(script_name)+'Failed   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 		if show: xbmcgui.Dialog().ok('فشل في الاتصال المشفر',https_problem)
 	else:
 		worked = True
@@ -1048,9 +1089,10 @@ def DNS_RESOLVER(url,dnsserver=''):
 			ip = ip[0:-1]
 			answer.append(ip)
 		if x_type in [1,2,5,6,15,28]: offset = offset + rdlength
-	if not answer: xbmc.log('[ '+addon_id+' ]:   Error: DNS_RESOLVER failed getting ip   URL:[ '+url+' ]', level=xbmc.LOGERROR)
+	if not answer: xbmc.log(LOGGING(script_name)+'Error: DNS_RESOLVER failed getting ip   URL:['+url.encode('utf8')+']', level=xbmc.LOGERROR)
 	return answer
 
+BLOCKED_VIDEOS = ['R','TVMA','TV-MA','PG-18','PG-16','NC-17']
 
 
 
@@ -1101,16 +1143,16 @@ playing = str(myplayer.isPlaying())
 logfile = file(logfilename, 'rb')
 logfile.seek(-4000, os.SEEK_END)
 logfile = logfile.read()
-logfile2 = logfile.split('[ '+addon_id+' ]:  Started playing video:')
+logfile2 = logfile.split(LOGGING(script_name)+'Started playing video:')
 if len(logfile2)==1: continue
 else: logfile2 = logfile2[-1]
 if 'CloseFile' in logfile2 or 'Attempt to use invalid handle' in logfile2:
 	result = 'failed'
-	xbmc.log('[ '+addon_id+' ]:   Failure: Video failed playing  '+urlmessage, level=xbmc.LOGNOTICE)
+	xbmc.log(LOGGING(script_name)+'Failure: Video failed playing  '+urlmessage, level=xbmc.LOGNOTICE)
 	#break
 elif 'Opening stream' in logfile2:
 	result = 'playing'
-	xbmc.log('[ '+addon_id+' ]:   Success: Video is playing successfully  '+urlmessage, level=xbmc.LOGNOTICE)
+	xbmc.log(LOGGING(script_name)+'Success: Video is playing successfully  '+urlmessage, level=xbmc.LOGNOTICE)
 	#break
 """
 
@@ -1202,14 +1244,14 @@ class MyHTTPConnection(httplib.HTTPConnection):
 	def connect(self):
 		ip = DNS_RESOLVER(self.host)
 		if ip: self.host = ip[0]
-		else: xbmc.log('[ '+addon_id+' ]:   Error: MyHTTPConnection failed getting ip   URL:[ '+self.host+' ]', level=xbmc.LOGERROR)
+		else: xbmc.log(LOGGING(script_name)+'Error: MyHTTPConnection failed getting ip   URL:['+self.host+']', level=xbmc.LOGERROR)
 		self.sock = socket.create_connection((self.host,self.port))
 
 class MyHTTPSConnection(httplib.HTTPSConnection):
 	def connect(self):
 		ip = DNS_RESOLVER(self.host)
 		if ip: self.host = ip[0]
-		else: xbmc.log('[ '+addon_id+' ]:   Error: MyHTTPSConnection failed getting ip   URL:[ '+self.host+' ]', level=xbmc.LOGERROR)
+		else: xbmc.log(LOGGING(script_name)+'Error: MyHTTPSConnection failed getting ip   URL:['+self.host+']', level=xbmc.LOGERROR)
 		self.sock = socket.create_connection((self.host,self.port), self.timeout)
 		self.sock = ssl.wrap_socket(self.sock, self.key_file, self.cert_file)
 
@@ -1221,6 +1263,14 @@ class MyHTTPSHandler(urllib2.HTTPSHandler):
 	def https_open(self,req):
 		return self.do_open(MyHTTPSConnection,req)
 """
+
+
+#url = 'http://example.com/name.mp4'
+#openURL_requests('GET',url)
+#import RESOLVERS ; RESOLVERS.URLRESOLVER(url)
+#PLAY_VIDEO(url)
+#traceback.print_exc(file=sys.stderr)
+
 
 
 

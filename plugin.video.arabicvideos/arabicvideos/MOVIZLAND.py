@@ -8,6 +8,7 @@ website0a = WEBSITES[script_name][0]
 website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if mode==180: MENU()
 	elif mode==181: TITLES(url,text)
 	elif mode==182: PLAY(url)

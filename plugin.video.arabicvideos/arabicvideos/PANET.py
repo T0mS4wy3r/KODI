@@ -8,6 +8,7 @@ menu_name='_PNT_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if mode==30: MENU()
 	elif mode==31: CATEGORIES(url,'3')
 	elif mode==32: ITEMS(url)

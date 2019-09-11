@@ -7,6 +7,7 @@ menu_name='_HLA_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if mode==80: MENU()
 	elif mode==81: ITEMS(url)
 	elif mode==82: PLAY(url)
@@ -114,7 +115,7 @@ def PLAY(url):
 	url2 = website0a + '/ajax/getVideoPlayer'
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 	items = re.findall('getVideoPlayer\(\'(.*?)\'',block,re.DOTALL)
-	threads = CustomThread()
+	threads = CustomThread(False)
 	def linkFUNC():
 		html = openURL_cached(LONG_CACHE,url2,data,headers,'','HALACIMA-PLAY-3rd')
 		html = html.replace('SRC=','src=')
@@ -124,7 +125,7 @@ def PLAY(url):
 	for server in items:
 		payload = { 'Ajax' : '1' , 'art' : artID , 'server' : server }
 		data = urllib.urlencode(payload)
-		threads.start_new_thread(server,False,linkFUNC)
+		threads.start_new_thread(server,linkFUNC)
 	threads.wait_finishing_all_threads()
 	linkLIST = linkLIST + threads.resultsDICT.values()
 	import RESOLVERS

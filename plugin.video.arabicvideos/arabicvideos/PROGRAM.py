@@ -4,11 +4,12 @@ from LIBRARY import *
 script_name='PROGRAM'
 
 def MAIN(mode,text=''):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if mode in [0,1]: FIX_KEYBOARD(mode,text)
 	elif mode==2: SEND_MESSAGE(text)
 	elif mode==3: DMCA()
 	elif mode==4: HTTPS_TEST()
-	elif mode==5: CLOSED()
+	elif mode==5: EGYBEST_ADBLOCKER()
 	elif mode==6: GLOBAL_SEARCH_MENU(text)
 	elif mode==7: VERSION()
 	elif mode==8: RANDOM()
@@ -19,6 +20,7 @@ def MAIN(mode,text=''):
 	elif mode==173: ENABLE_MPD()
 	elif mode==174: ENABLE_RTMP()
 	elif mode==175: TEST_ALL_WEBSITES()
+	elif mode==176: ANALYTICS_REPORT()
 	elif mode==179: TESTINGS()
 	return
 
@@ -30,7 +32,7 @@ def TOOLS_MENU():
 	addLink('[COLOR FFC89008] 4.  [/COLOR]'+'فحص تفعيل فيديوهات rtmp ـ','',174,'','','IsPlayable=no')
 	addLink('[COLOR FFC89008] 5.  [/COLOR]'+'فحص اتصال المواقع المشفرة','',4,'','','IsPlayable=no')
 	addLink('[COLOR FFC89008] 6.  [/COLOR]'+'مسح كاش البرنامج','',9,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008] 7.  [/COLOR]'+'ارسال سجل الاخطاء للمبرمج','',2,'','','IsPlayable=no,problem=yes')
+	addLink('[COLOR FFC89008] 7.  [/COLOR]'+'ارسال سجل الاخطاء والاستخدام للمبرمج','',2,'','','IsPlayable=no,problem=yes')
 	addLink('[COLOR FFC89008] 8.  [/COLOR]'+'ابلاغ المبرمج بوجود مشكلة','',2,'','','IsPlayable=no,problem=yes')
 	addLink('[COLOR FFC89008] 9.  [/COLOR]'+'ارسال رسالة الى المبرمج','',2,'','','IsPlayable=no,problem=no')
 	addLink('[COLOR FFC89008]10. [/COLOR]'+'تحذير يخص شهادة التشفير','',171,'','','IsPlayable=no')
@@ -56,7 +58,7 @@ def HTTPS_TEST():
 	return
 
 def FIX_KEYBOARD(mode,text):
-	keyboard=text
+	keyboard = text
 	if keyboard=='': return
 	if mode==1:
 		try:
@@ -64,19 +66,21 @@ def FIX_KEYBOARD(mode,text):
 			window = xbmcgui.Window(window_id)
 			keyboard = mixARABIC(keyboard)
 			window.getControl(311).setLabel(keyboard)
-		except: pass
+		except:
+			#traceback.print_exc(file=sys.stderr)
+			pass
 	elif mode==0:
-		ttype='X'
-		check=isinstance(keyboard, unicode)
-		if check==True: ttype='U'
-		new1=str(type(keyboard))+' '+keyboard+' '+ttype+' '
+		ttype = 'X'
+		check = isinstance(keyboard, unicode)
+		if check==True: ttype = 'U'
+		new1 = str(type(keyboard))+' '+keyboard+' '+ttype+' '
 		for i in range(0,len(keyboard),1):
 			new1 += hex(ord(keyboard[i])).replace('0x','')+' '
 		keyboard = mixARABIC(keyboard)
-		ttype='X'
-		check=isinstance(keyboard, unicode)
+		ttype = 'X'
+		check = isinstance(keyboard, unicode)
 		if check==True: ttype='U'
-		new2=str(type(keyboard))+' '+keyboard+' '+ttype+' '
+		new2 = str(type(keyboard))+' '+keyboard+' '+ttype+' '
 		for i in range(0,len(keyboard),1):
 			new2 += hex(ord(keyboard[i])).replace('0x','')+' '
 		#xbmcgui.Dialog().ok(new1,new2)
@@ -94,18 +98,18 @@ def SEND_MESSAGE(text=''):
 			DELETE_DATABASE_FILES()
 			xbmcgui.Dialog().ok('تم مسح كاش البرنامج بالكامل','اذا كانت عندك مشكلة في احد المواقع فجرب الموقع الان ... واذا المشكلة مستمرة فاذن ارسل المشكلة الى المبرمج')
 			return ''
-		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بارسال ال 500 سطر الاخيرة من سجل الاخطاء الى المبرمج لكي يستطيع المبرمج معرفة المشكلة واصلاحها','','','كلا','نعم')
+		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بارسال سجل الاخطاء والاستخدام الى المبرمج لكي يستطيع المبرمج معرفة المشكلة واصلاحها','','','كلا','نعم')
 		if logs==0:
-			xbmcgui.Dialog().ok('تم الغاء الارسال','للأسف بدون سجل الاخطاء المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
+			xbmcgui.Dialog().ok('تم الغاء الارسال','للأسف بدون سجل الاخطاء والاستخدام المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
 			return ''
-		logs2 = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هل قمت قبل قليل بتشغيل الفيديو او الرابط الذي اعطاك المشكلة لكي يتم تسجيل هذه المشكلة في سجل الاخطاء قبل ارساله للمبرمج','','','كلا','نعم')
+		logs2 = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هل قمت قبل قليل بتشغيل الفيديو او الرابط الذي اعطاك المشكلة لكي يتم تسجيل هذه المشكلة في سجل الاخطاء والاستخدام قبل ارساله للمبرمج','','','كلا','نعم')
 		if logs2==0:
-			xbmcgui.Dialog().ok('تم الغاء الارسال','للأسف بدون تسجيل المشكلة في سجل الاخطاء فان المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
+			xbmcgui.Dialog().ok('تم الغاء الارسال','للأسف بدون تسجيل المشكلة في سجل الاخطاء والاستخدام فان المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
 			return ''
 		"""
 		else:
 			text += 'logs=yes'
-			yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','قبل ارسال سجل الاخطاء الى المبرمج عليك ان تقوم بتشغيل الفيديو او الرابط الذي يعطيك المشكلة لكي يتم تسجيل المشكلة في سجل الاخطاء. هل تريد الارسال الان ؟','','','كلا','نعم')
+			yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','قبل ارسال سجل الاخطاء والاستخدام الى المبرمج عليك ان تقوم بتشغيل الفيديو او الرابط الذي يعطيك المشكلة لكي يتم تسجيل المشكلة في سجل الاخطاء والاستخدام. هل تريد الارسال الان ؟','','','كلا','نعم')
 			if yes==0:
 				xbmcgui.Dialog().ok('','تم الغاء الارسال')
 				return ''
@@ -169,15 +173,16 @@ def GLOBAL_SEARCH_MENU(search=''):
 	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
 	addDir('9.   [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند','',189,'','',search)
 	addDir('10. [COLOR FFC89008]AKM  [/COLOR]'+search+' - موقع اكوام','',79,'','',search)
-	addDir('11. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',129,'','',search)
-	addDir('12. [COLOR FFC89008]EG4  [/COLOR]'+search+' - موقع ايجي فور بيست','',229,'','',search)
+	addDir('11. [COLOR FFC89008]EG4  [/COLOR]'+search+' - موقع ايجي فور بيست','',229,'','',search)
 	#addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
 	addLink('[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('13. [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
-	addDir('14. [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',89,'','',search)
-	addDir('15. [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
-	addDir('16. [COLOR FFC89008]ARL  [/COLOR]'+search+' - موقع عرب ليونز','',209,'','',search)
-	addDir('17. [COLOR FFC89008]SFW [/COLOR]'+search+' - موقع سيريس فور وتش','',219,'','',search)
+	addDir('12. [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
+	addDir('13. [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',89,'','',search)
+	addDir('14. [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
+	addDir('15. [COLOR FFC89008]ARL  [/COLOR]'+search+' - موقع عرب ليونز','',209,'','',search)
+	addDir('16. [COLOR FFC89008]SFW [/COLOR]'+search+' - موقع سيريس فور وتش','',219,'','',search)
+	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
+	addDir('17. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',5,'','',search)# 129
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -196,8 +201,8 @@ def TV_CHANNELS_MENU():
 
 def VERSION():
 	xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
-	threads = CustomThread()
-	threads.start_new_thread(1,False,KODI_VERSION)
+	threads = CustomThread(False)
+	threads.start_new_thread(1,KODI_VERSION)
 	#	url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
 	#   url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
 	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
@@ -254,8 +259,8 @@ def RANDOM():
 	GLOBAL_SEARCH_MENU(search)
 	return
 
-def CLOSED():
-	xbmcgui.Dialog().ok('','المبرمج يحتاج بعض الوقت لاصلاح هذا الموقع')
+def EGYBEST_ADBLOCKER():
+	xbmcgui.Dialog().ok('مانع اعلانات','سيرفر ملفات الفيديو لهذا الموقع يستخدم مانع اعلانات والمبرمج لم يستطع تجاوزه لان كودي لا يفهم لغة البرمجة جافاسكربت ولهذا سيبقى الموقع مغلق الى ما شاء الله')
 	return
 
 def SSL_WARNING():
@@ -291,9 +296,9 @@ def TEST_ALL_WEBSITES():
 			#if 'https' in url: html = '___Error___'
 			#else: html = ''
 			return html
-		threads = CustomThread()
+		threads = CustomThread(True)
 		for site in websites_keys:
-			threads.start_new_thread(type+'_'+site,True,dummyFunc,site,type,proxy_url)
+			threads.start_new_thread(type+'_'+site,dummyFunc,site,type,proxy_url)
 		threads.wait_finishing_all_threads()
 		return threads.resultsDICT
 	DIRECTdict_result = test_all('direct')
@@ -335,12 +340,60 @@ def TEST_ALL_WEBSITES():
 	if direct=='problem' and proxy!='problem':
 		xbmcgui.Dialog().ok('نتيجة فحص مواقع البرنامج','المشكلة التي عندك في بعض المواقع قد اختفت باستخدام بروكسي وهذا معناه ان المشكلة من طرفك وليست من البرنامج. حاول حل مشكلتك اما باستخدام DNS أو Proxy أو VPN')
 	elif direct=='problem' and proxy=='problem':
-		xbmcgui.Dialog().ok('نتيجة فحص مواقع البرنامج','مشكلتك ظهرت مع بروكسي وبدون بروكسي وسببها اما من الموقع الاصلي أو البرنامج أو البروكسي الذي انت اخترته. جرب اعادة الفحص باختيار بروكسي مختلف وارسل سجل الاخطاء للمبرمج (من قائمة خدمات البرنامج)')		
+		xbmcgui.Dialog().ok('نتيجة فحص مواقع البرنامج','مشكلتك ظهرت مع بروكسي وبدون بروكسي وسببها اما من الموقع الاصلي أو البرنامج أو البروكسي الذي انت اخترته. جرب اعادة الفحص باختيار بروكسي مختلف وارسل سجل الاخطاء والاستخدام للمبرمج (من قائمة خدمات البرنامج)')		
 	elif direct!='problem':
-		xbmcgui.Dialog().ok('نتيجة فحص مواقع البرنامج','جميع المواقع تعمل عندك بدون مشكلة وهذا معناه ان جهازك لا يحتاج اي تعديلات. فاذا كانت لديك مشكلة في البرنامج فقم بارسال سجل الاخطاء الى المبرمج (من قائمة خدمات البرنامج)')
+		xbmcgui.Dialog().ok('نتيجة فحص مواقع البرنامج','جميع المواقع تعمل عندك بدون مشكلة وهذا معناه ان جهازك لا يحتاج اي تعديلات. فاذا كانت لديك مشكلة في البرنامج فقم بارسال سجل الاخطاء والاستخدام الى المبرمج (من قائمة خدمات البرنامج)')
 	return
 
+def ANALYTICS_REPORT():
+	payload,usageDICT,message1,message2,message3,message4 = {'a':'a'},{},'','','',''
+	data = urllib.urlencode(payload)
+	html = openURL_cached(REGULAR_CACHE,WEBSITES['LIVETV'][1],data,'','','PROGRAM-ANALYTICS_REPORT-1st')
+	#xbmcgui.Dialog().ok('',html)
+	resultsLIST = eval(html)
+	siteLIST,countLIST,countryLIST = zip(*resultsLIST)
+	siteLIST,countLIST,countryLIST = list(siteLIST),list(countLIST),list(countryLIST)
+	for site in sorted(WEBSITES.keys()):
+		if site not in siteLIST:
+			message1 += '  '+site
+	for i in range(len(siteLIST)):
+		site = siteLIST[i].encode('utf8')
+		usage = countLIST[i]
+		if   usage=='lowusage': message2 += '  '+site
+		elif usage=='highusage': message3 += '  '+site
+		countries = countryLIST[i].replace('___',' . ')
+		countries = countries.replace('United States',u'امريكا')
+		countries = countries.replace('United Kingdom',u'بريطانيا')
+		countries = countries.replace('United Arab Emirates',u'الامارات')
+		countries = countries.replace('Saudi Arabia',u'السعودية')
+		countries = countries.replace('Switzerland',u'سويسرا')
+		countries = countries.replace('Netherlands',u'هولندا')
+		countries = countries[:44].strip(' ').strip(' .')
+		message4 += '\n[COLOR FFC89008]'+site+' : [/COLOR]'+countries
+	message1 = message1.strip('  ')
+	message2 = message2.strip('  ')
+	message3 = message3.strip('  ')
+	message4 = message4.strip('\n')
+	xbmc.log(LOGGING(script_name)+'   NoUsage:['+message1+']', level=xbmc.LOGERROR)
+	xbmc.log(LOGGING(script_name)+'   LowUsage:['+message2+']', level=xbmc.LOGERROR)
+	xbmc.log(LOGGING(script_name)+'   HighUsage:['+message3+']', level=xbmc.LOGERROR)
+	#xbmc.log(LOGGING(script_name)+'   Countries:['+message4+']', level=xbmc.LOGERROR)
+	message  = 'مواقع شغل منها البرنامج مؤخراً فيديوهات كثيرة'+'\n'
+	message += 'وهذا معناه اذا لديك مشكلة فهي ليست من البرنامج'+'\n'
+	message += '[COLOR FFC89008]'+message3+'[/COLOR]'+'\n\n'
+	message += 'مواقع شغل منها البرنامج مؤخراً فيديوهات قليلة\n'
+	message += 'وهذا معناه اذا لديك مشكلة فهي ليست من البرنامج'+'\n'
+	message += '[COLOR FFC89008]'+message2+'[/COLOR]'+'\n\n'
+	message += 'مواقع لم يشغل البرنامج منها مؤخراً أي فيديوهات'+'\n'
+	message += 'وهذا معناه احتمال كبير ان هناك مشكلة في البرنامج'+'\n'
+	message += '[COLOR FFC89008]'+message1+'[/COLOR]'+'\n\n'
+	xbmcgui.Dialog().textviewer('مواقع اشتغلت مؤخراً في جميع دول العالم',message)
+	xbmcgui.Dialog().textviewer('اعلى الدول التي استخدمت مؤخراً البرنامج',message4)
+
 def TESTINGS():
+	url = 'http://egybest.vip/ee.mp4'
+	PLAY_VIDEO(url)
+	return
 	url = 'https://intoupload.net/w2j4lomvzopd'
 	import urlresolver
 	try:

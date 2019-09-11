@@ -9,6 +9,7 @@ moviesLIST = ['1239','1250','1245','20','1259','218','485','1238','1258','292']
 englishLIST = ['3030','628']
 
 def MAIN(mode,url,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if mode==60: MENU()
 	elif mode==61: TITLES(url,text)
 	elif mode==62: EPISODES(url)

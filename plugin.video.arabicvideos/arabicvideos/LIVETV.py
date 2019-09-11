@@ -5,6 +5,7 @@ script_name='LIVETV'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if mode==100: ITEMS(0)
 	elif mode==101: ITEMS(1)
 	elif mode==102: ITEMS(2)
@@ -35,11 +36,13 @@ def ITEMS(type):
 	else:
 		for i in range(len(items)):
 			name = items[i][3]
-			start = name[0:3]
+			start = name[0:2]
 			start = start.replace('al','Al')
 			start = start.replace('El','Al')
 			start = start.replace('AL','Al')
 			start = start.replace('EL','Al')
+			name = start+name[2:]
+			start = name[0:3]
 			start = start.replace('Al-','Al')
 			start = start.replace('Al ','Al')
 			name = start+name[3:]
@@ -48,6 +51,7 @@ def ITEMS(type):
 		items = sorted(items, reverse=False, key=lambda key: key[0].lower())
 		items = sorted(items, reverse=False, key=lambda key: key[3].lower())
 		for source,server,id2,name,img in items:
+			if '#' in source: continue
 			#if source in ['NT','YU','WS0','RL1','RL2']: continue
 			if source!='URL': name = name + '   [COLOR FFC89008]' + source + '[/COLOR]'
 			addLink(menu_name+' '+name,source+';;'+server+';;'+id2,104,img,'','IsPlayable=no')

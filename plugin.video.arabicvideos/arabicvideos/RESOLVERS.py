@@ -15,12 +15,15 @@ def PLAY(linkLIST,script_name,text=''):
 			if selection == -1: result = 'canceled1'
 			else:
 				title = serversLIST[selection]
+				url = linkLIST[selection]
 				#xbmcgui.Dialog().ok(str(urlLIST[selection]),str(urlLIST[selection]))
 				if 'سيرفر' in title and 'مجهول' in title:
+					xbmc.log(LOGGING(script_name)+'Unknown selected server   Server:['+title+']   URL:['+url+']', level=xbmc.LOGNOTICE)
 					import PROBLEMS
 					PROBLEMS.MAIN(156)
 					result = 'unresolved'
 				else:
+					xbmc.log(LOGGING(script_name)+'Playing selected server   Server:['+title+']   URL:['+url+']', level=xbmc.LOGNOTICE)
 					url = urlLIST[selection]
 					xbmc.log('[ '+addon_id+' ]:   Playing server   Server:[ '+title+' ]   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
 					result = PLAY_LINK(url,script_name,text)
@@ -31,7 +34,7 @@ def PLAY(linkLIST,script_name,text=''):
 	elif result in ['failed','timeout']: xbmcgui.Dialog().ok('الفيديو لم يعمل',' ')
 	"""
 	elif result in ['Canceled1','Canceled2']:
-		#xbmc.log('[ '+addon_id+' ]:   Test:   '+sys.argv[0]+sys.argv[2], level=xbmc.LOGNOTICE)
+		#xbmc.log(LOGGING(script_name)+'Test:   '+sys.argv[0]+sys.argv[2], level=xbmc.LOGNOTICE)
 		xbmcplugin.setResolvedUrl(addon_handle, False, xbmcgui.ListItem())
 		play_item = xbmcgui.ListItem(path='plugin://plugin.video.arabicvideos/?mode=143&url=https://www.youtube.com/watch%3Fv%3Dgwb1pxVtw9Q')
 		xbmc.Player().play('https://flv1.alarab.com/iphone/123447.mp4',play_item)
@@ -50,6 +53,7 @@ def PLAY(linkLIST,script_name,text=''):
 	#xbmcplugin.endOfDirectory(addon_handle)
 
 def PLAY_LINK(url,script_name,text=''):
+	#xbmcgui.Dialog().ok('',titleLIST[0])
 	url = url.strip(' ').strip('&').strip('?').strip('/')
 	titleLIST,linkLIST = RESOLVE(url)
 	if 'IsPlayable=no' in text: IsPlayable = 'no'
@@ -62,8 +66,7 @@ def PLAY_LINK(url,script_name,text=''):
 			else:
 				videoURL = linkLIST[selection]
 				title = titleLIST[selection]
-				xbmc.log('[ '+addon_id+' ]:   Playing selection   Selected:[ '+title+' ]   URL:[ '+videoURL+' ]', level=xbmc.LOGNOTICE)
-				#xbmcgui.Dialog().ok('',str(videoURL))
+				xbmc.log(LOGGING(script_name)+'Playing selected video   Selected:['+title+']   URL:['+str(videoURL).encode('utf8')+']', level=xbmc.LOGNOTICE)
 				if 'moshahda.' in videoURL and 'download_orig' in videoURL:
 					videoURL1,videoURL2 = MOVIZLAND(videoURL)
 					if videoURL2: videoURL = videoURL2[0]
@@ -235,7 +238,7 @@ def RESOLVE_cached(url):
 
 def RESOLVE(url):
 	#url = 'https://gounlimited.to/embed-wqsi313vbpua.html'
-	xbmc.log('[ '+addon_id+' ]:   Started resolving   URL:[ '+url+' ]', level=xbmc.LOGNOTICE)
+	xbmc.log(LOGGING(script_name)+'Started resolving   URL:['+url+']', level=xbmc.LOGNOTICE)
 	url2 = url.split('name=',1)[0].strip('?').strip('/').strip('&')
 	server = url2.lower().split('/')[2]
 	#if 'gounlimited' in server: url2 = url2.replace('https:','http:')
@@ -822,12 +825,12 @@ def YOUTUBE(url):
 				#xbmc.log('json_script='+str(json_script2),level=xbmc.LOGNOTICE)
 			#xbmc.log('[ '+addon_id+' ]:   dict:[ '+str(dict)+' ]', level=xbmc.LOGNOTICE)
 			#xbmc.log('url='+dict['url'], level=xbmc.LOGNOTICE)
-	#xbmc.log('[ '+addon_id+' ]:   streams:[ '+str(streams)+' ]', level=xbmc.LOGNOTICE)
+	#xbmc.log(LOGGING(script_name)+'streams:['+str(streams)+']', level=xbmc.LOGNOTICE)
 	for dict in streams:
 		filetype,codec,quality2,type2,codecs,bitrate = 'unknown','unknown','unknown','Unknown','',0
 		try:
 			type = dict['type']
-			#xbmc.log('[ '+addon_id+' ]:   Type:[ '+type+' ]', level=xbmc.LOGNOTICE)
+			#xbmc.log(LOGGING(script_name)+'Type:['+type+']', level=xbmc.LOGNOTICE)
 			type = type.replace('+','')
 			items = re.findall('(.*?)/(.*?);.*?"(.*?)"',type,re.DOTALL)
 			type2,filetype,codecs = items[0]
@@ -866,7 +869,7 @@ def YOUTUBE(url):
 		if 'dur=' in dict['url']:
 			dict['duration'] = round(0.5+float(dict['url'].split('dur=',1)[1].split('&',1)[0]))
 		streams2.append(dict)
-	#xbmc.log('[ '+addon_id+' ]:   streams2:[ '+str(streams2)+' ]', level=xbmc.LOGNOTICE)
+	#xbmc.log(LOGGING(script_name)+'streams2:['+str(streams2)+']', level=xbmc.LOGNOTICE)
 	videoTitleLIST,audioTitleLIST,muxedTitleLIST,mpdaudioTitleLIST,mpdvideoTitleLIST,allTitleLIST = [],[],[],[],[],[]
 	videoDictLIST,audioDictLIST,muxedDictLIST,mpdaudioDictLIST,mpdvideoDictLIST,allvideoDictLIST,allaudioDictLIST = [],[],[],[],[],[],[]
 	HighestDictTitle,HighestDictVideo,HighestDictAudio = [],[],[]
@@ -1051,8 +1054,8 @@ def YOUTUBE(url):
 				self.mpd = mpd
 				#print('server is up now listening on port: '+str(port))
 			def start(self):
-				self.threads = CustomThread()
-				self.threads.start_new_thread(1,False,self.serve)
+				self.threads = CustomThread(False)
+				self.threads.start_new_thread(1,self.serve)
 			def serve(self):
 				#print('serving requests started')
 				self.keeprunning = True

@@ -1,4 +1,15 @@
 ﻿
+v5.8.2	2019-09-10
+Fixed PLAY_LINK logging
+Fixed non-logs email
+Canceled EGYBEST website
+Added usage reports
+Added errors traceback to CustomThreads
+Added more diagnosis logs
+Added errors traceback
+Filtered sending logs
+
+
 v5.8.1	2019-08-14
 Fixed EGYBEST headers
 Fixed EGYBEST resolving

@@ -12,6 +12,7 @@ menu_name='_EGB_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if   mode==120: MAIN_MENU()
 	elif mode==121: FILTERS_MENU(url)
 	elif mode==122: TITLES(url,page)
@@ -140,7 +141,8 @@ def PLAY(url):
 	#xbmcgui.Dialog().ok(url, url[-45:])
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGYBEST-PLAY-1st')
 	rating = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
-	if rating[0] in ['R','TVMA','TV-MA','PG-18','PG-16']:
+	if rating[0] in BLOCKED_VIDEOS:
+		xbmc.log(LOGGING(script_name)+'Error: Adult video   URL:['+url+']', level=xbmc.LOGERROR)
 		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
 		return
 	"""

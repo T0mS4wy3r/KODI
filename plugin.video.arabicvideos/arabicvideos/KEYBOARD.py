@@ -4,6 +4,7 @@ from LIBRARY import *
 #import unicodedata,simplejson
 
 def MAIN(mode,keyboard):
+	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
 	if keyboard=='': return
 	if mode==1:
 		window_id = xbmcgui.getCurrentWindowDialogId()
