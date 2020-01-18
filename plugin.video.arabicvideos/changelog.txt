@@ -1,8 +1,24 @@
 ﻿
+v6.0.0	2020-01-17
+Updated SERIES4WATCH
+Updated MOVIZLAND resolver
+Updated ALARAB
+Updated PANET
+Rewrote RESOLVABLE function
+Rewrote M3U8_EXTRACTOR
+Rewrote YOUTUBE resolver
+Fixed urllib2 exceptions
+Added EGY4BEST player, search & resolver
+Added IPTV service
+Added new logging function
+Terminated MOVIZLAND
+Terminated HALACIMA
+
+
 v5.8.2	2019-09-10
 Fixed PLAY_LINK logging
 Fixed non-logs email
-Canceled EGYBEST website
+Terminated EGYBEST
 Added usage reports
 Added errors traceback to CustomThreads
 Added more diagnosis logs
@@ -11,9 +27,7 @@ Filtered sending logs
 
 
 v5.8.1	2019-08-14
-Fixed EGYBEST headers
-Fixed EGYBEST resolving
-Fixed EGYBEST playing
+Fixed EGYBEST headers, resolving & playing
 Added cloudflare blocking errors
 Added unknown errors
 Added logs of resolving menues

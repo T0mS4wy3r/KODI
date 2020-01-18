@@ -8,13 +8,18 @@ website0a = WEBSITES[script_name][0]
 website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==180: MENU()
 	elif mode==181: TITLES(url,text)
 	elif mode==182: PLAY(url)
 	elif mode==183: EPISODES(url)
+	elif mode==188: TERMINATED_CHANGED()
 	elif mode==189: SEARCH(text)
 	return
+
+def TERMINATED_CHANGED():
+	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
+	xbmcgui.Dialog().ok('الموقع تغير بالكامل',message)
 
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',189)
@@ -119,14 +124,12 @@ def PLAY(url):
 	html = openURL_cached(LONG_CACHE,url2,'',headers,'','MOVIZLAND-PLAY-1st')
 	link = re.findall('font-size: 25px;" href="(.*?)"',html,re.DOTALL)[0]
 	if link not in urls: urls.append(link)
-	linkLIST,links = [],[]
+	linkLIST = []
 	# main_watch_link
 	for link in urls:
 		if '://moshahda.' in link:
 			main_watch_link = link
-			if main_watch_link not in links:
-				linkLIST.append(main_watch_link+'?name=Main')
-				links.append(main_watch_link)	
+			linkLIST.append(main_watch_link+'?name=Main')
 	# all_vb_links
 	for link in urls:
 		if '://vb.movizland.' in link:
@@ -165,9 +168,7 @@ def PLAY(url):
 					block = html_blocks[selection]
 				link = re.findall('href="(http://moshahda\..*?/\w+.html)"',block,re.DOTALL)
 				forum_watch_link = link[0]
-				if forum_watch_link not in links:
-					linkLIST.append(forum_watch_link+'?name=Forum')
-					links.append(forum_watch_link)
+				linkLIST.append(forum_watch_link+'?name=Forum')
 				block = block.replace('ـ','')
 				block = block.replace('src="http://up.movizland.online/uploads/1517412175296.png"','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="both"  \n  ')
 				block = block.replace('src="http://up.movizland.com/uploads/1517412175296.png"','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="both"  \n  ')
@@ -179,15 +180,15 @@ def PLAY(url):
 				for link_block in links_blocks:
 					#xbmcgui.Dialog().ok('',str(link_block))
 					type = re.findall(' typetype="(.*?)" ',link_block)
-					if type: type = '__'+type[0]
-					else: type = ''
+					if type:
+						if type[0]!='both': type = '__'+type[0]
+						else: type = ''
 					items = re.findall('(?<!http://e5tsar.com/)(\w+[ \w]*</font>.*?|\w+[ \w]*<br />.*?)href="(http://e5tsar.com/.*?)"',link_block,re.DOTALL)
 					for title_block,link in items:
 						title = re.findall('(\w+[ \w]*)<',title_block)
 						title = title[-1]
 						link = link + '?name=' + title + type
 						linkLIST.append(link)
-	linkLIST = list(set(linkLIST))
 	# mobile_watch_link
 	url3 = url2.replace(website0a,website0b)
 	html = openURL_cached(LONG_CACHE,url3,'',headers,'','MOVIZLAND-PLAY-3rd')
@@ -197,8 +198,16 @@ def PLAY(url):
 	if items:
 		#mobile_watch_link = 'http://moshahda.online/' + id2[-1] + '.html'
 		mobile_watch_link = items[-1]
-		if mobile_watch_link not in links:
-			linkLIST.append(mobile_watch_link+'?name=Mobile')
+		linkLIST.append(mobile_watch_link+'?name=Mobile')
+	link2LIST,name2LIST = [],[]
+	for link in linkLIST:
+		link2,name2 = link.split('?name=')
+		link2LIST.append(link2)
+		name2LIST.append(name2)
+	#z = 
+		
+
+
 	if len(linkLIST)==0:
 		xbmcgui.Dialog().ok('مشكلة','غير قادر على ايجاد ملف الفيديو المناسب')
 	else:

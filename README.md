@@ -47,6 +47,7 @@ New video plugin for KODI that provide Arabic video contents from the following 
 <a href="http://series4watch.net">16. &nbsp; http://series4watch.net</a><br />
 <a href="http://arablionz.com">17. &nbsp; http://arablionz.com</a><br />
 18. &nbsp; Tv Channels<br />
+19. &nbsp; IPTV Service<br />
 <br />
 <br />
 <br />

@@ -5,7 +5,7 @@ script_name='LIVETV'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==100: ITEMS(0)
 	elif mode==101: ITEMS(1)
 	elif mode==102: ITEMS(2)
@@ -70,8 +70,9 @@ def PLAY(id):
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
 		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA1' }
 		response = openURL_requests_cached(LONG_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
-		proxyname,proxyurl = RANDOM_HTTPS_PROXY()
-		url = response.headers['Location']+'||MyProxyUrl='+proxyurl
+		#proxyname,proxyurl = RANDOM_HTTPS_PROXY()
+		url = response.headers['Location']#+'||MyProxyUrl='+proxyurl
+		#xbmcgui.Dialog().ok(url,'')
 		response = openURL_requests_cached(30*MINUTE,'GET',url,'','',False,'','LIVETV-PLAY-2nd')
 		cookies = response.cookies.get_dict()
 		session = cookies['ASP.NET_SessionId']
@@ -84,10 +85,20 @@ def PLAY(id):
 		headers = { 'Cookie' : 'ASP.NET_SessionId='+session }
 		response = openURL_requests_cached(NO_CACHE,'GET',url,'',headers,False,'','LIVETV-PLAY-4th')
 		html = response.text
-		url = re.findall('resp":"(.*?)"',html,re.DOTALL)
-		url = url[0]
-		items = re.findall('http.*?m3u8',url,re.DOTALL)
-		url = url.replace(items[0],'http://38.'+server+'777/'+id2+'_HD.m3u8')
+		url = re.findall('resp":"(http.*?m3u8)(.*?)"',html,re.DOTALL)
+		link = url[0][0]
+		params = url[0][1]
+		#url = link+params
+		url_HD = 'http://38.'+server+'777/'+id2+'_HD.m3u8'+params
+		url_SD1 = url_HD.replace('36:7','40:7').replace('_HD.m3u8','.m3u8')
+		url_SD2 = url_HD.replace('36:7','42:7').replace('_HD.m3u8','.m3u8')
+		titleLIST = ['HD','SD1','SD2']
+		linkLIST = [url_HD,url_SD1,url_SD2]
+		selection = 0
+		#selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
+		if selection == -1: return
+		else: url = linkLIST[selection]
+		#xbmcgui.Dialog().ok(items[0],url)
 		"""
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playGA' }

@@ -6,7 +6,7 @@ menu_name='_KWT_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==130: MENU()
 	#elif mode==131: TITLES(url)
 	elif mode==132: CATEGORIES(url)
@@ -190,7 +190,7 @@ def SEARCH(search,page):
 	#xbmcgui.Dialog().ok(str(items), str(items))
 	found = False
 	for link,title in items:
-		#xbmc.log(LOGGING(script_name)+'الكوثر:['+title+']', level=xbmc.LOGNOTICE)
+		#xbmc.log(LOGGING(script_name)+'   الكوثر:['+title+']', level=xbmc.LOGNOTICE)
 		title = title.replace('<b>','').replace('</b>','')
 		title = title.replace('\xab','').replace('\xbb','')
 		title = title.replace('\xb7','')

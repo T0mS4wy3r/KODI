@@ -7,7 +7,7 @@ menu_name='_SHA_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==110: MENU()
 	elif mode==111: TITLES(url)
 	elif mode==112: PLAY(url)
@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',119)
 	#addDir(menu_name+'فلتر','',114,website0a)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
@@ -111,11 +111,11 @@ def EPISODES(url):
 def PLAY(url):
 	linkLIST = []
 	parts = url.split('/')
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','SHAHID4U-PLAY-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SHAHID4U-PLAY-1st')
 	# watch links
 	if '/watch/' in html:
 		url2 = url.replace(parts[3],'watch')
-		html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','SHAHID4U-PLAY-2nd')
+		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers,'','SHAHID4U-PLAY-2nd')
 		html_blocks = re.findall('class="servers-list(.*?)</div>',html2,re.DOTALL)
 		if html_blocks:
 			block = html_blocks[0]
@@ -135,13 +135,13 @@ def PLAY(url):
 	# download links
 	if '/download/' in html:
 		url2 = url.replace(parts[3],'download')
-		html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','SHAHID4U-PLAY-3rd')
+		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers,'','SHAHID4U-PLAY-3rd')
 		id = re.findall('postId:"(.*?)"',html2,re.DOTALL)
 		if id:
 			id2 = id[0]
 			headers2 = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 			url2 = website0a + '/ajaxCenter?_action=getdownloadlinks&postId='+id2
-			html2 = openURL_cached(LONG_CACHE,url2,'',headers2,'','SHAHID4U-PLAY-4th')
+			html2 = openURL_cached(REGULAR_CACHE,url2,'',headers2,'','SHAHID4U-PLAY-4th')
 			html_blocks = re.findall('<h3.*?(\d+)(.*?)</div>',html2,re.DOTALL)
 			if html_blocks:
 				# https://shahd4u.tv/download/فيلم-كدبة-بيضا-2018-hd
@@ -181,7 +181,7 @@ def PLAY(url):
 	"""
 	#xbmc.log(str(linkLIST).replace(',','\n'), level=xbmc.LOGNOTICE)
 	#url2 = url + '?watch=1'
-	#html = openURL_cached(LONG_CACHE,url2,'',headers,'','SHAHID4U-PLAY-2nd')
+	#html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','SHAHID4U-PLAY-2nd')
 	#xbmcgui.Dialog().ok(html,html)
 	#html_blocks = re.findall('li.server"(.*?)id="DataServers',html,re.DOTALL)
 	#block = html_blocks[0]
@@ -189,7 +189,7 @@ def PLAY(url):
 	#url2 = items[0][0]+'?'+items[0][1]
 	#items = re.findall('server\((.*?)\)',block,re.DOTALL)
 	#for server in items:
-	#	#html = openURL_cached(LONG_CACHE,url2+server,'',headers,'','SHAHID4U-PLAY-3rd')
+	#	#html = openURL_cached(REGULAR_CACHE,url2+server,'',headers,'','SHAHID4U-PLAY-3rd')
 	#	urlLIST.append(url2+server)
 	#count = len(urlLIST)
 	#import concurrent.futures

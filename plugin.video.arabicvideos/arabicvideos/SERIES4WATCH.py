@@ -7,24 +7,31 @@ menu_name='_SFW_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==210: MENU()
 	elif mode==211: TITLES(url)
 	elif mode==212: PLAY(url)
 	elif mode==213: EPISODES(url)
 	elif mode==214: FILTER_MENU(url)
 	elif mode==215: FILTER_SELECT(url)
+	elif mode==218: TERMINATED_CHANGED()
 	elif mode==219: SEARCH(text)
 	return
+
+def TERMINATED_CHANGED():
+	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
+	xbmcgui.Dialog().ok('الموقع تغير بالكامل',message)
 
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',219)
 	#addDir(menu_name+'فلتر','',114,website0a)
+	url = website0a+'/getpostsPin?type=one&data=pin&limit=25'
+	addDir(menu_name+'المميزة',url,211)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SERIES4WATCH-MENU-1st')
-	html_blocks = re.findall('categories-tabs(.*?)tabs-wrapper',html,re.DOTALL)
+	html_blocks = re.findall('FiltersButtons(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
-	items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
-	for link,title in items[1:-1]:
+	items = re.findall('data-get="(.*?)".*?</i>(.*?)<',block,re.DOTALL)
+	for link,title in items:#[1:-1]:
 		url = website0a+'/getposts?type=one&data='+link
 		addDir(menu_name+title,url,211)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
@@ -41,12 +48,15 @@ def MENU():
 	return
 
 def TITLES(url):
-	#xbmcgui.Dialog().ok(url,url)
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-TITLES-1st')
-	if 'getposts' in url: block = html
+	#xbmcgui.Dialog().ok(url,html)
+	if 'getposts' in url or '/search?s=' in url: block = html
 	else:
-		html_blocks = re.findall('page-content(.*?)tags-cloud',html,re.DOTALL)
-		block = html_blocks[0]
+		html_blocks = re.findall('MediaGrid"(.*?)class="pagination"',html,re.DOTALL)
+		if html_blocks: block = html_blocks[0]
+		else:
+			xbmcplugin.endOfDirectory(addon_handle)
+			return
 	items = re.findall('src="(.*?)".*?href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
 	allTitles = []
 	itemLIST = ['مشاهدة','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']

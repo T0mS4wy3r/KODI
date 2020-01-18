@@ -10,7 +10,7 @@ website0d = WEBSITES[script_name][3]
 website1  = 'http://93.190.24.122'
 
 def MAIN(mode,url,page,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==20: LANGUAGE_MENU()
 	elif mode==21: MAIN_MENU(url)
 	elif mode==22: TITLES(url,page)

@@ -8,7 +8,7 @@ menu_name='_PNT_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==30: MENU()
 	elif mode==31: CATEGORIES(url,'3')
 	elif mode==32: ITEMS(url)
@@ -86,7 +86,7 @@ def ITEMS(url):
 			name = name.strip(' ')
 			addDir(menu_name+name,url,32,img)
 	if type=='movies':
-		html_blocks = re.findall('panet-mars-adv-panel.*?advBarMars(.+?)panet-pagination',html,re.DOTALL)
+		html_blocks = re.findall('advBarMars(.+?)panet-pagination',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('panet-thumbnail.*?href="(.*?)"><img src="(.*?)" alt="(.+?)"',block,re.DOTALL)
 		for link,img,name in items:
@@ -97,7 +97,7 @@ def ITEMS(url):
 		page = url.split('/')[-1]
 		#xbmcgui.Dialog().ok(url,'')
 		if page=='1':
-			html_blocks = re.findall('panet-mars-adv-panel(.+?)advBarMars',html,re.DOTALL)
+			html_blocks = re.findall('advBarMars(.+?)advBarMars',html,re.DOTALL)
 			block = html_blocks[0]
 			items = re.findall('panet-thumbnail.*?href="(.*?)"><img src="(.*?)".*?panet-title">(.*?)</div.*?panet-info">(.*?)</div',block,re.DOTALL)
 			count = 0
@@ -107,7 +107,7 @@ def ITEMS(url):
 				name = title + ' - ' + episode
 				url = website0a + link
 				addLink(menu_name+name,url,33,img)
-		html_blocks = re.findall('panet-mars-adv-panel.*?advBarMars(.+?)panet-pagination',html,re.DOTALL)
+		html_blocks = re.findall('advBarMars.*?advBarMars(.+?)panet-pagination',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('panet-thumbnail.*?href="(.*?)""><img src="(.*?)".*?panet-title"><h2>(.*?)</h2.*?panet-info"><h2>(.*?)</h2',block,re.DOTALL)
 		for link,img,title,episode in items:

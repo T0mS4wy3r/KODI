@@ -7,25 +7,30 @@ menu_name='_HLA_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==80: MENU()
 	elif mode==81: ITEMS(url)
 	elif mode==82: PLAY(url)
-	elif mode==84: ITEMS('/category/','','lastRecent',page)
-	elif mode==85: ITEMS('/category/','','pin',page)
+	elif mode==84: ITEMS('/category/','','newly',page)
+	elif mode==85: ITEMS('/category/','','featured',page)
 	elif mode==86: ITEMS('/category/','','views',page)
+	elif mode==88: TERMINATED_CHANGED()
 	elif mode==89: SEARCH(text)
 	return
 
+def TERMINATED_CHANGED():
+	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
+	xbmcgui.Dialog().ok('الموقع تغير بالكامل',message)
+
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',89)
-	addDir(menu_name+'جديد المسلسلات','',84,'','0')
+	addDir(menu_name+'المضاف حديثا','',84,'','0')
 	addDir(menu_name+'افلام ومسلسلات مميزة','',85,'','0')
 	addDir(menu_name+'الاكثر مشاهدة','',86,'','0')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
-	block = html_blocks[0]
+	block = html_blocks[1]
 	items = re.findall('<a href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 	#xbmcgui.Dialog().ok(block,str(items))
 	ignoreLIST = ['مسلسلات انمي']
@@ -38,36 +43,41 @@ def MENU():
 
 def ITEMS(url,html='',type='',page='0'):
 	page = int(page)
-	headers = { 'User-Agent' : '' }
+	global headers
 	if type=='':
 		if html=='': html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HALACIMA-ITEMS-1st')
-		html_blocks = re.findall('art_list(.*?)col-md-12',html,re.DOTALL)
+		html_blocks = re.findall('main-content(.*?)pagination',html,re.DOTALL)
 		if html_blocks: block = html_blocks[0]
 		else: block = ''
 	else:
 		if page==0: url2 = website0a + '/ajax/getItem'
 		else: url2 = website0a + '/ajax/loadMore'
-		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
+		headers2 = headers
+		headers2['Content-Type'] = 'application/x-www-form-urlencoded'
 		payload = { 'Ajax' : '1' , 'item' : type , 'offset' : page*50 }
 		data = urllib.urlencode(payload)
-		block = openURL_cached(REGULAR_CACHE,url2,data,headers,'','HALACIMA-ITEMS-2nd')
-	items = re.findall('href="(.*?)".*?data-src="(.*?)".*?class="desc">(.*?)<',block,re.DOTALL)
-	allTitles,allLinks = [],[]
+		block = openURL_cached(REGULAR_CACHE,url2,data,headers2,'','HALACIMA-ITEMS-2nd')
+	items = re.findall('<a href="(.*?)".*?data-original="(.*?)".*?class="content">(.*?)<',block,re.DOTALL)
+	allTitles,allLinks,allEpisodes,allImages = [],[],[],[]
 	for link,img,title in items:
+		episodeNo = '99999'
 		title = title.replace('\n','')
+		if 'حلقة' in title and 'موسم' not in title:
+			episode = re.findall('حلقة (\d+)',title,re.DOTALL)
+			if episode: episodeNo = episode[0]
 		if 'الحلقة' in title and '/category/' in url and 'برامج-وتلفزة' not in url:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode: title = episode[0]
-			episode = re.findall('(.*?)/article/(.*?)-الحلقة.*?.html',link,re.DOTALL)
+			episode = re.findall('(.*?)/download-view-online/(.*?)-الحلقة.*?.html',link,re.DOTALL)
 			if episode:
 				link = episode[0][0]+'/series/'+episode[0][1]+'.html'
 				link = link.replace('مشاهدة-','')
 				link = link.replace('Game-of-Thrones-الموسم-الثامن','Game-of-Thrones-الموسم-8')
 				link = link.replace('مسلسل-الهيبة-الجزء-الثالث','الهيبة-الموسم-3')
 				link = link.replace('كلبش-الجزء-الثالث','كلبش-الجزء-3')
-				#title = link.replace(episode[0][0],'')
+				#title = link.replace(episode2[0][0],'')
 				title = '_MOD_'+title
-		if 'فيلم' in title and '/series/' in link and '/category/' in url:
+		elif 'فيلم' in title and '/series/' in link and '/category/' in url:
 			title = link
 			title = title.replace('-',' ')
 			title = title.replace('.html','')
@@ -75,13 +85,16 @@ def ITEMS(url,html='',type='',page='0'):
 		title = title.strip(' -')
 		title = title.strip(' ')
 		title = unescapeHTML(title)
-		allTitles.append(title)
-		allLinks.append(link)
-	z = zip(allTitles,allLinks)
-	z = set(z)
-	#z = sorted(z, reverse=True, key=lambda key: key[0])
-	for title,link in z:
-		if '/article/' in link: addLink(menu_name+title,link,82,img)
+		if title not in allTitles:
+			allTitles.append(title)
+			allLinks.append(link)
+			allEpisodes.append(episodeNo)
+			allImages.append(img)
+	z = zip(allTitles,allLinks,allEpisodes,allImages)
+	#z = set(z)
+	z = sorted(z, reverse=True, key=lambda key: int(key[2]))
+	for title,link,episodeNo,img in z:
+		if '/download-view-online/' in link: addLink(menu_name+title,link,82,img)
 		else: addDir(menu_name+title,link,81,img)
 	html_blocks = re.findall('pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
@@ -98,7 +111,7 @@ def ITEMS(url,html='',type='',page='0'):
 
 def PLAY(url):
 	linkLIST = []
-	headers = { 'User-Agent' : '' }
+	global headers
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','HALACIMA-PLAY-1st')
 	html_blocks = re.findall('class="download(.*?)div',html,re.DOTALL)
 	block = html_blocks[0]
@@ -106,18 +119,19 @@ def PLAY(url):
 	for link in items:
 		if 'http' not in link: link = 'http:' + link
 		linkLIST.append(link)
-	url2 = url.replace('/article/','/online/')
+	url2 = url.replace('/download-view-online/','/online/')
 	html = openURL_cached(LONG_CACHE,url2,'',headers,'','HALACIMA-PLAY-2nd')
 	html_blocks = re.findall('artId.*?(.*?)col-sm-12',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall(' = \'(.*?)\'',block,re.DOTALL)
 	artID = items[0]
 	url2 = website0a + '/ajax/getVideoPlayer'
-	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
+	headers2 = headers
+	headers2['Content-Type'] = 'application/x-www-form-urlencoded'
 	items = re.findall('getVideoPlayer\(\'(.*?)\'',block,re.DOTALL)
 	threads = CustomThread(False)
 	def linkFUNC():
-		html = openURL_cached(LONG_CACHE,url2,data,headers,'','HALACIMA-PLAY-3rd')
+		html = openURL_cached(LONG_CACHE,url2,data,headers2,'','HALACIMA-PLAY-3rd')
 		html = html.replace('SRC=','src=')
 		link = re.findall("src='(.*?)'",html,re.DOTALL)
 		if 'http' not in link[0]: link[0] = 'http:' + link[0]

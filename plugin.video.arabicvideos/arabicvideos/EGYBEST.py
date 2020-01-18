@@ -12,14 +12,19 @@ menu_name='_EGB_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if   mode==120: MAIN_MENU()
 	elif mode==121: FILTERS_MENU(url)
 	elif mode==122: TITLES(url,page)
 	elif mode==123: PLAY(url)
 	elif mode==125: GET_USERNAME_PASSWORD()
 	elif mode==126: WARNING()
+	elif mode==128: TERMINATED_ADBLOCKER()
 	elif mode==129: SEARCH(text)
+	return
+
+def TERMINATED_ADBLOCKER():
+	xbmcgui.Dialog().ok('مانع اعلانات','سيرفر ملفات الفيديو لهذا الموقع يستخدم مانع اعلانات والمبرمج لم يستطع تجاوزه لان كودي لا يفهم لغة البرمجة جافاسكربت ولهذا سيبقى الموقع مغلق الى ما شاء الله')
 	return
 
 def MAIN_MENU():
@@ -138,11 +143,12 @@ def TITLES(url,page):
 	return
 
 def PLAY(url):
+	global headers
 	#xbmcgui.Dialog().ok(url, url[-45:])
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGYBEST-PLAY-1st')
 	rating = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
 	if rating[0] in BLOCKED_VIDEOS:
-		xbmc.log(LOGGING(script_name)+'Error: Adult video   URL:['+url+']', level=xbmc.LOGERROR)
+		LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
 		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
 		return
 	"""
@@ -157,14 +163,26 @@ def PLAY(url):
 	#xbmcgui.Dialog().ok(url2, str(html2))
 	# https://vidstream.top/embed/o2RbrN9bqf/?vclid=44711370a2655b3f2d23487cb74c05e5347648e8bb9571dfa7c5d5e4zlllsCGMDslElsMaYXobviuROhYfamfMOhlsEslsWQUlslElsMOcSbzMykqapaqlsEslsxMcGlslElsOGsabiZusOxySMgOpEaucSxiSVGEBOlOouQzsEslsxWdlslElsmmmlRPMMslnfpaqlsEslsCMcGlslElsOEOEEZlEMOuzslh
 	if watchitem:
-		url2 = watchitem[0]
-		server = url2.split('/')[:3]
-		html2 = openURL_cached(NO_CACHE,url2,'',headers,'','EGYBEST-PLAY-2nd')
+		url2 = watchitem[0]#+'||MyProxyUrl=http://79.165.242.84:4145'
+		server = SERVER(url2)
+		#xbmcgui.Dialog().ok(server,'')
+		response = openURL_requests_cached(NO_CACHE,'GET',url2,'','',True,'','EGYBEST-PLAY-2nd')
+		#html2 = response.text
+		cookies = response.cookies.get_dict()
+		PHPSID = cookies['PHPSID']
+		#xbmcgui.Dialog().ok(server, str(PHPSID))
+		headers2 = headers
+		headers2['Cookie'] = 'PHPSID='+PHPSID
+		response = openURL_requests_cached(NO_CACHE,'GET',url2,'',headers2,False,'','EGYBEST-PLAY-3rd')
+		html2 = response.text
+		#xbmc.log(html2, level=xbmc.LOGNOTICE)
 		#xbmcgui.Dialog().ok(url2, str(html2.count('404')))
 		items = re.findall('source src="(.*?)"',html2,re.DOTALL)
+		#xbmcgui.Dialog().ok(url2, str(html2))
+		#xbmcgui.Dialog().ok(url2, str(items))
 		if items:
 			url3 = server+items[0]
-			titleLIST,linkLIST = M3U8_EXTRACTOR(url3)
+			titleLIST,linkLIST = EXTRACT_M3U8(url3)
 			z = zip(titleLIST,linkLIST)
 			for title,link in z:
 				if 'Res: ' in title: quality = title.split('Res: ')[1]
@@ -177,6 +195,7 @@ def PLAY(url):
 		#xbmc.log(quality, level=xbmc.LOGNOTICE)
 		quality = quality.strip(' ').split(' ')[-1]
 		url = website0a + link # + '&v=1'
+		url = url+'?PHPSID='+PHPSID
 		linkLIST.append(url+'?name=vidstream__download__mp4__'+quality)
 		linkLIST.append(url+'?name=vidstream__watch__mp4__'+quality)
 	#if not linkLIST:
@@ -196,8 +215,8 @@ def PLAY(url):
 			qualityLIST.append ('m3u8   '+qualtiy)
 			datacallLIST.append (url)
 	"""
-	#selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', linkLIST)
-	#if selection == -1 : return
+	selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', linkLIST)
+	if selection == -1 : return
 	#url = linkLIST[selection]
 	"""
 	if 'http' not in url:

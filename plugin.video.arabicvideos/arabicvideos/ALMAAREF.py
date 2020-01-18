@@ -8,7 +8,7 @@ website0a = WEBSITES[script_name][0]
 website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==40: MENU()
 	elif mode==41: LIVE()
 	elif mode==42: EPISODES(url)

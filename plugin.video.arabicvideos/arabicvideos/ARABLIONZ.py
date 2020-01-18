@@ -7,7 +7,7 @@ menu_name='_ARL_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==200: MENU()
 	elif mode==201: TITLES(url)
 	elif mode==202: PLAY(url)
@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',209)
 	#addDir(menu_name+'فلتر','',114,website0a)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ARABLIONZ-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','ARABLIONZ-MENU-1st')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
@@ -110,11 +110,11 @@ def EPISODES(url):
 def PLAY(url):
 	linkLIST = []
 	parts = url.split('/')
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','ARABLIONZ-PLAY-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ARABLIONZ-PLAY-1st')
 	# watch links
 	if '/watch/' in html:
 		url2 = url.replace(parts[3],'watch')
-		html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','ARABLIONZ-PLAY-2nd')
+		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers,'','ARABLIONZ-PLAY-2nd')
 		html_blocks = re.findall('stream-servers(.*?)</div>',html2,re.DOTALL)
 		if html_blocks:
 			block = html_blocks[0]
@@ -133,13 +133,13 @@ def PLAY(url):
 	# download links
 	if '/download/' in html:
 		url2 = url.replace(parts[3],'download')
-		html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','ARABLIONZ-PLAY-3rd')
+		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers,'','ARABLIONZ-PLAY-3rd')
 		id = re.findall('postId:"(.*?)"',html2,re.DOTALL)
 		if id:
 			id2 = id[0]
 			headers2 = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 			url2 = website0a + '/ajaxCenter?_action=getdownloadlinks&postId='+id2
-			html2 = openURL_cached(LONG_CACHE,url2,'',headers2,'','ARABLIONZ-PLAY-4th')
+			html2 = openURL_cached(REGULAR_CACHE,url2,'',headers2,'','ARABLIONZ-PLAY-4th')
 			html_blocks = re.findall('<h3.*?(\d+)(.*?)</div>',html2,re.DOTALL)
 			if html_blocks:
 				for resolution,block in html_blocks:

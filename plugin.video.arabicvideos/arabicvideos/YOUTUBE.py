@@ -6,7 +6,7 @@ menu_name='_YUT_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	result = ''
 	if mode==140: MENU()
 	elif mode==141: TITLES(url)
@@ -22,16 +22,23 @@ def MAIN(mode,url,text):
 
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',149)
+	addDir(menu_name+'العراق خطبة المرجعية',website0a+'/playlist?list=PL4jUq6pnG36QjuXDhNnIlriuzroTFtmfr',142)
+	addDir(menu_name+'قناة كربلاء الفضائية',website0a+'/user/karbalatvchannel',145)
+	addDir(menu_name+'العتبة الحسينية المقدسة',website0a+'/user/ImamHussaindotorg',145)
 	addDir(menu_name+'قنوات عربية بث مباشر','',147)
 	addDir(menu_name+'قنوات أجنبية بث مباشر','',148)
-	addDir(menu_name+'مسلسلات عربية',website0a+'/results?search_query=مسلسل&sp=EgIQAw%253D%253D',141)
+	addDir(menu_name+'مسلسلات عربية',website0a+'/results?search_query=مسلسل&sp=EgIQAw==',141)
 	addDir(menu_name+'افلام عربية',website0a+'/results?search_query=فيلم',141)
 	addDir(menu_name+'مسرحيات عربية',website0a+'/results?search_query=مسرحية',141)
-	addDir(menu_name+'مسلسلات اجنبية',website0a+'/results?search_query=series&sp=EgIQAw%253D%253D',141)
+	addDir(menu_name+'مسلسلات اجنبية',website0a+'/results?search_query=series&sp=EgIQAw==',141)
 	addDir(menu_name+'افلام اجنبية',website0a+'/results?search_query=movie',141)
-	addDir(menu_name+'مسلسلات كارتون',website0a+'/results?search_query=كارتون&sp=EgIQAw%253D%253D',141)
-	#addDir(menu_name+'اعدادات اضافة يوتيوب','',144)
+	addDir(menu_name+'مسلسلات كارتون',website0a+'/results?search_query=كارتون&sp=EgIQAw==',141)
+	addDir(menu_name+'شوف دراما الاولى',website0a+'/channel/UCgd_tWU4X7s10DKdgt-XDNQ',145)
+	addDir(menu_name+'شوف دراما الثانية',website0a+'/channel/UC25ZB5ZMqLQwxFDV9FHvF8g',145)
+	addDir(menu_name+'شوف دراما الثالثة',website0a+'/channel/UCQOz2_AhxeHUbNMYan-6ZQQ',145)
+	addDir(menu_name+'شبكة وطن',website0a+'/user/WatanNetwork',145)
 	xbmcplugin.endOfDirectory(addon_handle)
+	#addDir(menu_name+'اعدادات اضافة يوتيوب','',144)
 	#yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
 	#if yes:
 	#	url = 'plugin://plugin.video.youtube'
@@ -41,10 +48,10 @@ def MENU():
 	return
 
 def LIVE_ARABIC():
-	TITLES(website0a+'/results?search_query=قناة+بث&sp=EgJAAQ%3D%3D')
+	TITLES(website0a+'/results?search_query=قناة+بث&sp=EgJAAQ==')
 
 def LIVE_ENGLISH():
-	TITLES(website0a+'/results?search_query=tv&sp=EgJAAQ%253D%253D')
+	TITLES(website0a+'/results?search_query=tv&sp=EgJAAQ==')
 
 def CHANNEL_MENU(url):
 	addDir(menu_name+'Videos',url+'/videos',146)
@@ -117,7 +124,6 @@ def PLAYLIST_ITEMS_PLAYER(url):
 	return
 
 def CHANNEL_ITEMS(url):
-	#xbmcgui.Dialog().ok(url,'')
 	html = openURL_cached(REGULAR_CACHE,url,'','','','YOUTUBE-CHANNEL_ITEMS-1st')
 	if 'browse_ajax' in url:
 		html = CLEAN_AJAX(html)
@@ -125,7 +131,7 @@ def CHANNEL_ITEMS(url):
 	else: html_blocks = re.findall('branded-page-v2-subnav-container(.*?)footer-container',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
-		items = re.findall('yt-lockup-thumbnail.*?href="(.*?)".*?src="(.*?)"(.*?)sessionlink.*?title="(.*?)"(.*?)yt-lockup-notifications',block,re.DOTALL)
+		items = re.findall('yt-lockup-thumbnail.*?href="(.*?)".*?src="(.*?)"(.*?)sessionlink.*?title="(.*?)"(.*?)container',block,re.DOTALL)
 		for link,img,count,title,live in items:
 			if '>Live now<' in live: live = 'LIVE:  '
 			else: live = ''
@@ -248,4 +254,5 @@ def CLEAN_AJAX(text):
 	#file.write(text)
 	#file.close()
 	return text
+
 

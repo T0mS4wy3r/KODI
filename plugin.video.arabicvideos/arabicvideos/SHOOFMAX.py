@@ -7,7 +7,7 @@ website0a = WEBSITES[script_name][0]
 website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==50: MAIN_MENU()
 	elif mode==51: TITLES(url)
 	elif mode==52: EPISODES(url)
@@ -98,24 +98,23 @@ def TITLES(url):
 
 def EPISODES(url):
 	parts = url.split('=')
-	episodes_count = parts[1]
+	episodes_count = int(parts[1])
 	name = unquote(parts[2])
+	name = name.replace('_MOD_مسلسل ','')
 	img = parts[3]
 	url = url.split('?')[0]
-	if episodes_count=='0':
+	if episodes_count==0:
 		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-EPISODES-1st')
 		html_blocks = re.findall('<select(.*?)</select>',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('option value="(.*?)"',block,re.DOTALL)
-		episodes_count = items[-1]
+		episodes_count = int(items[-1])
 		#xbmcgui.Dialog().ok(episodes_count,'')
 	#name = xbmc.getInfoLabel( "ListItem.Title" )
 	#img = xbmc.getInfoLabel( "ListItem.Thumb" )
-	name1 = 'مسلسل '
-	name2 = ' - الحلقة '
-	for episode in range(int(episodes_count),0,-1):
+	for episode in range(episodes_count,0,-1):
 		link = url + '?ep=' + str(episode)
-		title = '_MOD_' + name1 + name + name2 + str(episode)
+		title = '_MOD_مسلسل '+name+' - الحلقة '+str(episode)
 		addLink(menu_name+title,link,53,img)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
@@ -149,7 +148,7 @@ def PLAY(url):
 			server = 'main server'
 			url = origin_link + link
 		items_url.append(url)
-		items_name.append('mp4: '+server+' '+filename)
+		items_name.append('mp4  '+server+'  '+filename)
 	links = re.findall('hls: (.*?)_link\+"(.*?)"',block,re.DOTALL)
 	for server,link in links:
 		if 'backup' in server:
@@ -159,14 +158,16 @@ def PLAY(url):
 			server = 'main server'
 			url = origin_link + link
 		if '.m3u8' in url:
-			titleLIST,linkLIST = M3U8_EXTRACTOR(url)
+			titleLIST,linkLIST = EXTRACT_M3U8(url)
 			if titleLIST[0]=='-1':
 				items_url.append(url)
-				items_name.append('m3u8: '+server)
+				items_name.append('m3u8  '+server)
 			else:
 				for i in range(len(titleLIST)):
 					items_url.append(linkLIST[i])
-					items_name.append('m3u8: '+server+' '+titleLIST[i])
+					filetype = titleLIST[i].split(' ')[0]
+					title = titleLIST[i].replace(filetype,'').strip(' ').replace('   ','  ')
+					items_name.append(filetype+'  '+server+'  '+title)
 	selection = xbmcgui.Dialog().select('Select Video Quality:', items_name)
 	if selection == -1 : return
 	url = items_url[selection]
@@ -218,16 +219,16 @@ def SEARCH(search=''):
 	items = re.findall('href="(.*?)".*?background-image: url\((.*?)\).*?<span>(.*?)</span>',block,re.DOTALL)
 	if items:
 		for link,img,title in items:
-			title = title.replace('\n','')
+			title = title.replace('\n','').encode('utf8')
 			url = website0a + link
 			if '/program/' in url:
 				if '?ep=' in url:
-					title = '_MOD_' + 'مسلسل '+title.encode('utf8')
+					title = '_MOD_مسلسل '+title
 					url = url.replace('?ep=1','?ep=0')
-					url = url + '=' + quote(title) + '=' + img
+					url = url+'='+quote(title)+'='+img
 					addDir(menu_name+title,url,52,img)
 				else:
-					title = '_MOD_' + 'فيلم '+title.encode('utf8')
+					title = '_MOD_فيلم '+title
 					addLink(menu_name+title,url,53,img)
 	xbmcplugin.endOfDirectory(addon_handle)
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')

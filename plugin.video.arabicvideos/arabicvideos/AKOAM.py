@@ -6,29 +6,32 @@ script_name='AKOAM'
 menu_name='_AKM_'
 website0a = WEBSITES[script_name][0]
 noEpisodesLIST = ['فيلم','كليب','العرض الاسبوعي','مسرحية','مسرحيه','اغنية','اعلان','لقاء']
+#proxy = '||MyProxyUrl=https://159.203.87.130:3128'
+proxy = '||MyProxyUrl='+PROXIES[6][1]
+proxy = ''
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==70: MENU()
-	elif mode==71: CATEGORIES(url)
-	elif mode==72: TITLES(url,text)
-	elif mode==73: EPISODES(url)
-	elif mode==74: PLAY(url)
+	elif mode==71: CATEGORIES(url+proxy)
+	elif mode==72: TITLES(url+proxy,text)
+	elif mode==73: EPISODES(url+proxy)
+	elif mode==74: PLAY(url+proxy)
 	elif mode==79: SEARCH(text)
 	return
 
 def MENU():
 	addDir(menu_name+'بحث في الموقع','',79)
-	addDir(menu_name+'المميزة',website0a,72,'','','featured')
-	addDir(menu_name+'المزيد',website0a,72,'','','more')
-	#addDir(menu_name+'الاخبار',website0a,72,'','','news')
+	addDir(menu_name+'المميزة',website0a+proxy,72,'','','featured')
+	addDir(menu_name+'المزيد',website0a+proxy,72,'','','more')
+	#addDir(menu_name+'الاخبار',website0a+proxy,72,'','','news')
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات']
-	html = openURL_cached(NO_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
-	#xbmcgui.Dialog().textviewer('',html)
+	html = openURL_cached(NO_CACHE,website0a+proxy,'',headers,'','AKOAM-MENU-1st')
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
+	#xbmcgui.Dialog().textviewer('',html)
 	#if not html_blocks:
 	#	xbmc.sleep(2000)
-	#	html = openURL_cached(NO_CACHE,website0a,'',headers,'','AKOAM-MENU-2nd')
+	#	html = openURL_cached(NO_CACHE,website0a+proxy,'',headers,'','AKOAM-MENU-2nd')
 	#	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	if html_blocks:
@@ -41,7 +44,7 @@ def MENU():
 	return
 
 def CATEGORIES(url):
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','AKOAM-CATEGORIES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-CATEGORIES-1st')
 	html_blocks = re.findall('sect_parts(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -154,7 +157,7 @@ def EPISODES(url):
 def PLAY(url):
 	#xbmcgui.Dialog().ok(url,'')
 	url2,episode = url.split('?ep=')
-	html = openURL_cached(LONG_CACHE,url2,'',headers,'','AKOAM-PLAY-1st')
+	html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','AKOAM-PLAY-1st')
 	html_blocks = re.findall('ad-300-250.*?ad-300-250(.*?)ako-feedback',html,re.DOTALL)
 	html_block = html_blocks[0].replace('\'direct_link_box','"direct_link_box epsoide_box')
 	html_block = html_block + 'direct_link_box'
@@ -164,7 +167,7 @@ def PLAY(url):
 	linkLIST = []
 	serversDICT = {'1423075862':'dailymotion','1477487601':'estream','1505328404':'streamango',
 		'1423080015':'flashx','1458117295':'openload','1423079306':'vimple','1430052371':'ok.ru',
-		'1477488213':'thevid','1558278006':'uqload'}
+		'1477488213':'thevid','1558278006':'uqload','1477487990':'vidtodo'}
 	items = re.findall('download_btn\' target=\'_blank\' href=\'(.*?)\'',block,re.DOTALL)
 	for link in items:
 		linkLIST.append(link)
@@ -172,8 +175,9 @@ def PLAY(url):
 	for serverIMG,link in items:
 		serverIMG = serverIMG.split('/')[-1]
 		serverIMG = serverIMG.split('.')[0]
-		try: linkLIST.append(link+'?name='+serversDICT[serverIMG])
-		except: linkLIST.append(link+'?name='+serverIMG)
+		if serverIMG in serversDICT:
+			linkLIST.append(link+'?name='+serversDICT[serverIMG])
+		else: linkLIST.append(link+'?name='+serverIMG)
 	if len(linkLIST)==0:
 		message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
 		if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
@@ -188,7 +192,7 @@ def SEARCH(search):
 	if search == '': return
 	new_search = search.replace(' ','%20')
 	#xbmcgui.Dialog().ok(str(len(search)) , str(len(new_search)) )
-	url = website0a + '/search/' + new_search
+	url = website0a + '/search/' + new_search + proxy
 	TITLES(url,'search')
 	return
 

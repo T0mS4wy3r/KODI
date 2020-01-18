@@ -11,7 +11,7 @@ menu_name='_HEL_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==90: MENU()
 	elif mode==91: ITEMS(url)
 	elif mode==92: PLAY(url)
@@ -31,7 +31,7 @@ def MENU():
 	addDir(menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
 	#addLink('[COLOR FFC89008]=============[/COLOR]','',9999,'','','IsPlayable=no')
 	#addDir(menu_name+'جديد الموقع',website0a,91)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
 	#upper menu
 	html_blocks = re.findall('class="mainmenu(.*?)nav',html,re.DOTALL)
 	if html_blocks: block1 = html_blocks[0]
@@ -108,7 +108,7 @@ def EPISODES(url):
 def PLAY(url):
 	linkLIST,urlLIST = [],[]
 	adultLIST = ['R - للكبار فقط','PG-18','PG-16','TV-MA']
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','HELAL-PLAY-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-PLAY-1st')
 	if any(value in html for value in adultLIST):
 		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
 		return
@@ -132,10 +132,10 @@ def PLAY(url):
 	items = re.findall('data-server="(.*?)"',block,re.DOTALL)
 	for link in items:
 		url2 = website0a + '/ajax.php?id='+id+'&ajax=true&server='+link
-		#link = openURL_cached(LONG_CACHE,url2,'',headers,'','HELAL-PLAY-2nd')
+		#link = openURL_cached(REGULAR_CACHE,url2,'',headers,'','HELAL-PLAY-2nd')
 		#linkLIST.append(link)
 		urlLIST.append(url2)
-		html = openURL_cached(LONG_CACHE,url2,'',headers,'','HELAL-PLAY-3rd')
+		html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','HELAL-PLAY-3rd')
 		#xbmcgui.Dialog().ok(url2,html)
 	count = len(urlLIST)
 	import concurrent.futures

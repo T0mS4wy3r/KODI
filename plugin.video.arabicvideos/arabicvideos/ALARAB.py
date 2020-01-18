@@ -12,7 +12,7 @@ menu_name='_KLA_'
 website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
-	xbmc.log(LOGGING(script_name)+'Mode:['+str(mode)+']   Label:['+menulabel+']   Path:['+menupath+']', level=xbmc.LOGNOTICE)
+	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if mode==10: MENU()
 	elif mode==11: TITLES(url)
 	elif mode==12: PLAY(url)
@@ -28,10 +28,12 @@ def MENU():
 	addDir(menu_name+'اخر الاضافات','',14)
 	addDir(menu_name+'مسلسلات رمضان','',15)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
+	html_blocks=re.findall('id="nav-slider"(.*?)</div>',html,re.DOTALL)
+	block1 = html_blocks[0]
 	html_blocks=re.findall('id="navbar"(.*?)</div>',html,re.DOTALL)
-	block=html_blocks[0]
+	block2 = html_blocks[0]
 	#xbmcgui.Dialog().ok(str(len(html)), str(len(block)) )
-	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
+	items=re.findall('href="(.*?)".*?>(.*?)<',block1+block2,re.DOTALL)
 	for link,title in items:
 		link = website0a+link
 		addDir(menu_name+title,link,11)
@@ -50,7 +52,7 @@ def LATEST():
 	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','ALARAB-LATEST-1st')
 	#xbmcgui.Dialog().ok('',html)
 	html_blocks=re.findall('heading-top(.*?)div class=',html,re.DOTALL)
-	block = html_blocks[1]+html_blocks[2]
+	block = html_blocks[0]+html_blocks[1]
 	items=re.findall('href="(.*?)".*?src="(.*?)" alt="(.*?)"',block,re.DOTALL)
 	for link,img,title in items:
 		url = website0a + link
@@ -69,6 +71,7 @@ def TITLES(url):
 		items = re.findall('src="(http.*?)".*?<h2>#<a href="(.*?)">(.*?)<',block,re.DOTALL)		
 	allTitles,itemsNEW = [],[]
 	for img,link,title in items:
+		if title=='': title = link.split('/')[-1].replace('-',' ')
 		sequence = re.findall('(\d+)',title,re.DOTALL)
 		if sequence: sequence = int(sequence[0])
 		else: sequence = ''
@@ -79,6 +82,8 @@ def TITLES(url):
 		#xbmcgui.Dialog().ok(url,title)
 		title = title.replace('مشاهدة مسلسل','مسلسل')
 		title = title.replace('مشاهدة المسلسل','المسلسل')
+		title = title.replace('مشاهدة فيلم','فيلم')
+		title = title.replace('مشاهدة الفيلم','الفيلم')
 		title = title.replace('مباشرة كواليتي','')
 		title = title.replace('عالية على العرب','')
 		title = title.replace('مشاهدة مباشرة','')
@@ -150,37 +155,69 @@ def EPISODES_OLD(url):
 def PLAY(url):
 	#xbmcgui.Dialog().ok(url,str(url))
 	linkLIST,titleLIST,videodeliveryID = [],[],[]
-	if '/viewVedio/' in url:
-		id = re.findall('.com/viewVedio/([0-9]+)/',url,re.DOTALL)[0]
-	else:
-		id = re.findall('.com/v([0-9]+)-',url,re.DOTALL)[0]
-	url2 = 'https://alarabplayers.alarab.com/?vid='+id
 	html = openURL_cached(SHORT_CACHE,url,'',headers,'','ALARAB-PLAY-1st')
-	html += openURL_cached(SHORT_CACHE,url2,'',headers,'','ALARAB-PLAY-2nd')
-	html_blocks = re.findall('playerInstance.setup(.*?)primary',html,re.DOTALL)
-	for block in html_blocks:
-		youtube = re.findall('file:".*?youtu.*?=(.*?)"',block,re.DOTALL)
-		for youtubeID in youtube:
-			#url = 'plugin://plugin.video.youtube/play/?video_id='+youtubeID
-			linkLIST.append(youtubeID)
-			titleLIST.append('ملف يوتيوب')
-		items = re.findall('file: ["\'](.*?mp4)["\'].*?label: "(.*?)"',block,re.DOTALL)
-		for file,label in reversed(items):
-			linkLIST.append(file)
-			titleLIST.append('سيرفر خاص  mp4  '+label)
-		items = re.findall('file: ["\'].*?videodelivery.*?/(.*?)/',block,re.DOTALL)
-		for id in items: 
-			videodeliveryID.append(id)
-	id = re.findall('stream src="(.*?)"',html,re.DOTALL)
-	if id: videodeliveryID.append(id)
-	for id in videodeliveryID:
-		url = 'https://videodelivery.net/'+id+'/manifest/video.mpd'
-		linkLIST.append(url)
-		titleLIST.append('سيرفر خاص  mpd')
-		url = 'https://videodelivery.net/'+id+'/manifest/video.m3u8'
-		title = 'سيرفر خاص  m3u8'
-		titleLIST.append(title)
-		linkLIST.append(url)
+	if 'vid=' in html:
+		# https://vod.alarab.com/v101949-_حلقة_25_حكايتي_HD_رمضان_252019
+		url2 = re.findall('class="resp.*?src="(.*?)"',html,re.DOTALL)
+		if url2:
+			url2 = url2[0]
+			html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','ALARAB-PLAY-2nd')
+			url3 = re.findall('source src="(.*?)"',html2,re.DOTALL)
+			if url3:
+				url3 = url3[0]
+				linkLIST.append(url3)
+				titleLIST.append('سيرفر خاص  m3u8')
+	else:
+		if '/viewVedio/' in url:
+			id = re.findall('.com/viewVedio/([0-9]+)/',url,re.DOTALL)
+		else:
+			id = re.findall('.com/v([0-9]+)-',url,re.DOTALL)
+		if id:
+			url2 = 'https://alarabplayers.alarab.com/vod.php?vid='+id
+			headers['Referer'] = url
+			html2 = openURL_cached(SHORT_CACHE,url2,'',headers,'','ALARAB-PLAY-3rd')
+			html += html2
+		html_blocks = re.findall('playerInstance.setup(.*?)primary',html,re.DOTALL)
+		for block in html_blocks:
+			youtube = re.findall('file:".*?youtu.*?=(.*?)"',block,re.DOTALL)
+			items1 = re.findall('file: ["\'](.*?mp4)["\'].*?label: "(.*?)"',block,re.DOTALL)
+			items2 = re.findall('file: ["\'].*?videodelivery.*?/(.*?)/',block,re.DOTALL)
+			items3 = re.findall('file: ["\'](.*?)["\']',block,re.DOTALL)
+			items4 = re.findall('"file": ["\'](.*?)["\']',block,re.DOTALL)
+			if youtube:
+				for youtubeID in youtube:
+					#url = 'plugin://plugin.video.youtube/play/?video_id='+youtubeID
+					linkLIST.append(youtubeID)
+					titleLIST.append('ملف يوتيوب')
+			elif items1:
+				for file,label in reversed(items1):
+					linkLIST.append(file)
+					titleLIST.append('سيرفر خاص  mp4  '+label)
+			elif items2:
+				for id in items2:
+					videodeliveryID.append(id)
+			elif items3:
+				for file in items3:
+					linkLIST.append(file)
+					titleLIST.append('سيرفر خاص  mp4')
+			elif items4:
+				# https://cdn.alarab.com/vod,6,15,00/130479.mp4.urlset/playlist.m3u8
+				for file in items4:
+					titleLIST2,linkLIST2 = EXTRACT_M3U8(file)
+					z = zip(titleLIST2,linkLIST2)
+					for label,file in z:
+						linkLIST.append(file)
+						titleLIST.append('سيرفر خاص  '+label)
+		id = re.findall('stream src="(.*?)"',html,re.DOTALL)
+		if id: videodeliveryID.append(id)
+		for id in videodeliveryID:
+			url3 = 'https://videodelivery.net/'+id+'/manifest/video.mpd'
+			linkLIST.append(url3)
+			titleLIST.append('سيرفر خاص  mpd')
+			url3 = 'https://videodelivery.net/'+id+'/manifest/video.m3u8'
+			title = 'سيرفر خاص  m3u8'
+			titleLIST.append(title)
+			linkLIST.append(url3)
 		"""
 		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-PLAY-3rd')
 		xbmcgui.Dialog().ok(url,str(html))
@@ -191,20 +228,21 @@ def PLAY(url):
 				link = 'https://videodelivery.net/'+videodeliveryID[0]+'/manifest/'+link
 				titleLIST.append(title)
 				linkLIST.append(link)
+		#items = re.findall('resp-container.*?src="(.*?)".*?</div>',html,re.DOTALL)
+		#if items:
+		#	url = items[0]
+		#	linkLIST.append(url)
+		#	titleLIST.append('ملف التشغيل')
+		#xbmcgui.Dialog().ok('',str(linkLIST))
+		#url = website0a + '/download.php?file='+id
+		#html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-PLAY-4th')
+		#items = re.findall('</h2>.*?href="(.*?mp4)"',html,re.DOTALL)
+		#if items:
+		#	linkLIST.append(items[0])
+		#	titleLIST.append('ملف التحميل')
 		"""
-	#items = re.findall('resp-container.*?src="(.*?)".*?</div>',html,re.DOTALL)
-	#if items:
-	#	url = items[0]
-	#	linkLIST.append(url)
-	#	titleLIST.append('ملف التشغيل')
-	#xbmcgui.Dialog().ok('',str(linkLIST))
-	#url = website0a + '/download.php?file='+id
-	#html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-PLAY-4th')
-	#items = re.findall('</h2>.*?href="(.*?mp4)"',html,re.DOTALL)
-	#if items:
-	#	linkLIST.append(items[0])
-	#	titleLIST.append('ملف التحميل')
 	if len(linkLIST)==0:
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   No video file found   URL: [ '+url+' ]')
 		xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
 		return
 	elif len(linkLIST)==1:
