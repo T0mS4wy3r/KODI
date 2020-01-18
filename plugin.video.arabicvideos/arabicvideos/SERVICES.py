@@ -355,7 +355,7 @@ def VERSIONS():
 	message3 += '\n\n' + 'ملفات التنصيب مع التعليمات متوفرة على هذا الرابط'
 	message3 += '\n' + 'https://github.com/emadmahdi/KODI'
 	xbmcgui.Dialog().textviewer(message1,message2+message3)
-	threads.wait_finishing_all_threads()
+	#threads.wait_finishing_all_threads()
 	return ''
 
 def RANDOM():
