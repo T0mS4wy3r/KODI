@@ -329,7 +329,7 @@ def TV_CHANNELS_MENU():
 
 def VERSIONS():
 	xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
-	threads = CustomThread(False)
+	threads = CustomThread()
 	threads.start_new_thread(1,LATEST_KODI)
 	#	url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
 	#   url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
