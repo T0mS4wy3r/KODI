@@ -96,10 +96,10 @@ if mode==-1:
 	addDir('21.  [COLOR FFC89008]SHA  [/COLOR]'+'موقع شاهد فوريو','',110)
 	addDir('22.  [COLOR FFC89008]ARL   [/COLOR]'+'موقع عرب ليونز','',200)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addDir('23.  [COLOR FFC89008]HLA  [/COLOR]'+'موقع هلا سيما','',88) # 80
-	addDir('24.  [COLOR FFC89008]SFW  [/COLOR]'+'موقع سيريس فور وتش','',218)  # 210
-	addDir('25.  [COLOR FFC89008]MVZ  [/COLOR]'+'موقع موفيزلاند اونلاين','',188) # 180
-	addDir('26.  [COLOR FFC89008]EGB  [/COLOR]'+'موقع ايجي بيست','',128) # 120
+	#addDir('23.  [COLOR FFC89008]HLA  [/COLOR]'+'موقع هلا سيما','',88) # 80
+	#addDir('24.  [COLOR FFC89008]SFW  [/COLOR]'+'موقع سيريس فور وتش','',218)  # 210
+	#addDir('25.  [COLOR FFC89008]MVZ  [/COLOR]'+'موقع موفيزلاند اونلاين','',188) # 180
+	#addDir('26.  [COLOR FFC89008]EGB  [/COLOR]'+'موقع ايجي بيست','',128) # 120
 	xbmcplugin.endOfDirectory(addon_handle)
 
 elif mode>=0 and mode<=9: import SERVICES ; SERVICES.MAIN(mode,text)

@@ -76,14 +76,14 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'ALMAAREF'		:['http://www.almaareftv.com/old','http://www.almaareftv.com']
 			,'ARABLIONZ'	:['https://arablionz.com']
 			,'EGY4BEST'		:['https://egybest.vip']
-			,'EGYBEST'		:['https://egy.best']
-			,'HALACIMA'		:['https://www.halacima.co']
+			#,'EGYBEST'		:['https://egy.best']
+			#,'HALACIMA'		:['https://www.halacima.co']
 			,'HELAL'		:['https://www.4helal.co']
 			,'IFILM'		:['http://ar.ifilmtv.com','http://en.ifilmtv.com','http://fa.ifilmtv.com','http://fa2.ifilmtv.com']
 			,'LIVETV'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport']
-			,'MOVIZLAND'	:['https://movizland.online','https://m.movizland.online']
+			#,'MOVIZLAND'	:['https://movizland.online','https://m.movizland.online']
 			,'PANET'		:['http://www.panet.co.il']
-			,'SERIES4WATCH'	:['https://series4watch.net']  # 'https://s4w.tv'
+			#,'SERIES4WATCH'	:['https://series4watch.net']  # 'https://s4w.tv'
 			,'SHAHID4U'		:['https://shahid4u.net']
 			,'SHOOFMAX'		:['https://shoofmax.com','https://static.shoofmax.com']
 			,'YOUTUBE'		:['https://www.youtube.com']
@@ -164,33 +164,42 @@ class CustomePlayer(xbmc.Player):
 class CustomThread():
 	def __init__(self,showDialogs=False):
 		self.showDialogs = showDialogs
-		self.statusDICT,self.resultsDICT,self.elpasedtimeDICT = {},{},{}
 		self.finishedLIST,self.failedLIST = [],[]
+		self.statusDICT,self.resultsDICT = {},{}
+		self.starttimeDICT,self.finishtimeDICT,self.elpasedtimeDICT = {},{},{}
+		#sys.stderr.write('9999: 0000:'+str(self.statusDICT.values()))
 	def start_new_thread(self,id,func,*args):
-		if self.showDialogs: xbmcgui.Dialog().notification('',str(id))
+		id = str(id)
 		self.statusDICT[id] = 'running'
+		if self.showDialogs: xbmcgui.Dialog().notification('',id)
 		thread.start_new_thread(self.run,(id,func,args))
-		time.sleep(0.010)
-	def wait_finishing_all_threads(self):
-		while 'running' in self.statusDICT.values():
-			time.sleep(0.100)
-		#print 'all threads finished'
+		#sys.stderr.write('9999: 1111:'+str(self.statusDICT.values()))
 	def run(self,id,func,args):
-		starttime = time.time()
+		id = str(id)
+		self.starttimeDICT[id] = time.time()
 		try:
+			#sys.stderr.write('9999: 6666:'+str(self.statusDICT.values()))
 			self.resultsDICT[id] = func(*args)
-			self.statusDICT[id] = 'finished'
+			#sys.stderr.write('9999: 7777:'+str(self.statusDICT.values()))
 			self.finishedLIST.append(id)
+			self.statusDICT[id] = 'finished'
+			#sys.stderr.write('9999: 2222:'+str(self.statusDICT.values()))
 		except Exception as err:
-			self.statusDICT[id] = 'failed'
-			self.failedLIST.append(id)
 			#traceback.print_exc(file=sys.stderr)
 			errortrace = traceback.format_exc()
 			sys.stderr.write(errortrace)
 			self.resultsDICT[id] = '___Error___:-1:Threads function "'+func.func_name+'" failed due to '+str(err)
 			self.resultsDICT[id] += '\n====================\n'+errortrace+'===================='
-		finishtime = time.time()
-		self.elpasedtimeDICT[id] = finishtime - starttime
+			self.failedLIST.append(id)
+			self.statusDICT[id] = 'failed'
+			#sys.stderr.write('9999: 3333:'+str(self.statusDICT.values()))
+		self.finishtimeDICT[id] = time.time()
+		self.elpasedtimeDICT[id] = self.finishtimeDICT[id] - self.starttimeDICT[id]
+		#sys.stderr.write('9999: 4444:'+str(self.statusDICT.values()))
+	def wait_finishing_all_threads(self):
+		while 'running' in self.statusDICT.values():
+			time.sleep(1.000)
+			#sys.stderr.write('9999: 5555:'+str(self.statusDICT.values()))
 
 def SHOW_ERRORS(code=-1,reason=''):
 	#if code==104: xbmcgui.Dialog().ok('لديك خطأ اسبابه كثيرة','يرجى منك التواصل مع المبرمج عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
@@ -203,6 +212,7 @@ def SHOW_ERRORS(code=-1,reason=''):
 			message = 'لديك خطأ DNS ومعناه تعذر ترجمة اسم الموقع الى رقمه'
 			message += ' والسبب قد يكون '+block_meessage
 		else: message = 'هذا الموقع فيه '+block_meessage
+		LOG_THIS('ERROR',LOGGING(script_name)+'   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Message: [ '+message+' ]')
 		yes = xbmcgui.Dialog().yesno('بعض المواقع لا تعمل عندك',message,'Error '+str(code)+': '+reason,'','كلا','نعم')
 		if yes==1: import SERVICES ; SERVICES.MAIN(195)
 	else:
@@ -434,8 +444,11 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 	#xbmcgui.Dialog().ok(unquote(url),source+'     cache(hours)='+str(cacheperiod/60/60))
 	#nowTEXT = time.ctime(now)
 	#xbmc.log(LOGGING(script_name)+'   opening url   Source:['+source+']   URL: [ '+url.encode('utf8')+' ]', level=xbmc.LOGNOTICE)
+	#xbmc.log('WWWW: 1111:', level=xbmc.LOGNOTICE)
 	if cacheperiod==0: return openURL(url,data,headers,showDialogs,source)
+	#xbmc.log('WWWW: 2222:', level=xbmc.LOGNOTICE)
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
+	#xbmc.log('WWWW: 3333:', level=xbmc.LOGNOTICE)
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
 	conn.text_factory = str
@@ -445,26 +458,36 @@ def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 	rows = c.fetchall()
 	#html = repr(rows[0][0])
 	conn.close()
+	#xbmc.log('WWWW: 4444:', level=xbmc.LOGNOTICE)
 	if rows:
 		#message = 'found in cache'
 		html = rows[0][0]
 		#html = base64.b64decode(html)
+		#xbmc.log('WWWW: 9999:', level=xbmc.LOGNOTICE)
 		html = zlib.decompress(html)
+		#xbmc.log('WWWW: 5555:', level=xbmc.LOGNOTICE)
 	else:
 		#message = 'not found in cache'
+		#xbmc.log('WWWW: AAAA:', level=xbmc.LOGNOTICE)
 		html = openURL(url2,data,headers,showDialogs,source)
+		#xbmc.log('WWWW: 6666:', level=xbmc.LOGNOTICE)
 		if '___Error___' not in html:
+			#xbmc.log('WWWW: BBBB:', level=xbmc.LOGNOTICE)
 			conn = sqlite3.connect(dbfile)
 			c = conn.cursor()
 			conn.text_factory = str
 			#html2 = base64.b64encode(html)
+			#xbmc.log('WWWW: CCCC:', level=xbmc.LOGNOTICE)
 			compressed = zlib.compress(html)
 			t = (now+cacheperiod,url2,str(data),str(headers),source,sqlite3.Binary(compressed))
 			c.execute("INSERT INTO htmlcache VALUES (?,?,?,?,?,?)",t)
+			#xbmc.log('WWWW: DDDD:', level=xbmc.LOGNOTICE)
 			conn.commit()
 			conn.close()
+		#xbmc.log('WWWW: 7777:', level=xbmc.LOGNOTICE)
 	#t2 = time.time()
 	#xbmcgui.Dialog().notification(message,str(int(t2-t1))+' ms')
+	#xbmc.log('WWWW: 8888:', level=xbmc.LOGNOTICE)
 	return html
 
 def openURL_requests(method,url,data='',headers='',allow_redirects=True,showDialogs='',source=''):
@@ -608,9 +631,11 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 	proxies,timeout = {},40
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
 	html,code,reason,finalURL = None,None,None,url2
+	#xbmc.log('YYYY: LLLL: [ '+url+' ]   [ '+url2+' ]', level=xbmc.LOGNOTICE)
 	if dnsurl!=None:
 		import socket
 		original_create_connection = socket.create_connection
+		#xbmc.log('YYYY: MMMM:', level=xbmc.LOGNOTICE)
 		def patched_create_connection(address,*args,**kwargs):
 			host,port = address
 			ip = DNS_RESOLVER(host,dnsurl)
@@ -621,6 +646,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 	if proxyurl!=None:
 		if headers=='': headers = { 'User-Agent' : '' }
 		elif 'User-Agent' not in headers: headers['User-Agent'] = ''
+		#xbmc.log('YYYY: NNNN:', level=xbmc.LOGNOTICE)
 		if proxyurl=='': proxyname,proxyurl = RANDOM_HTTPS_PROXY()
 		proxies = {"http":proxyurl,"https":proxyurl}
 		MyProxyHandler = urllib2.ProxyHandler(proxies)
@@ -634,18 +660,30 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 	#old_opener = urllib2._opener
 	urllib2.install_opener(opener)
 	"""
+	#xbmc.log('YYYY: OOOO:', level=xbmc.LOGNOTICE)
 	if   headers=='': headers = {}
-	if   data=='': request = urllib2.Request(url2,headers=headers)
-	elif data!='': request = urllib2.Request(url2,headers=headers,data=data)
-	#if   data=='' and headers=='': request = urllib2.Request(url2)
-	#elif data=='' and headers!='': request = urllib2.Request(url2,headers=headers)
-	#elif data!='' and headers=='': request = urllib2.Request(url2,data=data)
-	#elif data!='' and headers!='': request = urllib2.Request(url2,headers=headers,data=data)
+	#xbmc.log('YYYY: PPPP:', level=xbmc.LOGNOTICE)
+	if   data=='':
+		#xbmc.log('YYYY: QQQQ:', level=xbmc.LOGNOTICE)
+		request = urllib2.Request(url2,headers=headers)
+		#xbmc.log('YYYY: RRRR:', level=xbmc.LOGNOTICE)
+	elif data!='':
+		#xbmc.log('YYYY: SSSS:', level=xbmc.LOGNOTICE)
+		request = urllib2.Request(url2,headers=headers,data=data)
+		#xbmc.log('YYYY: TTTT:', level=xbmc.LOGNOTICE)
+	"""
+	if   data=='' and headers=='': request = urllib2.Request(url2)
+	elif data=='' and headers!='': request = urllib2.Request(url2,headers=headers)
+	elif data!='' and headers=='': request = urllib2.Request(url2,data=data)
+	elif data!='' and headers!='': request = urllib2.Request(url2,headers=headers,data=data)
+	"""
+	#xbmc.log('YYYY: 1111:   '+str(request), level=xbmc.LOGNOTICE)
 	try:
 		if proxyurl!=None or dnsurl!=None or sslurl!=None:
 			# if testing proxies then timeout=10
 			if url2=='https://www.google.com': timeout = 10
 			response = urllib2.urlopen(request,timeout=timeout)
+			#xbmc.log('YYYY: 2222:', level=xbmc.LOGNOTICE)
 		else:
 			#ctx = ssl.create_default_context()
 			#ctx.check_hostname = False
@@ -653,6 +691,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 			#ctx = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
 			ctx = ssl._create_unverified_context()
 			response = urllib2.urlopen(request,timeout=timeout,context=ctx)
+			#xbmc.log('YYYY: 3333:', level=xbmc.LOGNOTICE)
 		#urllib2.install_opener(old_opener)
 		code = response.code
 		reason = response.msg
@@ -667,12 +706,14 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		# headers & cookies
 		#		headers = response.headers
 		#		headers = response.info()
+		#xbmc.log('YYYY: 4444:', level=xbmc.LOGNOTICE)
 	except Exception as e:
 		#xbmc.log(str(dir(e)), level=xbmc.LOGNOTICE)
 		#xbmc.log(str(url), level=xbmc.LOGNOTICE)
 		#xbmc.log(str(data), level=xbmc.LOGNOTICE)
 		#xbmc.log(str(headers), level=xbmc.LOGNOTICE)
 		#xbmcgui.Dialog().ok(url,'')
+		#xbmc.log('YYYY: KKKK:', level=xbmc.LOGNOTICE)
 		if 'google-analytics' not in url2:
 			traceback.print_exc(file=sys.stderr)
 		if 'timeout' in str(type(e)).lower():
@@ -700,11 +741,15 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		if html==None:
 			if hasattr(e,'read'): html = e.read()
 			else: html = '___Error___:'+str(code)+':'+str(reason)
+		#xbmc.log('YYYY: 5555:', level=xbmc.LOGNOTICE)
+	#xbmc.log('YYYY: GGGG:', level=xbmc.LOGNOTICE)
 	htmlLower = html.lower()
 	condition1 = (code!=200 and int(code/100)*100!=300)
 	condition2 = ('cloudflare' in htmlLower and 'ray id: ' in htmlLower)
 	condition3 = ('___Error___' in htmlLower)
+	#xbmc.log('YYYY: EEEE:', level=xbmc.LOGNOTICE)
 	if condition1 or condition2 or condition3:
+		#xbmc.log('YYYY: HHHH:', level=xbmc.LOGNOTICE)
 		if condition2:
 			reason2 = 'Blocked by Cloudflare'
 			if 'recaptcha' in htmlLower: reason2 += ' using Google reCAPTCHA'
@@ -726,19 +771,32 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		if send=='yes': SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
 		"""
 		#if 'google-analytics' not in url:
+		#xbmc.log('YYYY: 8888:', level=xbmc.LOGNOTICE)
 		if code in [7,11001,10054] and dnsurl==None:
+			#xbmc.log('YYYY: IIII:', level=xbmc.LOGNOTICE)
 			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]')
 			url = url+'||MyDNSUrl='
+			#xbmc.log('YYYY: 9999:', level=xbmc.LOGNOTICE)
 			html = openURL(url,data,headers,showDialogs,source)
+			#xbmc.log('YYYY: AAAA:', level=xbmc.LOGNOTICE)
 			return html
 		if code==8 and sslurl==None:
+			#xbmc.log('YYYY: JJJJ:', level=xbmc.LOGNOTICE)
 			LOG_THIS('ERROR',LOGGING(script_name)+'   SSL failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]')
 			url = url+'||MySSLUrl='
+			#xbmc.log('YYYY: BBBB:', level=xbmc.LOGNOTICE)
 			html = openURL(url,data,headers,showDialogs,source)
+			#xbmc.log('YYYY: CCCC:', level=xbmc.LOGNOTICE)
 			return html
 		else:
+			#xbmc.log('YYYY: DDDD:', level=xbmc.LOGNOTICE)
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason :['+reason+']   Source: [ '+source+' ]'+'   URL: [ '+url.encode('utf8')+' ]')
+		#xbmc.log('YYYY: 6666:', level=xbmc.LOGNOTICE)
 		EXIT_IF_SOURCE(source,code,reason)
+		#xbmc.log('YYYY: 7777:', level=xbmc.LOGNOTICE)
+	#xbmc.log('YYYY: FFFF:', level=xbmc.LOGNOTICE)
+	#xbmc.log('YYYY: HTML'+html, level=xbmc.LOGNOTICE)
+	#xbmcgui.Dialog().ok('',html)
 	return html
 
 def SERVER(url):

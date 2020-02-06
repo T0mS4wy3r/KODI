@@ -27,11 +27,11 @@ def MAIN_MENU():
 	#addDir(menu_name+'قنوات مجهولة','LIVE_UNKNOWN',233)
 	addDir(menu_name+'فيديوهات مجهولة','VOD_UNKNOWN',233)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addDir(menu_name+'قنوات مصنفة من أسمائها','LIVE',233)
-	addDir(menu_name+'فيديوهات مصنفة من أسمائها','VOD',233)
+	addDir(menu_name+'قنوات مصنفة من أسمائها','LIVE_FROM_NAME',233)
+	addDir(menu_name+'فيديوهات مصنفة من أسمائها','VOD_FROM_NAME',233)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addDir(menu_name+'قنوات بدون تغيير','LIVE_NOT_SORTED',233)
-	addDir(menu_name+'فيديوهات بدون تغيير','VOD_NOT_SORTED',233)
+	addDir(menu_name+'القنوات الاصلية بدون تغيير','LIVE_ORIGINAL',233)
+	addDir(menu_name+'الفيديوهات الاصلية بدون تغيير','VOD_ORIGINAL',233)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -41,8 +41,7 @@ def GROUPS(TYPE,GROUP):
 	if streams=='EXIT': return
 	groups,unique,logos = [],[],[]
 	for dict in streams:
-		if TYPE in ['LIVE','VOD']: groups.append(dict['lang'])
-		else: groups.append(dict['group'])
+		groups.append(dict['group'])
 		logos.append(dict['img'])
 	z = zip(groups,logos)
 	z = sorted(z, reverse=False, key=lambda key: key[0])
@@ -58,7 +57,7 @@ def GROUPS(TYPE,GROUP):
 			title = group2
 			if title in unique: continue
 			unique.append(title)
-			if GROUP=='' and TYPE!='VOD_NOT_SORTED': img = ''
+			if GROUP=='' and TYPE!='VOD_ORIGINAL': img = ''
 			if title=='!!__UNKNOWN__!!': img = ''
 			if TYPE!='VOD_SERIES' or GROUP=='' or title2 in GROUP:
 				addDir(menu_name+title,TYPE,234,img,'',group)
@@ -69,8 +68,7 @@ def ITEMS(TYPE,GROUP):
 	#xbmcgui.Dialog().ok(TYPE,GROUP)
 	streams = GET_STREAMS(TYPE)
 	for dict in streams:
-		if TYPE in ['LIVE','VOD']: group = dict['lang']
-		else: group = dict['group']
+		group = dict['group']
 		if group==GROUP:
 			title = dict['title']
 			url = dict['url']
@@ -111,7 +109,7 @@ def CREATE_ALL_FILES():
 	iptvURL = settings.getSetting('iptv.url')
 	try: m3u_text = openURL_cached(REGULAR_CACHE,iptvURL,'','','','IPTV-CREATE_ALL_FILES-1st')
 	except:
-		xbmcgui.Dialog().ok('IPTV','جهازك لا يحتوي على ملفات IPTV','يجب عليك: اولا الضغط على رابط اضافة حسابك ثم ثانيا الضغط على رابط جلب الملفات')
+		xbmcgui.Dialog().ok('فشل في جلب ملفات IPTV','يجب عليك: اولا الضغط على رابط اضافة حسابك ثم ثانيا الضغط على رابط جلب الملفات')
 		LOG_THIS('ERROR',LOGGING(script_name)+'   No IPTV files')
 		return
 	filesLIST = []
@@ -149,23 +147,34 @@ def CREATE_ALL_FILES():
 	streams_not_sorted = CREATE_STREAMS(m3u_text)
 	streams_sorted = sorted(streams_not_sorted, reverse=False, key=lambda key: key['title'].lower())
 	grouped_streams = {}
-	types = ['ALL','LIVE_NOT_SORTED','VOD_NOT_SORTED','LIVE','VOD','LIVE_GROUPED','LIVE_UNKNOWN','VOD_MOVIES','VOD_SERIES','VOD_UNKNOWN']
+	types = ['ALL','LIVE_ORIGINAL','VOD_ORIGINAL','LIVE_FROM_NAME','VOD_FROM_NAME','LIVE_GROUPED','LIVE_UNKNOWN','VOD_MOVIES','VOD_SERIES','VOD_UNKNOWN']
 	for type in types: grouped_streams[type] = []
 	for dict in streams_sorted:
+		grouped_streams['ALL'].append(dict)
+		type = dict['type']
 		dict2 = dict.copy()
-		type = dict2['type']
 		del dict2['type']
-		grouped_streams['ALL'].append(dict2)
-		if 'LIVE' in type: grouped_streams['LIVE'].append(dict2)
-		elif 'VOD' in type: grouped_streams['VOD'].append(dict2)
-		grouped_streams[type].append(dict2)
-		#if 'AWALEM KHAFIYA S01 E03' in dict2['title']:
-		#	xbmcgui.Dialog().ok(dict2['title'],'')
+		del dict2['org_title']
+		del dict2['org_group']
+		dict3 = dict2.copy()
+		dict4 = dict2.copy()
+		del dict3['lang']
+		grouped_streams[type].append(dict3)
+		dict4['group'] = dict4['lang']
+		del dict4['lang']
+		if 'LIVE' in type: grouped_streams['LIVE_FROM_NAME'].append(dict4)
+		elif 'VOD' in type: grouped_streams['VOD_FROM_NAME'].append(dict4)
 	for dict in streams_not_sorted:
 		type = dict['type']
-		del dict['type']
-		if 'LIVE' in type: grouped_streams['LIVE_NOT_SORTED'].append(dict)
-		elif 'VOD' in type: grouped_streams['VOD_NOT_SORTED'].append(dict)
+		dict2 = dict.copy()
+		dict2['title'] = dict2['org_title']
+		dict2['group'] = dict2['org_group'].replace('__MOVIES__','').replace('__SERIES__','')
+		del dict2['type']
+		del dict2['org_title']
+		del dict2['org_group']
+		del dict2['lang']
+		if 'LIVE' in type: grouped_streams['LIVE_ORIGINAL'].append(dict2)
+		elif 'VOD' in type: grouped_streams['VOD_ORIGINAL'].append(dict2)
 	"""
 	for dict in streams_sorted:
 		dict3 = dict.copy()
@@ -215,6 +224,7 @@ def CREATE_STREAMS(m3u_text):
 		for key,value in params:
 			key = key.replace('"','').strip(' ')
 			dict[key] = value.strip(' ')
+		dict['org_title'] = title
 		if title=='':
 			if 'name' in dict.keys(): title = dict['name']
 			else: title = '!!__UNKNOWN__!!'
@@ -225,6 +235,7 @@ def CREATE_STREAMS(m3u_text):
 		else: dict['img'] = ''
 		group = ''
 		if 'group' in dict.keys(): group = dict['group']
+		dict['org_group'] = group
 		if group=='': group = '!!__UNKNOWN__!!'
 		if '.mp4' in url or '.mkv' in url or '.avi' in url or '.mp3' in url or '__SERIES__' in group or '__MOVIES__' in group:
 			if '__SERIES__' in group: type = 'VOD_SERIES'
@@ -249,19 +260,21 @@ def CREATE_STREAMS(m3u_text):
 		title = dict['title'].replace('||','|').replace('::',':').replace('--','-')
 		title = title.replace('[[','[').replace(']]',']')
 		title = title.replace('((','(').replace('))',')')
-		title0 = title[0]
-		title2 = title[1:].strip(' ')
-		if title0==':' or title0=='|' or title0=='-' or title0=='[' or title0=='(': title0 = ''
-		separator = re.findall('[\:\|\-\]\)]',title2,re.DOTALL)
-		if separator:
-			separator = separator[0]
-			part1,part2 = title2.split(separator,1)
-			part1 = title0+part1
-			dict['title'] = part1.strip(' ').upper()+' '+separator+' '+part2.strip(' ')#.title()
-			dict['lang'] = part1.strip(' ').upper()
+		separators = re.findall(' *[\:\|\-\[\]\(\)] *',title,re.DOTALL)
+		if separators:
+			for sep in separators:
+				sep2 = ' '+sep.strip(' ')+' '
+				title = title.replace(sep,sep2)
+				#if 'NW INFO' in title: xbmcgui.Dialog().ok(title,'66'+sep2+'77')
+			title = title.replace('   ',' ').replace('  ',' ')
+			title = title.strip(' ').strip('|').strip('-').strip(':').strip('(').strip('[')
+			dict['title'] = title.strip(' ').upper()
+			dict['lang'] = title.split(separators[0],1)[0].strip(' ').upper()
 		else:
-			dict['title'] = title#.title()
+			dict['title'] = title.strip(' ').upper()
 			dict['lang'] = '!!__UNKNOWN__!!'
+		#if 'AL - ' in dict['title']: dict['title'] = dict['title'].replace('AL - ','AL ')
+		#if 'EL - ' in dict['title']: dict['title'] = dict['title'].replace('EL - ','EL ')
 		streams.append(dict)
 	return streams
 
@@ -281,8 +294,8 @@ def GET_STREAMS(TYPE):
 		return 'EXIT'
 
 def SEARCH(search=''):
-	searchTitle = ['بحث في جميع ملفات IPTV','بحث عن قنوات IPTV','بحث عن فيديوهات IPTV']
-	typeList = ['ALL','LIVE','VOD']
+	searchTitle = ['الكل','قنوات','فيديوهات']
+	typeList = ['ALL','LIVE_FROM_NAME','VOD_FROM_NAME']
 	selection = xbmcgui.Dialog().select('أختر البحث المناسب', searchTitle)
 	if selection == -1: return
 	type = typeList[selection]
@@ -303,10 +316,8 @@ def SEARCH(search=''):
 			url = dict['url']
 			img = dict['img']
 			if '.mp4' in url or '.mkv' in url or '.avi' in url or '.mp3' in url:
-				#type = 'VOD'
 				addLink(menu_name+title,url,236,img,'','IsPlayable=yes')
 			else:
-				#type = 'LIVE'
 				addLink(menu_name+title,url,235,img,'','IsPlayable=no')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return

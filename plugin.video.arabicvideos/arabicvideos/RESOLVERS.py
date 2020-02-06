@@ -577,17 +577,19 @@ def AKOAM(url,named):
 		website = WEBSITES['AKOAM'][0]
 		response = openURL_requests_cached(REGULAR_CACHE,'GET',website,'','',False,'','RESOLVERS-AKOAM-2nd')
 		relocateURL = response.headers['Location']
-		url2 = url2.replace('https://akoam.net/',relocateURL)
-		headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' , 'Referer':url2 }
-		response = openURL_requests_cached(SHORT_CACHE,'POST', url2, '', headers, False,'','RESOLVERS-AKOAM-3rd')
+		serverOLD = url2.split('/')[2]
+		serverNEW = relocateURL.split('/')[2]
+		url3 = url2.replace(serverOLD,serverNEW)
+		headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' , 'Referer':url3 }
+		response = openURL_requests_cached(SHORT_CACHE,'POST', url3, '', headers, False,'','RESOLVERS-AKOAM-3rd')
 		html = response.text
-		#xbmc.log(html)
-		#xbmcgui.Dialog().ok(url2,html)
+		#xbmc.log(str(url3), level=xbmc.LOGERROR)
 		items = re.findall('direct_link":"(.*?)"',html,re.DOTALL|re.IGNORECASE)
 		if not items:
 			items = re.findall('<iframe.*?src="(.*?)"',html,re.DOTALL|re.IGNORECASE)
 			if not items:
 				items = re.findall('<embed.*?src="(.*?)"',html,re.DOTALL|re.IGNORECASE)
+		#xbmcgui.Dialog().ok(str(items),html)
 		if items:
 			link = items[0].replace('\/','/')
 			link = link.rstrip('/')

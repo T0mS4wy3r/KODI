@@ -1,11 +1,13 @@
 ﻿
 
+v6.0.3	2020-02-05
+Fixed IPTV categories
+Fixed AKOAM resolver
+
+
 v6.0.2	2020-01-17
-Fixed kodi version report
-
-
 v6.0.1	2020-01-17
-Fixed kodi version report
+Canceled version report threading
 
 
 v6.0.0	2020-01-17

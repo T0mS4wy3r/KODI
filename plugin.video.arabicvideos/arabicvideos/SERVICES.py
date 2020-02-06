@@ -305,11 +305,11 @@ def GLOBAL_SEARCH_MENU(search=''):
 	addDir('12. [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
 	addDir('13. [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
 	addDir('14. [COLOR FFC89008]ARL  [/COLOR]'+search+' - موقع عرب ليونز','',209,'','',search)
-	addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
-	addDir('15. [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',88,'','',search) # 89
-	addDir('16. [COLOR FFC89008]SFW  [/COLOR]'+search+' - موقع سيريس فور وتش','',218,'','',search) # 219
-	addDir('17. [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند','',188,'','',search)# 189
-	addDir('18. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',128,'','',search)# 129
+	#addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
+	#addDir('15. [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',88,'','',search) # 89
+	#addDir('16. [COLOR FFC89008]SFW  [/COLOR]'+search+' - موقع سيريس فور وتش','',218,'','',search) # 219
+	#addDir('17. [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند','',188,'','',search)# 189
+	#addDir('18. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',128,'','',search)# 129
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -328,9 +328,13 @@ def TV_CHANNELS_MENU():
 	return
 
 def VERSIONS():
-	xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
-	threads = CustomThread()
-	threads.start_new_thread(1,LATEST_KODI)
+	#xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
+	#xbmc.log('BBBB: 1111:', level=xbmc.LOGNOTICE)
+	#threads22 = CustomThread()
+	#xbmc.log('BBBB: 2222:', level=xbmc.LOGNOTICE)
+	#threads22.start_new_thread('22',LATEST_KODI)
+	#xbmc.log('BBBB: 3333:', level=xbmc.LOGNOTICE)
+	#xbmcgui.Dialog().notification('thread submitted','')
 	#	url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
 	#   url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
 	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
@@ -355,8 +359,9 @@ def VERSIONS():
 	message3 += '\n\n' + 'ملفات التنصيب مع التعليمات متوفرة على هذا الرابط'
 	message3 += '\n' + 'https://github.com/emadmahdi/KODI'
 	xbmcgui.Dialog().textviewer(message1,message2+message3)
-	#threads.wait_finishing_all_threads()
-	return ''
+	LATEST_KODI()
+	#threads22.wait_finishing_all_threads()
+	return
 
 def RANDOM():
 	headers = { 'User-Agent' : '' }
@@ -398,11 +403,16 @@ def LATEST_KODI():
 	#	http://mirror.math.princeton.edu/pub/xbmc/releases/windows/win64
 	#	http://mirrors.mit.edu/kodi/releases/windows/win64'
 	url = 'http://mirrors.kodi.tv/releases/windows/win64/'
+	#xbmc.log('ZZZZ: 1111:', level=xbmc.LOGNOTICE)
 	html = openURL_cached(REGULAR_CACHE,url,'','','','SERVICES-LATEST_KODI-1st')
+	#html = openURL_requests(url,'','','','SERVICES-LATEST_KODI-1st')
+	#xbmc.log('ZZZZ: 2222:', level=xbmc.LOGNOTICE)
 	latest_KODI_VER = re.findall('title="kodi-(.*?)-',html,re.DOTALL)[0]
+	#xbmc.log('ZZZZ: 3333:', level=xbmc.LOGNOTICE)
 	current_KODI_VER = xbmc.getInfoLabel( "System.BuildVersion" ).split(' ')[0]
-	message4a = 'الاصدار الاخير لكودي المتوفر الان هو :   ' + latest_KODI_VER
-	message4b = 'الاصدار الذي انت تستخدمه لكودي هو :   ' + current_KODI_VER
+	#xbmc.log('ZZZZ: 4444:', level=xbmc.LOGNOTICE)
+	message4a = 'اصدار كودي الاخير المتوفر الان هو :   ' + latest_KODI_VER
+	message4b = 'اصدار كودي الذي انت تستخدمه هو :   ' + current_KODI_VER
 	xbmcgui.Dialog().ok('كودي',message4a,message4b)
 	return
 
