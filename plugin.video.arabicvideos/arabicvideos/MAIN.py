@@ -52,21 +52,30 @@ conn.commit()
 conn.close()
 
 
-args = { 'mode':-1 , 'url':'' , 'text':'' , 'page':'' }
+if newdb:
+	allFiles = str(os.listdir(addoncachefolder))
+	if 'iptv_' in allFiles and '_.streams' in allFiles:
+		xbmcgui.Dialog().ok('IPTV','تم مسح الكاش أو تم تحديث البرنامج فاذا كنت تستخدم خدمة IPTV فاذن انت تحتاج ان تجلب ملفات IPTV جديدة')
+		import IPTV
+		IPTV.CREATE_ALL_FILES()
+
+
+args = { 'mode':'MAIN_MENU' , 'url':'' , 'text':'' , 'page':'' }
 line = addon_path
 if '?' in line:
 	params = line[1:].split('&')
 	for param in params:
 		key,value = param.split('=',1)
 		args[key] = value
-mode=int(args['mode'])
-url=urllib2.unquote(args['url'])
-text=urllib2.unquote(args['text'])
-page=urllib2.unquote(args['page'])
+mode = args['mode']
+if mode.isdigit(): mode = int(mode)
+url = urllib2.unquote(args['url'])
+text = urllib2.unquote(args['text'])
+page = urllib2.unquote(args['page'])
 #xbmcgui.Dialog().ok('args',str(args))
 
 
-if mode==-1:
+if mode=='MAIN_MENU':
 	#addLink('Testing - watched enabled','',179,'','','yes','','','IsPlayable=yes')
 	#addLink('Testing - watched disabled','',179,'','','no','','','IsPlayable=no')
 	addDir(' [COLOR FFC89008] 1.  [/COLOR]'+'للتواصل مع المبرمج','',196)

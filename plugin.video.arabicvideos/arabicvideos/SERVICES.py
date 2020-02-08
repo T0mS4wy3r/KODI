@@ -328,11 +328,11 @@ def TV_CHANNELS_MENU():
 	return
 
 def VERSIONS():
-	#xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
+	xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
 	#xbmc.log('BBBB: 1111:', level=xbmc.LOGNOTICE)
-	#threads22 = CustomThread()
+	threads22 = CustomThread()
 	#xbmc.log('BBBB: 2222:', level=xbmc.LOGNOTICE)
-	#threads22.start_new_thread('22',LATEST_KODI)
+	threads22.start_new_thread('22',LATEST_KODI)
 	#xbmc.log('BBBB: 3333:', level=xbmc.LOGNOTICE)
 	#xbmcgui.Dialog().notification('thread submitted','')
 	#	url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
@@ -359,7 +359,7 @@ def VERSIONS():
 	message3 += '\n\n' + 'ملفات التنصيب مع التعليمات متوفرة على هذا الرابط'
 	message3 += '\n' + 'https://github.com/emadmahdi/KODI'
 	xbmcgui.Dialog().textviewer(message1,message2+message3)
-	LATEST_KODI()
+	#LATEST_KODI()
 	#threads22.wait_finishing_all_threads()
 	return
 

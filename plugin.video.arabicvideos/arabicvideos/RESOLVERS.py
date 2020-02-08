@@ -575,8 +575,10 @@ def AKOAM(url,named):
 		titleLIST,linkLIST = CATCHIS(url2)
 	else:
 		website = WEBSITES['AKOAM'][0]
-		response = openURL_requests_cached(REGULAR_CACHE,'GET',website,'','',False,'','RESOLVERS-AKOAM-2nd')
-		relocateURL = response.headers['Location']
+		response = openURL_requests_cached(REGULAR_CACHE,'GET',website,'','',True,'','RESOLVERS-AKOAM-2nd')
+		relocateURL = response.url
+		#relocateURL = response.headers['Location']
+		#xbmcgui.Dialog().ok(response.url,website)
 		serverOLD = url2.split('/')[2]
 		serverNEW = relocateURL.split('/')[2]
 		url3 = url2.replace(serverOLD,serverNEW)

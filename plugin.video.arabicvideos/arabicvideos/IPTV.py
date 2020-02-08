@@ -89,12 +89,12 @@ def ADD_ACCOUNT():
 	xbmcgui.Dialog().ok('IPTV','البرنامج يحتاج اشتراك IPTV من نوع رابط التحميل m3u من اي شركة IPTV والافضل ان يحتوي الرابط في نهايته على هذه الكلمات','&type=m3u_plus')
 	iptvURL = settings.getSetting('iptv.url')
 	if iptvURL!='':
-		answer = xbmcgui.Dialog().yesno(iptvURL,'هذا هو رابط IPTV المسجل في البرنامج هل تريد تغييره ؟')
+		answer = xbmcgui.Dialog().yesno(iptvURL,'هذا هو رابط IPTV المسجل في البرنامج هل تريد تغييره ؟','','','كلا','نعم')
 		if not answer: return
 	iptvURL = KEYBOARD('اكتب رابط IPTV كاملا')
 	if iptvURL=='': return
 	else:
-		answer = xbmcgui.Dialog().yesno(iptvURL,'هل تريد استخدام هذا الرابط بدلا من الرابط القديم ؟')
+		answer = xbmcgui.Dialog().yesno(iptvURL,'هل تريد استخدام هذا الرابط بدلا من الرابط القديم ؟','','','كلا','نعم')
 		if not answer: return
 	settings.setSetting('iptv.url',iptvURL)
 	xbmcgui.Dialog().ok(iptvURL,'تم تغير رابط اشتراك IPTV الى هذا الرابط الجديد')
@@ -102,7 +102,7 @@ def ADD_ACCOUNT():
 	return
 
 def CREATE_ALL_FILES():
-	answer = xbmcgui.Dialog().yesno('IPTV','هل تريد تغير ملفات IPTV الان وجلب ملفات جديدة ؟')
+	answer = xbmcgui.Dialog().yesno('IPTV','هل تريد تغير ملفات IPTV الان وجلب ملفات جديدة ؟','','','كلا','نعم')
 	if not answer: return
 	settings = xbmcaddon.Addon(id=addon_id)
 	iptvFile = settings.getSetting('iptv.file')

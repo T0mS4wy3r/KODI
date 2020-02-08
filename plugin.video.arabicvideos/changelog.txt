@@ -1,5 +1,12 @@
 ﻿
 
+v6.0.4	2020-02-08
+Canceled threading wait (report of versions)
+Added update IPTV files after addon upgrade
+Fixed AKOAM resolver
+Added more YOUTUBE menu items
+
+
 v6.0.3	2020-02-05
 Fixed IPTV categories
 Fixed AKOAM resolver
