@@ -22,12 +22,17 @@
 
 
 
-<addon id="repository.emad" name="EMAD Repository" version="2.0.4" provider-name="EMAD MAHDI">
+<addon id="repository.emad" name="EMAD Repository" version="2.1.0" provider-name="EMAD MAHDI">
 	<extension point="xbmc.addon.repository" name="EMAD Repository">
 		<dir>
 			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/addons.xml</info>
 			<checksum>https://github.com/emadmahdi/KODI/raw/master/addons.xml.md5</checksum>
 			<datadir zip="true">https://github.com/emadmahdi/KODI/raw/master/ADDONS/</datadir>
+		</dir>
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS/</datadir>
 		</dir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
