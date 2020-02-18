@@ -22,12 +22,22 @@
 
 
 
-<addon id="repository.emad" name="EMAD Repository" version="2.0.3" provider-name="EMAD MAHDI">
+<addon id="repository.emad" name="EMAD Repository" version="3.0.0" provider-name="EMAD MAHDI">
 	<extension point="xbmc.addon.repository" name="EMAD Repository">
 		<dir>
-			<info compressed="false">https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml</info>
-			<checksum>https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml.md5</checksum>
-			<datadir zip="true">https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS/</datadir>
+			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/addons.xml</info>
+			<checksum>https://github.com/emadmahdi/KODI/raw/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://github.com/emadmahdi/KODI/raw/master/</datadir>
+		</dir>
+		<dir>
+			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml</info>
+			<checksum>https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml.md5</checksum>
+			<datadir zip="true">https://github.com/emadmahdi/KODI/raw/master/ADDONS/</datadir>
+		</dir>
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/</datadir>
 		</dir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
@@ -429,21 +439,6 @@
         <source>https://github.com/jdf76/plugin.video.youtube</source>
         <reuselanguageinvoker>true</reuselanguageinvoker>
     </extension>
-</addon>
-
-
-
-<addon id="repository.husham.com" name="Husham.com Repo" version="1.1.0004" provider-name="husham.com">
-	<extension point="xbmc.addon.repository" name="Husham.com Repository">
-		<info compressed="false">https://raw.githubusercontent.com/hmemar/husham.com/master/repository/addons.xml</info>
-		<checksum>https://raw.githubusercontent.com/hmemar/husham.com/master/repository/addons.xml.md5</checksum>
-		<datadir zip="true">https://raw.githubusercontent.com/hmemar/husham.com/master/zip</datadir>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary>The Husham.com Repo</summary>
-		<description>Download and install addons from husham.com repo</description>
-		<platform>all</platform>
-	</extension>
 </addon>
 
 
