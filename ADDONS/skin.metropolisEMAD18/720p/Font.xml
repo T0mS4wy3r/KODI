@@ -3,11 +3,6 @@
 	<fontset id="Default">
 		<!-- Metropolis Fonts -->
 		<font>
-			<name>MediaFlagsResolution</name>
-			<filename>Arial.ttf</filename>
-			<size>20</size>
-		</font>
-		<font>
 			<name>VerySmallText</name>
 			<filename>Arial.ttf</filename>
 			<size>20</size>

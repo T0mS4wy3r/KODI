@@ -1521,7 +1521,7 @@
 			</control>
 			<AAAcontrol type="progress" id="23">
 				<description>ProgressbarCache</description>
-				<posx>300</posx>
+				<posx>295</posx>
 				<posy>632</posy>
 				<width>960</width>
 				<height>15</height>
@@ -1535,7 +1535,7 @@
 			</AAAcontrol>
 			<AAAcontrol type="progress" id="23">
 				<description>Progressbar</description>
-				<posx>300</posx>
+				<posx>295</posx>
 				<posy>632</posy>
 				<width>960</width>
 				<height>15</height>
@@ -1550,7 +1550,7 @@
 			</AAAcontrol>
 			<AAAcontrol type="slider" id="87">
 				<description>Seek Slider</description>
-				<posx>300</posx>
+				<posx>295</posx>
 				<posy>632</posy>
 				<width>960</width>
 				<height>15</height>
@@ -1584,7 +1584,7 @@
 			<!-- Title -->
 			<control type="fadelabel">
 				<posx>300</posx>
-				<posy>610</posy>
+				<posy>580</posy>
 				<width>700</width>
 				<height>40</height>
 				<font>METF_TitleTextMedium</font>
@@ -1596,12 +1596,12 @@
 				<scrollspeed>40</scrollspeed>
 				<scroll>true</scroll>
 				<label>$VAR[VideoPlayerTitle]</label>
-				<AAAanimation effect="slide" end="0,25" condition="[!VideoPlayer.Content(MusicVideos) + String.IsEmpty(VideoPlayer.Tagline) + !Integer.IsGreater(Player.ChapterCount,1)] | [VideoPlayer.Content(MusicVideos) + String.IsEmpty(VideoPlayer.Artist) + String.IsEmpty(VideoPlayer.Album)]">Conditional</AAAanimation>
+				<animation effect="slide" end="0,25" condition="[!VideoPlayer.Content(MusicVideos) + String.IsEmpty(VideoPlayer.Tagline) + !Integer.IsGreater(Player.ChapterCount,1)] | [VideoPlayer.Content(MusicVideos) + String.IsEmpty(VideoPlayer.Artist) + String.IsEmpty(VideoPlayer.Album)]">Conditional</animation>
 			</control>
 			<!-- Chapter Info, Movie Tagline, or Music Video Artist/Album -->
 			<AAAcontrol type="fadelabel">
 				<posx>300</posx>
-				<posy>588</posy>
+				<posy>587</posy>
 				<width>700</width>
 				<height>30</height>
 				<font>METF_PlotText</font>
@@ -1612,7 +1612,7 @@
 				<scrollout>false</scrollout>
 				<pauseatend>3800</pauseatend>
 				<scrollspeed>40</scrollspeed>
-				<label>AAA$VAR[VideoPlayerTitle2]</label>
+				<label>$VAR[VideoPlayerTitle2]</label>
 			</AAAcontrol>
 			<control type="group">
 				<visible>!String.StartsWith(Player.FolderPath,http)</visible>

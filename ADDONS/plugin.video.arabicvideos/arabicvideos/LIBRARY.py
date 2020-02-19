@@ -890,8 +890,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 			if '|' not in url: url = url+'|User-Agent=&'
 			else: url = url+'&User-Agent=&'
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   Got final url   URL: [ '+url.encode('utf8')+' ]')
-	play_item = xbmcgui.ListItem()
-	#play_item = xbmcgui.ListItem(path=url)
+	play_item = xbmcgui.ListItem(path=url)
 	play_item.setProperty('inputstreamaddon', '')
 	play_item.setMimeType('mime/x-type')
 	myplayer = CustomePlayer()
@@ -910,8 +909,8 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		#title = xbmc.getInfoLabel('ListItem.Title')
 		#label = xbmc.getInfoLabel('ListItem.Label')
 		#play_item.setInfo( "video", { "Title": label } )
+		#play_item.setPath(url)
 		#play_item.setInfo('Video', {'duration': 3600})
-		play_item.setPath(url)
 		xbmcplugin.setResolvedUrl(addon_handle, True, play_item)
 	else:
 		label = xbmc.getInfoLabel('ListItem.Label')

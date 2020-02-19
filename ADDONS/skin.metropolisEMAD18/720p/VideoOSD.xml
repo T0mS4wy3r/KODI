@@ -2,9 +2,9 @@
 <window>
 	<defaultcontrol always="true">410</defaultcontrol>
 	<controls>
-		<AAAcontrol type="panel">
+		<control type="panel">
 			<content>plugin://skin.metropolisEMAD18?mode=2&text=$INFO[Player.FileNameAndPath]</content>
-		</AAAcontrol>
+		</control>
 		<control type="button" id="410">
 			<onfocus>Dialog.Close(FullscreenInfo)</onfocus>
 			<onfocus condition="!Skin.HasSetting(OneButtonSubtitles) + String.Contains(Skin.String(DefaultOSD),714)">SetFocus(14)</onfocus>

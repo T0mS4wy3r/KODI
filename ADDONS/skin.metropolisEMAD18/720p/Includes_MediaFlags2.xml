@@ -99,34 +99,6 @@
 			<control type="group">
 				<width>90</width>
 				<height>56</height>
-				<control type="label">
-					<top>-3</top>
-					<left>10</left>
-					<align>center</align>
-					<label>[B]$INFO[Player.Process(VideoWidth)][/B]</label>
-					<font>MediaFlagsResolution</font>
-					<textcolor>MediaDetailsInfo</textcolor>
-				</control>
-				<control type="label">
-					<top>18</top>
-					<left>10</left>
-					<align>center</align>
-					<label>[B]$INFO[Player.Process(VideoHeight)][/B]</label>
-					<font>MediaFlagsResolution</font>
-					<textcolor>MediaDetailsInfo</textcolor>
-				</control>
-				<control type="image">
-					<width>104</width>
-					<height>46</height>
-					<texture>flags/flag_frame.png</texture>
-					<colordiffuse>MediaFlagBoxDiffuse</colordiffuse>
-				</control>
-			</control>
-
-			<!-- Original Video Resolution -->
-			<AAAcontrol type="group">
-				<width>90</width>
-				<height>56</height>
 				<control type="image">
 					<width>95</width>
 					<height>48</height>
@@ -142,7 +114,7 @@
 					<texture>flags/flag_frame.png</texture>
 					<colordiffuse>MediaFlagBoxDiffuse</colordiffuse>
 				</control>
-			</AAAcontrol>
+			</control>
 
 			<!-- Video Aspect -->
 			<control type="group">

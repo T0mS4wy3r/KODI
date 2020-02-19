@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="skin.metropolisEMAD18" version="2.2.0" name="Metropolis EMAD 18" provider-name="EMAD MAHDI">
+<addon id="skin.metropolisEMAD18" version="2.1.1" name="Metropolis EMAD 18" provider-name="EMAD MAHDI">
 	<requires>
 		<import addon="xbmc.gui" version="5.14.0"/>
 		<import addon="script.skinshortcuts" version="1.0.6"/>
@@ -9,7 +9,6 @@
 		<import addon="resource.images.studios.coloured" version="0.0.8"/>
 		<import addon="resource.images.weatherfanart.prairie" version="0.0.5"/>
 		<import addon="resource.images.weathericons.coloured" version="0.0.6"/>
-		<import addon="repository.emad" version="3.0.0" optional="true"/>
 	</requires>
 	<extension point="xbmc.gui.skin" debugging="false" effectslowdown="0.75">
 		<res width="1280" height="720" aspect="16:9" default="true" folder="720p"/>
@@ -32,7 +31,6 @@
 		<summary lang="fr_CA">Un mélange de rétro et de moderne</summary>
 		<summary lang="fr_FR">Un mélange de Rétro et de Moderne.</summary>
 		<summary lang="gl_ES">Unha Mestura do Retro e o Moderno.</summary>
-		<summary lang="he_IL">שילוב של רטרו ומודרני.</summary>
 		<summary lang="hu_HU">Eden-re optimalizálva. A retro és modern stílus ötvözete. Az eredeti Metropolis felszín készítője: Amra -  Stoli, jingai, Macgyver folytatja.</summary>
 		<summary lang="it_IT">Un Mix di Retrò e Moderno.</summary>
 		<summary lang="ko_KR">복고풍과 모던함의 혼합</summary>
