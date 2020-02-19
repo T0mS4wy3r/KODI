@@ -131,10 +131,9 @@ def CREATE_ALL_FILES():
 	if username and password: 
 		username = username[0]
 		password = password[0]
-		host_port = iptvURL.split('/')[2]
-		if ':' in host_port: host,port = host_port.split(':')
-		else: host,port = host_port,'80'
-		seriesCategoriesURL = host+':'+port+'/player_api.php?username='+username+'&password='+password+'&action=get_series_categories'
+		url_parts = iptvURL.split('/')
+		server = url_parts[0]+'//'+url_parts[2]
+		seriesCategoriesURL = server+'/player_api.php?username='+username+'&password='+password+'&action=get_series_categories'
 		series_groups = openURL_cached(REGULAR_CACHE,seriesCategoriesURL,'',headers,'','IPTV-CREATE_ALL_FILES-2nd')
 		series_groups = re.findall('category_name":"(.*?)"',series_groups,re.DOTALL)
 		if series_groups:
@@ -142,7 +141,7 @@ def CREATE_ALL_FILES():
 			for group in series_groups:
 				group = group.replace('\/','/').decode('unicode_escape').encode('utf8')
 				m3u_text = m3u_text.replace('group="'+group+'"','group="__SERIES__'+group+'"')
-		vodCategoriesURL = host+':'+port+'/player_api.php?username='+username+'&password='+password+'&action=get_vod_categories'
+		vodCategoriesURL = server+'/player_api.php?username='+username+'&password='+password+'&action=get_vod_categories'
 		vod_groups = openURL_cached(REGULAR_CACHE,vodCategoriesURL,'',headers,'','IPTV-CREATE_ALL_FILES-3rd')
 		vod_groups = re.findall('category_name":"(.*?)"',vod_groups,re.DOTALL)
 		if vod_groups:

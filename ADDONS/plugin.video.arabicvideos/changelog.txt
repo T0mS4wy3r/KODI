@@ -1,4 +1,10 @@
 ﻿
+
+v6.0.6	2020-02-19
+Fixed creating IPTV files
+Changed automatic install for tvaddons & emad repositories
+
+
 v6.0.5	2020-02-18
 Added kodi skin message
 Allowed IPTV to load the old m3u link

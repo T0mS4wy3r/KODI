@@ -16,6 +16,7 @@
 	</coordinates>
 	<controls>
 		<control type="panel">
+			<AAAcontent>plugin://plugin.video.arabicvideos?mode=1&text=$INFO[Control.GetLabel(312).index(1)]</AAAcontent>
 			<content>plugin://skin.metropolisEMAD18?mode=1&text=$INFO[Control.GetLabel(312).index(1)]</content>
 		</control>
 		<control type="group">
@@ -537,6 +538,9 @@
 						<texturefocus border="5">keyboard/KeyboardKey.png</texturefocus>
 						<AAAonfocus>RunPlugin(plugin://plugin.video.arabvideos?mode=0&text=$INFO[Control.GetLabel(312).index(1)])</AAAonfocus>
 						<AAAonfocus>RunScript(special://skin/720p/emad.py,0,$INFO[Control.GetLabel(312).index(1)])</AAAonfocus>
+						<AAAonfocus>plugin://plugin.video.arabicvideos?mode=1&text=$INFO[Control.GetLabel(312).index(1)]</AAAonfocus>
+						<AAAonfocus>RunPlugin(plugin://plugin.video.arabicvideos?mode=1&text=$INFO[Control.GetLabel(312).index(1)])</AAAonfocus>
+						<AAAonfocus>RunScript(special://skin/MAIN.py,0,$INFO[Control.GetLabel(312).index(1)])</AAAonfocus>
 						<align>center</align>
 						<aligny>center</aligny>
 						<font>font13</font>
