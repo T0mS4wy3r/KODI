@@ -843,9 +843,11 @@ def mixARABIC(string):
 	new_string = new_string.encode('utf-8')
 	return new_string
 
-def KEYBOARD(label='Search'):
-	search =''
-	keyboard = xbmc.Keyboard(search, label)
+def KEYBOARD(heading='لوحة المفاتيج',default=''):
+	search = ''
+	keyboard = xbmc.Keyboard(default,heading)
+	#keyboard.setDefault(default)
+	#keyboard.setHeading(heading)
 	keyboard.doModal()
 	if keyboard.isConfirmed(): search = keyboard.getText()
 	search = search.strip(' ')
@@ -868,7 +870,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	videofiletype = re.findall('(\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
 	if videofiletype: videofiletype = videofiletype[0][0]
 	else: videofiletype = ''
-	if videofiletype=='.m3u8':
+	if videofiletype=='.m3u8' and website!='IPTV':
 		headers = { 'User-Agent' : '' }
 		titleLIST,linkLIST = EXTRACT_M3U8(url,headers)
 		if len(linkLIST)>1:

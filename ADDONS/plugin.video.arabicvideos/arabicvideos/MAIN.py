@@ -52,7 +52,9 @@ conn.commit()
 conn.close()
 
 
-if newdb:
+if newdb:# or 1==1:
+	import SERVICES
+	SERVICES.KODI_SKIN()
 	allFiles = str(os.listdir(addoncachefolder))
 	if 'iptv_' in allFiles and '_.streams' in allFiles:
 		xbmcgui.Dialog().ok('IPTV','تم مسح الكاش أو تم تحديث البرنامج فاذا كنت تستخدم خدمة IPTV فاذن انت تحتاج ان تجلب ملفات IPTV جديدة')

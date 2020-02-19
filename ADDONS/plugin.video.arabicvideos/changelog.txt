@@ -1,7 +1,13 @@
 ﻿
+v6.0.5	2020-02-18
+Added kodi skin message
+Allowed IPTV to load the old m3u link
+Canceled m3u8 extraction for IPTV
+Added automatic install for tvaddons & emad repositories
+
 
 v6.0.4	2020-02-08
-Canceled threading wait (report of versions)
+Canceled threading wait for the report of versions
 Added update IPTV files after addon upgrade
 Fixed AKOAM resolver
 Added more YOUTUBE menu items

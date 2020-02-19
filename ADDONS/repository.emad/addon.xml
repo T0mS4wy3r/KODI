@@ -1,6 +1,6 @@
-<addon id="repository.emad" name="EMAD Repository" version="3.1.1" provider-name="EMAD MAHDI">
+<addon id="repository.emad" name="EMAD Repository" version="3.1.2" provider-name="EMAD MAHDI">
 	<requires>
-		<import addon="repository.xbmchub" version="3.0.0" optional="false"/>
+		<import addon="repository.xbmchub" version="3.0.0" optional="true"/>
 	</requires>
 	<extension point="xbmc.addon.repository" name="EMAD Repository">
 		<dir>

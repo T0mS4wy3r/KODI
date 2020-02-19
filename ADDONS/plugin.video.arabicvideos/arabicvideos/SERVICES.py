@@ -37,6 +37,7 @@ def MAIN(mode,text=''):
 	elif mode==194: MPD_NOT_WORKING()
 	elif mode==195: WEBSITES_BLOCKED()
 	elif mode==196: HOW_TO_CONTACT_US()
+	elif mode==197: KODI_SKIN()
 	return
 
 def MAIN_MENU():
@@ -53,22 +54,23 @@ def MAIN_MENU():
 	addLink('[COLOR FFC89008] 9.  [/COLOR]'+'ابلاغ المبرمج بوجود مشكلة','',2,'','','IsPlayable=no,problem=yes')
 	addLink('[COLOR FFC89008]10.  [/COLOR]'+'ارسال رسالة الى المبرمج','',2,'','','IsPlayable=no,problem=no')
 	addLink('[COLOR FFC89008]11.  [/COLOR]'+'تحذير يخص شهادة التشفير','',171,'','','IsPlayable=no')
-	#addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]12.  [/COLOR]'+'لماذا بعض المواقع لا تعمل','',195)
-	addLink('[COLOR FFC89008]13.  [/COLOR]'+'كيف تحل مشكلة ححب بعض المواقع','',195)
-	addLink('[COLOR FFC89008]14.  [/COLOR]'+'بعض الفيدوهات بطيئة وتقطع','',158)
-	addLink('[COLOR FFC89008]15.  [/COLOR]'+'كيف تحل بنفسك مشكلة مؤقته','',192)
-	addLink('[COLOR FFC89008]16.  [/COLOR]'+'بعض الروابط لا تعمل','',153)
-	addLink('[COLOR FFC89008]17.  [/COLOR]'+'بعض الروابط بطيئة','',155)
-	addLink('[COLOR FFC89008]18.  [/COLOR]'+'لماذا يوجد سيرفرات مجهولة','',156)
-	addLink('[COLOR FFC89008]19.  [/COLOR]'+'ما هي السيرفرات العامة والخاصة','',157)
-	addLink('[COLOR FFC89008]20. [/COLOR]'+'ما معنى هذه العلامات بالبرنامج ,'+escapeUNICODE('\u02d1')+';','',191)
-	addLink('[COLOR FFC89008]21. [/COLOR]'+'ما هو اخر اصدار لكودي وللبرنامج','',7)
-	addLink('[COLOR FFC89008]22. [/COLOR]'+'ما هو الكاش وكم مقداره بالبرنامج','',190)
-	addLink('[COLOR FFC89008]23. [/COLOR]'+'الفيديوهات نوع mpd لا تعمل','',194)
-	addLink('[COLOR FFC89008]24. [/COLOR]'+'المواقع المشفرة لا تعمل','',152)
-	addLink('[COLOR FFC89008]25. [/COLOR]'+'لماذا لا نفحص شهادة التشفير','',193)
-	addLink('[COLOR FFC89008]26. [/COLOR]'+'اين مواقع الافلام والمسلسلات الاجنبية','',154)
+	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008]12.  [/COLOR]'+'ما هي افضل واجهة للبرنامج','',197)
+	addLink('[COLOR FFC89008]13.  [/COLOR]'+'لماذا بعض المواقع لا تعمل','',195)
+	addLink('[COLOR FFC89008]14.  [/COLOR]'+'كيف تحل مشكلة ححب بعض المواقع','',195)
+	addLink('[COLOR FFC89008]15.  [/COLOR]'+'بعض الفيدوهات بطيئة وتقطع','',158)
+	addLink('[COLOR FFC89008]16.  [/COLOR]'+'كيف تحل بنفسك مشكلة مؤقته','',192)
+	addLink('[COLOR FFC89008]17.  [/COLOR]'+'بعض الروابط لا تعمل','',153)
+	addLink('[COLOR FFC89008]18.  [/COLOR]'+'بعض الروابط بطيئة','',155)
+	addLink('[COLOR FFC89008]19.  [/COLOR]'+'لماذا يوجد سيرفرات مجهولة','',156)
+	addLink('[COLOR FFC89008]20.  [/COLOR]'+'ما هي السيرفرات العامة والخاصة','',157)
+	addLink('[COLOR FFC89008]21. [/COLOR]'+'ما معنى هذه العلامات بالبرنامج ,'+escapeUNICODE('\u02d1')+';','',191)
+	addLink('[COLOR FFC89008]22. [/COLOR]'+'ما هو اخر اصدار لكودي وللبرنامج','',7)
+	addLink('[COLOR FFC89008]23. [/COLOR]'+'ما هو الكاش وكم مقداره بالبرنامج','',190)
+	addLink('[COLOR FFC89008]24. [/COLOR]'+'الفيديوهات نوع mpd لا تعمل','',194)
+	addLink('[COLOR FFC89008]25. [/COLOR]'+'المواقع المشفرة لا تعمل','',152)
+	addLink('[COLOR FFC89008]26. [/COLOR]'+'لماذا لا نفحص شهادة التشفير','',193)
+	addLink('[COLOR FFC89008]27. [/COLOR]'+'اين مواقع الافلام والمسلسلات الاجنبية','',154)
 	xbmcplugin.endOfDirectory(addon_handle)
 
 def NO_ARABIC_FONTS():
@@ -183,6 +185,11 @@ def HTTPS_TEST():
 	return
 
 def FIX_KEYBOARD(mode,text):
+	import xbmc,unicodedata,email.charset
+	import xbmcgui
+	#import simplejson as json
+	#from LIBRARY import *
+	#xbmcgui.Dialog().ok(str(mode),text)
 	keyboard = text
 	if keyboard=='': return
 	if mode==1:
@@ -192,7 +199,7 @@ def FIX_KEYBOARD(mode,text):
 			keyboard = mixARABIC(keyboard)
 			window.getControl(311).setLabel(keyboard)
 		except:
-			#traceback.print_exc(file=sys.stderr)
+			traceback.print_exc(file=sys.stderr)
 			pass
 	elif mode==0:
 		ttype = 'X'
@@ -337,7 +344,7 @@ def VERSIONS():
 	#xbmcgui.Dialog().notification('thread submitted','')
 	#	url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
 	#   url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
-	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/addons.xml'
+	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS/addons.xml'
 	html = openURL_PROXY(url,'','','','SERVICES-VERSIONS-1st')
 	latest_ADDON_VER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
 	current_ADDON_VER = addon_version
@@ -529,6 +536,10 @@ def ANALYTICS_REPORT():
 	"""
 	xbmcgui.Dialog().textviewer('مواقع اشتغلت مؤخراً في جميع دول العالم',message5)
 	xbmcgui.Dialog().textviewer('اعلى الدول التي استخدمت مؤخراً البرنامج',message4)
+
+def KODI_SKIN():
+	xbmcgui.Dialog().textviewer('واجهة كودي Kodi Skin','هذا البرنامج يعمل افضل بأستخدام واجهة كودي التي اسمها\nkodi skin "[COLOR FFC89008]metropolisEMAD[/COLOR]"\n\nوهي موجودة في نفس موقع البرنامج\n[COLOR FFC89008]https://github.com/emadmahdi/KODI [/COLOR]\n\nهذه الرسالة وغيرها كثير موجودة في قائمة خدمات البرنامج')
+	return
 
 def TESTINGS():
 	url = 'http://egybest.vip/ee.mp4'

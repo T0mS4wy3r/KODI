@@ -89,9 +89,10 @@ def ADD_ACCOUNT():
 	xbmcgui.Dialog().ok('IPTV','البرنامج يحتاج اشتراك IPTV من نوع رابط التحميل m3u من اي شركة IPTV والافضل ان يحتوي الرابط في نهايته على هذه الكلمات','&type=m3u_plus')
 	iptvURL = settings.getSetting('iptv.url')
 	if iptvURL!='':
-		answer = xbmcgui.Dialog().yesno(iptvURL,'هذا هو رابط IPTV المسجل في البرنامج هل تريد تغييره ؟','','','كلا','نعم')
-		if not answer: return
-	iptvURL = KEYBOARD('اكتب رابط IPTV كاملا')
+		answer = xbmcgui.Dialog().yesno(iptvURL,'هذا هو رابط IPTV المسجل في البرنامج ... هل تريد تعديله أم تريد كتابة رابط جديد ؟!','','','كتابة جديد','تعديل القديم')
+		if not answer: iptvURL = ''
+	iptvURL = KEYBOARD('اكتب رابط IPTV كاملا',iptvURL)
+	iptvURL = iptvURL.strip(' ')
 	if iptvURL=='': return
 	else:
 		answer = xbmcgui.Dialog().yesno(iptvURL,'هل تريد استخدام هذا الرابط بدلا من الرابط القديم ؟','','','كلا','نعم')
@@ -107,7 +108,8 @@ def CREATE_ALL_FILES():
 	settings = xbmcaddon.Addon(id=addon_id)
 	iptvFile = settings.getSetting('iptv.file')
 	iptvURL = settings.getSetting('iptv.url')
-	try: m3u_text = openURL_cached(REGULAR_CACHE,iptvURL,'','','','IPTV-CREATE_ALL_FILES-1st')
+	headers = { 'User-Agent' : '' }
+	try: m3u_text = openURL_cached(REGULAR_CACHE,iptvURL,'',headers,'','IPTV-CREATE_ALL_FILES-1st')
 	except:
 		xbmcgui.Dialog().ok('فشل في جلب ملفات IPTV','يجب عليك: اولا الضغط على رابط اضافة حسابك ثم ثانيا الضغط على رابط جلب الملفات')
 		LOG_THIS('ERROR',LOGGING(script_name)+'   No IPTV files')
@@ -119,31 +121,34 @@ def CREATE_ALL_FILES():
 	file = open(iptvFile, 'wb')
 	file.write(m3u_text)
 	file.close()
+	m3u_text = m3u_text.replace('"tvg-','" tvg-')
 	m3u_text = m3u_text.replace('َ','').replace('ً','').replace('ُ','').replace('ٌ','')
 	m3u_text = m3u_text.replace('ّ','').replace('ِ','').replace('ٍ','').replace('ْ','')
-	username = re.findall('username=(.*?)&',iptvURL+'&',re.DOTALL)[0]
-	password = re.findall('password=(.*?)&',iptvURL+'&',re.DOTALL)[0]
-	host = re.findall('(http.*?://.*?)[:/\?]',iptvURL,re.DOTALL)[0]
-	port = re.findall(':(\d+)[/\?]',iptvURL,re.DOTALL)
-	if port: port = port[0]
-	else: port = '80'
-	seriesCategoriesURL = host+':'+port+'/player_api.php?username='+username+'&password='+password+'&action=get_series_categories'
-	series_groups = openURL_cached(REGULAR_CACHE,seriesCategoriesURL,'','','','IPTV-CREATE_ALL_FILES-2nd')
-	series_groups = re.findall('category_name":"(.*?)"',series_groups,re.DOTALL)
 	m3u_text = m3u_text.replace('group-title=','group=')
 	m3u_text = m3u_text.replace('tvg-','')
-	if series_groups:
-		#xbmcgui.Dialog().ok('','')
-		for group in series_groups:
-			group = group.replace('\/','/').decode('unicode_escape').encode('utf8')
-			m3u_text = m3u_text.replace('group="'+group+'"','group="__SERIES__'+group+'"')
-	vodCategoriesURL = host+':'+port+'/player_api.php?username='+username+'&password='+password+'&action=get_vod_categories'
-	vod_groups = openURL_cached(REGULAR_CACHE,vodCategoriesURL,'','','','IPTV-CREATE_ALL_FILES-3rd')
-	vod_groups = re.findall('category_name":"(.*?)"',vod_groups,re.DOTALL)
-	if vod_groups:
-		for group in vod_groups:
-			group = group.replace('\/','/').decode('unicode_escape').encode('utf8')
-			m3u_text = m3u_text.replace('group="'+group+'"','group="__MOVIES__'+group+'"')
+	username = re.findall('username=(.*?)&',iptvURL+'&',re.DOTALL)
+	password = re.findall('password=(.*?)&',iptvURL+'&',re.DOTALL)
+	if username and password: 
+		username = username[0]
+		password = password[0]
+		host_port = iptvURL.split('/')[2]
+		if ':' in host_port: host,port = host_port.split(':')
+		else: host,port = host_port,'80'
+		seriesCategoriesURL = host+':'+port+'/player_api.php?username='+username+'&password='+password+'&action=get_series_categories'
+		series_groups = openURL_cached(REGULAR_CACHE,seriesCategoriesURL,'',headers,'','IPTV-CREATE_ALL_FILES-2nd')
+		series_groups = re.findall('category_name":"(.*?)"',series_groups,re.DOTALL)
+		if series_groups:
+			#xbmcgui.Dialog().ok('','')
+			for group in series_groups:
+				group = group.replace('\/','/').decode('unicode_escape').encode('utf8')
+				m3u_text = m3u_text.replace('group="'+group+'"','group="__SERIES__'+group+'"')
+		vodCategoriesURL = host+':'+port+'/player_api.php?username='+username+'&password='+password+'&action=get_vod_categories'
+		vod_groups = openURL_cached(REGULAR_CACHE,vodCategoriesURL,'',headers,'','IPTV-CREATE_ALL_FILES-3rd')
+		vod_groups = re.findall('category_name":"(.*?)"',vod_groups,re.DOTALL)
+		if vod_groups:
+			for group in vod_groups:
+				group = group.replace('\/','/').decode('unicode_escape').encode('utf8')
+				m3u_text = m3u_text.replace('group="'+group+'"','group="__MOVIES__'+group+'"')
 	streams_not_sorted = CREATE_STREAMS(m3u_text)
 	streams_sorted = sorted(streams_not_sorted, reverse=False, key=lambda key: key['title'].lower())
 	grouped_streams = {}
@@ -260,7 +265,7 @@ def CREATE_STREAMS(m3u_text):
 		title = dict['title'].replace('||','|').replace('::',':').replace('--','-')
 		title = title.replace('[[','[').replace(']]',']')
 		title = title.replace('((','(').replace('))',')')
-		separators = re.findall(' *[\:\|\-\[\]\(\)] *',title,re.DOTALL)
+		separators = re.findall(' *[\:\|\[\]\(\)] *',title,re.DOTALL)
 		if separators:
 			for sep in separators:
 				sep2 = ' '+sep.strip(' ')+' '

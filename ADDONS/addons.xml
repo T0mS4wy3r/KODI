@@ -3,11 +3,13 @@
 
 
 
-<addon id="plugin.video.arabicvideos" name="Arabic Videos" version="6.0.4" provider-name="EMAD MAHDI">
+<addon id="plugin.video.arabicvideos" name="Arabic Videos" version="6.0.5" provider-name="EMAD MAHDI">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.requests" version="2.12.4"/>
 		<import addon="script.module.urlresolver" version="5.0.0"/>
+		<import addon="repository.emad" version="3.0.0" optional="true"/>
+		<import addon="repository.xbmchub" version="3.0.0" optional="true"/>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="arabicvideos/__init__.py">
 		<provides>video</provides>
@@ -22,7 +24,7 @@
 
 
 
-<addon id="repository.emad" name="EMAD Repository" version="3.1.1" provider-name="EMAD MAHDI">
+<addon id="repository.emad" name="EMAD Repository" version="3.1.2" provider-name="EMAD MAHDI">
 	<requires>
 		<import addon="repository.xbmchub" version="3.0.0" optional="true"/>
 	</requires>
