@@ -22,33 +22,7 @@
 
 
 
-<addon id="repository.emad" name="EMAD Repository" version="3.1.2" provider-name="EMAD MAHDI">
-	<requires>
-		<import addon="repository.xbmchub" version="3.0.0" optional="true"/>
-	</requires>
-	<extension point="xbmc.addon.repository" name="EMAD Repository">
-		<dir>
-			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml</info>
-			<checksum>https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml.md5</checksum>
-			<datadir zip="true">https://github.com/emadmahdi/KODI/raw/master/ADDONS/</datadir>
-		</dir>
-		<dir>
-			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/addons.xml</info>
-			<checksum>https://github.com/emadmahdi/KODI/raw/master/addons.xml.md5</checksum>
-			<datadir zip="true">https://github.com/emadmahdi/KODI/raw/master/</datadir>
-		</dir>
-		<dir>
-			<info compressed="false">https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/addons.xml</info>
-			<checksum>https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/addons.xml.md5</checksum>
-			<datadir zip="true">https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/</datadir>
-		</dir>
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Install Add-ons from EMAD</summary>
-		<description lang="en">Download and install add-ons from EMAD</description>
-		<platform>all</platform>
-	</extension>
-</addon>
+
 
 
 
@@ -476,6 +450,40 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
 		<platform>all</platform>
                 <forum>https://www.tvaddons.co/forums</forum>
                 <website>https://www.tvaddons.co</website>
+	</extension>
+</addon>
+
+
+
+
+
+
+
+<addon id="repository.emad" name="EMAD Repository" version="3.1.2" provider-name="EMAD MAHDI">
+	<requires>
+		<import addon="repository.xbmchub" version="3.0.0" optional="false"/>
+	</requires>
+	<extension point="xbmc.addon.repository" name="EMAD Repository">
+		<dir>
+			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml</info>
+			<checksum>https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml.md5</checksum>
+			<datadir zip="true">https://github.com/emadmahdi/KODI/raw/master/ADDONS/</datadir>
+		</dir>
+		<dir>
+			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/addons.xml</info>
+			<checksum>https://github.com/emadmahdi/KODI/raw/master/addons.xml.md5</checksum>
+			<datadir zip="true">https://github.com/emadmahdi/KODI/raw/master/</datadir>
+		</dir>
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/</datadir>
+		</dir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">Install Add-ons from EMAD</summary>
+		<description lang="en">Download and install add-ons from EMAD</description>
+		<platform>all</platform>
 	</extension>
 </addon>
 
