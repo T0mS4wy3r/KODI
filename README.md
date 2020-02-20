@@ -36,16 +36,16 @@ New video plugin for KODI that provide Arabic video contents from the following 
 <a href="http://almaareftv.com">5. &nbsp; http://almaareftv.com</a><br />
 <a href="http://alarab.com">6. &nbsp; http://alarab.com</a><br />
 <a href="http://akoam.net">7. &nbsp; http://akoam.net</a><br />
-<a href="http://halacima.net">8. &nbsp; http://halacima.net</a><br />
-<a href="http://4helal.net">9. &nbsp; http://4helal.net</a><br />
-<a href="http://shahid4u.net">10. &nbsp; http://shahid4u.net</a><br />
-<a href="http://egy.best">11. &nbsp; http://egy.best</a><br />
-<a href="http://egy4best.com">12. &nbsp; http://egy4best.com</a><br />
-<a href="http://alkawthartv.com">13. &nbsp; http://alkawthartv.com</a><br />
-<a href="http://youtube.com">14. &nbsp; http://youtube.com</a><br />
-<a href="http://movizland.online">15. &nbsp; http://movizland.online</a><br />
-<a href="http://series4watch.net">16. &nbsp; http://series4watch.net</a><br />
-<a href="http://arablionz.com">17. &nbsp; http://arablionz.com</a><br />
+<a href="http://4helal.net">8. &nbsp; http://4helal.net</a><br />
+<a href="http://shahid4u.net">9. &nbsp; http://shahid4u.net</a><br />
+<a href="http://egy4best.com">10. http://egy4best.com</a><br />
+<a href="http://alkawthartv.com">11. http://alkawthartv.com</a><br />
+<a href="http://youtube.com">12. http://youtube.com</a><br />
+<a href="http://arablionz.com">13. http://arablionz.com</a><br />
+14. <strike>http://egy.best</strike></a> &nbsp; &nbsp; &nbsp; Deleted<br />
+15. <strike>http://halacima.net</strike></a> &nbsp; &nbsp; &nbsp; Deleted<br />
+16. <strike>http://movizland.online</strike></a> &nbsp; &nbsp; &nbsp; Deleted<br />
+17. <strike>http://series4watch.net</strike></a> &nbsp; &nbsp; &nbsp; Deleted<br />
 18. &nbsp; Tv Channels<br />
 19. &nbsp; IPTV Service<br />
 <br />
