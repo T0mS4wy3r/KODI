@@ -3,9 +3,9 @@
 
 
 
-<addon id="repository.emadtest" name="EMAD TEST 44 Repository" version="0.0.1" provider-name="EMAD MAHDI">
+<addon id="repository.emadtest" name="EMAD TEST 55 Repository" version="0.0.1" provider-name="EMAD MAHDI">
 	<requires>
-		<import addon="repository.xbmchub" version="3.0.0" optional="false"/>
+		<import addon="repository.xbmchub" optional="false"/>
 	</requires>
 	<extension point="xbmc.addon.repository" name="EMAD Repository">
 		<dir>
