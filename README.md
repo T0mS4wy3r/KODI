@@ -13,17 +13,17 @@ These addons modified to suit my personal needs
 This is kodi repository that keeps emad addons updated automatically ... should be installed along with Arabic Video Addon
 <br />
 <br />
-هذا هو المخزن الخاص بكودي لجعل اضافات عماد يصلها التحديثات اوتوماتيكيا ... يجب تنصيبه عند تنصيب اضافة الفيديو العربي
+هذا هو المخزن الخاص بكودي لجعل اضافات عماد يصلها التحديثات اوتوماتيكيا ... يجب تنصيبه عند تنصيب اضافة الفيديوهات العربية
 <br />
 <br />
 <br />
 <br />
-<h2>2. برنامج الفيديو العربي <br />
+<h2>2. برنامج الفيديوهات العربية <br />
 &nbsp; Plugin Arabic Videos For Kodi
 <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(plugin.video.arabicvideos)</h2>
 <br />
-برنامج الفيديو العربي (اضافة جديدة) الى كودي تسمح لكودي بان يتصفح جميع المواقع المكتوبة ادناه
+برنامج الفيديوهات العربية (اضافة جديدة) الى كودي تسمح لكودي بان يتصفح جميع المواقع المكتوبة ادناه
 <br />
 New video plugin for KODI that provide Arabic video contents from the following websites:
 <br />
