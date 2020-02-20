@@ -1,4 +1,8 @@
 
+v2.2.1
+Fixed repository
+
+
 v2.2.0
 Minor updates and fixes
 

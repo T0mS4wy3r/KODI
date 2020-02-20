@@ -1,4 +1,8 @@
 ﻿
+v6.0.7	2020-02-19
+Fixed repository installation
+
+
 v6.0.6	2020-02-19
 Fixed creating IPTV files
 
