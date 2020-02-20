@@ -85,6 +85,7 @@
 						<height>24</height>
 						<texture>$INFO[ListItem.Overlay]</texture>
 						<colordiffuse>WatchedOverlay</colordiffuse>
+						<visible>!ListItem.IsResumable + String.IsEqual(ListItem.Overlay,OverlayWatched.png) + Window.IsActive(videos) + [[[Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideMovieWatchedOverlays)] | [![Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideTVWatchedOverlays)]]</visible>
 						<AAAvisible>String.IsEqual(ListItem.Overlay,OverlayWatched.png) + Window.IsActive(videos) + [[[Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideMovieWatchedOverlays)] | [![Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideTVWatchedOverlays)]]</AAAvisible>
 					</control>
 					<!-- Watched Overlay for In-Progress Items in Video Library -->
