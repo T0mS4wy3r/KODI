@@ -1,5 +1,5 @@
 ﻿<b>
-<img src="./plugin.video.arabicvideos/icon.png" title="Arabic Videos">
+<img src="./ADDONS/plugin.video.arabicvideos/icon.png" title="Arabic Videos">
 <br />
 <br />
 <h1>My KODI Addons</h1>
