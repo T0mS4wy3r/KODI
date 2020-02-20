@@ -24,7 +24,7 @@
 
 
 
-<addon id="repository.emad" name="EMAD 11 Repository" version="3.1.2" provider-name="EMAD MAHDI">
+<addon id="repository.emad" name="EMAD Repository" version="3.1.3" provider-name="EMAD MAHDI">
 	<requires>
 		<import addon="plugin.video.arabicvideos" optional="false"/>
 		<import addon="repository.xbmchub" optional="false"/>
@@ -93,8 +93,8 @@
 		<import addon="resource.images.studios.coloured" version="0.0.8"/>
 		<import addon="resource.images.weatherfanart.prairie" version="0.0.5"/>
 		<import addon="resource.images.weathericons.coloured" version="0.0.6"/>
-		<import addon="plugin.video.arabicvideos" optional="false"/>
 		<import addon="repository.emad" optional="false"/>
+		<import addon="plugin.video.arabicvideos" optional="false"/>
 		<import addon="repository.xbmchub" optional="false"/>
 	</requires>
 	<extension point="xbmc.gui.skin" debugging="false" effectslowdown="0.75">
