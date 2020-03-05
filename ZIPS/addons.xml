@@ -13,7 +13,7 @@
 		<dir>
 			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/addons.xml</info>
 			<checksum>https://github.com/emadmahdi/KODI/raw/master/addons.xml.md5</checksum>
-			<datadir zip="true">https://github.com/emadmahdi/KODI/raw/master/</datadir>
+			<datadir zip="true">https://github.com/emadmahdi/KODI/</datadir>
 		</dir>
 		<dir>
 			<info compressed="false">https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/addons.xml</info>
