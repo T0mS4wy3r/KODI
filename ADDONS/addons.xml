@@ -333,7 +333,6 @@
 		<import addon="script.module.cryptopy" version="1.2.6" optional="true" />
 		<import addon="plugin.video.gdrive" optional="true" />
 		<import addon="repository.xbmchub" optional="false"/>
-		<import addon="repository.emad" optional="false"/>
 	</requires>
 	<extension point="xbmc.python.module" library="lib" />
 	<extension point="xbmc.python.pluginsource" library="lib/default.py" />
