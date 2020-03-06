@@ -894,6 +894,10 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	#play_item = xbmcgui.ListItem(path=url)
 	play_item.setProperty('inputstreamaddon', '')
 	play_item.setMimeType('mime/x-type')
+	play_item.setInfo('Video', {'mediatype': 'video'})
+	label = xbmc.getInfoLabel('ListItem.Label')
+	label = label.strip(' ')
+	play_item.setInfo( "Video", { "Title": label } )
 	myplayer = CustomePlayer()
 	if videofiletype in ['.ts','.mkv','.mp4','.mp3','.flv']:
 		#when set to "False" it makes glarabTV fails and make WS2TV opens fast
@@ -908,16 +912,10 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		#xbmc.log(LOGGING(script_name)+'      Added subtitle to video   Subtitle:['+subtitle+']', level=xbmc.LOGNOTICE)
 	if showWatched=='yes':
 		#title = xbmc.getInfoLabel('ListItem.Title')
-		label = xbmc.getInfoLabel('ListItem.Label')
-		label = label.strip(' ')
-		play_item.setInfo( "video", { "Title": label } )
 		#play_item.setInfo('Video', {'duration': 3600})
 		play_item.setPath(url)
 		xbmcplugin.setResolvedUrl(addon_handle, True, play_item)
 	else:
-		label = xbmc.getInfoLabel('ListItem.Label')
-		label = label.strip(' ')
-		play_item.setInfo( "video", { "Title": label } )
 		myplayer.play(url,play_item)
 		#xbmc.Player().play(url,play_item)
 	play_item.setContentLookup(False)

@@ -1,4 +1,9 @@
 ﻿
+v6.0.8	2020-03-05
+Fixed YOUTUBE resolver
+Added one more YOUTUBE cipher
+
+
 v6.0.7	2020-02-19
 Fixed repository installation
 

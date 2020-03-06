@@ -949,19 +949,19 @@ def YOUTUBE(url):
 			errortrace = traceback.format_exc()
 			sys.stderr.write(errortrace)
 			#pass
-		title = type2+':  '+quality2+'  ('+codec+','+dict['itag']+')'
-		dict['title'] = title
+		if 'dur=' in dict['url']: duration = round(0.5+float(dict['url'].split('dur=',1)[1].split('&',1)[0]))
+		elif 'approxDurationMs' in dict.keys(): duration = round(0.5+float(dict['approxDurationMs'])/1000)
+		else: duration = '0'
+		if 'bitrate' not in dict.keys(): bitrate = int(dict['size'].split('x')[1])
+		else: bitrate = int(dict['bitrate'])
+		if 'init' not in dict.keys(): dict['init'] = '0-0'
+		dict['title'] = type2+':  '+quality2+'  ('+codec+','+dict['itag']+')'
+		dict['quality'] = quality2.split(' ')[0].split('kbps')[0]
 		dict['type2'] = type2
 		dict['filetype'] = filetype
 		dict['codecs'] = codecs
-		if 'bitrate' not in dict.keys(): dict['bitrate'] = int(dict['size'].split('x')[1])
-		else: dict['bitrate'] = int(dict['bitrate'])
-		dict['quality'] = quality2.split(' ')[0].split('kbps')[0]
-		if 'dur=' in dict['url']:
-			dict['duration'] = round(0.5+float(dict['url'].split('dur=',1)[1].split('&',1)[0]))
-		elif 'approxDurationMs' in dict.keys():
-			dict['duration'] = round(0.5+float(dict['approxDurationMs'])/1000)
-			#xbmcgui.Dialog().ok(str(dict['duration']),'')
+		dict['duration'] = duration
+		dict['bitrate'] = bitrate
 		streams2.append(dict)
 	videoTitleLIST,audioTitleLIST,muxedTitleLIST,mpdaudioTitleLIST,mpdvideoTitleLIST = [],[],[],[],[]
 	videoDictLIST,audioDictLIST,muxedDictLIST,mpdaudioDictLIST,mpdvideoDictLIST = [],[],[],[],[]
