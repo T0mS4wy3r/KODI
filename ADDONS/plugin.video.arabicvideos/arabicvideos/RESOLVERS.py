@@ -860,7 +860,11 @@ def YOUTUBE(url):
 		block = block.replace('&&','&')
 		block = block.replace('="','=').replace('""','"')
 		block = block.replace(':true',':True').replace(':false',':False')
+		if '[' not in block: block = '['+block+']'
 		block = eval(block)
+		#xbmcgui.Dialog().ok(str(type(block)),'')
+		#xbmc.log(str(block), level=xbmc.LOGNOTICE)
+		#xbmcgui.Dialog().ok(str(block['url']),str(block['itag']))
 		for dict in block:
 			dict['itag'] = str(dict['itag'])
 			dict['type'] = dict['mimeType'].replace('=','="')+'"'
@@ -924,10 +928,10 @@ def YOUTUBE(url):
 	for dict in streams1:
 		filetype,codec,quality2,type2,codecs,bitrate = 'unknown','unknown','unknown','Unknown','',0
 		try:
-			type = dict['type']
-			#LOG_THIS('NOTICE',LOGGING(script_name)+'   Type:['+type+']')
-			type = type.replace('+','')
-			items = re.findall('(.*?)/(.*?);.*?"(.*?)"',type,re.DOTALL)
+			type0 = dict['type']
+			#LOG_THIS('NOTICE',LOGGING(script_name)+'   Type:['+type0+']')
+			type0 = type0.replace('+','')
+			items = re.findall('(.*?)/(.*?);.*?"(.*?)"',type0,re.DOTALL)
 			type2,filetype,codecs = items[0]
 			codecs2 = codecs.split(',')
 			codec = ''
@@ -936,7 +940,7 @@ def YOUTUBE(url):
 			if 'bitrate' in dict.keys(): bitrate = str(int(dict['bitrate'])/1024)+'kbps  '
 			else: bitrate = ''
 			if type2=='text': continue
-			elif ',' in type:
+			elif ',' in type0:
 				type2 = 'A+V'
 				quality2 = filetype+'  '+bitrate+dict['size'].split('x')[1]
 			elif type2=='video':

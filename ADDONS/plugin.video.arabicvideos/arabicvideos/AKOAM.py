@@ -179,9 +179,12 @@ def PLAY(url):
 			linkLIST.append(link+'?name='+serversDICT[serverIMG])
 		else: linkLIST.append(link+'?name='+serverIMG)
 	if len(linkLIST)==0:
-		message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
-		if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
-		else: xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
+		if 'الانتقال إلي التصميم الجديد' in html:
+			xbmcgui.Dialog().ok('موقع اكوام الجديد','هذا الفيديو يستخدم موقع اكوام الجديد','وهو لا يعمل حاليا في هذا البرنامج')
+		else:
+			message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
+			if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
+			else: xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name)
