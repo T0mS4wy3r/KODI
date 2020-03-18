@@ -6,6 +6,9 @@ from LIBRARY import *
 #website0a = 'https://egybest1.com'
 #website0a = 'https://egybest.vip'
 #website0a = 'https://egy4best.com'
+#website0a = 'https://egybest-vip.shofda.com'
+#website0a = 'https://rome.egybest.nl'
+#website0a = 'https://vi.egybest.vip'
 
 
 headers = { 'User-Agent' : '' }
@@ -149,7 +152,7 @@ def PLAY(url):
 	# https://egy4best.com/movie/فيلم-the-lion-king-2019-مترجم
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGY4BEST-PLAY-1st')
 	rating = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
-	if rating:
+	if rating and False:
 		if rating[0] in BLOCKED_VIDEOS:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
 			xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')

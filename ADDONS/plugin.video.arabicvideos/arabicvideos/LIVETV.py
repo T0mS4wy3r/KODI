@@ -9,6 +9,7 @@ def MAIN(mode,url):
 	if mode==100: ITEMS(0)
 	elif mode==101: ITEMS(1)
 	elif mode==102: ITEMS(2)
+	elif mode==103: ITEMS(3)
 	elif mode==104: PLAY(url)
 	return
 

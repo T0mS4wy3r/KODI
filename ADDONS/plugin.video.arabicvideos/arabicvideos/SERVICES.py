@@ -329,8 +329,9 @@ def TV_CHANNELS_MENU():
 	#addDir('5.  [COLOR FFC89008]MRF  [/COLOR]'+'من موقع قناة المعارف','',41)
 	#addDir('6.  [COLOR FFC89008]KWT  [/COLOR]'+'من موقع قناة الكوثر','',135)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addDir('6.  [COLOR FFC89008]TV1  [/COLOR]'+'قنوات تلفزونية خاصة','',101)
-	addDir('7.  [COLOR FFC89008]TV2  [/COLOR]'+'قنوات تلفزونية للفحص','',102)
+	addDir('6.  [COLOR FFC89008]TV1  [/COLOR]'+'قنوات تلفزونية عامة','',101)
+	addDir('7.  [COLOR FFC89008]TV2  [/COLOR]'+'قنوات تلفزونية خاصة','',102)
+	addDir('8.  [COLOR FFC89008]TV3  [/COLOR]'+'قنوات تلفزونية للفحص','',103)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
