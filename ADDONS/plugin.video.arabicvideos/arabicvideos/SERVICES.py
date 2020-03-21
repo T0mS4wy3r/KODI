@@ -168,15 +168,15 @@ def WEBSITES_BLOCKED():
 	#TEST_ALL_WEBSITES()
 
 def HOW_TO_CONTACT_US():
-	xbmcgui.Dialog().ok('هناك طريقتين للتواصل مع المبرمج','الاولى عن طريق ارسال رسالة او مشكلة من قائمة الخدمات ... والافضل الطريقة الثانية وهي فتح موضوع للنقاش عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
+	xbmcgui.Dialog().ok('ثلاثة طرق للتواصل مع المبرمج','إما بأستخدام الفيسبوك "الحاج عماد مهدي" أو بارسال رسالة أو مشكلة من قائمة خدمات البرنامج أو بفتح موضوع للنقاش بهذا الرابط','https://github.com/emadmahdi/KODI/issues')
 
 def DELETE_CACHE():
-	MAIN(190)
-	yes = xbmcgui.Dialog().yesno('هل متأكد وتريد مسح جميع الكاش ؟','الكاش مهم لتسريع عمل البرنامج ومسحه يسبب اعادة طلب جميع الصفحات من الانترنيت عند الحاجة اليها. وهذا قد يحل مشاكل بعض المواقع','','','كلا','نعم')
+	#MAIN(190)
+	yes = xbmcgui.Dialog().yesno('هل تريد مسح جميع الكاش ؟','الكاش يعمل على تسريع عمل البرنامج ومسحه يسبب اعادة طلب جميع الصفحات من الانترنيت عند الحاجة اليها والمسح ليس فيه أي ضرر وبالعكس فان المسح ممكن ان يحل بعض مشاكل البرنامج','','','كلا','نعم')
 	if yes==1: 
 		DELETE_DATABASE_FILES()
 		xbmcgui.Dialog().ok('تم مسح كاش البرنامج بالكامل','اذا كانت عندك مشكلة في احد المواقع فجرب الموقع الان ... واذا المشكلة مستمرة فاذن ارسل المشكلة الى المبرمج')
-	return ''
+	return yes
 
 def HTTPS_TEST():
 	working = HTTPS(True)
@@ -225,11 +225,8 @@ def SEND_MESSAGE(text=''):
 		yes = xbmcgui.Dialog().yesno('','هل لديك مشكلة تريد ابلاغ المبرمج عنها ؟','','','كلا','نعم')
 		if yes==1: problem='yes'
 	if problem=='yes':
-		yes = xbmcgui.Dialog().yesno('هل جربت مسح كاش البرنامج ولم تحل المشكلة ؟','في بعض الاحيان تكون المشكلة بسبب صفحة مخزنة في كاش البرنامج وعند مسح الكاش تعود الصفحة للعمل بصورة طبيعية','','','كلا','نعم')
-		if yes==0: 
-			DELETE_DATABASE_FILES()
-			xbmcgui.Dialog().ok('تم مسح كاش البرنامج بالكامل','اذا كانت عندك مشكلة في احد المواقع فجرب الموقع الان ... واذا المشكلة مستمرة فاذن ارسل المشكلة الى المبرمج')
-			return ''
+		yes = DELETE_CACHE()
+		if yes==1: return ''
 		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بارسال سجل الاخطاء والاستخدام الى المبرمج لكي يستطيع المبرمج معرفة المشكلة واصلاحها','','','كلا','نعم')
 		if logs==0:
 			xbmcgui.Dialog().ok('تم الغاء الارسال','للأسف بدون سجل الاخطاء والاستخدام المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
@@ -296,27 +293,28 @@ def GLOBAL_SEARCH_MENU(search=''):
 	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة - قليلة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
 	addDir('1.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - خدمة IPTV','',239,'','',search)
 	addDir('2.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - موقع يوتيوب','',149,'','',search)
-	addDir('3.  [COLOR FFC89008]SHF  [/COLOR]'+search+' - موقع شوف ماكس','',59,'','',search)
-	addDir('4.  [COLOR FFC89008]KLA  [/COLOR]'+search+' - موقع كل العرب','',19,'','',search)
-	addDir('5.  [COLOR FFC89008]PNT  [/COLOR]'+search+' - موقع بانيت','',39,'','',search)
+	addDir('3.  [COLOR FFC89008]KLA  [/COLOR]'+search+' - موقع كل العرب','',19,'','',search)
+	addDir('4.  [COLOR FFC89008]PNT  [/COLOR]'+search+' - موقع بانيت','',39,'','',search)
+	addDir('5.  [COLOR FFC89008]SHF  [/COLOR]'+search+' - موقع شوف ماكس','',59,'','',search)
 	addDir('6.  [COLOR FFC89008]IFL    [/COLOR]'+search+' - موقع قناة اي فيلم','',29,'','',search)
-	addDir('7.  [COLOR FFC89008]KWT  [/COLOR]'+search+' - موقع قناة الكوثر','',139,'','',search)
-	addDir('8.  [COLOR FFC89008]MRF  [/COLOR]'+search+' - موقع قناة المعارف','',49,'','',search)
+	addDir('7.  [COLOR FFC89008]MRF  [/COLOR]'+search+' - موقع قناة المعارف','',49,'','',search)
+	addDir('8.  [COLOR FFC89008]KWT  [/COLOR]'+search+' - موقع قناة الكوثر','',139,'','',search)
 	addDir('9.  [COLOR FFC89008]FTM  [/COLOR]'+search+' - موقع المنبر الفاطمي','',69,'','',search)
+	addDir('10. [COLOR FFC89008]AKW  [/COLOR]'+search+' - موقع اكوام الجديد','',249,'','',search)
 	#addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
 	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('10. [COLOR FFC89008]AKM  [/COLOR]'+search+' - موقع اكوام','',79,'','',search)
-	addDir('11. [COLOR FFC89008]EG4  [/COLOR]'+search+' - موقع ايجي فور بيست','',229,'','',search)
+	addDir('11. [COLOR FFC89008]AKO  [/COLOR]'+search+' - موقع اكوام القديم','',79,'','',search)
+	addDir('12. [COLOR FFC89008]EG4  [/COLOR]'+search+' - موقع ايجي فور بيست','',229,'','',search)
 	#addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
 	addLink('[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('12. [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
-	addDir('13. [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
-	addDir('14. [COLOR FFC89008]ARL  [/COLOR]'+search+' - موقع عرب ليونز','',209,'','',search)
+	addDir('13. [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
+	addDir('14. [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
+	addDir('15. [COLOR FFC89008]ARL  [/COLOR]'+search+' - موقع عرب ليونز','',209,'','',search)
 	#addDir('[COLOR FFC89008]=========================[/COLOR]','',9999)
-	#addDir('15. [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',88,'','',search) # 89
-	#addDir('16. [COLOR FFC89008]SFW  [/COLOR]'+search+' - موقع سيريس فور وتش','',218,'','',search) # 219
-	#addDir('17. [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند','',188,'','',search)# 189
-	#addDir('18. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',128,'','',search)# 129
+	#addDir('16. [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',88,'','',search) # 89
+	#addDir('17. [COLOR FFC89008]SFW  [/COLOR]'+search+' - موقع سيريس فور وتش','',218,'','',search) # 219
+	#addDir('18. [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند','',188,'','',search)# 189
+	#addDir('19. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',128,'','',search)# 129
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 

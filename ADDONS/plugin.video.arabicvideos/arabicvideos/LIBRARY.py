@@ -88,6 +88,7 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'SHOOFMAX'		:['https://shoofmax.com','https://static.shoofmax.com']
 			,'YOUTUBE'		:['https://www.youtube.com']
 			,'IPTV'			:['https://nowhere.com']
+			,'AKWAM'		:['https://akwam.net']
 			}
 
 script_name = 'LIBRARY'
@@ -1220,7 +1221,7 @@ def DNS_RESOLVER(url,dnsserver=''):
 	if not answer: LOG_THIS('ERROR',LOGGING(script_name)+'   DNS_RESOLVER failed getting ip   URL: [ '+url.encode('utf8')+' ]')
 	return answer
 
-BLOCKED_VIDEOS = ['R','TVMA','TV-MA','PG-18','PG-16','NC-17']
+BLOCKED_VIDEOS = ['R','TV-MA','PG-18','PG-16','NC-17','TVMA','PG18','PG16','NC17','R18','18']
 
 
 

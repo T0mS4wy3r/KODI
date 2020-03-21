@@ -3,7 +3,7 @@ from LIBRARY import *
 
 headers = { 'User-Agent' : '' }
 script_name='AKOAM'
-menu_name='_AKM_'
+menu_name='_AKO_'
 website0a = WEBSITES[script_name][0]
 noEpisodesLIST = ['فيلم','كليب','العرض الاسبوعي','مسرحية','مسرحيه','اغنية','اعلان','لقاء']
 #proxy = '||MyProxyUrl=https://159.203.87.130:3128'
@@ -12,10 +12,10 @@ proxy = ''
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==70: MENU()
+	if   mode==70: MENU()
 	elif mode==71: CATEGORIES(url+proxy)
 	elif mode==72: TITLES(url+proxy,text)
-	elif mode==73: EPISODES(url+proxy)
+	elif mode==73: SECTIONS(url+proxy)
 	elif mode==74: PLAY(url+proxy)
 	elif mode==79: SEARCH(text)
 	return
@@ -26,7 +26,7 @@ def MENU():
 	addDir(menu_name+'المزيد',website0a+proxy,72,'','','more')
 	#addDir(menu_name+'الاخبار',website0a+proxy,72,'','','news')
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات']
-	html = openURL_cached(NO_CACHE,website0a+proxy,'',headers,'','AKOAM-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a+proxy,'',headers,'','AKOAM-MENU-1st')
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#xbmcgui.Dialog().textviewer('',html)
 	#if not html_blocks:
@@ -58,7 +58,7 @@ def CATEGORIES(url):
 	return
 
 def TITLES(url,type):
-	html = openURL_cached(NO_CACHE,url,'',headers,'','AKOAM-TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-TITLES-1st')
 	items = []
 	if type=='featured':
 		html_blocks = re.findall('section_title featured_title(.*?)subjects-crousel',html,re.DOTALL)
@@ -93,9 +93,24 @@ def TITLES(url,type):
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def EPISODES(url):
+def SECTIONS(url):
 	notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-EPISODES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-SECTIONS-1st')
+	if 'التصميم الجديد من هنا' in html:
+		url3 = re.findall('<br />.*?<a href="(http.*?akwam.*?)"',html,re.DOTALL)
+		url3 = unquote(url3[0])
+		#xbmcgui.Dialog().ok(url3,'SECTIONS')
+		import AKWAM
+		if '/series/' in url3: AKWAM.EPISODES(url3)
+		else: AKWAM.PLAY(url3)
+		return
+	rating = re.findall('محتوى الفيلم.*?>.*?(\w*?)\W*?<',html,re.DOTALL)
+	#xbmcgui.Dialog().ok(rating[0],'')
+	if rating:
+		if rating[0] in BLOCKED_VIDEOS:
+			LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
+			xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
+			return
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#xbmcgui.Dialog().ok(url,html)
 	items = re.findall('<br />\n<a href="(.*?)".*?<span style="color:.*?">(.*?)</span>',html,re.DOTALL)
@@ -115,8 +130,7 @@ def EPISODES(url):
 		items = []
 		for filename in filenames:
 			items.append( ('رابط التشغيل',filename) )
-	if not items:
-		items = [ ('رابط التشغيل','') ]
+	if not items: items = [ ('رابط التشغيل','') ]
 	count = 0
 	titleLIST,episodeLIST = [],[]
 	size = len(items)
@@ -137,15 +151,16 @@ def EPISODES(url):
 			if size==1:
 				selection = 0
 			else:
+				#xbmcgui.Dialog().select('',titleLIST)
 				selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', titleLIST)
 				if selection == -1: return
-			PLAY(url+'?ep='+str(1+episodeLIST[size-selection-1]))
+			PLAY(url+'?section='+str(1+episodeLIST[size-selection-1]))
 		else:
 			for i in reversed(range(size)):
 				#if ':' in titleLIST[i]: title = titleLIST[i].strip(':') + ' - ملف الفيديو غير موجود'
 				#else: title = name + ' - ' + titleLIST[i]
 				title = name + ' - ' + titleLIST[i]
-				link = url + '?ep='+str(size-i)
+				link = url + '?section='+str(size-i)
 				addLink(menu_name+title,link,74,img)
 			xbmcplugin.endOfDirectory(addon_handle)
 	else:
@@ -156,8 +171,8 @@ def EPISODES(url):
 
 def PLAY(url):
 	#xbmcgui.Dialog().ok(url,'')
-	url2,episode = url.split('?ep=')
-	html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','AKOAM-PLAY-1st')
+	url2,episode = url.split('?section=')
+	html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','AKOAM-PLAY_AKOAM-1st')
 	html_blocks = re.findall('ad-300-250.*?ad-300-250(.*?)ako-feedback',html,re.DOTALL)
 	html_block = html_blocks[0].replace('\'direct_link_box','"direct_link_box epsoide_box')
 	html_block = html_block + 'direct_link_box'
@@ -179,16 +194,16 @@ def PLAY(url):
 			linkLIST.append(link+'?name='+serversDICT[serverIMG])
 		else: linkLIST.append(link+'?name='+serverIMG)
 	if len(linkLIST)==0:
-		if 'الانتقال إلي التصميم الجديد' in html:
-			xbmcgui.Dialog().ok('موقع اكوام الجديد','هذا الفيديو يستخدم موقع اكوام الجديد','وهو لا يعمل حاليا في هذا البرنامج')
-		else:
-			message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
-			if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
-			else: xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
+		#xbmcgui.Dialog().ok('رسالة من المبرمج','هذا الفيديو يستخدم موقع اكوام الجديد وهو حاليا لا يعمل  في هذا البرنامج ... والمبرمج يعلم بهذه المشكلة ويدرس امكانية اضافة موقع اكوام الجديد الى البرنامج')
+		message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
+		if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
+		else: xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
 	else:
+		#xbmcgui.Dialog().select('',linkLIST)
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name)
-	return ''
+		return
+	return
 
 def SEARCH(search):
 	if search=='': search = KEYBOARD()
@@ -198,5 +213,6 @@ def SEARCH(search):
 	url = website0a + '/search/' + new_search + proxy
 	TITLES(url,'search')
 	return
+
 
 
