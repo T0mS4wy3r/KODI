@@ -155,7 +155,7 @@ def PLAY(url):
 	if rating and False:
 		if rating[0] in BLOCKED_VIDEOS:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
-			xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
+			xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
 			return
 	# https://egybest.vip/movie/فيلم-the-lion-king-2019-مترجم
 	watchURL,downloadURL = '',''

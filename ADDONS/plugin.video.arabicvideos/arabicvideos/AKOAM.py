@@ -96,7 +96,7 @@ def TITLES(url,type):
 def SECTIONS(url):
 	notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-SECTIONS-1st')
-	if 'التصميم الجديد من هنا' in html:
+	if 'التصميم الجديد من هنا' in html or 'للموقع الجديد من هنا' in html:
 		url3 = re.findall('<br />.*?<a href="(http.*?akwam.*?)"',html,re.DOTALL)
 		url3 = unquote(url3[0])
 		#xbmcgui.Dialog().ok(url3,'SECTIONS')
@@ -109,7 +109,7 @@ def SECTIONS(url):
 	if rating:
 		if rating[0] in BLOCKED_VIDEOS:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
-			xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
+			xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
 			return
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#xbmcgui.Dialog().ok(url,html)
@@ -194,7 +194,6 @@ def PLAY(url):
 			linkLIST.append(link+'?name='+serversDICT[serverIMG])
 		else: linkLIST.append(link+'?name='+serverIMG)
 	if len(linkLIST)==0:
-		#xbmcgui.Dialog().ok('رسالة من المبرمج','هذا الفيديو يستخدم موقع اكوام الجديد وهو حاليا لا يعمل  في هذا البرنامج ... والمبرمج يعلم بهذه المشكلة ويدرس امكانية اضافة موقع اكوام الجديد الى البرنامج')
 		message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
 		if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
 		else: xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')

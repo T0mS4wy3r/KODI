@@ -110,7 +110,7 @@ def PLAY(url):
 	adultLIST = ['R - للكبار فقط','PG-18','PG-16','TV-MA']
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-PLAY-1st')
 	if any(value in html for value in adultLIST):
-		xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
+		xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
 		return
 	html_blocks = re.findall('id="links-panel(.*?)div',html,re.DOTALL)
 	if html_blocks:

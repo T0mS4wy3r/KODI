@@ -18,6 +18,7 @@ def MAIN(mode,url,text):
 	elif mode==241: TITLES(url+proxy,text)
 	elif mode==242: EPISODES(url+proxy)
 	elif mode==243: PLAY(url+proxy)
+	elif mode==244: FILTERS_MENU(url+proxy,text)
 	elif mode==249: SEARCH(text)
 	return
 
@@ -34,7 +35,7 @@ def MENU():
 		ignoreLIST = ['ألعاب','برامج','منوعات']
 		for link,title in items:
 			if title not in ignoreLIST:
-				addDir(menu_name+title,link,241)
+				addDir(menu_name+title,link,244)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
@@ -99,7 +100,7 @@ def PLAY(url):
 	if rating:
 		if rating[0] in BLOCKED_VIDEOS:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
-			xbmcgui.Dialog().notification('قم بتشغيل فيديو غيره','هذا الفيديو للكبار فقط ولا يعمل هنا')
+			xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
 			return
 	buttons = re.findall('li><a href="#(.*?)".*?>(.*?)<',html,re.DOTALL)
 	buttonLIST,qualityLIST = zip(*buttons)
@@ -152,4 +153,62 @@ def PLAY(url):
 	else: PLAY_VIDEO(url3,script_name,'yes')
 	return
 
+def FILTERS_MENU(url,filter):
+	#xbmcgui.Dialog().ok(str(filters),'')
+	#filters = '?section=0&category=0&rating=0&year=0&language=0&formats=0&quality=0'
+	if filter=='': newfilter_options,newfilter_values = '',''
+	else: newfilter_options,newfilter_values = filter.split(':')
+	filtersDICT = {}
+	all_keys = ['section','category','rating','year','language','formats','quality']
+	if newfilter_values=='':
+		for key in all_keys:
+			newfilter_values = newfilter_values+'&'+key+'=0'
+		newfilter_values = newfilter_values.strip('&')
+	items = newfilter_values.split('&')
+	for item in items:
+		var,value = item.split('=')
+		filtersDICT[var] = value
+	newfilter_values = ''
+	for key in all_keys:
+		newfilter_values = newfilter_values+'&'+key+'='+filtersDICT[key]
+	newfilter_values = newfilter_values.strip('&')
+	if newfilter_options=='':
+		for key in all_keys:
+			newfilter_options = newfilter_options+'&'+key+'=0'
+		newfilter_options = newfilter_options.strip('&')
+	items = newfilter_options.split('&')
+	for item in items:
+		var,value = item.split('=')
+		filtersDICT[var] = value
+	newfilter_options = ''
+	filter_show = ''
+	for key in all_keys:
+		newfilter_options = newfilter_options+'&'+key+'='+filtersDICT[key]
+		if filtersDICT[key]!='0': filter_show = filter_show+'+'+filtersDICT[key]
+	newfilter_options = newfilter_options.strip('&')
+	filter_show = filter_show.strip('+')
+	filter_url = url+'?'+newfilter_values
+	addDir(menu_name+'أظهار قائمة الفيديو التي تم اختيارها',filter_url,241,'','1')
+	addDir(menu_name+'[[   '+filter_show+'   ]]',filter_url,241,'','1')
+	addDir(menu_name+'===========================','',9999)
+	html = openURL_cached(LONG_CACHE,url,'','','','AKWAM-FILTERS_MENU-1st')
+	html_blocks = re.findall('<form id(.*?)</form>',html,re.DOTALL)
+	block = html_blocks[0]
+	select_blocks = re.findall('<select.*?name="(.*?)"(.*?)</select>',block,re.DOTALL)
+	dict = {}
+	for name,block in select_blocks:
+		dict[name] = {}
+		items = re.findall('<option(.*?)>(.*?)<',block,re.DOTALL)
+		for value,option in items:
+			if 'value' not in value: value = option
+			else: value = re.findall('"(.*?)"',value,re.DOTALL)[0]
+			dict[name][value] = option
+			if value=='0': continue
+			newoptions = newfilter_options+'&'+name+'='+option
+			newvalues = newfilter_values+'&'+name+'='+value
+			newfilter = newoptions+':'+newvalues
+			title = option+' :'+dict[name]['0']
+			addDir(menu_name+title,url,244,'','',newfilter)
+	xbmcplugin.endOfDirectory(addon_handle)
+	return
 

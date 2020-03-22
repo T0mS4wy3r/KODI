@@ -1,4 +1,9 @@
 ﻿
+v6.2.0	2020-03-22
+Added AKWAM full filter
+Used RESOLVEURL instead of URLRESOLVER
+
+
 v6.1.0	2020-03-21
 Updated "Contact Us" & "Delete Cache" messages
 Added new AKWAM website

@@ -198,8 +198,8 @@ def RESOLVABLE(url):
 	elif 'wintv.live'	in server:	known = 'wintv.live'
 	elif 'zippyshare'	in server:	known = 'zippyshare'
 	else:
-		import urlresolver
-		external = urlresolver.HostedMediaFile(url2).valid_url()
+		import resolveurl
+		external = resolveurl.HostedMediaFile(url2).valid_url()
 	#xbmcgui.Dialog().ok(url,url2)
 	if private:
 		result1 = 'خاص'
@@ -305,7 +305,7 @@ def RESOLVE(url):
 	elif 'youtu'		in server: titleLIST,linkLIST = YOUTUBE(url2)
 	elif 'y2u.be'		in server: titleLIST,linkLIST = YOUTUBE(url2)
 	elif 'zippyshare'	in server: titleLIST,linkLIST = ZIPPYSHARE(url2)
-	else: titleLIST,linkLIST = URLRESOLVER(url2)
+	else: titleLIST,linkLIST = RESOLVEURL(url2)
 	if len(linkLIST)==0:
 		if len(titleLIST)==1: errormsg = titleLIST[0]
 		else: errormsg = 'Error: RESOLVE Resolver failed'
@@ -371,17 +371,17 @@ def SERVERS(linkLIST,script_name=''):
 	#	result = SEND_EMAIL(subject,message,'no','','FROM-RESOLVERS-'+script_name)
 	return serversLIST,urlLIST
 
-def	URLRESOLVER(url):
+def	RESOLVEURL(url):
 	try:
-		import urlresolver
-		result = urlresolver.HostedMediaFile(url).resolve()
+		import resolveurl
+		result = resolveurl.HostedMediaFile(url).resolve()
 	except: result = False
-	# urlresolver might fail either with an error or returns value False
+	# resolveurl might fail either with an error or returns value False
 	if result!=False: return [''],[result]
 	errortrace = traceback.format_exc()
 	sys.stderr.write(errortrace)
 	if 'raise' in errortrace: errormsg = errortrace.splitlines()[-1]
-	else: errormsg = 'Error: URLRESOLVER Resolver failed'
+	else: errormsg = 'Error: RESOLVEURL Resolver failed'
 	#xbmcgui.Dialog().ok(errormsg,str(result))
 	return [errormsg],[]
 
