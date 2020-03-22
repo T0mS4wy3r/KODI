@@ -88,8 +88,6 @@
 		<import addon="resource.images.studios.coloured" version="0.0.8"/>
 		<import addon="resource.images.weatherfanart.prairie" version="0.0.5"/>
 		<import addon="resource.images.weathericons.coloured" version="0.0.6"/>
-		<import addon="repository.jsergio" optional="true"/>
-		<import addon="plugin.video.arabicvideos" optional="true"/>
 	</requires>
 	<extension point="xbmc.gui.skin" debugging="false" effectslowdown="0.75">
 		<res width="1280" height="720" aspect="16:9" default="true" folder="720p"/>
@@ -196,8 +194,6 @@
 		<import addon="resource.images.weathericons.coloured" version="0.0.6"/>
 		<import addon="resource.images.moviegenreicons.metropolisEMAD" version="1.0.0"/>
 		<import addon="resource.images.musicgenreicons.metropolisEMAD" version="1.0.0"/>
-		<import addon="repository.jsergio" optional="true"/>
-		<import addon="plugin.video.arabicvideos" optional="true"/>
 	</requires>
 	<extension point="xbmc.gui.skin" debugging="false" effectslowdown="0.75">
 		<res width="1280" height="720" aspect="16:9" default="true" folder="720p"/>
@@ -292,8 +288,6 @@
 		<import addon="script.image.resource.select" version="0.1.0"/>
 		<import addon="resource.images.weatherfanart.single" version="0.0.6"/>
 		<import addon="resource.images.moviegenreicons.arctic.zephyr" version="0.0.1"/>
-		<import addon="repository.jsergio" optional="true"/>
-		<import addon="plugin.video.arabicvideos" optional="true"/>
 	</requires>
 	<extension point="xbmc.gui.skin" defaultthemename="Textures.xbt" effectslowdown="1" debugging="false">
 		<res width="1920" height="1080" aspect="16:9" default="true" folder="1080p"/>
