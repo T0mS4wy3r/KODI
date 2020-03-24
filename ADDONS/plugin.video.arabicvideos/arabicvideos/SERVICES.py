@@ -505,6 +505,7 @@ def ANALYTICS_REPORT():
 		countries = countries.replace('United Kingdom','UK')
 		countries = countries.replace('United Arab Emirates','UAE')
 		countries = countries.replace('Saudi Arabia','KSA')
+		countries = countries.replace('Western Sahara','W.Sahara')
 		countries = countries[:43].strip(' ').strip(' .')
 		message4 += '\n[COLOR FFC89008]'+site+' : [/COLOR]'+countries
 	for site in sorted(WEBSITES.keys()):

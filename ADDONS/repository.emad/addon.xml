@@ -1,4 +1,4 @@
-<addon id="repository.emad" name="EMAD Repository" version="4.0.2" provider-name="EMAD MAHDI">
+<addon id="repository.emad" name="EMAD Repository" version="4.0.3" provider-name="EMAD MAHDI">
 	<extension point="xbmc.addon.repository" name="EMAD Repository">
 		<dir>
 			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml</info>

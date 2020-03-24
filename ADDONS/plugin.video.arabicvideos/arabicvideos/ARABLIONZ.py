@@ -29,10 +29,11 @@ def MENU():
 		addDir(menu_name+title,url,201)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
-	items = re.findall('href="(http.*?)">(.*?)<',block,re.DOTALL)
+	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	ignoreLIST = ['مسلسلات انمي مترجمة','الرئيسية']
 	#keepLIST = ['مسلسلات ','افلام ','برامج','عروض','كليبات','اغانى']
 	for link,title in items:
+		if 'http' not in link: link = website0a+link
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
 		#	if any(value in title for value in keepLIST):
