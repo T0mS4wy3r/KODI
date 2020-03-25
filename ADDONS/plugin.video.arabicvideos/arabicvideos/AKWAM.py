@@ -110,34 +110,43 @@ def PLAY(url):
 			return
 	buttons = re.findall('li><a href="#(.*?)".*?>(.*?)<',html,re.DOTALL)
 	#buttons = (['',''],['',''])
-	linkLIST,titleLIST,quality = [],[],''
+	linkLIST,titleLIST,blocks,qualities = [],[],[],[]
 	if buttons:
+		filename = '.mp4'
 		buttonLIST,qualityLIST = zip(*buttons)
 		for i in range(len(buttonLIST)):
 			button = buttonLIST[i]
 			quality = qualityLIST[i]
 			#xbmcgui.Dialog().ok(quality,button)
 			html_blocks = re.findall('tab-content" id="'+button+'"(.*?)</a>.. *?</div>.. *?</div>',html,re.DOTALL)
-			block,filename = html_blocks[0],'.mp4'
+			block = html_blocks[0]
+			blocks.append(block)
+			qualities.append(quality)
 	else:
 		html_blocks = re.findall('class="qualities(.*?)<h3.*?>(.*?)<',html,re.DOTALL)
 		block,filename = html_blocks[0]
-	notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
-	file_extension = filename.rsplit('.',1)[1].strip(' ')
-	if file_extension in notvideosLIST:
-		xbmcgui.Dialog().ok('الملف ليس فيديو ولا صوت','')
-		return
-	links = re.findall('href="(.*?)".*?icon-(.*?)"',block,re.DOTALL)
-	for link,icon in links:
-		if 'torrent' in icon: continue
-		elif 'download' in icon: type = 'تحميل'
-		elif 'play' in icon: type = 'مشاهدة'
-		else: type = 'غير معروف'
-		title = quality+' ملف '+type
-		titleLIST.append(title)
-		linkLIST.append(link)
+		notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
+		file_extension = filename.rsplit('.',1)[1].strip(' ')
+		if file_extension in notvideosLIST:
+			xbmcgui.Dialog().ok('الملف ليس فيديو ولا صوت','')
+			return
+		blocks.append(block)
+		qualities.append('')
+	#xbmcgui.Dialog().ok(str(qualities),'')
+	for i in range(len(blocks)):
+		links = re.findall('href="(.*?)".*?icon-(.*?)"',blocks[i],re.DOTALL)
+		#xbmcgui.Dialog().ok(str(links),'')
+		for link,icon in links:
+			if 'torrent' in icon: continue
+			elif 'download' in icon: type = 'تحميل'
+			elif 'play' in icon: type = 'مشاهدة'
+			else: type = 'غير معروف'
+			title = qualities[i]+' ملف '+type
+			titleLIST.append(title)
+			linkLIST.append(link)
 	#selection = xbmcgui.Dialog().select('',linkLIST)
-	selection = xbmcgui.Dialog().select('',titleLIST)
+	if len(titleLIST)==1: selection = 0
+	else: selection = xbmcgui.Dialog().select('',titleLIST)
 	if selection==-1: return
 	link = linkLIST[selection]
 	title = titleLIST[selection]
@@ -146,11 +155,11 @@ def PLAY(url):
 	url2 = unquote(url2[0])
 	url3 = ''
 	if 'تحميل' in title:
-		html3 = openURL_cached(REGULAR_CACHE,url2,'',headers,'','AKWAM-PLAY-3rd')
+		html3 = openURL_cached(NO_CACHE,url2,'',headers,'','AKWAM-PLAY-3rd')
 		url3 = re.findall('btn-loader.*?href="(.*?)"',html3,re.DOTALL)
 		url3 = unquote(url3[0])
 	if 'مشاهدة' in title:
-		html4 = openURL_cached(REGULAR_CACHE,url2,'',headers,'','AKWAM-PLAY-4th')
+		html4 = openURL_cached(NO_CACHE,url2,'',headers,'','AKWAM-PLAY-4th')
 		links = re.findall('source\n *?src="(.*?)".*?size="(.*?)"',html4,re.DOTALL)
 		for link,size in links:
 			if size in title:
@@ -161,7 +170,8 @@ def PLAY(url):
 			for link,size in links:
 				titleLIST.append(size)
 				linkLIST.append(link)
-			selection = xbmcgui.Dialog().select('',titleLIST)
+			if len(titleLIST)==1: selection = 0
+			else: selection = xbmcgui.Dialog().select('',titleLIST)
 			if selection==-1: return
 			url3 = linkLIST[selection]
 	if url3=='': xbmcgui.Dialog().ok('','لا يوجد ملف تشغيل لهذا الفيديو')
@@ -169,7 +179,7 @@ def PLAY(url):
 	return
 
 def FILTERS_MENU(url,filter):
-	#xbmcgui.Dialog().ok(url,'FILTERS_MENU')
+	#xbmcgui.Dialog().ok(filter,url)
 	if '?' in url: url = url.split('?')[0]
 	type,filter = filter.split(':',1)
 	if filter=='': filter_options,filter_values = '',''
@@ -183,8 +193,6 @@ def FILTERS_MENU(url,filter):
 		new_filter = new_options.strip('&')+':'+new_values.strip('&')
 		clean_filter = RECONSTRUCT_FILTER(filter_values,False)
 		url2 = url+'?'+clean_filter
-		if category=='year': addDir(menu_name+'الجميع',url2,241,'','1')
-		else: addDir(menu_name+'الجميع',url2,245,'','',new_filter)
 	elif type=='FILTERS':
 		filter_show = RECONSTRUCT_FILTER(filter_options,True)
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,False)
@@ -197,11 +205,20 @@ def FILTERS_MENU(url,filter):
 	html_blocks = re.findall('<form id(.*?)</form>',html,re.DOTALL)
 	block = html_blocks[0]
 	select_blocks = re.findall('<select.*?name="(.*?)"(.*?)</select>',block,re.DOTALL)
+	#xbmcgui.Dialog().ok(str(len(select_blocks)),'')
 	dict = {}
 	for name,block in select_blocks:
-		if type=='CATEGORIES' and name!=category: continue
-		dict[name] = {}
 		items = re.findall('<option(.*?)>(.*?)<',block,re.DOTALL)
+		if type=='CATEGORIES':
+			if name!=category: continue
+			elif len(items)<3:
+				if category=='year': TITLES(url2)
+				else: FILTERS_MENU(url2,'CATEGORIES:'+new_filter)
+				return
+			else:
+				if category=='year': addDir(menu_name+'الجميع',url2,241,'','1')
+				else: addDir(menu_name+'الجميع',url2,245,'','',new_filter)
+		dict[name] = {}
 		for value,option in items:
 			if 'value' not in value: value = option
 			else: value = re.findall('"(.*?)"',value,re.DOTALL)[0]
@@ -209,14 +226,14 @@ def FILTERS_MENU(url,filter):
 			if value=='0': continue
 			new_options = filter_options+'&'+name+'='+option
 			new_values = filter_values+'&'+name+'='+value
-			new_filter = new_options+':'+new_values
+			new_filter2 = new_options+':'+new_values
 			title = option+' :'+dict[name]['0']
-			if type=='FILTERS': addDir(menu_name+title,url,244,'','',new_filter)
+			if type=='FILTERS': addDir(menu_name+title,url,244,'','',new_filter2)
 			elif type=='CATEGORIES' and 'category=' in filter_options:
 				clean_filter = RECONSTRUCT_FILTER(new_values,False)
-				url2 = url+'?'+clean_filter
-				addDir(menu_name+title,url2,241,'','1')
-			else: addDir(menu_name+title,url,245,'','',new_filter)
+				url3 = url+'?'+clean_filter
+				addDir(menu_name+title,url3,241,'','1')
+			else: addDir(menu_name+title,url,245,'','',new_filter2)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 

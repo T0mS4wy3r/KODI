@@ -1,4 +1,9 @@
 ﻿
+v6.2.2	2020-03-25
+Fixed AKWAN multiple qualities menu
+Minimized AKWAM categories menu
+
+
 v6.2.1	2020-03-24
 Fixed ARABLIONZ menu
 Fixed AKWAM filter menu

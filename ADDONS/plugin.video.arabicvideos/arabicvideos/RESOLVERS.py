@@ -305,7 +305,7 @@ def RESOLVE(url):
 	elif 'youtu'		in server: titleLIST,linkLIST = YOUTUBE(url2)
 	elif 'y2u.be'		in server: titleLIST,linkLIST = YOUTUBE(url2)
 	elif 'zippyshare'	in server: titleLIST,linkLIST = ZIPPYSHARE(url2)
-	else: titleLIST,linkLIST = RESOLVEURL(url2)
+	else: titleLIST,linkLIST = EXTERNAL_RESOLVER(url2)
 	if len(linkLIST)==0:
 		if len(titleLIST)==1: errormsg = titleLIST[0]
 		else: errormsg = 'Error: RESOLVE Resolver failed'
@@ -371,7 +371,7 @@ def SERVERS(linkLIST,script_name=''):
 	#	result = SEND_EMAIL(subject,message,'no','','FROM-RESOLVERS-'+script_name)
 	return serversLIST,urlLIST
 
-def	RESOLVEURL(url):
+def	EXTERNAL_RESOLVER(url):
 	try:
 		import resolveurl
 		result = resolveurl.HostedMediaFile(url).resolve()
@@ -381,7 +381,7 @@ def	RESOLVEURL(url):
 	errortrace = traceback.format_exc()
 	sys.stderr.write(errortrace)
 	if 'raise' in errortrace: errormsg = errortrace.splitlines()[-1]
-	else: errormsg = 'Error: RESOLVEURL Resolver failed'
+	else: errormsg = 'Error: EXTERNAL RESOLVER failed'
 	#xbmcgui.Dialog().ok(errormsg,str(result))
 	return [errormsg],[]
 
@@ -550,12 +550,15 @@ def ARABLIONZ(link):
 		return ['New Server: Not yet supported by ArabicVideos'],[]
 
 def SHAHID4U(link):
-	# http://shahid4u/?postid=126981&serverid=5
+	# https://shahid4u.net/?postid=142302&serverid=4
 	parts = re.findall('postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL|re.IGNORECASE)
 	postid,serverid = parts[0]
 	url = 'https://on.shahid4u.net/ajaxCenter?_action=getserver&_post_id='+postid+'&serverid='+serverid
 	headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 	url2 = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-SHAHID4U-1st')
+	#url2 = url2.replace('embed-','')
+	#url2 = url2.replace('.html','')
+	#xbmcgui.Dialog().ok(link,url2)
 	titleLIST,linkLIST = RESOLVE(url2)
 	return titleLIST,linkLIST
 

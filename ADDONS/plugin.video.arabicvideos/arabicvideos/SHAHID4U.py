@@ -132,6 +132,7 @@ def PLAY(url):
 				items = re.findall('data-embedd=".*?(http.*?)("|&quot;)',block,re.DOTALL)
 				for link,dummy in items:
 					linkLIST.append(link)
+	#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', linkLIST)
 	# download links
 	if '/download/' in html:
 		url2 = url.replace(parts[3],'download')
