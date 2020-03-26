@@ -7,7 +7,6 @@
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.requests" version="2.12.4"/>
-		<import addon="repository.jsergio" optional="false"/>
 		<import addon="script.module.resolveurl" version="5.0.0" optional="false"/>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="arabicvideos/__init__.py">
@@ -499,7 +498,6 @@ Kodi is a registered trademark of the XBMC Foundation. We are not connected to o
         <import addon="script.module.python.twitch" optional="true" />
         <import addon="script.module.cryptopy" version="1.2.6" optional="true" />
         <import addon="plugin.video.gdrive" optional="true" />
-		<import addon="repository.jsergio" optional="false"/>
     </requires>
     <extension point="xbmc.python.module" library="lib" />
     <extension point="xbmc.python.pluginsource" library="lib/default.py" />
