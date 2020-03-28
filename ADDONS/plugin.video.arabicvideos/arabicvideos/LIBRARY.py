@@ -866,7 +866,8 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		url,subtitle,httpd = url3
 		if subtitle!='': subtitlemessage = '   Subtitle: [ '+subtitle+' ]'
 	else: url,subtitle,httpd = url3,'',''
-	#url = url+'dddd'
+	url = url.replace(' ','%20')
+	#url = quote(url)
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to play video   URL: [ '+url.encode('utf8')+' ]'+subtitlemessage)
 	videofiletype = re.findall('(\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
 	if videofiletype: videofiletype = videofiletype[0][0]

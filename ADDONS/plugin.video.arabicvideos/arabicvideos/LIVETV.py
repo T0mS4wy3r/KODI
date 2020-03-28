@@ -6,21 +6,21 @@ website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==100: ITEMS(0)
-	elif mode==101: ITEMS(1)
-	elif mode==102: ITEMS(2)
-	elif mode==103: ITEMS(3)
+	if mode==100: ITEMS('0')
+	elif mode==101: ITEMS('1')
+	elif mode==102: ITEMS('2')
+	elif mode==103: ITEMS('3')
 	elif mode==104: PLAY(url)
 	return
 
-def ITEMS(type):
-	menu_name='_TV'+str(type)+'_'
+def ITEMS(menu):
+	menu_name='_TV'+menu+'_'
 	client = dummyClientID(32)
-	payload = { 'id' : '' , 'user' : client , 'function' : 'list_'+str(type) }
+	payload = { 'id' : '' , 'user' : client , 'function' : 'list' , 'menu' : menu }
 	data = urllib.urlencode(payload)
 	#response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, '', True,'','LIVETV-ITEMS-1st')
 	#html = response.text
-	html = openURL_cached(LONG_CACHE,website0a,data,'','','LIVETV-ITEMS-1st')
+	html = openURL_cached(SHORT_CACHE,website0a,data,'','','LIVETV-ITEMS-1st')
 	#html = html.replace('\r','')
 	#xbmcgui.Dialog().ok(html,html)
 	#file = open('s:/emad.html', 'w')
@@ -55,13 +55,13 @@ def ITEMS(type):
 			if '#' in source: continue
 			#if source in ['NT','YU','WS0','RL1','RL2']: continue
 			if source!='URL': name = name + '   [COLOR FFC89008]' + source + '[/COLOR]'
-			addLink(menu_name+' '+name,source+';;'+server+';;'+id2,104,img,'','IsPlayable=no')
+			addLink(menu_name+' '+name,source+';;'+server+';;'+id2+';;'+menu,104,img,'','IsPlayable=no')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def PLAY(id):
 	xbmcgui.Dialog().notification('جاري تشغيل القناة','')
-	source,server,id2 = id.split(';;')
+	source,server,id2,menu = id.split(';;')
 	url = ''
 	#xbmcgui.Dialog().ok(source,id2)
 	#try:
@@ -69,8 +69,11 @@ def PLAY(id):
 	elif source=='GA':
 		#xbmcgui.Dialog().ok(url,html)
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
-		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA1' }
-		response = openURL_requests_cached(LONG_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
+		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA1' , 'menu' : menu }
+		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
+		if 'Not Allowed' in response.text:
+			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			return
 		#proxyname,proxyurl = RANDOM_HTTPS_PROXY()
 		url = response.headers['Location']#+'||MyProxyUrl='+proxyurl
 		#xbmcgui.Dialog().ok(url,'')
@@ -80,8 +83,11 @@ def PLAY(id):
 		#html = response.text
 		#session = re.findall('SessionID = "(.*?)"',html,re.DOTALL)
 		#session = session[0]
-		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA2' }
-		response = openURL_requests_cached(LONG_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-3rd')
+		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA2' , 'menu' : menu }
+		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-3rd')
+		if 'Not Allowed' in response.text:
+			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			return
 		url = response.headers['Location'].replace('__ID2__',id2)
 		headers = { 'Cookie' : 'ASP.NET_SessionId='+session }
 		response = openURL_requests_cached(NO_CACHE,'GET',url,'',headers,False,'','LIVETV-PLAY-4th')
@@ -102,8 +108,8 @@ def PLAY(id):
 		#xbmcgui.Dialog().ok(items[0],url)
 		"""
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
-		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playGA' }
-		response = openURL_requests_cached(NO_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-1st')
+		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playGA' , 'menu' : menu }
+		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-1st')
 		url = response.headers['Location']
 		html = response.text
 		html = re.findall('\.(.*?)\.',html,re.DOTALL)
@@ -113,8 +119,11 @@ def PLAY(id):
 		"""
 	elif source=='NT':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
-		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playNT' }
-		response = openURL_requests_cached(REGULAR_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
+		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playNT' , 'menu' : menu }
+		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
+		if 'Not Allowed' in response.text:
+			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			return
 		url = response.headers['Location']
 		url = url.replace('%20',' ')
 		url = url.replace('%3D','=')
@@ -123,8 +132,11 @@ def PLAY(id):
 			url = url.replace('learning1','Learning')
 	elif source=='PL':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
-		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playPL' }
-		response = openURL_requests_cached(REGULAR_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-6th')
+		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playPL' , 'menu' : menu }
+		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-6th')
+		if 'Not Allowed' in response.text:
+			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			return
 		response = openURL_requests_cached(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-7th')
 		html = response.text
 		items = re.findall('source src="(.*?)"',html,re.DOTALL)
@@ -132,8 +144,11 @@ def PLAY(id):
 	elif source in ['TA','FM','YU','WS1','WS2','RL1','RL2']:
 		if source=='TA': id2 = id
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
-		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'play'+source }
-		response = openURL_requests_cached(NO_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-8th')
+		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'play'+source , 'menu' : menu }
+		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-8th')
+		if 'Not Allowed' in response.text:
+			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			return
 		url = response.headers['Location']
 		if source=='FM':
 			#xbmcgui.Dialog().ok(url,'')

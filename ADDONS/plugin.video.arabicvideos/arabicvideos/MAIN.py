@@ -78,8 +78,8 @@ page = urllib2.unquote(args['page'])
 
 
 if mode=='MAIN_MENU':
-	#addLink('Testing - watched enabled','',179,'','','yes','','','IsPlayable=yes')
-	#addLink('Testing - watched disabled','',179,'','','no','','','IsPlayable=no')
+	#addLink('Testing - watched enabled','',179,'','','IsPlayable=yes')
+	#addLink('Testing - watched disabled','',179,'','','IsPlayable=no')
 	addDir(' [COLOR FFC89008] 1.  [/COLOR]'+'للتواصل مع المبرمج','',196)
 	addDir(' [COLOR FFC89008] 2.  [/COLOR]'+'تقرير عن استخدام البرنامج','',176)
 	addDir(' [COLOR FFC89008] 3.  [/COLOR]'+'لماذا بعض المواقع لا تعمل','',195)

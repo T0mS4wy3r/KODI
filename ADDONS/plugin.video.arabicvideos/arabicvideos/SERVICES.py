@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+#from __future__ import unicode_literals
 from LIBRARY import *
 
 script_name='SERVICES'
@@ -542,16 +543,117 @@ def KODI_SKIN():
 	return
 
 def TESTINGS():
-	url = 'http://egybest.vip/ee.mp4'
-	PLAY_VIDEO(url)
+
+	urls = [
+	
+	#'http://www.youtube.com/watch?v=BaW_jenozKc'
+	 'https://www.youtube.com/watch?v=C0DPdy98e4c'
+
+	,'https://vidshare.tv/embed-6tsveeet2p1e.html'
+	,'https://vidshare.tv/6tsveeet2p1e.html'
+
+	,'https://vidhd.net/embed-qr4ntb4ba2p9'
+	,'https://vidhd.net/qr4ntb4ba2p9'
+
+	,'https://www.vidbm.com/embed-w7nrn1zt0dje'
+	,'https://www.vidbm.com/w7nrn1zt0dje'
+
+	,'https://vidbm.com/embed-w7nrn1zt0dje'
+	,'https://vidbm.com/w7nrn1zt0dje'
+
+	,'https://www.vidbom.com/embed-w7nrn1zt0dje'
+	,'https://www.vidbom.com/w7nrn1zt0dje'
+
+	,'https://videobin.co/embed-adszju8cefng.html'
+	,'https://videobin.co/adszju8cefng'
+
+	,'https://uqload.com/embed-iaj1zudyf89v.html'
+	,'https://uqload.com/iaj1zudyf89v.html'
+	,'https://uqload.com/iaj1zudyf89v'
+
+	,'https://vidfast.co/embed-qcltlzis35h7'
+	,'https://vidfast.co/qcltlzis35h7'
+
+	,'https://jawcloud.co/embed-5r7lexzmw2um'
+	,'https://jawcloud.co/5r7lexzmw2um'
+	
+	]
+
+	# 'http://www.youtube.com/watch?v=BaW_jenozKc'
+	# from __future__ import unicode_literals
+
+	success = 0
+	xbmc.log('======= STARTING ==================================',level=xbmc.LOGNOTICE)
+	#import youtube_dl
+	import resolveurl
+	#import urlresolver
+	#ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s%(ext)s'})
+	for url in urls:
+		try:
+			#with ydl:
+			#	result = ydl.extract_info(url,download=False) # We just want to extract the info
+			#result = urlresolver.HostedMediaFile(url).resolve()
+			result = resolveurl.HostedMediaFile(url).resolve()
+			if not result: raise
+			success += 1
+			xbmc.log('      Succeeded:  '+url+'   '+str(result),level=xbmc.LOGNOTICE)
+		except:
+			xbmc.log('      Failed:  '+url,level=xbmc.LOGNOTICE)
+	xbmcgui.Dialog().ok('Done','Succeeded:  '+str(success))
+	xbmc.log('======= FINISHED =================================',level=xbmc.LOGNOTICE)
 	return
-	url = 'https://intoupload.net/w2j4lomvzopd'
-	import urlresolver
+
+
+	if 'entries' in result:
+		# Can be a playlist or a list of videos
+		video = result['entries'][0]
+	else:
+		# Just a video
+		video = result
+	video_url = video['url']
+	xbmcgui.Dialog().ok(video_url,video)
+	return
+
+	"""
+	1	https://vidshare.tv/6tsveeet2p1e.html
+	0	https://vidhd.net/qr4ntb4ba2p9
+	0	https://vidfast.co/qcltlzis35h7
+	0	https://videobin.co/adszju8cefng
+	1	https://www.vidbm.com/w7nrn1zt0dje
+	0	https://jawcloud.co/5r7lexzmw2um
+	"""
+
+	"""
+	https://vidshare.tv/embed-6tsveeet2p1e.html
+	https://vidhd.net/embed-qr4ntb4ba2p9
+	https://vidfast.co/embed-qcltlzis35h7
+	https://videobin.co/embed-adszju8cefng
+	https://www.vidbm.com/embed-w7nrn1zt0dje
+	https://jawcloud.co/embed-5r7lexzmw2um
+	"""
+
+	#url = 'http://egybest.vip/ee.mp4'
+	#PLAY_VIDEO(url)
+	#return
+	#url = 'https://intoupload.net/w2j4lomvzopd'
+
+	url = 'https://vidfast.co/embed-qcltlzis35h7'
+	#url = 'https://www.ok.ru/videoembed/1984816024113'
+	#url = 'https://vidshare.tv/6tsveeet2p1e.html'
+	#url = 'https://vidhd.net/qr4ntb4ba2p9'
+	#url = 'https://videobin.co/adszju8cefng'
+	#url = 'https://www.vidbm.com/w7nrn1zt0dje'
+	#url = 'https://jawcloud.co/5r7lexzmw2um'
+	#url = ''
+	#url = ''
+	import resolveurl
 	try:
 		#resolvable = urlresolver.HostedMediaFile(url).valid_url()
-		link = urlresolver.HostedMediaFile(url).resolve()
-		#xbmcgui.Dialog().ok(str(link),url)
-	except: xbmcgui.Dialog().ok('urlresolver: fail',url)
+		link = resolveurl.HostedMediaFile(url).resolve()
+		xbmcgui.Dialog().ok(str(link),url)
+	except: xbmcgui.Dialog().ok('Resolver: failed',url)
+	return
+
 	import RESOLVERS
 	titles,urls = RESOLVERS.RESOLVE(url)
 	selection = xbmcgui.Dialog().select('TITLES :', titles)

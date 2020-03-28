@@ -620,8 +620,9 @@ def RAPIDVIDEO(url):
 
 def UQLOAD(url):
 	# https://uqload.com/embed-iaj1zudyf89v.html
+	url = url.replace('embed-','')
 	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-UQLOAD-1st')
+	html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-UQLOAD-1st')
 	items = re.findall('sources: \["(.*?)"',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(url,items[0])
 	if items:

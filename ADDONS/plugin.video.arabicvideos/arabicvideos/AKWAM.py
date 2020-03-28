@@ -17,8 +17,8 @@ def MAIN(mode,url,text):
 	elif mode==241: TITLES(url+proxy,text)
 	elif mode==242: EPISODES(url+proxy)
 	elif mode==243: PLAY(url+proxy)
-	elif mode==244: FILTERS_MENU(url+proxy,'FILTERS:'+text)
-	elif mode==245: FILTERS_MENU(url+proxy,'CATEGORIES:'+text)
+	elif mode==244: FILTERS_MENU(url+proxy,'FILTERS::'+text)
+	elif mode==245: FILTERS_MENU(url+proxy,'CATEGORIES::'+text)
 	elif mode==249: SEARCH(text)
 	return
 
@@ -67,7 +67,7 @@ def TITLES(url,type=''):
 		for link,title in items:
 			if title=='&lsaquo;': title = 'سابقة'
 			if title=='&rsaquo;': title = 'لاحقة'
-			#title = unescapeHTML(title)
+			link = unescapeHTML(link)
 			addDir(menu_name+'صفحة '+title,link,241)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
@@ -155,11 +155,11 @@ def PLAY(url):
 	url2 = unquote(url2[0])
 	url3 = ''
 	if 'تحميل' in title:
-		html3 = openURL_cached(NO_CACHE,url2,'',headers,'','AKWAM-PLAY-3rd')
+		html3 = openURL_cached(SHORT_CACHE,url2,'',headers,'','AKWAM-PLAY-3rd')
 		url3 = re.findall('btn-loader.*?href="(.*?)"',html3,re.DOTALL)
 		url3 = unquote(url3[0])
 	if 'مشاهدة' in title:
-		html4 = openURL_cached(NO_CACHE,url2,'',headers,'','AKWAM-PLAY-4th')
+		html4 = openURL_cached(SHORT_CACHE,url2,'',headers,'','AKWAM-PLAY-4th')
 		links = re.findall('source\n *?src="(.*?)".*?size="(.*?)"',html4,re.DOTALL)
 		for link,size in links:
 			if size in title:
@@ -181,16 +181,16 @@ def PLAY(url):
 def FILTERS_MENU(url,filter):
 	#xbmcgui.Dialog().ok(filter,url)
 	if '?' in url: url = url.split('?')[0]
-	type,filter = filter.split(':',1)
+	type,filter = filter.split('::',1)
 	if filter=='': filter_options,filter_values = '',''
-	else: filter_options,filter_values = filter.split(':')
+	else: filter_options,filter_values = filter.split('::')
 	if type=='CATEGORIES':
 		if 'section=' not in filter_options: category = 'section'
 		if 'section=' in filter_options: category = 'category'
 		if 'category=' in filter_options: category = 'year'
 		new_options = filter_options+'&'+category+'=0'
 		new_values = filter_values+'&'+category+'=0'
-		new_filter = new_options.strip('&')+':'+new_values.strip('&')
+		new_filter = new_options.strip('&')+'::'+new_values.strip('&')
 		clean_filter = RECONSTRUCT_FILTER(filter_values,False)
 		url2 = url+'?'+clean_filter
 	elif type=='FILTERS':
@@ -213,7 +213,7 @@ def FILTERS_MENU(url,filter):
 			if name!=category: continue
 			elif len(items)<3:
 				if category=='year': TITLES(url2)
-				else: FILTERS_MENU(url2,'CATEGORIES:'+new_filter)
+				else: FILTERS_MENU(url2,'CATEGORIES::'+new_filter)
 				return
 			else:
 				if category=='year': addDir(menu_name+'الجميع',url2,241,'','1')
@@ -226,7 +226,7 @@ def FILTERS_MENU(url,filter):
 			if value=='0': continue
 			new_options = filter_options+'&'+name+'='+option
 			new_values = filter_values+'&'+name+'='+value
-			new_filter2 = new_options+':'+new_values
+			new_filter2 = new_options+'::'+new_values
 			title = option+' :'+dict[name]['0']
 			if type=='FILTERS': addDir(menu_name+title,url,244,'','',new_filter2)
 			elif type=='CATEGORIES' and 'category=' in filter_options:
