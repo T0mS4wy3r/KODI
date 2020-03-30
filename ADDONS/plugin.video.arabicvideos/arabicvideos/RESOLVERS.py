@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+#from __future__ import unicode_literals
 from LIBRARY import *
 
 script_name='RESOLVERS'
-doNOTresolveMElist = [ 'mystream','vimple','vidbom','gounlimited' ]
+#doNOTresolveMElist = [ 'mystream','vimple','vidbom','gounlimited' ]
+doNOTresolveMElist = []
 
 def PLAY(linkLIST,script_name,text=''):
 	titleLIST,linkLIST = SERVERS_cached(linkLIST,script_name)
@@ -20,12 +22,12 @@ def PLAY(linkLIST,script_name,text=''):
 				url = linkLIST[selection]
 				#xbmcgui.Dialog().ok(str(urlLIST[selection]),str(urlLIST[selection]))
 				if 'سيرفر' in title and 'مجهول' in title:
-					LOG_THIS('ERROR',LOGGING(script_name)+'   Unknown selected server   Server: [ '+title+' ]   URL: [ '+url+' ]')
+					LOG_THIS('ERROR',LOGGING(script_name)+'   Unknown Selected Server   Server: [ '+title+' ]   URL: [ '+url+' ]')
 					import SERVICES
 					SERVICES.MAIN(156)
 					result = 'unresolved'
 				else:
-					LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing selected server   Server: [ '+title+' ]   URL: [ '+url+' ]')
+					LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing Selected Server   Server: [ '+title+' ]   URL: [ '+url+' ]')
 					result,errormsg = PLAY_LINK(url,script_name,text)
 			if result in ['playing','canceled1'] or len(linkLIST)==1: break
 			elif result in ['failed','timeout','tried']: break
@@ -55,9 +57,7 @@ def PLAY(linkLIST,script_name,text=''):
 def PLAY_LINK(url,script_name,text=''):
 	#xbmcgui.Dialog().ok('',titleLIST[0])
 	url = url.strip(' ').strip('&').strip('?').strip('/')
-	titleLIST,linkLIST = RESOLVE(url)
-	if len(titleLIST)==1 and len(linkLIST)==0: errormsg = titleLIST[0]
-	else: errormsg = ''
+	errormsg,titleLIST,linkLIST = RESOLVE(url)
 	if 'IsPlayable=no' in text: IsPlayable = 'no'
 	else: IsPlayable='yes'
 	if linkLIST:
@@ -68,9 +68,9 @@ def PLAY_LINK(url,script_name,text=''):
 			else:
 				videoURL = linkLIST[selection]
 				title = titleLIST[selection]
-				LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing selected video   Selected: [ '+title+' ]   URL: [ '+str(videoURL).encode('utf8')+' ]')
+				LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing Selected Video   Selected: [ '+title+' ]   URL: [ '+str(videoURL).encode('utf8')+' ]')
 				if 'moshahda.' in videoURL and 'download_orig' in videoURL:
-					titleLIST2,linkLIST2 = MOVIZLAND(videoURL)
+					errormsg2,titleLIST2,linkLIST2 = MOVIZLAND(videoURL)
 					if linkLIST2: videoURL = linkLIST2[0]
 					else: videoURL = ''
 				if videoURL=='': result = 'unresolved'
@@ -94,56 +94,6 @@ def PLAY_LINK(url,script_name,text=''):
 	#	import SERVICES
 	#	SERVICES.MAIN(156)
 	#	return ''
-
-"""
-def CHECK(url):
-	result = 'unknown'
-	if   '1fichier'		in url: result = 'known'
-	elif '4helal'		in url: result = 'known'
-	elif 'allmyvideos'	in url: result = 'known'
-	elif 'allvid'		in url: result = 'known'
-	elif 'bestcima'		in url: result = 'known'
-	elif 'cloudy.ec'	in url: result = 'known'
-	elif 'dailymotion'	in url: result = 'known'
-	elif 'downace'		in url: result = 'known'
-	#elif 'estream'		in url: result = 'known'
-	elif 'filerio'		in url: result = 'known'
-	elif 'firedrive'	in url: result = 'known'
-	elif 'flashx'		in url: result = 'known'
-	elif 'govid'		in url: result = 'known'
-	elif 'hqq'			in url: result = 'known'
-	elif 'media4up'		in url: result = 'known'
-	#elif 'mystream'		in url: result = 'known'
-	elif 'nitroflare'	in url: result = 'known'
-	elif 'nowvideo'		in url: result = 'known'
-	elif 'ok.ru'		in url: result = 'known'
-	elif 'oload'		in url: result = 'known'
-	elif 'openload'		in url: result = 'known'
-	elif 'streamango'	in url: result = 'known'
-	elif 'streamin'		in url: result = 'known'
-	elif 'streammango'	in url: result = 'known'
-	elif 'thevid.net'	in url: result = 'known'
-	elif 'upload'		in url: result = 'known'
-	elif 'uptobox'		in url: result = 'known'
-	elif 'videobam'		in url: result = 'known'
-	elif 'videorev'		in url: result = 'known'
-	elif 'vidfast'		in url: result = 'known'
-	elif 'vidgg'		in url: result = 'known'
-	elif 'vidlox'		in url: result = 'known'
-	elif 'vidzi'		in url: result = 'known'
-	elif 'watchers'		in url: result = 'known'
-	elif 'watchers.to'	in url: result = 'known'
-	elif 'wintv.live'	in url: result = 'known'
-	elif 'youwatch'		in url: result = 'known'
-	elif 'vidto.me'		in url: result = 'known'
-	elif 'archive'		in url: result = 'known'
-	elif 'publicvideohost' in url: result = 'known'
-	#elif 'vidbom'		in url: result = 'known'
-	else:
-		link = 'http://emadmahdi.pythonanywhere.com/check?url=' + url
-		result = openURL_cached(SHORT_CACHE,link,'','','','RESOLVERS-CHECK-1st')
-	return result
-"""
 
 def RESOLVABLE(url):
 	# private	: سيرفر خاص
@@ -214,7 +164,7 @@ def RESOLVABLE(url):
 		result1 = '%%%عام خارجي'
 		result2 = server
 	else:
-		result1 = '%%%%مجهول'
+		result1 = '%%%%عام تجربة'
 		result2 = server
 	result1 = ' '+result1
 	result2 = ' '+result2	
@@ -233,37 +183,7 @@ def RESOLVABLE(url):
 	elif 'vidshare' 	in server2:	known = 'vidshare'
 	"""
 
-"""
-def RESOLVE_cached(url):
-	server = url.split('/')[2]
-	if 'youtu' in server or 'upto' in server:
-		titleLIST,linkLIST = RESOLVE(url)
-	else:
-		#t1 = time.time()
-		cacheperiod = SHORT_CACHE
-		conn = sqlite3.connect(dbfile)
-		c = conn.cursor()
-		conn.text_factory = str
-		c.execute('SELECT titleLIST,linkLIST FROM resolvecache WHERE url="'+url+'"')
-		rows = c.fetchall()
-		if rows:
-			#message = 'found in cache'
-			titleLIST,linkLIST = eval(rows[0][0]),eval(rows[0][1])
-		else:
-			#message = 'not found in cache'
-			titleLIST,linkLIST = RESOLVE(url)
-			t = (now+cacheperiod,url,str(titleLIST),str(linkLIST))
-			c.execute("INSERT INTO resolvecache VALUES (?,?,?,?)",t)
-			conn.commit()
-		conn.close()
-		#t2 = time.time()
-		#xbmcgui.Dialog().notification(message,str(int(t2-t1))+' ms')
-	return titleLIST,linkLIST
-"""
-
-def RESOLVE(url):
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Started resolving   URL: [ '+url+' ]')
-	#titleLIST,linkLIST = [],[]
+def INTERNAL_RESOLVERS(url):
 	url2,server = url,url.lower().split('/')[2]
 	if 'name=' in url:
 		url2,named = url.split('name=',1)
@@ -272,59 +192,86 @@ def RESOLVE(url):
 	url2 = url2.strip('?').strip('/').strip('&')
 	#if 'gounlimited'	in server: url2 = url2.replace('https:','http:')
 	#if any(value in server for value in doNOTresolveMElist): titleLIST,linkLIST = ['Error: RESOLVE does not resolve this server'],[]
-	if 'publicvideohos'	in server: titleLIST,linkLIST = PUBLICVIDEOHOST(url2)
-	elif 'facultybooks'	in server: titleLIST,linkLIST = FACULTYBOOKS(url2)
-	elif 'inflam.cc'	in server: titleLIST,linkLIST = FACULTYBOOKS(url2)
-	elif 'series4watch'	in server: titleLIST,linkLIST = SERIES4WATCH(url2)
-	elif 'moshahda'		in server: titleLIST,linkLIST = MOVIZLAND(url)
-	elif 'akoam'		in server: titleLIST,linkLIST = AKOAM(url2,named)
-	elif 'egy.best'		in server: titleLIST,linkLIST = EGYBEST(url)
-	elif 'shahid4u'		in server: titleLIST,linkLIST = SHAHID4U(url2)
-	elif 'arblionz'		in server: titleLIST,linkLIST = ARABLIONZ(url2)
-	elif 'arablionz'	in server: titleLIST,linkLIST = ARABLIONZ(url2)
-	elif 'e5tsar'		in server: titleLIST,linkLIST = E5TSAR(url2)
-	elif 'arabloads'	in server: titleLIST,linkLIST = ARABLOADS(url2)
-	elif 'archive'		in server: titleLIST,linkLIST = ARCHIVE(url2)
-	elif 'catch.is'	 	in server: titleLIST,linkLIST = CATCHIS(url2)
-	elif 'filerio'		in server: titleLIST,linkLIST = FILERIO(url2)
-	elif 'govid'		in server: titleLIST,linkLIST = GOVID(url2)
-	elif 'liivideo' 	in server: titleLIST,linkLIST = LIIVIDEO(url2)
-	elif 'mp4upload'	in server: titleLIST,linkLIST = MP4UPLOAD(url2)
-	elif 'rapidvideo' 	in server: titleLIST,linkLIST = RAPIDVIDEO(url2)
-	elif 'top4top'		in server: titleLIST,linkLIST = TOP4TOP(url2)
-	elif 'upbom' 		in server: titleLIST,linkLIST = UPBOM(url2)
-	elif 'uppom' 		in server: titleLIST,linkLIST = UPBOM(url2)
-	elif 'uptobox' 		in server: titleLIST,linkLIST = UPTO(url2)
-	elif 'uptostream'	in server: titleLIST,linkLIST = UPTO(url2)
-	elif 'uqload' 		in server: titleLIST,linkLIST = UQLOAD(url2)
-	elif 'vcstream' 	in server: titleLIST,linkLIST = VCSTREAM(url2)
-	elif 'vidbob'		in server: titleLIST,linkLIST = VIDBOB(url2)
-	elif 'vidoza' 		in server: titleLIST,linkLIST = VIDOZA(url2)
-	elif 'watchvideo' 	in server: titleLIST,linkLIST = WATCHVIDEO(url2)
-	elif 'wintv.live'	in server: titleLIST,linkLIST = WINTVLIVE(url2)
-	elif 'youtu'		in server: titleLIST,linkLIST = YOUTUBE(url2)
-	elif 'y2u.be'		in server: titleLIST,linkLIST = YOUTUBE(url2)
-	elif 'zippyshare'	in server: titleLIST,linkLIST = ZIPPYSHARE(url2)
-	else: titleLIST,linkLIST = EXTERNAL_RESOLVER(url2)
-	if len(linkLIST)==0:
-		if len(titleLIST)==1: errormsg = titleLIST[0]
-		else: errormsg = 'Error: RESOLVE Resolver failed'
-		LOG_THIS('ERROR',LOGGING(script_name)+'   RESOLVE failed   Message: [ '+errormsg+' ]   URL: [ '+url+' ]')
-		return [errormsg],[]
-	else:
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Resolving succeded   URL: [ '+str(linkLIST)+' ]')
-		return titleLIST,linkLIST
+	if 'series4watch'	in server: errormsg,titleLIST,linkLIST = SERIES4WATCH(url2)
+	elif 'moshahda'		in server: errormsg,titleLIST,linkLIST = MOVIZLAND(url)
+	elif 'akoam'		in server: errormsg,titleLIST,linkLIST = AKOAM(url2,named)
+	elif 'egy.best'		in server: errormsg,titleLIST,linkLIST = EGYBEST(url)
+	elif 'shahid4u'		in server: errormsg,titleLIST,linkLIST = SHAHID4U(url2)
+	elif 'arblionz'		in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
+	elif 'arablionz'	in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
+	elif 'youtu'		in server: errormsg,titleLIST,linkLIST = YOUTUBE(url2)
+	elif 'y2u.be'		in server: errormsg,titleLIST,linkLIST = YOUTUBE(url2)
+	else: errormsg,titleLIST,linkLIST = 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
+	return errormsg,titleLIST,linkLIST
+
+def EXTERNAL_RESOLVER_1(url):
+	server = url.lower().split('/')[2]
+	#if 'gounlimited'	in server: url2 = url2.replace('https:','http:')
+	#if any(value in server for value in doNOTresolveMElist): titleLIST,linkLIST = ['Error: RESOLVE does not resolve this server'],[]
+	if 'publicvideohos'	in server: errormsg,titleLIST,linkLIST = PUBLICVIDEOHOST(url)
+	elif 'facultybooks'	in server: errormsg,titleLIST,linkLIST = FACULTYBOOKS(url)
+	elif 'inflam.cc'	in server: errormsg,titleLIST,linkLIST = FACULTYBOOKS(url)
+	elif 'e5tsar'		in server: errormsg,titleLIST,linkLIST = E5TSAR(url)
+	elif 'arabloads'	in server: errormsg,titleLIST,linkLIST = ARABLOADS(url)
+	elif 'archive'		in server: errormsg,titleLIST,linkLIST = ARCHIVE(url)
+	elif 'catch.is'	 	in server: errormsg,titleLIST,linkLIST = CATCHIS(url)
+	elif 'filerio'		in server: errormsg,titleLIST,linkLIST = FILERIO(url)
+	elif 'govid'		in server: errormsg,titleLIST,linkLIST = GOVID(url)
+	elif 'liivideo' 	in server: errormsg,titleLIST,linkLIST = LIIVIDEO(url)
+	elif 'mp4upload'	in server: errormsg,titleLIST,linkLIST = MP4UPLOAD(url)
+	elif 'rapidvideo' 	in server: errormsg,titleLIST,linkLIST = RAPIDVIDEO(url)
+	elif 'top4top'		in server: errormsg,titleLIST,linkLIST = TOP4TOP(url)
+	elif 'upbom' 		in server: errormsg,titleLIST,linkLIST = UPBOM(url)
+	elif 'uppom' 		in server: errormsg,titleLIST,linkLIST = UPBOM(url)
+	elif 'uptobox' 		in server: errormsg,titleLIST,linkLIST = UPTO(url)
+	elif 'uptostream'	in server: errormsg,titleLIST,linkLIST = UPTO(url)
+	elif 'uqload' 		in server: errormsg,titleLIST,linkLIST = UQLOAD(url)
+	elif 'vcstream' 	in server: errormsg,titleLIST,linkLIST = VCSTREAM(url)
+	elif 'vidbob'		in server: errormsg,titleLIST,linkLIST = VIDBOB(url)
+	elif 'vidoza' 		in server: errormsg,titleLIST,linkLIST = VIDOZA(url)
+	elif 'watchvideo' 	in server: errormsg,titleLIST,linkLIST = WATCHVIDEO(url)
+	elif 'wintv.live'	in server: errormsg,titleLIST,linkLIST = WINTVLIVE(url)
+	elif 'zippyshare'	in server: errormsg,titleLIST,linkLIST = ZIPPYSHARE(url)
+	else: errormsg,titleLIST,linkLIST = 'Error: EXTERNAL_RESOLVER_1 Failed',[],[]
+	return errormsg,titleLIST,linkLIST
 	"""
-	elif 'estream'	 	in server: titleLIST,linkLIST = ESTREAM(url2)
-	elif 'gounlimited'	in server: titleLIST,linkLIST = GOUNLIMITED(url2)
-	elif 'intoupload' 	in server: titleLIST,linkLIST = INTOUPLOAD(url2)
-	elif 'thevideo'		in server: titleLIST,linkLIST = THEVIDEO(url2)
-	elif 'vev.io'	 	in server: titleLIST,linkLIST = VEVIO(url2)
-	elif 'playr.4helal'	in server: titleLIST,linkLIST = HELAL(url2)
-	elif 'vidbom'		in server: titleLIST,linkLIST = VIDBOM(url2)
-	elif 'vidhd' 		in server: titleLIST,linkLIST = VIDHD(url2)
-	elif 'vidshare' 	in server: titleLIST,linkLIST = VIDSHARE(url2)
+	elif 'estream'	 	in server: errormsg,titleLIST,linkLIST = ESTREAM(url)
+	elif 'gounlimited'	in server: errormsg,titleLIST,linkLIST = GOUNLIMITED(url)
+	elif 'intoupload' 	in server: errormsg,titleLIST,linkLIST = INTOUPLOAD(url)
+	elif 'thevideo'		in server: errormsg,titleLIST,linkLIST = THEVIDEO(url)
+	elif 'vev.io'	 	in server: errormsg,titleLIST,linkLIST = VEVIO(url)
+	elif 'playr.4helal'	in server: errormsg,titleLIST,linkLIST = HELAL(url)
+	elif 'vidbom'		in server: errormsg,titleLIST,linkLIST = VIDBOM(url)
+	elif 'vidhd' 		in server: errormsg,titleLIST,linkLIST = VIDHD(url)
+	elif 'vidshare' 	in server: errormsg,titleLIST,linkLIST = VIDSHARE(url)
 	"""
+
+def RESOLVE(url):
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Resolving Started   For: [ '+url+' ]')
+	resolver,link = 'INTERNAL_RESOLVERS',''
+	errormsg,titleLIST,linkLIST = INTERNAL_RESOLVERS(url)
+	allerrors = errormsg.replace('NEED_EXTERNAL_RESOLVERS','')
+	if errormsg!='' and errormsg!='NEED_EXTERNAL_RESOLVERS':
+		LOG_THIS('ERROR',LOGGING(script_name)+'   All Internal Resolvers Failed   Messages: [ '+allerrors+' ]   Resolver: [ '+resolver+' ]   For: [ '+url+' ]')
+	if errormsg=='NEED_EXTERNAL_RESOLVERS':
+		link = linkLIST[0]
+		resolver = 'EXTERNAL_RESOLVER_1'
+		errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVER_1(link)
+		if   errormsg!='' and allerrors=='': allerrors = errormsg
+		elif errormsg!='' and allerrors!='': allerrors = allerrors+' \n '+errormsg
+		if errormsg!='':
+			resolver = 'EXTERNAL_RESOLVER_2'
+			errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVER_2(link)
+			if   errormsg!='' and allerrors=='': allerrors = errormsg
+			elif errormsg!='' and allerrors!='': allerrors = allerrors+' \n '+errormsg
+			if errormsg!='':
+				resolver = 'EXTERNAL_RESOLVER_3'
+				errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVER_3(link)
+				if   errormsg!='' and allerrors=='': allerrors = errormsg
+				elif errormsg!='' and allerrors!='': allerrors = allerrors+' \n '+errormsg
+	if len(linkLIST)>0: LOG_THIS('NOTICE',LOGGING(script_name)+'   Resolving Succeeded   Resolver: [ '+resolver+' ]   Result: [ '+str(linkLIST)+' ]   Messages: [ '+allerrors+' ]')
+	else: LOG_THIS('ERROR',LOGGING(script_name)+'   All Internal & External Resolvers Failed   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
+	return allerrors,titleLIST,linkLIST
 
 def SERVERS_cached(linkLIST,script_name=''):
 	#t1 = time.time()
@@ -371,19 +318,44 @@ def SERVERS(linkLIST,script_name=''):
 	#	result = SEND_EMAIL(subject,message,'no','','FROM-RESOLVERS-'+script_name)
 	return serversLIST,urlLIST
 
-def	EXTERNAL_RESOLVER(url):
+def	EXTERNAL_RESOLVER_2(url):
+	#url = 'http://www.youtube.com/watch?v=BaW_jenozKc'
 	try:
 		import resolveurl
 		result = resolveurl.HostedMediaFile(url).resolve()
 	except: result = False
 	# resolveurl might fail either with an error or returns value False
-	if result!=False: return [''],[result]
-	errortrace = traceback.format_exc()
-	sys.stderr.write(errortrace)
-	if 'raise' in errortrace: errormsg = errortrace.splitlines()[-1]
-	else: errormsg = 'Error: EXTERNAL RESOLVER failed'
-	#xbmcgui.Dialog().ok(errormsg,str(result))
-	return [errormsg],[]
+	if result==False:
+		errortrace = traceback.format_exc()
+		sys.stderr.write(errortrace)
+		if 'raise' in errortrace: errormsg = errortrace.splitlines()[-1]
+		else: errormsg = 'Error: EXTERNAL_RESOLVER_2 Failed'
+		#xbmcgui.Dialog().ok(errormsg,str(result))
+		return errormsg,[],[]
+	return '',[''],[result]
+
+def	EXTERNAL_RESOLVER_3(url):
+	#url = 'http://www.youtube.com/watch?v=BaW_jenozKc'
+	try:
+		import youtube_dl
+		ydl = youtube_dl.YoutubeDL({})
+		#ydl = youtube_dl.YoutubeDL({'outtmpl': u'%(id)s%(ext)s'})
+		with ydl:
+			results = ydl.extract_info(url,download=False) # We just want to extract the info
+	except: results = False
+	# youtube_dl might fail either with an error or returns value False
+	if results==False or 'formats' not in results.keys():
+		errortrace = traceback.format_exc()
+		sys.stderr.write(errortrace)
+		if 'raise' in errortrace: errormsg = errortrace.splitlines()[-1]
+		else: errormsg = 'Error: EXTERNAL_RESOLVER_3 Failed'
+		return errormsg,[],[]
+	else:
+		titleLIST,linkLIST = [],[]
+		for link in results['formats']:
+			titleLIST.append(link['format'])
+			linkLIST.append(link['url'])
+		return '',titleLIST,linkLIST
 
 def MOVIZLAND(link):
 	# http://moshahda.online/hj4ihfwvu3rl.html?name=Main
@@ -394,12 +366,12 @@ def MOVIZLAND(link):
 		#xbmc.log(html)
 		#xbmcgui.Dialog().ok(link,html)
 		items = re.findall('direct link.*?href="(.*?)"',html,re.DOTALL)
-		if items: return [''],[ items[0] ]
+		if items: return '',[''],[ items[0] ]
 		else:
 			message = re.findall('class="err">(.*?)<',html,re.DOTALL)
 			if message:
 				xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
-				return [ message[0] ],[]
+				return message[0],[],[]
 	else:
 		#xbmcgui.Dialog().ok(link,'')
 		parts = link.split('?')
@@ -408,10 +380,10 @@ def MOVIZLAND(link):
 		# watch links
 		html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-MOSHAHDA_ONLINE-2nd')
 		html_blocks = re.findall('Form method="POST" action=\'(.*?)\'(.*?)div',html,re.DOTALL)
-		if not html_blocks: return ['Error: MOVIZLAND Resolver failed'],[]
+		if not html_blocks: return 'Error: MOVIZLAND Resolver failed',[],[]
 		link2 = html_blocks[0][0]
 		block = html_blocks[0][1]
-		if '.rar' in block or '.zip' in block: return ['Error: MOVIZLAND Not a video file'],[]
+		if '.rar' in block or '.zip' in block: return 'Error: MOVIZLAND Not a video file',[],[]
 		items = re.findall('name="(.*?)".*?value="(.*?)"',block,re.DOTALL)
 		payload = {}
 		for name,value in items:
@@ -419,7 +391,7 @@ def MOVIZLAND(link):
 		data = urllib.urlencode(payload)
 		html = openURL_cached(SHORT_CACHE,link2,data,headers,'','RESOLVERS-MOSHAHDA_ONLINE-3rd')
 		html_blocks = re.findall('Download Video.*?get\(\'(.*?)\'.*?sources:(.*?)image:',html,re.DOTALL)
-		if not html_blocks: return ['Error: MOVIZLAND Resolver failed'],[]
+		if not html_blocks: return 'Error: MOVIZLAND Resolver failed',[],[]
 		download = html_blocks[0][0]
 		block = html_blocks[0][1]
 		items = re.findall('file:"(.*?)"(,label:".*?"|)',block,re.DOTALL)
@@ -468,8 +440,8 @@ def MOVIZLAND(link):
 		for i in range(len(sortingDICT)):
 			titleLIST.append(sortingDICT[i][0])
 			linkLIST.append(sortingDICT[i][1])
-	if len(linkLIST)==0: return ['Error: MOVIZLAND Resolver failed'],[]
-	else: return titleLIST,linkLIST
+	if len(linkLIST)==0: return 'Error: MOVIZLAND Resolver Failed',[],[]
+	else: return '',titleLIST,linkLIST
 
 def E5TSAR(url):
 	# http://e5tsar.com/717254
@@ -479,8 +451,9 @@ def E5TSAR(url):
 	html = openURL_cached(SHORT_CACHE,url2,'',headers,'','RESOLVERS-E5TSAR-1st')
 	items = re.findall('Please wait.*?href=\'(.*?)\'',html,re.DOTALL)
 	url = items[0]
-	titleLIST,linkLIST = RESOLVE(url)
-	return titleLIST,linkLIST
+	#errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVERS(url)
+	#return errormsg,titleLIST,linkLIST
+	return 'NEED_EXTERNAL_RESOLVERS',[''],[url]
 
 def FACULTYBOOKS(url):
 	# https://facultybooks.org/VLO1NNdGuy
@@ -489,8 +462,8 @@ def FACULTYBOOKS(url):
 	headers = { 'User-Agent' : '' }
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','RESOLVERS-FACULTYBOOKS-1st')
 	url2 = re.findall('href","(htt.*?)"',html,re.DOTALL)
-	if url2: return [''],[url2[0]]
-	else: return ['Error: FACULTYBOOKS Resolver failed'],[]
+	if url2: return '',[''],[url2[0]]
+	else: return 'Error: FACULTYBOOKS Resolver failed',[],[]
 
 def EGYBEST(url):
 	# https://egy.best/api?call=nAAAUceAUAlAUNbbbbbbbaUlUAUbFQAUAlAUGkmPMsfPyNBUlUAUSReUAlAUuReRSRBpElzAUlUAUguGdPRbgBUAlNhANdNANdNdNbbdNUlUAUPRSAUAlAUNhhlNhNNdAUlUAUPRyAUAlAUNhbUAzhAlfzhlAvfUAd&auth=874ded32a2e3b91d6ae55186274469e2?name=vidstream__watch
@@ -517,10 +490,10 @@ def EGYBEST(url):
 		#html = openURL_cached(NO_CACHE,url3,'',headers,'','RESOLVERS-EGYBEST-3rd')
 		if '/f/' in url3: items = re.findall('<h2>.*?href="(.*?)"',html,re.DOTALL)
 		elif '/v/' in url3: items = re.findall('id="video".*?src="(.*?)"',html,re.DOTALL)
-		if items: return [''],[ items[0] ]
+		if items: return [],[''],[ items[0] ]
 		elif '<h1>404</h1>' in html:
-			return ['سيرفر الفيديو فيه حجب ضد كودي ومصدره من الانترنيت الخاصة بك'],[]
-	else: return ['Error: EGYBEST Resolver failed'],[]
+			return 'سيرفر الفيديو فيه حجب ضد كودي ومصدره من الانترنيت الخاصة بك',[],[]
+	else: return 'Error: EGYBEST Resolver failed',[],[]
 	#xbmc.log(html)
 
 def SERIES4WATCH(link):
@@ -531,8 +504,9 @@ def SERIES4WATCH(link):
 	headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 	url2 = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-SERIES4WATCH-1st')
 	#xbmcgui.Dialog().ok(url,url2)
-	titleLIST,linkLIST = RESOLVE(url2)
-	return titleLIST,linkLIST
+	#errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVERS(url2)
+	#return errormsg,titleLIST,linkLIST
+	return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
 
 def ARABLIONZ(link):
 	# https://arblionz.com/page/3404
@@ -543,11 +517,13 @@ def ARABLIONZ(link):
 		url = 'https://arblionz.tv/ajaxCenter?_action=getserver&_post_id='+postid+'&serverid='+serverid
 		headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 		url2 = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-ARABLIONZ-1st')
+		url2 = url2.replace('\n','').replace('\r','')
 		#xbmcgui.Dialog().ok(url,url2)
-		titleLIST,linkLIST = RESOLVE(url2)
-		return titleLIST,linkLIST
+		#errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVERS(url2)
+		#return errormsg,titleLIST,linkLIST
+		return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
 	else:
-		return ['New Server: Not yet supported by ArabicVideos'],[]
+		return 'Error: New server not yet supported by "Arabic Videos"',[],[]
 
 def SHAHID4U(link):
 	# https://shahid4u.net/?postid=142302&serverid=4
@@ -559,8 +535,9 @@ def SHAHID4U(link):
 	#url2 = url2.replace('embed-','')
 	#url2 = url2.replace('.html','')
 	#xbmcgui.Dialog().ok(link,url2)
-	titleLIST,linkLIST = RESOLVE(url2)
-	return titleLIST,linkLIST
+	#errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVERS(url2)
+	#return errormsg,titleLIST,linkLIST
+	return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
 
 def AKOAM(url,named):
 	# http://go.akoam.net/5cf68c23e6e79
@@ -575,7 +552,7 @@ def AKOAM(url,named):
 	if 'catch.is' in url2:
 		id = url2.split('%2F')[-1]
 		url2 = 'http://catch.is/'+id
-		titleLIST,linkLIST = CATCHIS(url2)
+		errormsg,titleLIST,linkLIST = CATCHIS(url2)
 	else:
 		website = WEBSITES['AKOAM'][0]
 		response = openURL_requests_cached(REGULAR_CACHE,'GET',website,'','',True,'','RESOLVERS-AKOAM-2nd')
@@ -599,10 +576,11 @@ def AKOAM(url,named):
 			link = items[0].replace('\/','/')
 			link = link.rstrip('/')
 			if 'http' not in link: link = 'http:' + link
-			if named!='': titleLIST,linkLIST = RESOLVE(link)
-			else: titleLIST,linkLIST = [''],[link]
-		else: return ['Error: AKOAM Resolver failed'],[]
-	return titleLIST,linkLIST
+			#if named!='': errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVERS(link)
+			#else: errormsg,titleLIST,linkLIST = '',[''],[link]
+			errormsg,titleLIST,linkLIST = 'NEED_EXTERNAL_RESOLVERS',[''],[link]
+		else: errormsg,titleLIST,linkLIST = 'Error: AKOAM Resolver failed',[],[]
+	return errormsg,titleLIST,linkLIST
 
 def RAPIDVIDEO(url):
 	# https://www.rapidvideo.com/e/FZSQ3R0XHZ
@@ -615,8 +593,8 @@ def RAPIDVIDEO(url):
 		for link,label in items:
 			titleLIST.append(label)
 			linkLIST.append(link)
-	if len(linkLIST)==0: return ['Error: RAPIDVIDEO Resolver failed'],[]
-	else: return titleLIST,linkLIST
+	if len(linkLIST)==0: return 'Error: RAPIDVIDEO Resolver failed',[],[]
+	else: return '',titleLIST,linkLIST
 
 def UQLOAD(url):
 	# https://uqload.com/embed-iaj1zudyf89v.html
@@ -627,8 +605,8 @@ def UQLOAD(url):
 	#xbmcgui.Dialog().ok(url,items[0])
 	if items:
 		url = items[0]+'|Referer='+url
-		return [''],[url]
-	else: return ['Error: UQLOAD Resolver failed'],[]
+		return '',[''],[url]
+	else: return 'Error: UQLOAD Resolver failed',[],[]
 
 def VCSTREAM(url):
 	# https://vcstream.to/embed/5c83f14297d62
@@ -641,8 +619,8 @@ def VCSTREAM(url):
 	html = html.replace('\\','')
 	#xbmcgui.Dialog().ok(url,html)
 	items = re.findall('file":"(.*?)"',html,re.DOTALL)
-	if items: return [''],[ items[0] ]
-	else: return ['Error: VCSTREAM Resolver failed'],[]
+	if items: return '',[''],[ items[0] ]
+	else: return 'Error: VCSTREAM Resolver failed',[],[]
 
 def VIDOZA(url):
 	# https://vidoza.net/embed-pkqq5ljvckb7.html
@@ -653,8 +631,8 @@ def VIDOZA(url):
 	for link,label,res in items:
 		titleLIST.append(label+' '+res)
 		linkLIST.append(link)
-	if len(linkLIST)==0: return ['Error: VIDOZA Resolver failed'],[]
-	else: return titleLIST,linkLIST
+	if len(linkLIST)==0: return 'Error: VIDOZA Resolver failed',[],[]
+	else: return '',titleLIST,linkLIST
 
 def WATCHVIDEO(url):
 	# https://watchvideo.us/embed-rpvwb9ns8i73.html
@@ -670,8 +648,8 @@ def WATCHVIDEO(url):
 		for link in items:
 			titleLIST.append(label+' '+res)
 			linkLIST.append(link)
-	if len(linkLIST)==0: return ['Error: WATCHVIDEO Resolver failed'],[]
-	else: return titleLIST,linkLIST
+	if len(linkLIST)==0: return 'Error: WATCHVIDEO Resolver failed',[],[]
+	else: return '',titleLIST,linkLIST
 
 def UPBOM(url):
 	# http://upbom.live/hm9opje7okqm/TGQSDA001.The.Vanishing.2018.1080p.WEB-DL.Cima4U.mp4.html
@@ -686,8 +664,8 @@ def UPBOM(url):
 	#xbmcgui.Dialog().ok(url,html)
 	#xbmc.log(html)
 	items = re.findall('direct_link.*?href="(.*?)"',html,re.DOTALL)
-	if items: return [''],[ items[0] ]
-	else: return ['Error: UPBOM Resolver failed'],[]
+	if items: return '',[''],[ items[0] ]
+	else: return 'Error: UPBOM Resolver failed',[],[]
 
 def LIIVIDEO(url):
 	# https://www.liivideo.com/012ocyw9li6g.html
@@ -700,14 +678,14 @@ def LIIVIDEO(url):
 		linkLIST.append(items[0][1])
 		titleLIST.append('m3u8')
 		linkLIST.append(items[0][0])
-		return titleLIST,linkLIST
-	else: return ['Error: LIIVIDEO Resolver failed'],[]
+		return '',titleLIST,linkLIST
+	else: return 'Error: LIIVIDEO Resolver failed',[],[]
 
 def UPTO(url):
 	#xbmcgui.Dialog().ok(url,'')
 	titleLIST = ['uptostream','uptobox (delay 30sec)','both']
 	selection = xbmcgui.Dialog().select('اختر السيرفر:', titleLIST)
-	if selection == -1: return ['Error: UPTO Resolver failed'],[]
+	if selection == -1: return 'Error: UPTO Resolver failed',[],[]
 	elif selection==0:
 		url2 = url.replace('://uptobox.','://uptostream.')
 		titleLIST,linkLIST = UPTOSTREAM(url2)
@@ -721,8 +699,8 @@ def UPTO(url):
 		titleLIST3,linkLIST3 = UPTOBOX(url2)
 		titleLIST = titleLIST2 + titleLIST3
 		linkLIST = linkLIST2 + linkLIST3
-	if len(linkLIST)==0: return ['Error: UPTO Resolver failed'],[]
-	else: return titleLIST,linkLIST
+	if len(linkLIST)==0: return 'Error: UPTO Resolver failed',[],[]
+	else: return '',titleLIST,linkLIST
 
 def UPTOSTREAM(url):
 	#xbmcgui.Dialog().ok(url,'')
@@ -735,8 +713,8 @@ def UPTOSTREAM(url):
 			link = link.replace('\/','/')
 			titleLIST.append(title)
 			linkLIST.append(link)
-		return titleLIST,linkLIST
-	else: return ['Error: UPTOSTREAM Resolver failed'],[]
+		return '',titleLIST,linkLIST
+	else: return 'Error: UPTOSTREAM Resolver failed',[],[]
 
 def UPTOBOX(url):
 	#xbmcgui.Dialog().ok(url,'')
@@ -760,8 +738,8 @@ def UPTOBOX(url):
 	items = re.findall('class=\'file-title\'>(.*?)<.*?comparison-table.*?href="(.*?)"',html,re.DOTALL)
 	if items:
 		title,url = items[0]
-		return [title],[url]
-	else: return ['Error: UPTOBOX Resolver failed'],[]
+		return '',[title],[url]
+	else: return 'Error: UPTOBOX Resolver failed',[],[]
 	#xbmcgui.Dialog().ok(str(html),html)
 	#file = open('S:\emad3.html', 'w')
 	#file.write(token)
@@ -784,7 +762,7 @@ def YOUTUBE(url):
 	#id = url.split('/')[-1]
 	#youtubeID = id.split('?')[0]
 	url = 'plugin://plugin.video.youtube/play/?video_id='+youtubeID
-	return [''],[url]
+	return '',[''],[url]
 	"""
 	id = url.split('/')[-1]
 	id = id.replace('watch?v=','')
@@ -1005,14 +983,14 @@ def YOUTUBE(url):
 		message = re.findall('class="message">(.*?)<',html,re.DOTALL)
 		if 'Content Warning' in html:
 			xbmcgui.Dialog().ok('رسالة من الموقع','تحذير بشأن المحتوى','ربما يكون هذا الفيديو غير ملائم لبعض المستخدمين')
-			return ['Error: YOUTUBE Resolver failed: '+'تحذير بشأن المحتوى'],[]
+			return 'Error: YOUTUBE Resolver failed: '+'تحذير بشأن المحتوى',[],[]
 		elif message:
 			# 'The uploader has not made this video available in your country.'
 			# 'This video is unavailable.'
 			message = message[0].replace('\n','').strip(' ')
 			xbmcgui.Dialog().ok('رسالة من الموقع',message)
-			return ['Error: YOUTUBE Resolver failed: '+message],[]
-		else: return ['Error: YOUTUBE Resolver failed'],[]
+			return 'Error: YOUTUBE Resolver failed: '+message,[],[]
+		else: return 'Error: YOUTUBE Resolver failed',[],[]
 	allStreams,highestStreams,firstLIST = [],[],[]
 	for dict in streams2:
 		#xbmcgui.Dialog().ok(dict['codecs'],'')
@@ -1079,7 +1057,7 @@ def YOUTUBE(url):
 	need_mpd_server = False
 	while True:
 		selection = xbmcgui.Dialog().select('اختر النوع المناسب:', selectMenu)
-		if selection==-1: return ['تم الغاء تشغيل الفيديو'],[]
+		if selection==-1: return 'تم الغاء تشغيل الفيديو',[],[]
 		choice = choiceMenu[selection]
 		logTitle = selectMenu[selection]
 		if choice=='dash':
@@ -1128,7 +1106,7 @@ def YOUTUBE(url):
 	if not need_mpd_server: logURL = finalURL
 	else: logURL = 'Video: '+videoDICT['url']+' + Audio: '+audioDICT['url']
 	#xbmcgui.Dialog().ok(logURL,logTitle)
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing selected   File: [ '+logTitle+' ]   URL: [ '+logURL+' ]')
+	#LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing Selected   File: [ '+logTitle+' ]   URL: [ '+logURL+' ]')
 	if need_mpd_server:
 		#xbmc.log(videoDICT['url'],level=xbmc.LOGNOTICE)
 		#xbmc.log(audioDICT['url'],level=xbmc.LOGNOTICE)
@@ -1228,8 +1206,8 @@ def YOUTUBE(url):
 		# http://localhost:55055/shutdown
 		finalURL = 'http://localhost:55055/youtube.mpd'
 	else: httpd = ''
-	if finalURL!='': return [''],[ [finalURL,subtitleURL,httpd] ]
-	else: return ['Error: Resolving YOUTUBE failed'],[]
+	if finalURL!='': return '',[''],[ [finalURL,subtitleURL,httpd] ]
+	else: return 'Error: Resolving YOUTUBE failed',[],[]
 
 def VIDBOB(url):
 	# https://vidbob.com/v6rnlgmrwgqu
@@ -1255,8 +1233,8 @@ def VIDBOB(url):
 				title = 'سيرفر خاص'+'   mp4   '+label
 				linkLIST.append(link)
 				titleLIST.append(title)
-		return titleLIST,linkLIST
-	else: return ['Error: Resolving VIDBOB failed'],[]
+		return '',titleLIST,linkLIST
+	else: return 'Error: Resolving VIDBOB failed',[],[]
 
 def	FILERIO(url):
 	# https://filerio.in/dmntn4rjquns
@@ -1268,8 +1246,8 @@ def	FILERIO(url):
 	html = openURL_cached(SHORT_CACHE,url,data,headers,'','RESOLVERS-FILERIO-2nd')
 	#xbmc.log(html)
 	items = re.findall('direct_link.*?href="(.*?)"',html,re.DOTALL)
-	if items: return [''],[items[0]]
-	else: return ['Error: Resolving FILERIO failed'],[]
+	if items: return '',[''],[ items[0] ]
+	else: return 'Error: Resolving FILERIO failed',[],[]
 
 def GOVID(url):
 	# https://govid.co/video/play/AAVENd
@@ -1289,8 +1267,8 @@ def GOVID(url):
 			title = 'سيرفر خاص'+'   mp4'
 			titleLIST.append(title)
 			linkLIST.append(link)
-		return titleLIST,linkLIST
-	else: return ['Error: Resolving GOVID failed'],[] 
+		return '',titleLIST,linkLIST
+	else: return 'Error: Resolving GOVID failed',[],[]
 	# https://s1m.govid.co/stream/229.m3u8
 
 
@@ -1313,17 +1291,17 @@ def CATCHIS(url):
 	data = urllib.urlencode(payload)
 	html = openURL_cached(SHORT_CACHE,url,data,headers,'','RESOLVERS-CATCH-1st')
 	items = re.findall('direct_link.*?href="(.*?)"',html,re.DOTALL)
-	if items: return [''],[ items[0] ]
-	else: return ['Error: Resolving CATCHIS failed'],[]
+	if items: return '',[''],[ items[0] ]
+	else: return 'Error: Resolving CATCHIS failed',[],[]
 
 def ARABLOADS(url):
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-ARABLOADS-1st')
 	items = re.findall('color="red">(.*?)<',html,re.DOTALL)
-	if items: return [''],[ items[0] ]
-	else: return ['Error: Resolving ARABLOADS failed'],[]
+	if items: return '',[''],[ items[0] ]
+	else: return 'Error: Resolving ARABLOADS failed',[],[]
 
 def TOP4TOP(url):
-	return [''],[url]
+	return '',[''],[ url ]
 
 def ZIPPYSHARE(url):
 	#xbmcgui.Dialog().ok(url,'')
@@ -1336,8 +1314,8 @@ def ZIPPYSHARE(url):
 		var1,var2,var3,var4,var5,var6 = items[0]
 		var = int(var2) % int(var3) + int(var4) % int(var5)
 		url = basename + var1 + str(var) + var6
-		return [''],[url]
-	else: return ['Error: ZIPPYSHARE Resolver failed'],[]
+		return '',[''],[ url ]
+	else: return 'Error: ZIPPYSHARE Resolver failed',[],[]
 
 def MP4UPLOAD(url):
 	url = url.replace('embed-','')
@@ -1347,14 +1325,14 @@ def MP4UPLOAD(url):
 	payload = { "id":id , "op":"download2" }
 	request = openURL_requests_cached(SHORT_CACHE,'POST', url, payload, headers, False,'','RESOLVERS-MP4UPLOAD-1st')
 	url = request.headers['Location']
-	if url!='': return [''],[url]
-	else: return ['Error: Resolving MP4UPLOAD failed'],[]
+	if url!='': return '',[''],[ url ]
+	else: return 'Error: Resolving MP4UPLOAD failed',[],[]
 
 def WINTVLIVE(url):
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-WINTVLIVE-1st')
 	items = re.findall('mp4: \[\'(.*?)\'',html,re.DOTALL)
-	if items: return [''],[ items[0] ]
-	else: return ['Error: WINTVLIVE Resolver failed'],[]
+	if items: return '',[''],[ items[0] ]
+	else: return 'Error: WINTVLIVE Resolver failed',[],[]
 
 def ARCHIVE(url):
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-ARCHIVE-1st')
@@ -1362,23 +1340,23 @@ def ARCHIVE(url):
 	#logging.warning('https://archive.org' + items[0])
 	if items:
 		url = url = 'https://archive.org' + items[0]
-		return [''],[url]
-	else: return ['Error: ARCHIVE Resolver failed'],[]
+		return '',[''],[ url ]
+	else: return 'Error: ARCHIVE Resolver failed',[],[]
 
 def PUBLICVIDEOHOST(url):
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-PUBLICVIDEOHOST-1st')
 	items = re.findall('file: "(.*?)"',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(str(items),html)
-	if items: return [''],[ items[0] ]
-	else: return ['Error: PUBLICVIDEOHOST Resolver failed'],[]
+	if items: return '',[''],[ items[0] ]
+	else: return 'Error: PUBLICVIDEOHOST Resolver failed',[],[]
 
 def ESTREAM(url):
 	#url = url.replace('embed-','')
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-ESTREAM-1st')
 	items = re.findall('video preload.*?src=.*?src="(.*?)"',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(items[0],items[0])
-	if items: return [''],[ items[0] ]
-	else: return ['Error: ESTREAM Resolver failed'],[]
+	if items: return '',[''],[ items[0] ]
+	else: return 'Error: ESTREAM Resolver failed',[],[]
 
 
 
@@ -1572,5 +1550,55 @@ def VIDHD_PROBLEM(url):
 	#link = https://s2.vidhd.net/kmxsuzrepjumwmesrluuynfphmbrrpofmbwknihn4l6rdua3pwajpcxqvboq/v.mp4
 """
 
+
+"""
+def CHECK(url):
+	result = 'unknown'
+	if   '1fichier'		in url: result = 'known'
+	elif '4helal'		in url: result = 'known'
+	elif 'allmyvideos'	in url: result = 'known'
+	elif 'allvid'		in url: result = 'known'
+	elif 'bestcima'		in url: result = 'known'
+	elif 'cloudy.ec'	in url: result = 'known'
+	elif 'dailymotion'	in url: result = 'known'
+	elif 'downace'		in url: result = 'known'
+	#elif 'estream'		in url: result = 'known'
+	elif 'filerio'		in url: result = 'known'
+	elif 'firedrive'	in url: result = 'known'
+	elif 'flashx'		in url: result = 'known'
+	elif 'govid'		in url: result = 'known'
+	elif 'hqq'			in url: result = 'known'
+	elif 'media4up'		in url: result = 'known'
+	#elif 'mystream'		in url: result = 'known'
+	elif 'nitroflare'	in url: result = 'known'
+	elif 'nowvideo'		in url: result = 'known'
+	elif 'ok.ru'		in url: result = 'known'
+	elif 'oload'		in url: result = 'known'
+	elif 'openload'		in url: result = 'known'
+	elif 'streamango'	in url: result = 'known'
+	elif 'streamin'		in url: result = 'known'
+	elif 'streammango'	in url: result = 'known'
+	elif 'thevid.net'	in url: result = 'known'
+	elif 'upload'		in url: result = 'known'
+	elif 'uptobox'		in url: result = 'known'
+	elif 'videobam'		in url: result = 'known'
+	elif 'videorev'		in url: result = 'known'
+	elif 'vidfast'		in url: result = 'known'
+	elif 'vidgg'		in url: result = 'known'
+	elif 'vidlox'		in url: result = 'known'
+	elif 'vidzi'		in url: result = 'known'
+	elif 'watchers'		in url: result = 'known'
+	elif 'watchers.to'	in url: result = 'known'
+	elif 'wintv.live'	in url: result = 'known'
+	elif 'youwatch'		in url: result = 'known'
+	elif 'vidto.me'		in url: result = 'known'
+	elif 'archive'		in url: result = 'known'
+	elif 'publicvideohost' in url: result = 'known'
+	#elif 'vidbom'		in url: result = 'known'
+	else:
+		link = 'http://emadmahdi.pythonanywhere.com/check?url=' + url
+		result = openURL_cached(SHORT_CACHE,link,'','','','RESOLVERS-CHECK-1st')
+	return result
+"""
 
 

@@ -5,6 +5,9 @@ from LIBRARY import *
 script_name = 'MAIN'
 
 
+LOG_THIS('NOTICE','================================================================')
+
+
 if 'mode' not in addon_path:
 	message = 'Version: [ '+addon_version+' ]   Kodi: [ '+kodi_version+' ]'
 	#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'

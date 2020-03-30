@@ -131,13 +131,18 @@ def LOG_MENU_LABEL(script_name,label,mode,path):
 	return
 
 def LOG_THIS(level,message):
+	#xbmc.log('EMAD 111'+message+'EMAD 222', level=xbmc.LOGNOTICE)
 	if level=='ERROR': loglevel = xbmc.LOGERROR
 	else: loglevel = xbmc.LOGNOTICE
 	lines = message.split('   ')
 	tabs = ''
 	#loglines = lines[0] + '\r'
 	loglines = lines[0]
+	replaced = False
 	for line in lines[1:]:
+		if '\n' in line and not replaced:
+			line = line.replace('\n','\n     ')
+			replaced = True
 		tabs += '      '
 		loglines += '\r                          '+tabs+line
 	loglines += '_'
@@ -753,7 +758,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		#xbmc.log('YYYY: HHHH:', level=xbmc.LOGNOTICE)
 		if condition2:
 			reason2 = 'Blocked by Cloudflare'
-			if 'recaptcha' in htmlLower: reason2 += ' using Google reCAPTCHA'
+			if 'recaptcha' in htmlLower: reason2 += ' Using Google reCAPTCHA'
 			reason = reason2+' ( '+reason+' )'
 		html = '___Error___:'+str(code)+':'+reason
 		message,send,showDialogs = '','no','no'
@@ -775,7 +780,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		#xbmc.log('YYYY: 8888:', level=xbmc.LOGNOTICE)
 		if code in [7,11001,10054] and dnsurl==None:
 			#xbmc.log('YYYY: IIII:', level=xbmc.LOGNOTICE)
-			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]')
+			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS Failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]')
 			url = url+'||MyDNSUrl='
 			#xbmc.log('YYYY: 9999:', level=xbmc.LOGNOTICE)
 			html = openURL(url,data,headers,showDialogs,source)
@@ -783,7 +788,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 			return html
 		if code==8 and sslurl==None:
 			#xbmc.log('YYYY: JJJJ:', level=xbmc.LOGNOTICE)
-			LOG_THIS('ERROR',LOGGING(script_name)+'   SSL failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]')
+			LOG_THIS('ERROR',LOGGING(script_name)+'   SSL Failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]')
 			url = url+'||MySSLUrl='
 			#xbmc.log('YYYY: BBBB:', level=xbmc.LOGNOTICE)
 			html = openURL(url,data,headers,showDialogs,source)
@@ -791,7 +796,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 			return html
 		else:
 			#xbmc.log('YYYY: DDDD:', level=xbmc.LOGNOTICE)
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason :['+reason+']   Source: [ '+source+' ]'+'   URL: [ '+url.encode('utf8')+' ]')
+			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed Opening URL   Code: [ '+str(code)+' ]   Reason :[ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url.encode('utf8')+' ]')
 		#xbmc.log('YYYY: 6666:', level=xbmc.LOGNOTICE)
 		EXIT_IF_SOURCE(source,code,reason)
 		#xbmc.log('YYYY: 7777:', level=xbmc.LOGNOTICE)
