@@ -6,9 +6,9 @@
 <addon id="plugin.video.arabicvideos" name="Arabic Videos" version="6.3.0" provider-name="EMAD MAHDI">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
-		<import addon="script.module.requests" version="2.0.0" optional="true"/>
-		<import addon="script.module.resolveurl" version="5.0.0" optional="true"/>
-		<import addon="script.module.youtube.dl" version="20.0.0" optional="true"/>
+		<import addon="script.module.requests" version="2.0.0" optional="false"/>
+		<import addon="script.module.resolveurl" version="5.0.0" optional="false"/>
+		<import addon="script.module.youtube.dl" version="20.0.0" optional="false"/>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="arabicvideos/__init__.py">
 		<provides>video</provides>
