@@ -176,7 +176,7 @@ def PLAY(url):
 			watchlist = re.findall('source src="(.*?)" title="(.*?)"',html2,re.DOTALL)
 			if watchlist:
 				for link,quality in watchlist:
-					linkLIST.append(link+'?name=egy4best__watch__mp4__'+quality)
+					linkLIST.append(link+'?name=ed.egybest.do__watch__mp4__'+quality)
 			else:
 				server = url2.split('/')[2]
 				linkLIST.append(url2+'?name='+server+'__watch')

@@ -135,16 +135,16 @@ def LOG_THIS(level,message):
 	if level=='ERROR': loglevel = xbmc.LOGERROR
 	else: loglevel = xbmc.LOGNOTICE
 	lines = message.split('   ')
-	tabs = ''
+	tabs,tab = '','      '
 	#loglines = lines[0] + '\r'
 	loglines = lines[0]
-	replaced = False
 	for line in lines[1:]:
-		if '\n' in line and not replaced:
-			line = line.replace('\n','\n     ')
-			replaced = True
-		tabs += '      '
-		loglines += '\r                          '+tabs+line
+		if '\n' in line: line = line.replace('\n','\n'+tabs)
+		#if 'Resolver 2:' in line or 'Resolver 3:' in line:
+		#	line = line.replace('\nResolver 2:','\n'+tabs+'Resolver 2:')
+		#	line = line.replace('\nResolver 3:','\n'+tabs+'Resolver 3:')
+		tabs = tabs+tab
+		loglines += '\r  '+tab+tab+tab+tab+tabs+line
 	loglines += '_'
 	xbmc.log(loglines, level=loglevel)
 	return
@@ -255,6 +255,8 @@ NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
 				,'LIBRARY-PLAY_VIDEO-1st'
 				,'SERVICES-TEST_ALL_WEBSITES-1st'
 				,'SERVICES-TEST_ALL_WEBSITES-2nd'
+				,'EGY4BEST-PLAY-2nd'
+				,'EGY4BEST-PLAY-3rd'
 				]
 
 def EXIT_IF_SOURCE(source,code,reason):
@@ -796,7 +798,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 			return html
 		else:
 			#xbmc.log('YYYY: DDDD:', level=xbmc.LOGNOTICE)
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed Opening URL   Code: [ '+str(code)+' ]   Reason :[ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url.encode('utf8')+' ]')
+			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed Opening URL   Code: [ '+str(code)+' ]   Reason :[ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
 		#xbmc.log('YYYY: 6666:', level=xbmc.LOGNOTICE)
 		EXIT_IF_SOURCE(source,code,reason)
 		#xbmc.log('YYYY: 7777:', level=xbmc.LOGNOTICE)
@@ -873,7 +875,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 	else: url,subtitle,httpd = url3,'',''
 	url = url.replace(' ','%20')
 	#url = quote(url)
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to play video   URL: [ '+url.encode('utf8')+' ]'+subtitlemessage)
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to play video   URL: [ '+url+' ]'+subtitlemessage)
 	videofiletype = re.findall('(\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
 	if videofiletype: videofiletype = videofiletype[0][0]
 	else: videofiletype = ''
@@ -896,7 +898,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		if 'user-agent' not in url.lower() and website!='IPTV':
 			if '|' not in url: url = url+'|User-Agent=&'
 			else: url = url+'&User-Agent=&'
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Got final url   URL: [ '+url.encode('utf8')+' ]')
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Got final url   URL: [ '+url+' ]')
 	play_item = xbmcgui.ListItem()
 	#play_item = xbmcgui.ListItem(path=url)
 	play_item.setProperty('inputstreamaddon', '')
@@ -933,7 +935,7 @@ def PLAY_VIDEO(url3,website='',showWatched='yes'):
 		result = myplayer.status
 		if result=='playing':
 			xbmcgui.Dialog().notification('الفيديو يعمل','','',500)
-			LOG_THIS('NOTICE',LOGGING(script_name)+'   Success: Video is playing   URL: [ '+url.encode('utf8')+' ]'+subtitlemessage)
+			LOG_THIS('NOTICE',LOGGING(script_name)+'   Success: Video is playing   URL: [ '+url+' ]'+subtitlemessage)
 			break
 		elif result=='failed':
 			xbmcgui.Dialog().notification('الفيديو لم يعمل','')
