@@ -6,7 +6,6 @@ script_name='AKWAM'
 menu_name='_AKW_'
 website0a = WEBSITES[script_name][0]
 #noEpisodesLIST = ['فيلم','كليب','العرض الاسبوعي','مسرحية','مسرحيه','اغنية','اعلان','لقاء']
-#ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات']
 #proxy = '||MyProxyUrl=https://159.203.87.130:3128'
 #proxy = '||MyProxyUrl='+PROXIES[6][1]
 proxy = ''
@@ -150,16 +149,16 @@ def PLAY(url):
 	if selection==-1: return
 	link = linkLIST[selection]
 	title = titleLIST[selection]
-	html2 = openURL_cached(LONG_CACHE,link,'',headers,'','AKWAM-PLAY-2nd')
-	url2 = re.findall('class="content.*?href="(.*?)"',html2,re.DOTALL)
-	url2 = unquote(url2[0])
+	#html2 = openURL_cached(LONG_CACHE,link,'',headers,'','AKWAM-PLAY-2nd')
+	#url2 = re.findall('class="content.*?href="(.*?)"',html2,re.DOTALL)
+	#url2 = unquote(url2[0])
 	url3 = ''
 	if 'تحميل' in title:
-		html3 = openURL_cached(SHORT_CACHE,url2,'',headers,'','AKWAM-PLAY-3rd')
+		html3 = openURL_cached(SHORT_CACHE,link,'',headers,'','AKWAM-PLAY-3rd')
 		url3 = re.findall('btn-loader.*?href="(.*?)"',html3,re.DOTALL)
 		url3 = unquote(url3[0])
 	if 'مشاهدة' in title:
-		html4 = openURL_cached(SHORT_CACHE,url2,'',headers,'','AKWAM-PLAY-4th')
+		html4 = openURL_cached(SHORT_CACHE,link,'',headers,'','AKWAM-PLAY-4th')
 		links = re.findall('source\n *?src="(.*?)".*?size="(.*?)"',html4,re.DOTALL)
 		for link,size in links:
 			if size in title:
@@ -207,6 +206,7 @@ def FILTERS_MENU(url,filter):
 	select_blocks = re.findall('<select.*?name="(.*?)"(.*?)</select>',block,re.DOTALL)
 	#xbmcgui.Dialog().ok(str(len(select_blocks)),'')
 	dict = {}
+	ignoreLIST = ['المصارعة الحرة']
 	for name,block in select_blocks:
 		items = re.findall('<option(.*?)>(.*?)<',block,re.DOTALL)
 		if type=='CATEGORIES':
@@ -220,6 +220,7 @@ def FILTERS_MENU(url,filter):
 				else: addDir(menu_name+'الجميع',url2,245,'','',new_filter)
 		dict[name] = {}
 		for value,option in items:
+			if option in ignoreLIST: continue
 			if 'value' not in value: value = option
 			else: value = re.findall('"(.*?)"',value,re.DOTALL)[0]
 			dict[name][value] = option
@@ -228,6 +229,7 @@ def FILTERS_MENU(url,filter):
 			new_values = filter_values+'&'+name+'='+value
 			new_filter2 = new_options+'::'+new_values
 			title = option+' :'+dict[name]['0']
+			#xbmcgui.Dialog().ok(option,'')
 			if type=='FILTERS': addDir(menu_name+title,url,244,'','',new_filter2)
 			elif type=='CATEGORIES' and 'category=' in filter_options:
 				clean_filter = RECONSTRUCT_FILTER(new_values,False)

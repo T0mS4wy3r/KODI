@@ -25,7 +25,7 @@ def MENU():
 	addDir(menu_name+'المميزة',website0a+proxy,72,'','','featured')
 	addDir(menu_name+'المزيد',website0a+proxy,72,'','','more')
 	#addDir(menu_name+'الاخبار',website0a+proxy,72,'','','news')
-	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات']
+	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات','المصارعة الحرة']
 	html = openURL_cached(LONG_CACHE,website0a+proxy,'',headers,'','AKOAM-MENU-1st')
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	#xbmcgui.Dialog().textviewer('',html)

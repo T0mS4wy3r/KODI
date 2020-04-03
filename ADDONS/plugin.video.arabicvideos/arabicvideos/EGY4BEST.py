@@ -41,7 +41,7 @@ def MAIN_MENU():
 	addDir(menu_name+'المسلسلات',website0a+'/tv',221)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGY4BEST-MAIN_MENU-1st')
-	html_blocks=re.findall('class="ba mgb(.*?)class="tam pdb',html,re.DOTALL)
+	html_blocks=re.findall('class="ba mgb(.*?)>EgyBest</a>',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 	for link,title in items:

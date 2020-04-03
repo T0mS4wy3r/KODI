@@ -3,7 +3,7 @@
 
 
 
-<addon id="plugin.video.arabicvideos" name="Arabic Videos" version="6.3.1" provider-name="EMAD MAHDI">
+<addon id="plugin.video.arabicvideos" name="Arabic Videos" version="6.3.2" provider-name="EMAD MAHDI">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.requests" version="2.0.0" optional="false"/>
@@ -461,7 +461,7 @@
 
 
 
-<addon id="script.module.youtube.dl" name="youtube-dl Control" version="20.324.10.2" provider-name="Rick Phillips (ruuk), YLLOW_DRAGON">
+<addon id="script.module.youtube.dl" name="youtube-dl Control" version="20.324.10.3" provider-name="Rick Phillips (ruuk), YLLOW_DRAGON">
 	<requires>
 		<import addon="xbmc.python" version="2.14.0" />
 		<import addon="script.module.addon.signals" version="0.0.1"/>

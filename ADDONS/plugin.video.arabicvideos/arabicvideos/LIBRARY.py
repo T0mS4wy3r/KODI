@@ -282,11 +282,11 @@ def addDir(name,url='',mode='',iconimage='',page='',text=''):
 	name2 = re.findall('&&_(\D\D\w)_(.*?)&&','&&'+name+'&&',re.DOTALL)
 	if name2: name = ',[COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
-	if url!='': u = u + '&url=' + quote(url)
+	if url!='': u = u+'&url='+quote(url)
 	#xbmcgui.Dialog().ok(quote(url),'addDir')
-	if page!='': u = u + '&page=' + quote(page)
-	if text!='': u = u + '&text=' + quote(text)
-	listitem=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
+	if page!='': u = u+'&page='+quote(page)
+	if text!='': u = u+'&text='+quote(text)
+	listitem = xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
 	listitem.setInfo( type="Video", infoLabels={ "Title": name } )
 	listitem.setProperty('fanart_image', fanart)
 	#listitem.setProperty('IsPlayable', 'true')
@@ -302,10 +302,10 @@ def addLink(name,url,mode,iconimage='',duration='',text=''):
 	if 'IsPlayable=no' in text: IsPlayable = 'no'
 	else: IsPlayable='yes'
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
-	if url!='': u = u + '&url=' + quote(url)
+	if url!='': u = u+'&url='+quote(url)
 	#xbmcgui.Dialog().ok(quote(url),'addLink')
-	if text!='': u = u + '&text=' + quote(text)
-	listitem=xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
+	if text!='': u = u+'&text=' +quote(text)
+	listitem = xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
 	listitem.setProperty('fanart_image', fanart)
 	listitem.setInfo('Video', {'mediatype': 'video'})
 	if duration!='':
@@ -638,6 +638,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 	if showDialogs=='': showDialogs='yes'
 	proxies,timeout = {},40
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
+	#url2 = quote(url2)
 	html,code,reason,finalURL = None,None,None,url2
 	#xbmc.log('YYYY: LLLL: [ '+url+' ]   [ '+url2+' ]', level=xbmc.LOGNOTICE)
 	if dnsurl!=None:
@@ -1229,8 +1230,7 @@ def DNS_RESOLVER(url,dnsserver=''):
 	if not answer: LOG_THIS('ERROR',LOGGING(script_name)+'   DNS_RESOLVER failed getting ip   URL: [ '+url.encode('utf8')+' ]')
 	return answer
 
-BLOCKED_VIDEOS = ['R','TV-MA','PG-18','PG-16','NC-17','TVMA','PG18','PG16','NC17','R18','18']
-
+BLOCKED_VIDEOS = ['R','TV-MA','PG-18','PG-16','NC-17','TVMA','PG18','PG16','NC17','R18','18','17','16','R - للكبار فقط']
 
 
 

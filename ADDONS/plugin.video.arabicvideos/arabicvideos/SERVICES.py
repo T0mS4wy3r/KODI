@@ -289,7 +289,7 @@ def DMCA():
 def GLOBAL_SEARCH_MENU(search=''):
 	if search=='': search = KEYBOARD()
 	if search == '': return
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Searching: [ '+search+' ]')
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Global Search For: [ '+search+' ]')
 	search = search.lower()
 	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة - قليلة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
 	addDir('1.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - خدمة IPTV','',239,'','',search)

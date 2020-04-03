@@ -30,7 +30,7 @@ def MENU():
 	html_blocks = re.findall('navigation-menu(.*?)div',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(\/.*?)">(.*?)<',block,re.DOTALL)
-	ignoreLIST = ['مسلسلات انمي','الرئيسية']
+	ignoreLIST = ['مسلسلات انمي','الرئيسية','عروض مصارعة']
 	#keepLIST = ['مسلسلات ','افلام ','برامج','عروض','كليبات','اغانى']
 	for link,title in items:
 		title = title.strip(' ')

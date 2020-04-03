@@ -255,9 +255,8 @@ def	CLEAN_URLS(urls):
 	return links
 
 def RESOLVE(url):
-	allerrors = ''
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   Resolving Started   For: [ '+url+' ]')
-	resolver,link = 'INTERNAL_RESOLVERS',''
+	resolver,link,allerrors = 'INTERNAL_RESOLVERS','',''
 	errormsg,titleLIST,linkLIST = INTERNAL_RESOLVERS(url)
 	linkLIST = CLEAN_URLS(linkLIST)
 	if errormsg=='NEED_EXTERNAL_RESOLVERS':
@@ -284,7 +283,7 @@ def RESOLVE(url):
 		#LOG_THIS('ERROR',LOGGING(script_name)+'   All Internal Resolvers Failed   Messages: [ '+allerrors+' ]   Resolver: [ '+resolver+' ]   For: [ '+url+' ]')
 	allerrors = allerrors.strip('\n')
 	if len(linkLIST)>0:
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Resolving Succeeded   Resolver: [ '+resolver+' ]   Result: [ '+str(linkLIST)+' ]   Messages: [ '+allerrors+' ]')
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   Resolving Succeeded   Resolver: [ '+resolver+' ]   Result: [ '+str(linkLIST)+' ]   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
 	elif 'Resolver 3:' in allerrors:
 		LOG_THIS('ERROR',LOGGING(script_name)+'   All Internal & External Resolvers Failed   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
 	#allerrors = allerrors.replace('\n',' ... ')

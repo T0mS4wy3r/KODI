@@ -24,19 +24,20 @@ def MENU():
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
-	for link,title in items:
-		url = website0a+'/getposts?type=one&data='+link
-		addDir(menu_name+title,url,201)
+	for url,title in items:
+		link = website0a+'/getposts?type=one&data='+url
+		addDir(menu_name+title,link,201)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
-	ignoreLIST = ['مسلسلات انمي مترجمة','الرئيسية']
+	ignoreLIST = ['مسلسلات انمي مترجمة','الرئيسية','عروض المصارعة']
 	#keepLIST = ['مسلسلات ','افلام ','برامج','عروض','كليبات','اغانى']
 	for link,title in items:
 		if 'http' not in link: link = website0a+link
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
 		#	if any(value in title for value in keepLIST):
+			link = quote(link)
 			addDir(menu_name+title,link,201)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
@@ -51,9 +52,10 @@ def TITLES(url):
 	items = re.findall('src="(.*?)".*?href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
 	allTitles = []
 	itemLIST = ['مشاهدة','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
-	for img,link,title in items:
+	for img,link ,title in items:
+		link = quote(link)
 		if '/series/' in link: continue
-		link = unquote(link).strip('/')
+		link = link.strip('/')
 		title = unescapeHTML(title)
 		title = title.strip(' ')
 		if '/film/' in link or any(value in title for value in itemLIST):
@@ -104,7 +106,10 @@ def EPISODES(url):
 			if '/season/' in link: addDir(menu_name+title,link,203)
 	else:
 		for link,title,sequence in items:
-			if '/season/' not in link: addLink(menu_name+title,link,202)
+			if '/season/' not in link:
+				if '%' not in link: link = quote(link)
+				title = unquote(title)
+				addLink(menu_name+title,link,202)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 

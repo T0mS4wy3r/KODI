@@ -43,7 +43,7 @@ def MENU():
 	#xbmcgui.Dialog().ok(block,str(items))
 	block = block1 + block2
 	items = re.findall('<li><a href="(.*?)".*?>(.*?)<',block,re.DOTALL)
-	ignoreLIST = ['افلام للكبار فقط']
+	ignoreLIST = ['افلام للكبار فقط','رياضة']
 	for link,title in items:
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
@@ -107,9 +107,8 @@ def EPISODES(url):
 
 def PLAY(url):
 	linkLIST,urlLIST = [],[]
-	adultLIST = ['R - للكبار فقط','PG-18','PG-16','TV-MA']
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-PLAY-1st')
-	if any(value in html for value in adultLIST):
+	if any(value in html for value in BLOCKED_VIDEOS):
 		xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
 		return
 	html_blocks = re.findall('id="links-panel(.*?)div',html,re.DOTALL)
