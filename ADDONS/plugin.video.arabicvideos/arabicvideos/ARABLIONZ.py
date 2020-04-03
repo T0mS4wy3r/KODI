@@ -103,7 +103,9 @@ def EPISODES(url):
 	episodesCount = str(items).count('/episode/')
 	if seasonsCount>1 and episodesCount>0 and '/season/' not in url:
 		for link,title,sequence in items:
-			if '/season/' in link: addDir(menu_name+title,link,203)
+			if '/season/' in link:
+				link = quote(link)
+				addDir(menu_name+title,link,203)
 	else:
 		for link,title,sequence in items:
 			if '/season/' not in link:

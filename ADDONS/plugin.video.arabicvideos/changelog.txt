@@ -1,4 +1,8 @@
 ﻿
+v6.3.3	2020-04-03
+Fixed ARABLIONZ seasons url quote
+
+
 v6.3.2	2020-04-03
 Fixed ARABLIONZ url quote
 Fixed EGY4BEST menu
