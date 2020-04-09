@@ -89,6 +89,7 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'YOUTUBE'		:['https://www.youtube.com']
 			,'IPTV'			:['https://nowhere.com']
 			,'AKWAM'		:['https://akwam.net']
+			,'ARABSEED'		:['https://arabseed.net']
 			}
 
 script_name = 'LIBRARY'
@@ -638,6 +639,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 	if showDialogs=='': showDialogs='yes'
 	proxies,timeout = {},40
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
+	#xbmcgui.Dialog().ok(url2,'')
 	#url2 = quote(url2)
 	html,code,reason,finalURL = None,None,None,url2
 	#xbmc.log('YYYY: LLLL: [ '+url+' ]   [ '+url2+' ]', level=xbmc.LOGNOTICE)
@@ -705,6 +707,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		code = response.code
 		reason = response.msg
 		html = response.read()
+		#final_url = response.url
 		response.close
 		# error code
 		#		code = response.code
@@ -723,6 +726,7 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		#xbmc.log(str(headers), level=xbmc.LOGNOTICE)
 		#xbmcgui.Dialog().ok(url,'')
 		#xbmc.log('YYYY: KKKK:', level=xbmc.LOGNOTICE)
+		#final_url = response.url
 		if 'google-analytics' not in url2:
 			traceback.print_exc(file=sys.stderr)
 		if 'timeout' in str(type(e)).lower():
@@ -781,6 +785,10 @@ def openURL(url,data='',headers='',showDialogs='',source=''):
 		"""
 		#if 'google-analytics' not in url:
 		#xbmc.log('YYYY: 8888:', level=xbmc.LOGNOTICE)
+		#if code==502:
+		#	LOG_THIS('ERROR',LOGGING(script_name)+'   URL Quote Error   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]   Final URL: [ '+final_url.encode('utf8')+' ]')
+		#	html = openURL(final_url,data,headers,showDialogs,source)
+		#	return html
 		if code in [7,11001,10054] and dnsurl==None:
 			#xbmc.log('YYYY: IIII:', level=xbmc.LOGNOTICE)
 			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS Failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]')
@@ -1230,8 +1238,13 @@ def DNS_RESOLVER(url,dnsserver=''):
 	if not answer: LOG_THIS('ERROR',LOGGING(script_name)+'   DNS_RESOLVER failed getting ip   URL: [ '+url.encode('utf8')+' ]')
 	return answer
 
-BLOCKED_VIDEOS = ['R','TV-MA','PG-18','PG-16','NC-17','TVMA','PG18','PG16','NC17','R18','18','17','16','R - للكبار فقط']
-
+def RATING_CHECK(script_name,url,ratingLIST):
+	blockedLIST = ['R','MA','16','17','18','كبار']
+	if ratingLIST and any(value in ratingLIST[0] for value in blockedLIST):
+		LOG_THIS('ERROR',LOGGING(script_name)+'   Blocked adults video   URL: [ '+url+' ]')
+		xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
+		return True
+	else: return False
 
 
 

@@ -146,11 +146,8 @@ def PLAY(url):
 	global headers
 	#xbmcgui.Dialog().ok(url, url[-45:])
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGYBEST-PLAY-1st')
-	rating = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
-	if rating[0] in BLOCKED_VIDEOS:
-		LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
-		xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
-		return
+	ratingLIST = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
+	if RATING_CHECK(script_name,url,ratingLIST): return
 	"""
 	html_blocks = re.findall('tbody(.*?)tbody',html,re.DOTALL)
 	if not html_blocks:

@@ -93,28 +93,29 @@ if mode=='MAIN_MENU':
 	addDir(' [COLOR FFC89008] 7.  [/COLOR]'+'بحث بجميع مواقع البرنامج','',6)
 	addDir(' [COLOR FFC89008] 8.  [/COLOR]'+'مشاهدة فيدوهات عشوائية','',8)
 	addLink('  [COLOR FFC89008]مواقع سيرفرات خاصة - قليلة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('  9.  [COLOR FFC89008]IPT    [/COLOR]'+'خدمة IPTV','',230)
-	addDir('10.  [COLOR FFC89008]YUT  [/COLOR]'+'موقع يوتيوب','',140)
-	addDir('11.  [COLOR FFC89008]KLA  [/COLOR]'+'موقع كل العرب','',10)
-	addDir('12.  [COLOR FFC89008]PNT  [/COLOR]'+'موقع بانيت','',30)
-	addDir('13.  [COLOR FFC89008]SHF  [/COLOR]'+'موقع شوف ماكس','',50)
-	addDir('14.  [COLOR FFC89008]IFL    [/COLOR]'+'موقع قناة اي فيلم','',20)
-	addDir('15.  [COLOR FFC89008]MRF  [/COLOR]'+'موقع قناة المعارف','',40)
-	addDir('16.  [COLOR FFC89008]KWT  [/COLOR]'+'موقع قناة الكوثر','',130)
-	addDir('17.  [COLOR FFC89008]FTM  [/COLOR]'+'موقع المنبر الفاطمي','',60)
-	addDir('18.  [COLOR FFC89008]AKW  [/COLOR]'+'موقع أكوام الجديد','',240)
+	addDir('  9.  [COLOR FFC89008]IFL    [/COLOR]'+'موقع قناة اي فيلم','',20)
+	addDir('10.  [COLOR FFC89008]MRF  [/COLOR]'+'موقع قناة المعارف','',40)
+	addDir('11.  [COLOR FFC89008]KWT  [/COLOR]'+'موقع قناة الكوثر','',130)
+	addDir('12.  [COLOR FFC89008]FTM  [/COLOR]'+'موقع المنبر الفاطمي','',60)
+	addDir('13.  [COLOR FFC89008]IPT    [/COLOR]'+'خدمة IPTV','',230)
+	addDir('14.  [COLOR FFC89008]YUT  [/COLOR]'+'موقع يوتيوب','',140)
+	addDir('15.  [COLOR FFC89008]KLA  [/COLOR]'+'موقع كل العرب','',10)
+	addDir('16.  [COLOR FFC89008]PNT  [/COLOR]'+'موقع بانيت','',30)
+	addDir('17.  [COLOR FFC89008]SHF  [/COLOR]'+'موقع شوف ماكس','',50)
+	addDir('18.  [COLOR FFC89008]AKW [/COLOR]'+'موقع أكوام الجديد','',240)
 	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
 	addDir('19.  [COLOR FFC89008]AKO  [/COLOR]'+'موقع أكوام القديم','',70)
 	addDir('20.  [COLOR FFC89008]EG4  [/COLOR]'+'موقع ايجي فور بيست','',220)    # 220
+	addDir('21.  [COLOR FFC89008]ARS  [/COLOR]'+'موقع عرب سييد','',250)
 	addLink('[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('21.  [COLOR FFC89008]HEL  [/COLOR]'+'موقع هلال يوتيوب','',90)
-	addDir('22.  [COLOR FFC89008]SHA  [/COLOR]'+'موقع شاهد فوريو','',110)
-	addDir('23.  [COLOR FFC89008]ARL   [/COLOR]'+'موقع عرب ليونز','',200)
+	addDir('22.  [COLOR FFC89008]HEL  [/COLOR]'+'موقع هلال يوتيوب','',90)
+	addDir('23.  [COLOR FFC89008]SHA  [/COLOR]'+'موقع شاهد فوريو','',110)
+	addDir('24.  [COLOR FFC89008]ARL   [/COLOR]'+'موقع عرب ليونز','',200)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	#addDir('24.  [COLOR FFC89008]HLA  [/COLOR]'+'موقع هلا سيما','',88) # 80
-	#addDir('25.  [COLOR FFC89008]SFW  [/COLOR]'+'موقع سيريس فور وتش','',218)  # 210
-	#addDir('26.  [COLOR FFC89008]MVZ  [/COLOR]'+'موقع موفيزلاند اونلاين','',188) # 180
-	#addDir('27.  [COLOR FFC89008]EGB  [/COLOR]'+'موقع ايجي بيست','',128) # 120
+	#addDir('25.  [COLOR FFC89008]HLA  [/COLOR]'+'موقع هلا سيما','',88) # 80
+	#addDir('26.  [COLOR FFC89008]SFW  [/COLOR]'+'موقع سيريس فور وتش','',218)  # 210
+	#addDir('27.  [COLOR FFC89008]MVZ  [/COLOR]'+'موقع موفيزلاند اونلاين','',188) # 180
+	#addDir('28.  [COLOR FFC89008]EGB  [/COLOR]'+'موقع ايجي بيست','',128) # 120
 	xbmcplugin.endOfDirectory(addon_handle)
 
 elif mode>=0 and mode<=9: import SERVICES ; SERVICES.MAIN(mode,text)
@@ -142,6 +143,7 @@ elif mode>=210 and mode<=219: import SERIES4WATCH ; SERIES4WATCH.MAIN(mode,url,t
 elif mode>=220 and mode<=229: import EGY4BEST ; EGY4BEST.MAIN(mode,url,page,text)
 elif mode>=230 and mode<=239: import IPTV ; IPTV.MAIN(mode,url,text)
 elif mode>=240 and mode<=249: import AKWAM ; AKWAM.MAIN(mode,url,text)
+elif mode>=250 and mode<=259: import ARABSEED ; ARABSEED.MAIN(mode,url,text)
 
 
 #xbmc.log('99  11', level=xbmc.LOGNOTICE)

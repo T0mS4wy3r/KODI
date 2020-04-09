@@ -7,6 +7,13 @@ script_name='RESOLVERS'
 doNOTresolveMElist = []
 
 def PLAY(linkLIST,script_name,text=''):
+	linkLIST = set(linkLIST)
+	count_watch = str(linkLIST).count('__watch')
+	count_download = str(linkLIST).count('__download')
+	count_others = len(linkLIST)-count_watch-count_download
+	select_header = 'مشاهدة: '+str(count_watch)+'    تحميل: '+str(count_download)+'    أخرى: '+str(count_others)
+	#xbmcgui.Dialog().ok(str(count_watch),str(count_download))
+	#selection = xbmcgui.Dialog().select(select_header, linkLIST)
 	titleLIST,linkLIST = SERVERS_cached(linkLIST,script_name)
 	if len(linkLIST)==0:
 		result = 'unresolved'
@@ -15,7 +22,7 @@ def PLAY(linkLIST,script_name,text=''):
 		while True:
 			errormsg = ''
 			if len(linkLIST)==1: selection = 0
-			else: selection = xbmcgui.Dialog().select('اختر السيرفر المناسب', titleLIST)
+			else: selection = xbmcgui.Dialog().select(select_header, titleLIST)
 			if selection == -1: result = 'canceled1'
 			else:
 				title = titleLIST[selection]
@@ -108,7 +115,9 @@ def RESOLVABLE(url):
 	if 'name=' in url:
 		url2,named = url.split('name=',1)
 		named = named+'__'+'__'+'__'
-		server,type,filetype,quality = named.lower().split('__')[:4]
+		server2,type,filetype,quality = named.lower().split('__')[:4]
+		#xbmcgui.Dialog().ok(server,server2)
+		if server2!='': server = server2
 		if type=='watch': result3 = ' '+'مشاهدة'
 		elif type=='download': result3 = ' '+'%%تحميل'
 		else: result3 = ' '+'%مشاهدة وتحميل'
@@ -313,7 +322,7 @@ def SERVERS_cached(linkLIST,script_name=''):
 
 def SERVERS(linkLIST,script_name=''):
 	serversLIST,urlLIST,unknownLIST,serversDICT = [],[],[],[]
-	linkLIST = list(set(linkLIST))
+	#linkLIST = list(set(linkLIST))
 	#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', linkLIST)
 	#if selection == -1 : return ''
 	for link in linkLIST:
@@ -548,8 +557,7 @@ def ARABLIONZ(link):
 		#errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVERS(url2)
 		#return errormsg,titleLIST,linkLIST
 		return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
-	else:
-		return 'Error: New server not yet supported by "Arabic Videos"',[],[]
+	else: return 'Error: Resolver ARABLIONZ Failed',[],[]
 
 def SHAHID4U(link):
 	# https://shahid4u.net/?postid=142302&serverid=4

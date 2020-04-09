@@ -37,8 +37,8 @@ def MAIN_MENU():
 	#	if url!=website0a: addDir(menu_name+title,url,221)
 	addDir(menu_name+'بحث في الموقع','',229)
 	addDir(menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
-	addDir(menu_name+'الأفلام',website0a+'/movies',221)
-	addDir(menu_name+'المسلسلات',website0a+'/tv',221)
+	addDir(menu_name+'الافلام مصنفة',website0a+'/movies',221)
+	addDir(menu_name+'المسلسلات مصنفة',website0a+'/tv',221)
 	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGY4BEST-MAIN_MENU-1st')
 	html_blocks=re.findall('class="ba mgb(.*?)>EgyBest</a>',html,re.DOTALL)
@@ -151,12 +151,8 @@ def PLAY(url):
 	#xbmcgui.Dialog().ok(url, url[-45:])
 	# https://egy4best.com/movie/فيلم-the-lion-king-2019-مترجم
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGY4BEST-PLAY-1st')
-	rating = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
-	if rating and False:
-		if rating[0] in BLOCKED_VIDEOS:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
-			xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
-			return
+	ratingLIST = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
+	if False and RATING_CHECK(script_name,url,ratingLIST): return
 	# https://egybest.vip/movie/فيلم-the-lion-king-2019-مترجم
 	watchURL,downloadURL = '',''
 	htmlWatch,htmlDownload = html,html

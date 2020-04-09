@@ -29,7 +29,7 @@ def MENU():
 	addDir(menu_name+'المثبت',website0a+'/?type=pin',91)
 	addDir(menu_name+'جديد الافلام',website0a+'/?type=newMovies',91)
 	addDir(menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
-	#addLink('[COLOR FFC89008]=============[/COLOR]','',9999,'','','IsPlayable=no')
+	addLink('[COLOR FFC89008]====================[/COLOR]','',9999,'','','IsPlayable=no')
 	#addDir(menu_name+'جديد الموقع',website0a,91)
 	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
 	#upper menu
@@ -108,9 +108,8 @@ def EPISODES(url):
 def PLAY(url):
 	linkLIST,urlLIST = [],[]
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-PLAY-1st')
-	if any(value in html for value in BLOCKED_VIDEOS):
-		xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
-		return
+	ratingLIST = re.findall('text-shadow: none;">(.*?)<',html,re.DOTALL)
+	if RATING_CHECK(script_name,url,ratingLIST): return
 	html_blocks = re.findall('id="links-panel(.*?)div',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]

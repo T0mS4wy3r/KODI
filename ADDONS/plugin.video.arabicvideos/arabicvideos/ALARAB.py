@@ -30,10 +30,14 @@ def MENU():
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
 	html_blocks=re.findall('id="nav-slider"(.*?)</div>',html,re.DOTALL)
 	block1 = html_blocks[0]
+	items=re.findall('href="(.*?)".*?>(.*?)<',block1,re.DOTALL)
+	for link,title in items:
+		link = website0a+link
+		addDir(menu_name+title,link,11)
+	addLink('[COLOR FFC89008]====================[/COLOR]','',9999,'','','IsPlayable=no')
 	html_blocks=re.findall('id="navbar"(.*?)</div>',html,re.DOTALL)
 	block2 = html_blocks[0]
-	#xbmcgui.Dialog().ok(str(len(html)), str(len(block)) )
-	items=re.findall('href="(.*?)".*?>(.*?)<',block1+block2,re.DOTALL)
+	items=re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	for link,title in items:
 		link = website0a+link
 		addDir(menu_name+title,link,11)

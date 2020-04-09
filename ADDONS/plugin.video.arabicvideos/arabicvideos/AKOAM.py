@@ -24,16 +24,11 @@ def MENU():
 	addDir(menu_name+'بحث في الموقع','',79)
 	addDir(menu_name+'المميزة',website0a+proxy,72,'','','featured')
 	addDir(menu_name+'المزيد',website0a+proxy,72,'','','more')
+	addLink('[COLOR FFC89008]====================[/COLOR]','',9999,'','','IsPlayable=no')
 	#addDir(menu_name+'الاخبار',website0a+proxy,72,'','','news')
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات','المصارعة الحرة']
 	html = openURL_cached(LONG_CACHE,website0a+proxy,'',headers,'','AKOAM-MENU-1st')
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
-	#xbmcgui.Dialog().textviewer('',html)
-	#if not html_blocks:
-	#	xbmc.sleep(2000)
-	#	html = openURL_cached(NO_CACHE,website0a+proxy,'',headers,'','AKOAM-MENU-2nd')
-	#	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
-	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
@@ -58,6 +53,7 @@ def CATEGORIES(url):
 	return
 
 def TITLES(url,type):
+	#xbmcgui.Dialog().ok(url,type)
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-TITLES-1st')
 	items = []
 	if type=='featured':
@@ -68,6 +64,7 @@ def TITLES(url,type):
 		html_blocks = re.findall('akoam_result(.*?)<script',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?background-image: url\((.*?)\).*?<h1>(.*?)</h1>',block,re.DOTALL)
+		#xbmcgui.Dialog().ok(str(len(items)),block)
 	elif type=='more':
 		html_blocks = re.findall('section_title more_title(.*?)footer_bottom_services',html,re.DOTALL)
 	#elif type=='news':
@@ -89,28 +86,24 @@ def TITLES(url,type):
 		block = html_blocks[0]
 		items = re.findall("<li>.*?href='(.*?)'>(.*?)<",block,re.DOTALL)
 		for link,title in items:
-			addDir(menu_name+'صفحة '+title,link,72)
+			addDir(menu_name+'صفحة '+title,link,72,'','','search')
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def SECTIONS(url):
+	#xbmcgui.Dialog().ok(url,'SECTIONS')
 	notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-SECTIONS-1st')
 	if 'التصميم الجديد من هنا' in html or 'للموقع الجديد من هنا' in html:
-		url3 = re.findall('<br />.*?<a href="(http.*?akwam.*?)"',html,re.DOTALL)
+		url3 = re.findall('sub_extra_desc.*?href="(http.*?akwam.*?)"',html,re.DOTALL)
 		url3 = unquote(url3[0])
-		#xbmcgui.Dialog().ok(url3,'SECTIONS')
+		#xbmcgui.Dialog().ok(str(url3),'SECTIONS')
 		import AKWAM
 		if '/series/' in url3: AKWAM.EPISODES(url3)
 		else: AKWAM.PLAY(url3)
 		return
-	rating = re.findall('محتوى الفيلم.*?>.*?(\w*?)\W*?<',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(rating[0],'')
-	if rating:
-		if rating[0] in BLOCKED_VIDEOS:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
-			xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
-			return
+	ratingLIST = re.findall('محتوى الفيلم.*?>.*?(\w*?)\W*?<',html,re.DOTALL)
+	if RATING_CHECK(script_name,url,ratingLIST): return
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#xbmcgui.Dialog().ok(url,html)
 	items = re.findall('<br />\n<a href="(.*?)".*?<span style="color:.*?">(.*?)</span>',html,re.DOTALL)

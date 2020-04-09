@@ -1,4 +1,16 @@
 ﻿
+v6.4.0	2020-04-09
+Added ARABSEED website
+Rewrote ARABLIONZ play, search & filters
+Rewrote SHAHID4U play & search & filters
+Enhanced AKWAM Filters & Categories
+Fixed AKWAM play
+Fixed ARABLIONZ foreign movies menu
+Fixed AKOAM play using AKWAM
+Fixed HELAL age restriction
+Fixed AKOAM pagination
+
+
 v6.3.3	2020-04-03
 Fixed ARABLIONZ seasons url quote
 

@@ -40,7 +40,7 @@ def MENU():
 		addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 		for link,title in items:
 			if title not in ignoreLIST:
-				title = 'فلتر '+title
+				title = title+' مفلترة'
 				addDir(menu_name+title,link,244)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
@@ -100,13 +100,9 @@ def PLAY(url):
 	#xbmcgui.Dialog().ok(url,'PLAY')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#with open('S:\\emad.html', 'w') as f: f.write(html)
-	html = openURL_cached(LONG_CACHE,url,'','','','AKWAM-PLAY-1st')
-	rating = re.findall('class="badge.*?>.*?(\w*).*?<',html,re.DOTALL)
-	if rating:
-		if rating[0] in BLOCKED_VIDEOS:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Adult video   URL: [ '+url+' ]')
-			xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
-			return
+	html = openURL_cached(LONG_CACHE,url,'',headers,'','AKWAM-PLAY-1st')
+	ratingLIST = re.findall('class="badge.*?>.*?(\w*).*?<',html,re.DOTALL)
+	if RATING_CHECK(script_name,url,ratingLIST): return
 	buttons = re.findall('li><a href="#(.*?)".*?>(.*?)<',html,re.DOTALL)
 	#buttons = (['',''],['',''])
 	linkLIST,titleLIST,blocks,qualities = [],[],[],[]
@@ -143,22 +139,25 @@ def PLAY(url):
 			title = qualities[i]+' ملف '+type
 			titleLIST.append(title)
 			linkLIST.append(link)
+	#selection = xbmcgui.Dialog().select('',titleLIST)
 	#selection = xbmcgui.Dialog().select('',linkLIST)
 	if len(titleLIST)==1: selection = 0
 	else: selection = xbmcgui.Dialog().select('',titleLIST)
 	if selection==-1: return
 	link = linkLIST[selection]
 	title = titleLIST[selection]
-	#html2 = openURL_cached(LONG_CACHE,link,'',headers,'','AKWAM-PLAY-2nd')
-	#url2 = re.findall('class="content.*?href="(.*?)"',html2,re.DOTALL)
-	#url2 = unquote(url2[0])
+	if 'akwam' in link: url2 = link
+	else:
+		html2 = openURL_cached(LONG_CACHE,link,'',headers,'','AKWAM-PLAY-2nd')
+		url2 = re.findall('class="content.*?href="(.*?)"',html2,re.DOTALL)
+		url2 = unquote(url2[0])
 	url3 = ''
 	if 'تحميل' in title:
-		html3 = openURL_cached(SHORT_CACHE,link,'',headers,'','AKWAM-PLAY-3rd')
+		html3 = openURL_cached(SHORT_CACHE,url2,'',headers,'','AKWAM-PLAY-3rd')
 		url3 = re.findall('btn-loader.*?href="(.*?)"',html3,re.DOTALL)
 		url3 = unquote(url3[0])
 	if 'مشاهدة' in title:
-		html4 = openURL_cached(SHORT_CACHE,link,'',headers,'','AKWAM-PLAY-4th')
+		html4 = openURL_cached(SHORT_CACHE,url2,'',headers,'','AKWAM-PLAY-4th')
 		links = re.findall('source\n *?src="(.*?)".*?size="(.*?)"',html4,re.DOTALL)
 		for link,size in links:
 			if size in title:
@@ -179,68 +178,80 @@ def PLAY(url):
 
 def FILTERS_MENU(url,filter):
 	#xbmcgui.Dialog().ok(filter,url)
+	menu_list = ['section','rating','category','year']
 	if '?' in url: url = url.split('?')[0]
 	type,filter = filter.split('::',1)
 	if filter=='': filter_options,filter_values = '',''
 	else: filter_options,filter_values = filter.split('::')
 	if type=='CATEGORIES':
-		if 'section=' not in filter_options: category = 'section'
-		if 'section=' in filter_options: category = 'category'
-		if 'category=' in filter_options: category = 'year'
+		if menu_list[0]+'=' not in filter_options: category = menu_list[0]
+		for i in range(len(menu_list[0:-1])):
+			if menu_list[i]+'=' in filter_options: category = menu_list[i+1]
 		new_options = filter_options+'&'+category+'=0'
 		new_values = filter_values+'&'+category+'=0'
 		new_filter = new_options.strip('&')+'::'+new_values.strip('&')
-		clean_filter = RECONSTRUCT_FILTER(filter_values,False)
+		clean_filter = RECONSTRUCT_FILTER(filter_values,'all')
 		url2 = url+'?'+clean_filter
 	elif type=='FILTERS':
-		filter_show = RECONSTRUCT_FILTER(filter_options,True)
-		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,False)
-		filter_url = url+'?'+filter_values
-		#filter_url = filter_url.strip('?')
-		addDir(menu_name+'أظهار قائمة الفيديو التي تم اختيارها',filter_url,241,'','1')
-		addDir(menu_name+'[[   '+filter_show+'   ]]',filter_url,241,'','1')
-		addDir(menu_name+'===========================','',9999)
-	html = openURL_cached(LONG_CACHE,url,'','','','AKWAM-FILTERS_MENU-1st')
+		filter_show = RECONSTRUCT_FILTER(filter_options,'modified_values')
+		filter_show = unquote(filter_show)
+		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'all')
+		if filter_values=='': url2 = url
+		else: url2 = url+'?'+filter_values
+		addDir(menu_name+'أظهار قائمة الفيديو التي تم اختيارها',url2,241,'','1')
+		addDir(menu_name+' [[   '+filter_show+'   ]]',url2,241,'','1')
+		addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	html = openURL_cached(LONG_CACHE,url,'',headers,'','AKWAM-FILTERS_MENU-1st')
 	html_blocks = re.findall('<form id(.*?)</form>',html,re.DOTALL)
 	block = html_blocks[0]
-	select_blocks = re.findall('<select.*?name="(.*?)"(.*?)</select>',block,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(len(select_blocks)),'')
+	select_blocks = re.findall('<select.*?name="(.*?)".*?">(.*?)<(.*?)</select>',block,re.DOTALL)
+	#xbmcgui.Dialog().ok('',str(select_blocks))
 	dict = {}
-	ignoreLIST = ['المصارعة الحرة']
-	for name,block in select_blocks:
+	ignoreLIST = ['عروض مصارعة','الكل']
+	for category2,name,block in select_blocks:
+		#name = name.replace('--','')
 		items = re.findall('<option(.*?)>(.*?)<',block,re.DOTALL)
+		if '=' not in url2: url2 = url
 		if type=='CATEGORIES':
-			if name!=category: continue
-			elif len(items)<3:
-				if category=='year': TITLES(url2)
+			if category!=category2: continue
+			elif len(items)<=1:
+				if category2==menu_list[-1]: TITLES(url2)
 				else: FILTERS_MENU(url2,'CATEGORIES::'+new_filter)
 				return
 			else:
-				if category=='year': addDir(menu_name+'الجميع',url2,241,'','1')
+				if category2==menu_list[-1]: addDir(menu_name+'الجميع',url2,241,'','1')
 				else: addDir(menu_name+'الجميع',url2,245,'','',new_filter)
-		dict[name] = {}
+		elif type=='FILTERS':
+			new_options = filter_options+'&'+category2+'=0'
+			new_values = filter_values+'&'+category2+'=0'
+			new_filter = new_options+'::'+new_values
+			addDir(menu_name+'الجميع : '+name,url2,244,'','',new_filter)
+		dict[category2] = {}
 		for value,option in items:
 			if option in ignoreLIST: continue
 			if 'value' not in value: value = option
 			else: value = re.findall('"(.*?)"',value,re.DOTALL)[0]
-			dict[name][value] = option
-			if value=='0': continue
-			new_options = filter_options+'&'+name+'='+option
-			new_values = filter_values+'&'+name+'='+value
+			dict[category2][value] = option
+			new_options = filter_options+'&'+category2+'='+option
+			new_values = filter_values+'&'+category2+'='+value
 			new_filter2 = new_options+'::'+new_values
-			title = option+' :'+dict[name]['0']
-			#xbmcgui.Dialog().ok(option,'')
+			title = option+' : '#+dict[category2]['0']
+			title = option+' : '+name
 			if type=='FILTERS': addDir(menu_name+title,url,244,'','',new_filter2)
-			elif type=='CATEGORIES' and 'category=' in filter_options:
-				clean_filter = RECONSTRUCT_FILTER(new_values,False)
+			elif type=='CATEGORIES' and menu_list[-2]+'=' in filter_options:
+				clean_filter = RECONSTRUCT_FILTER(new_values,'all')
 				url3 = url+'?'+clean_filter
 				addDir(menu_name+title,url3,241,'','1')
 			else: addDir(menu_name+title,url,245,'','',new_filter2)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
-def RECONSTRUCT_FILTER(filters,only_available_values=False):
-	#xbmcgui.Dialog().ok(url,'RECONSTRUCT_FILTER')
+def RECONSTRUCT_FILTER(filters,mode):
+	#xbmcgui.Dialog().ok(filters,'RECONSTRUCT_FILTER 11')
+	# mode=='modified_values'		only non empty values
+	# mode=='modified_filters'		only non empty filters
+	# mode=='all'					all filters (includes empty filter)
+	#filters = filters.replace('=&','=0&')
 	filters = filters.strip('&')
 	filtersDICT = {}
 	if '=' in filters:
@@ -249,15 +260,19 @@ def RECONSTRUCT_FILTER(filters,only_available_values=False):
 			var,value = item.split('=')
 			filtersDICT[var] = value
 	new_filters = ''
-	all_keys = ['section','category','rating','year','language','formats','quality']
-	for key in all_keys:
+	url_filter_list = ['section','category','rating','year','language','formats','quality']
+	for key in url_filter_list:
 		if key in filtersDICT.keys(): value = filtersDICT[key]
 		else: value = '0'
-		if not only_available_values: new_filters = new_filters+'&'+key+'='+value
-		elif only_available_values and value!='0': new_filters = new_filters+' + '+value
+		#if '%' not in value: value = quote(value)
+		if mode=='modified_values' and value!='0': new_filters = new_filters+' + '+value
+		elif mode=='modified_filters' and value!='0': new_filters = new_filters+'&'+key+'='+value
+		elif mode=='all': new_filters = new_filters+'&'+key+'='+value
 	new_filters = new_filters.strip(' + ')
 	new_filters = new_filters.strip('&')
+	#new_filters = new_filters.replace('=0','=')
+	#xbmcgui.Dialog().ok(filters,'RECONSTRUCT_FILTER 22')
 	return new_filters
-	
+
 
 
