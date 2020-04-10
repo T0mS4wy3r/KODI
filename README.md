@@ -38,7 +38,7 @@ New video plugin for KODI that provide Arabic video contents from the following 
 <a href="http://akoam.net">7. &nbsp; http://akoam.net</a><br />
 <a href="http://akwam.net">8. &nbsp; http://akwam.net</a><br />
 <a href="http://4helal.net">9. &nbsp; http://4helal.net</a><br />
-<a href="http://shahid4u.net">10. &nbsp; http://shahid4u.net</a><br />
+<a href="http://shahid4u.net">10. http://shahid4u.net</a><br />
 <a href="http://egybest.vip">11. http://egybest.vip</a><br />
 <a href="http://alkawthartv.com">12. http://alkawthartv.com</a><br />
 <a href="http://youtube.com">13. http://youtube.com</a><br />
