@@ -5,6 +5,7 @@ script_name='ARABSEED'
 headers = { 'User-Agent' : '' }
 menu_name='_ARS_'
 website0a = WEBSITES[script_name][0]
+ignoreLIST = ['الرئيسية','مصارعه']
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
@@ -36,9 +37,9 @@ def MENU():
 	block = html_blocks[0]
 	items = re.findall('href="(\/.*?)">(.*?)<',block,re.DOTALL)
 	"""
-	ignoreLIST = ['الرئيسية','مصارعه']
 	#keepLIST = ['مسلسلات ','افلام ','برامج','عروض','كليبات','اغانى']
 	for link,title in items:
+		if 'javascript' in link: continue
 		#title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
 		#	if any(value in title for value in keepLIST):
@@ -120,81 +121,89 @@ def EPISODES(url):
 	"""
 
 def PLAY(url):
+	#LOG_THIS('NOTICE','EMAD 111')
 	linkLIST = []
 	parts = url.split('/')
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ARABSEED-PLAY-1st')
-	ratingLIST = re.findall('<li>التصنيف :.*?">(.*?)<',html,re.DOTALL)
-	if RATING_CHECK(script_name,url,ratingLIST): return
+	#xbmcgui.Dialog().ok(url,'PLAY-1st')
+	#url = unquote(quote(url))
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ARABLIONZ-PLAY-1st')
 	id = re.findall('postId:"(.*?)"',html,re.DOTALL)
 	if not id: id = re.findall('post_id=(.*?)"',html,re.DOTALL)
 	id = id[0]
 	if '/post/' in url and 'seed' in url: url = website0a+'/watch/'+id
-	if '/watch/' in html:
+	if True or '/watch/' in html:
 		url2 = url.replace(parts[3],'watch')
-		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers,'','ARABSEED-PLAY-2nd')
+		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers,'','ARABLIONZ-PLAY-2nd')
 		items1 = re.findall('data-embedd="(.*?)".*?alt="(.*?)"',html2,re.DOTALL)
 		items2 = re.findall('data-embedd=".*?(http.*?)("|&quot;)',html2,re.DOTALL)
 		items3 = re.findall('src=&quot;(.*?)&quot;.*?>(.*?)<',html2,re.DOTALL|re.IGNORECASE)
-		items4 = re.findall('data-embedd="(.*?)".*?server_image">\n(.*?)\n',html2,re.DOTALL)
-		items = items1+items2+items3+items4
+		items4 = re.findall('data-embedd="(.*?)">\n.*?server_image">\n(.*?)\n',html2,re.DOTALL)
+		items5 = re.findall('src=&quot;(.*?)&quot;.*?alt="(.*?)"',html2,re.DOTALL|re.IGNORECASE)
+		items = items1+items2+items3+items4+items5
 		for server,title in items:
 			if '.png' in server: continue
 			if '.jpg' in server: continue
+			if '&quot;' in server: continue
 			if server.isdigit():
 				link = website0a+'/?postid='+id+'&serverid='+server+'?name='+title+'__watch'
-			else: 
+			else:
 				if 'http' not in server: server = 'http:'+server
 				link = server+'?name=__watch'
 			linkLIST.append(link)
-		#xbmcgui.Dialog().ok('watch 1',	str(len(items)))
-	if '/download/' in html:
+	#selection = xbmcgui.Dialog().select('أختر البحث المناسب', linkLIST)
+	#xbmcgui.Dialog().ok('watch 1',	str(len(items)))
+	if True or '/download/' in html:
 		headers2 = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 		url2 = website0a + '/ajaxCenter?_action=getdownloadlinks&postId='+id
-		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers2,'','ARABSEED-PLAY-4th')
+		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers2,'','ARABLIONZ-PLAY-3rd')
 		if 'download-btns' in html2:
 			items3 = re.findall('href="(.*?)"',html2,re.DOTALL)
 			for url3 in items3:
-				if '/page/' in url3:
-					resolution4 = ''
-					html4 = openURL_cached(REGULAR_CACHE,url3,'',headers,'','ARABSEED-PLAY-5th')
-					items4 = re.findall('<strong>(.*?)</strong>(.*?)-----',html4,re.DOTALL)
-					for server4,temp4 in items4:
-						if '<strong>' in temp4:
-							resolution4 = server4
-							server4 = re.findall('<strong>(.*?)</strong>',temp4,re.DOTALL)
-							server4 = server4[0]
-						items5 = re.findall('href="(.*?)"',temp4,re.DOTALL)
-						for link5 in items5:
-							link5 = link5+'?name='+server4+'__download____'+resolution4
-							linkLIST.append(link5)
-				elif 'http' in url3:
+				if '/page/' not in url3 and 'http' in url3:
 					url3 = url3+'?name=__download'
 					linkLIST.append(url3)
+				elif '/page/' in url3:
+					resolution4 = ''
+					html4 = openURL_cached(REGULAR_CACHE,url3,'',headers,'','ARABLIONZ-PLAY-4th')
+					blocks = re.findall('(<strong>.*?)-----',html4,re.DOTALL)
+					for block4 in blocks:
+						server4 = ''
+						items4 = re.findall('<strong>(.*?)</strong>',block4,re.DOTALL)
+						for item4 in items4:
+							item = re.findall('\d\d\d+',item4,re.DOTALL)
+							if item:
+								resolution4 = '____'+item[0]
+								break
+						for item4 in reversed(items4):
+							item = re.findall('\w\w+',item4,re.DOTALL)
+							if item:
+								server4 = item[0]
+								break
+						items5 = re.findall('href="(.*?)"',block4,re.DOTALL)
+						for link5 in items5:
+							link5 = link5+'?name='+server4+'__download'+resolution4
+							linkLIST.append(link5)
 			#xbmcgui.Dialog().ok('download 1',	str(len(linkLIST))	)
 		elif 'slow-motion' in html2:
-			if '</table>' in html2:
-				blocks_upper = re.findall('class=(.*?)</table>',html2,re.DOTALL)
-				blocks_lower = re.findall('</table>(.*?)</div>',html2,re.DOTALL)
-			else:
-				blocks_upper = []
-				blocks_lower = re.findall('class=(.*?)</div>',html2,re.DOTALL)
-			for block in blocks_upper:
-				items = re.findall('slow-motion">(.*?)<',block,re.DOTALL)
-				if not items: resolution = ''
-				else: resolution = items[-1]
-				items = re.findall('<td>(.*?)</td>.*?href="(.*?)"',block,re.DOTALL)
-				for server,link in items:
-					link = link+'?name='+server+'__download____'+resolution
-					linkLIST.append(link)
-			for block in blocks_lower:
-				items = re.findall('slow-motion">(.*?)<',block,re.DOTALL)
-				if not items: resolution = ''
-				else: resolution = items[-1]
-				items = re.findall('href="(.*?)".*?name">(.*?)<',block,re.DOTALL)
-				for link,server in items:
-					link = link.strip(' ')
-					link = link+'?name='+server+'__download____'+resolution
-					linkLIST.append(link)
+			html3 = html2.replace('<h6 ','==END== ==START==')+'==END=='
+			all_blocks = re.findall('==START==(.*?)==END==',html3,re.DOTALL)
+			for block4 in all_blocks:
+				resolution4 = ''
+				items4 = re.findall('slow-motion">(.*?)<',block4,re.DOTALL)
+				for item4 in items4:
+					item = re.findall('\d\d\d+',item4,re.DOTALL)
+					if item:
+						resolution4 = '____'+item[0]
+						break
+				items4 = re.findall('<td>(.*?)</td>.*?href="(.*?)"',block4,re.DOTALL)
+				for server4,link4 in items4:
+					link4 = link4+'?name='+server4+'__download'+resolution4
+					linkLIST.append(link4)
+				items4 = re.findall('href="(.*?)".*?name">(.*?)<',block4,re.DOTALL)
+				for link4,server4 in items4:
+					link4 = link4+'?name='+server4+'__download'+resolution4
+					linkLIST.append(link4)
+	#LOG_THIS('NOTICE','EMAD 222')
 	#xbmcgui.Dialog().ok('both: watch & download',	str(len(linkLIST))	)
 	#selection = xbmcgui.Dialog().select('أختر البحث المناسب', linkLIST)
 	if len(linkLIST)==0: xbmcgui.Dialog().ok('','الرابط ليس فيه فيديو')
@@ -202,6 +211,8 @@ def PLAY(url):
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name)
 	return
+
+
 
 def SEARCH(search):
 	if search=='': search = KEYBOARD()
@@ -257,7 +268,6 @@ def FILTERS_MENU(url,filter):
 	select_blocks = re.findall('class="ti-arrow-down.*?span>(.*?)</span>.*?data-tax="(.*?)"(.*?)</ul>',block,re.DOTALL)
 	#xbmcgui.Dialog().ok('',str(select_blocks))
 	dict = {}
-	ignoreLIST = ['عروض مصارعة','الكل']
 	for name,category2,block in select_blocks:
 		name = name.replace('--','')
 		items = re.findall('data-cat="(.*?)".*?</div>(.*?)\n',block,re.DOTALL)

@@ -86,7 +86,7 @@ def TITLES(url,type):
 		block = html_blocks[0]
 		items = re.findall("<li>.*?href='(.*?)'>(.*?)<",block,re.DOTALL)
 		for link,title in items:
-			addDir(menu_name+'صفحة '+title,link,72,'','','search')
+			addDir(menu_name+'صفحة '+title,link,72,'','',type)
 	xbmcplugin.endOfDirectory(addon_handle)
 	return
 

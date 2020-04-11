@@ -7,11 +7,11 @@ script_name='RESOLVERS'
 doNOTresolveMElist = []
 
 def PLAY(linkLIST,script_name,text=''):
-	linkLIST = set(linkLIST)
+	linkLIST = list(set(linkLIST))
 	count_watch = str(linkLIST).count('__watch')
 	count_download = str(linkLIST).count('__download')
 	count_others = len(linkLIST)-count_watch-count_download
-	select_header = 'مشاهدة: '+str(count_watch)+'    تحميل: '+str(count_download)+'    أخرى: '+str(count_others)
+	select_header = 'مشاهدة: '+str(count_watch)+'   تحميل: '+str(count_download)+'   أخرى: '+str(count_others)
 	#xbmcgui.Dialog().ok(str(count_watch),str(count_download))
 	#selection = xbmcgui.Dialog().select(select_header, linkLIST)
 	titleLIST,linkLIST = SERVERS_cached(linkLIST,script_name)
@@ -544,7 +544,6 @@ def SERIES4WATCH(link):
 	return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
 
 def ARABLIONZ(link):
-	# https://arblionz.com/page/3404
 	# http://arablionz.tv/?postid=159485&serverid=0
 	if 'postid' in link:
 		parts = re.findall('postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL|re.IGNORECASE)
@@ -557,6 +556,14 @@ def ARABLIONZ(link):
 		#errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVERS(url2)
 		#return errormsg,titleLIST,linkLIST
 		return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
+	elif '/redirect/' in link:
+		counts = 0
+		while '/redirect/' in link and counts<5:
+			response = openURL_requests_cached(SHORT_CACHE,'GET',link,'','',False,'','RESOLVERS-ARABLIONZ-2nd')
+			if 'Location' in response.headers.keys():
+				link = response.headers['Location']
+			counts += 1
+		return '',[''],[link]
 	else: return 'Error: Resolver ARABLIONZ Failed',[],[]
 
 def SHAHID4U(link):
