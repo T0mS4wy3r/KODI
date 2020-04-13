@@ -64,16 +64,21 @@ New video plugin for KODI that provide Arabic video contents from the following 
 <br />
 الخطوة الثانية: تنزيل وتنصيب هذا البرنامج (الاضافة) على كودي
 <br />
-<a href="http://www.kodiarabic.net/2018/10/arabic-video-kodi.html">2. &nbsp; صفحة باللغة العربية توضح طريقة تنزيل وتنصيب هذه الاضافة على كودي بالصور والشرح - شكرا لموقع كودي العربي</a>
+<a href="http://www.husham.com/new-2018-arabic-videos-kodi-addon">2. &nbsp; صفحة باللغة الانكليزية توضح طريقة تنزيل وتنصيب هذه الاضافة على كودي بالصور والشرح - شكرا للاخ هشام</a>
 <br />
 <br />
 <br />
 <br />
-خطوات اضافية وغير ضرورية
+خطوات بديلة للاستخدام عند ألحاجه
 <br />
-<a href="http://www.husham.com/new-2018-arabic-videos-kodi-addon">3. &nbsp; صفحة باللغة الانكليزية توضح طريقة تنزيل وتنصيب هذه الاضافة على كودي بالصور والشرح - شكرا للاخ هشام</a>
 <br />
-<a href="http://www.youtube.com/watch?v=0fDi_7l_1Yw">4. &nbsp; مقطع يوتيوب باللغة العربية يوضح طريقة تنزيل وتنصيب واستخدام هذه الاضافة على كودي - شكرا للاخ هشام</a>
+<a href="http://www.youtube.com/watch?v=0fDi_7l_1Yw">3. &nbsp; مقطع يوتيوب باللغة العربية يوضح طريقة تنزيل وتنصيب واستخدام هذه الاضافة على كودي - شكرا للاخ هشام</a>
+<br />
+<br />
+<a href="http://www.kodiarabic.net/2018/10/arabic-video-kodi.html">4. &nbsp; صفحة باللغة العربية توضح طريقة تنزيل وتنصيب هذه الاضافة على كودي بالصور والشرح - شكرا لموقع كودي العربي</a>
+<br />
+<br />
+<a href="https://atlasweb.net/media-center-installer-arabic-video/">5. &nbsp; صفحة باللغة الفرنسية توضح طريقة تنزيل وتنصيب هذه الاضافة على كودي بالصور والشرح - شكرا لموقع اطلس ويب</a>
 <br />
 <br />
 <br />
