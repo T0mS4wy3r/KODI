@@ -1,11 +1,23 @@
 ﻿
+v6.4.3	2020-04-14
+Modified cache period for ARABLIONZ, ARABSEED & SHAHID4U
+Renamed EGY4BEST to EGYBESTVIP
+Fixed ARABSEED filter
+Added ARABSEED internal resolver
+Added XFILESHARING resolver
+Added resolvers VIDBM, VIDHD & VIDEOBIN
+Added youtube-dl site check
+Added settings link for ResolveURL & YOUTUBE-DL
+Minor fixes & improvements
+
+
 v6.4.2	2020-04-11
 Fixed ARABLIONZ download page urls
 Fixed ARABLIONZ resolver
 Fixed ARABLIONZ playing function
 Fixed ARABSEED playing function
 Fixed SHAHID4U playing function
-Minor fixes
+Minor fixes & improvements
 
 
 v6.4.1	2020-04-10

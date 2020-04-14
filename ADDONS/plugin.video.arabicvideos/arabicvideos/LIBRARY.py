@@ -75,21 +75,22 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'ALKAWTHAR'	:['http://www.alkawthartv.com']
 			,'ALMAAREF'		:['http://www.almaareftv.com/old','http://www.almaareftv.com']
 			,'ARABLIONZ'	:['https://arablionz.com']
-			,'EGY4BEST'		:['https://egybest.vip']
-			#,'EGYBEST'		:['https://egy.best']
-			#,'HALACIMA'	:['https://www.halacima.co']
+			,'EGYBESTVIP'	:['https://egybest.vip']
 			,'HELAL'		:['https://www.4helal.co']
 			,'IFILM'		:['http://ar.ifilmtv.com','http://en.ifilmtv.com','http://fa.ifilmtv.com','http://fa2.ifilmtv.com']
 			,'LIVETV'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport']
-			#,'MOVIZLAND'	:['https://movizland.online','https://m.movizland.online']
 			,'PANET'		:['http://www.panet.co.il']
-			#,'SERIES4WATCH':['https://series4watch.net']  # 'https://s4w.tv'
 			,'SHAHID4U'		:['https://shahid4u.net']
 			,'SHOOFMAX'		:['https://shoofmax.com','https://static.shoofmax.com']
 			,'YOUTUBE'		:['https://www.youtube.com']
 			,'IPTV'			:['https://nowhere.com']
 			,'AKWAM'		:['https://akwam.net']
 			,'ARABSEED'		:['https://arabseed.net']
+			#,'EGY4BEST'	:['https://egybest.vip']
+			#,'EGYBEST'		:['https://egy.best']
+			#,'HALACIMA'	:['https://www.halacima.co']
+			#,'MOVIZLAND'	:['https://movizland.online','https://m.movizland.online']
+			#,'SERIES4WATCH':['https://series4watch.net']  # 'https://s4w.tv'
 			}
 
 script_name = 'LIBRARY'
@@ -256,8 +257,8 @@ NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
 				,'LIBRARY-PLAY_VIDEO-1st'
 				,'SERVICES-TEST_ALL_WEBSITES-1st'
 				,'SERVICES-TEST_ALL_WEBSITES-2nd'
-				,'EGY4BEST-PLAY-2nd'
-				,'EGY4BEST-PLAY-3rd'
+				,'EGYBESTVIP-PLAY-2nd'
+				,'EGYBESTVIP-PLAY-3rd'
 				]
 
 def EXIT_IF_SOURCE(source,code,reason):

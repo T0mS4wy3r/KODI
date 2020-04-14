@@ -11,7 +11,10 @@ and no need to add "from __future__ import unicode_literals"
 
 
 
-2. 
+
+2. NOT NEEDED (ADDED TO MY RESOLVERS FILE)
+2. NOT NEEDED (ADDED TO MY RESOLVERS FILE)
+2. NOT NEEDED (ADDED TO MY RESOLVERS FILE)
 Edit this file and add these 3 lines to line 60
         (r'vidbm\.com', 'VidBm'),
         (r'vidhd\.net', 'VidHD'),

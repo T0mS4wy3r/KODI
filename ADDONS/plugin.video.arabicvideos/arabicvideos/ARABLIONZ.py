@@ -133,14 +133,14 @@ def PLAY(url):
 	parts = url.split('/')
 	#xbmcgui.Dialog().ok(url,'PLAY-1st')
 	#url = unquote(quote(url))
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ARABLIONZ-PLAY-1st')
+	html = openURL_cached(LONG_CACHE,url,'',headers,'','ARABLIONZ-PLAY-1st')
 	id = re.findall('postId:"(.*?)"',html,re.DOTALL)
 	if not id: id = re.findall('post_id=(.*?)"',html,re.DOTALL)
 	id = id[0]
 	if '/post/' in url and 'seed' in url: url = website0a+'/watch/'+id
 	if True or '/watch/' in html:
 		url2 = url.replace(parts[3],'watch')
-		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers,'','ARABLIONZ-PLAY-2nd')
+		html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','ARABLIONZ-PLAY-2nd')
 		items1 = re.findall('data-embedd="(.*?)".*?alt="(.*?)"',html2,re.DOTALL)
 		items2 = re.findall('data-embedd=".*?(http.*?)("|&quot;)',html2,re.DOTALL)
 		items3 = re.findall('src=&quot;(.*?)&quot;.*?>(.*?)<',html2,re.DOTALL|re.IGNORECASE)
@@ -155,14 +155,17 @@ def PLAY(url):
 				link = website0a+'/?postid='+id+'&serverid='+server+'?name='+title+'__watch'
 			else:
 				if 'http' not in server: server = 'http:'+server
-				link = server+'?name=__watch'
+				resolution = re.findall('\d\d\d+',title,re.DOTALL)
+				if resolution: resolution = '__'+resolution[0]
+				else: resolution = ''
+				link = server+'?name=__watch'+resolution
 			linkLIST.append(link)
 	#selection = xbmcgui.Dialog().select('أختر البحث المناسب', linkLIST)
 	#xbmcgui.Dialog().ok('watch 1',	str(len(items)))
 	if True or '/download/' in html:
 		headers2 = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 		url2 = website0a + '/ajaxCenter?_action=getdownloadlinks&postId='+id
-		html2 = openURL_cached(REGULAR_CACHE,url2,'',headers2,'','ARABLIONZ-PLAY-3rd')
+		html2 = openURL_cached(LONG_CACHE,url2,'',headers2,'','ARABLIONZ-PLAY-3rd')
 		if 'download-btns' in html2:
 			items3 = re.findall('href="(.*?)"',html2,re.DOTALL)
 			for url3 in items3:
@@ -171,7 +174,7 @@ def PLAY(url):
 					linkLIST.append(url3)
 				elif '/page/' in url3:
 					resolution4 = ''
-					html4 = openURL_cached(REGULAR_CACHE,url3,'',headers,'','ARABLIONZ-PLAY-4th')
+					html4 = openURL_cached(LONG_CACHE,url3,'',headers,'','ARABLIONZ-PLAY-4th')
 					blocks = re.findall('(<strong>.*?)-----',html4,re.DOTALL)
 					for block4 in blocks:
 						server4 = ''
@@ -223,7 +226,7 @@ def SEARCH(search):
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.replace(' ','+')
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','ARABLIONZ-SEARCH-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ARABLIONZ-SEARCH-1st')
 	html_blocks = re.findall('chevron-select(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]

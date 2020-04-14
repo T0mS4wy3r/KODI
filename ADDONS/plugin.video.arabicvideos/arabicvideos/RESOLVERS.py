@@ -11,7 +11,7 @@ def PLAY(linkLIST,script_name,text=''):
 	count_watch = str(linkLIST).count('__watch')
 	count_download = str(linkLIST).count('__download')
 	count_others = len(linkLIST)-count_watch-count_download
-	select_header = 'مشاهدة: '+str(count_watch)+'   تحميل: '+str(count_download)+'   أخرى: '+str(count_others)
+	select_header = 'مشاهدة:'+str(count_watch)+'    تحميل:'+str(count_download)+'    أخرى:'+str(count_others)
 	#xbmcgui.Dialog().ok(str(count_watch),str(count_download))
 	#selection = xbmcgui.Dialog().select(select_header, linkLIST)
 	titleLIST,linkLIST = SERVERS_cached(linkLIST,script_name)
@@ -28,7 +28,7 @@ def PLAY(linkLIST,script_name,text=''):
 				title = titleLIST[selection]
 				url = linkLIST[selection]
 				#xbmcgui.Dialog().ok(str(urlLIST[selection]),str(urlLIST[selection]))
-				if 'سيرفر' in title and 'مجهول' in title:
+				if 'سيرفر' in title and '2مجهول2' in title:
 					LOG_THIS('ERROR',LOGGING(script_name)+'   Unknown Selected Server   Server: [ '+title+' ]   URL: [ '+url+' ]')
 					import SERVICES
 					SERVICES.MAIN(156)
@@ -132,17 +132,22 @@ def RESOLVABLE(url):
 	url2 = url2.strip('?').strip('/').strip('&')
 	#if any(value in server for value in doNOTresolveMElist): return ''
 	#xbmcgui.Dialog().ok(server,named)
-	if   'd.egybest.d'	in server: private = 'egy4best'
+	if   'akoam'		in server: private = 'akoam'
+	elif 'arabseed'		in server: private = 'arabseed'
+	elif 'youtu'	 	in server: private = 'youtube'
+	elif 'y2u.be'	 	in server: private = 'youtube'
+	elif 'd.egybest.d'	in server: private = 'egybestvip'
+	elif 'moshahda'		in server: private = 'movizland'
 	elif 'facultybooks'	in server: private = 'facultybooks'
 	elif 'inflam.cc'	in server: private = 'inflam'
-	elif 'moshahda'		in server: private = 'movizland'
-	elif 'akoam'		in server: private = 'akoam'
-	elif 'youtu'	 	in server: private = 'youtube'
 	elif 'buzzvrl'		in server: private = 'buzzvrl'
 	elif 'arabloads'	in server: known = 'arabloads'
 	elif 'archive'		in server: known = 'archive'
 	elif 'catch.is'	 	in server: known = 'catch'
 	elif 'filerio'		in server: known = 'filerio'
+	elif 'vidbm'		in server: known = 'vidbm'
+	elif 'vidhd'		in server: known = 'vidhd'
+	elif 'videobin'		in server: known = 'videobin'
 	elif 'govid'		in server: known = 'govid'
 	elif 'liivideo' 	in server: known = 'liivideo'
 	elif 'mp4upload'	in server: known = 'mp4upload'
@@ -163,12 +168,28 @@ def RESOLVABLE(url):
 	else:
 		import resolveurl
 		external = resolveurl.HostedMediaFile(url2).valid_url()
+		if not external:
+			#LOG_THIS('NOTICE','1111 ==========================')
+			external = False
+			list_url = 'https://ytdl-org.github.io/youtube-dl/supportedsites.html'
+			html = openURL_cached(LONG_CACHE,list_url,'','','','RESOLVERS-RESOLVABLE-1st')
+			html = re.findall('<ul>(.*?)</ul>',html,re.DOTALL)
+			html = html[0].lower()
+			html = html.replace('<li>','').replace('<b>','')
+			html = html.replace('</li>','').replace('</b>','')
+			#LOG_THIS('NOTICE','2222 ==========================')
+			parts = server.split('.')
+			for part in parts:
+				if len(part)<4: continue
+				elif part in html:
+					external = True
+					break
 	#xbmcgui.Dialog().ok(url,url2)
 	if   private:  result1,result2 = 'خاص',private
-	elif named:    result1,result2 = '%محدد',server
-	elif known:    result1,result2 = '%%عام معروف',known
+	elif known:    result1,result2 = '%عام معروف',known
+	elif named:    result1,result2 = '%%عام محدد',server
 	elif external: result1,result2 = '%%%عام خارجي',server
-	else:          result1,result2 = '%%%%عام تجربة',server
+	else:          result1,result2 = '%%%%عام مجهول',server
 	result1 = ' '+result1
 	result2 = ' '+result2	
 	result = 'سيرفر'+result3+result1+result2+result4+result5
@@ -197,6 +218,7 @@ def INTERNAL_RESOLVERS(url):
 	#if any(value in server for value in doNOTresolveMElist): titleLIST,linkLIST = ['Error: RESOLVE does not resolve this server'],[]
 	if   'akoam'		in server: errormsg,titleLIST,linkLIST = AKOAM(url2,named)
 	elif 'shahid4u'		in server: errormsg,titleLIST,linkLIST = SHAHID4U(url2)
+	elif 'arabseed'		in server: errormsg,titleLIST,linkLIST = ARABSEED(url2)
 	elif 'arblionz'		in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
 	elif 'arablionz'	in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
 	elif 'youtu'		in server: errormsg,titleLIST,linkLIST = YOUTUBE(url2)
@@ -220,8 +242,11 @@ def EXTERNAL_RESOLVER_1(url):
 	elif 'e5tsar'		in server: errormsg,titleLIST,linkLIST = E5TSAR(url)
 	elif 'facultybooks'	in server: errormsg,titleLIST,linkLIST = FACULTYBOOKS(url)
 	elif 'inflam.cc'	in server: errormsg,titleLIST,linkLIST = FACULTYBOOKS(url)
-	elif 'catch.is'	 	in server: errormsg,titleLIST,linkLIST = CATCHIS(url)
-	elif 'filerio'		in server: errormsg,titleLIST,linkLIST = FILERIO(url)
+	elif 'catch.is'	 	in server: errormsg,titleLIST,linkLIST = XFILESHARING(url)
+	elif 'filerio'		in server: errormsg,titleLIST,linkLIST = XFILESHARING(url)
+	elif 'vidbm'		in server: errormsg,titleLIST,linkLIST = XFILESHARING(url)
+	elif 'vidhd'		in server: errormsg,titleLIST,linkLIST = XFILESHARING(url)
+	elif 'videobin'		in server: errormsg,titleLIST,linkLIST = XFILESHARING(url)
 	elif 'govid'		in server: errormsg,titleLIST,linkLIST = GOVID(url)
 	elif 'liivideo' 	in server: errormsg,titleLIST,linkLIST = LIIVIDEO(url)
 	elif 'mp4upload'	in server: errormsg,titleLIST,linkLIST = MP4UPLOAD(url)
@@ -265,7 +290,7 @@ def	CLEAN_URLS(urls):
 
 def RESOLVE(url):
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   Resolving Started   For: [ '+url+' ]')
-	resolver,link,allerrors = 'INTERNAL_RESOLVERS','',''
+	resolver,link,allerrors = 'INTERNAL_RESOLVER','',''
 	errormsg,titleLIST,linkLIST = INTERNAL_RESOLVERS(url)
 	linkLIST = CLEAN_URLS(linkLIST)
 	if errormsg=='NEED_EXTERNAL_RESOLVERS':
@@ -289,12 +314,11 @@ def RESOLVE(url):
 					#LOG_THIS('ERROR',LOGGING(script_name)+'   All External Resolvers Failed   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
 	elif errormsg!='':
 		allerrors = 'Resolver 0: '+errormsg
-		#LOG_THIS('ERROR',LOGGING(script_name)+'   All Internal Resolvers Failed   Messages: [ '+allerrors+' ]   Resolver: [ '+resolver+' ]   For: [ '+url+' ]')
 	allerrors = allerrors.strip('\n')
 	if len(linkLIST)>0:
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Resolving Succeeded   Resolver: [ '+resolver+' ]   Result: [ '+str(linkLIST)+' ]   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
-	elif 'Resolver 3:' in allerrors:
-		LOG_THIS('ERROR',LOGGING(script_name)+'   All Internal & External Resolvers Failed   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
+	else:
+		LOG_THIS('ERROR',LOGGING(script_name)+'   Resolving Failed   Resolver: [ '+resolver+' ]   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
 	#allerrors = allerrors.replace('\n',' ... ')
 	return allerrors,titleLIST,linkLIST
 
@@ -559,12 +583,23 @@ def ARABLIONZ(link):
 	elif '/redirect/' in link:
 		counts = 0
 		while '/redirect/' in link and counts<5:
-			response = openURL_requests_cached(SHORT_CACHE,'GET',link,'','',False,'','RESOLVERS-ARABLIONZ-2nd')
+			response = openURL_requests_cached(LONG_CACHE,'GET',link,'','',False,'','RESOLVERS-ARABLIONZ-2nd')
 			if 'Location' in response.headers.keys():
 				link = response.headers['Location']
 			counts += 1
 		return '',[''],[link]
 	else: return 'Error: Resolver ARABLIONZ Failed',[],[]
+
+def ARABSEED(url):
+	#xbmcgui.Dialog().ok(url,url)
+	if '.mp4.html' in url:
+		errormsg,titleLIST,linkLIST = XFILESHARING(url)
+		return errormsg,titleLIST,linkLIST
+	else:
+		html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-ARABLIONZ-1st')
+		links = re.findall('<source src="(.*?)"',html,re.DOTALL)
+		if links: return '',[''],[ links[0] ]
+		return 'Error: Resolver ARABSEED Failed',[],[]
 
 def SHAHID4U(link):
 	# https://shahid4u.net/?postid=142302&serverid=4
@@ -589,7 +624,7 @@ def AKOAM(url,named):
 	if 'catch.is' in url2:
 		id = url2.split('%2F')[-1]
 		url2 = 'http://catch.is/'+id
-		errormsg,titleLIST,linkLIST = CATCHIS(url2)
+		return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
 	else:
 		website = WEBSITES['AKOAM'][0]
 		response = openURL_requests_cached(REGULAR_CACHE,'GET',website,'','',True,'','RESOLVERS-AKOAM-2nd')
@@ -616,8 +651,8 @@ def AKOAM(url,named):
 			if named=='': errormsg,titleLIST,linkLIST = '',[''],[link]
 			else: errormsg,titleLIST,linkLIST = 'NEED_EXTERNAL_RESOLVERS',[''],[link]
 		else: errormsg,titleLIST,linkLIST = 'Error: Resolver AKOAM Failed',[],[]
-	#xbmcgui.Dialog().ok(linkLIST[0],errormsg)
-	return errormsg,titleLIST,linkLIST
+		#xbmcgui.Dialog().ok(linkLIST[0],errormsg)
+		return errormsg,titleLIST,linkLIST
 
 def RAPIDVIDEO(url):
 	# https://www.rapidvideo.com/e/FZSQ3R0XHZ
@@ -1272,18 +1307,24 @@ def VIDBOB(url):
 		return '',titleLIST,linkLIST
 	else: return 'Error: Resolver VIDBOB Failed',[],[]
 
-def	FILERIO(url):
+def	XFILESHARING(url):
 	# https://filerio.in/dmntn4rjquns
 	#xbmc.log(url)
-	id = url.split('/')[-1]
-	headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
+	url = url.replace('embed-','')
+	url = url.replace('.html','')
+	id = url.split('/')[3]
+	#xbmcgui.Dialog().ok(url,id)
+	headers = { 'User-Agent':'' , 'Content-Type':'application/x-www-form-urlencoded' }
 	payload = { 'id':id , 'op':'download2' }
 	data = urllib.urlencode(payload)
-	html = openURL_cached(SHORT_CACHE,url,data,headers,'','RESOLVERS-FILERIO-2nd')
-	#xbmc.log(html)
+	html = openURL_cached(NO_CACHE,url,data,headers,'','RESOLVERS-XFILESHARING-1st')
+	#xbmcgui.Dialog().ok(url,html)
+	#LOG_THIS('NOTICE','----------------------------------')
+	#LOG_THIS('NOTICE',html)
+	#LOG_THIS('NOTICE','----------------------------------')
 	items = re.findall('direct_link.*?href="(.*?)"',html,re.DOTALL)
 	if items: return '',[''],[ items[0] ]
-	else: return 'Error: Resolver FILERIO Failed',[],[]
+	else: return 'Error: Resolver XFILESHARING Failed',[],[]
 
 def GOVID(url):
 	# https://govid.co/video/play/AAVENd
@@ -1319,16 +1360,6 @@ def GOVID(url):
 #    NOT YET VERIFIED
 #    16-06-2019
 #####################################################
-
-def CATCHIS(url):
-	id = url.split('/')[-1]
-	payload = { 'op' : 'download2' , 'id' : id }
-	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
-	data = urllib.urlencode(payload)
-	html = openURL_cached(SHORT_CACHE,url,data,headers,'','RESOLVERS-CATCH-1st')
-	items = re.findall('direct_link.*?href="(.*?)"',html,re.DOTALL)
-	if items: return '',[''],[ items[0] ]
-	else: return 'Error: Resolver CATCHIS Failed',[],[]
 
 def ARABLOADS(url):
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-ARABLOADS-1st')
