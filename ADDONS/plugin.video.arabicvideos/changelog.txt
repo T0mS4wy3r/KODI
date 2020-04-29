@@ -1,4 +1,28 @@
 ﻿
+v6.5.0	2020-04-29
+Offered addons "Check for updates"
+Offered install/enable/update of "EMAD Repository"
+Minimized size of LIBRARY file
+Added video categories menu
+Fixed ALARAB slow menus
+Removed HELAL duplicated menu items
+Created RANDOMS & MENUS modules
+Added random videos section
+Added random video search
+Moved all menus to MENUS file
+Moved all websites to separate menu
+Added ANSWERS menu
+Fixed IPTV name categorization
+Fixed ALKAWTHAR live channel
+Fixed some live channels
+Added cache for all IPTV
+Added random iptv section
+Added random iptv search
+Added random LIVETV channels
+Fixed ALKAWTHAR search
+Minor fixes & improvements
+
+
 v6.4.3	2020-04-14
 Modified cache period for ARABLIONZ, ARABSEED & SHAHID4U
 Renamed EGY4BEST to EGYBESTVIP
@@ -7,7 +31,7 @@ Added ARABSEED internal resolver
 Added XFILESHARING resolver
 Added resolvers VIDBM, VIDHD & VIDEOBIN
 Added youtube-dl site check
-Added settings link for ResolveURL & YOUTUBE-DL
+Offered settings modification for ResolveURL & YOUTUBE-DL
 Minor fixes & improvements
 
 

@@ -8,46 +8,44 @@ website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==50: MAIN_MENU()
-	elif mode==51: TITLES(url)
-	elif mode==52: EPISODES(url)
-	elif mode==53: PLAY(url)
-	elif mode==55: MOVIES_MENU()
-	elif mode==56: SERIES_MENU()
-	elif mode==57: FILTERS(url,1)
-	elif mode==58: FILTERS(url,2)
-	elif mode==59: SEARCH(text)
-	return
+	if   mode==50: results = MENU(url)
+	elif mode==51: results = TITLES(url)
+	elif mode==52: results = EPISODES(url)
+	elif mode==53: results = PLAY(url)
+	elif mode==55: results = MOVIES_MENU()
+	elif mode==56: results = SERIES_MENU()
+	elif mode==57: results = FILTERS(url,1)
+	elif mode==58: results = FILTERS(url,2)
+	elif mode==59: results = SEARCH(text)
+	else: results = False
+	return results
 
-def MAIN_MENU():
-	addDir(menu_name+'بحث في الموقع','',59)
-	addDir(menu_name+'المسلسلات','',56)
-	addDir(menu_name+'الافلام','',55)
-	xbmcplugin.endOfDirectory(addon_handle)
+def MENU(website=''):
+	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',59)
+	addMenuItem('dir',website+'::'+menu_name+'المسلسلات','',56)
+	addMenuItem('dir',website+'::'+menu_name+'الافلام','',55)
 	return
 
 def MOVIES_MENU():
-	addDir(menu_name+'احدث الافلام',website0a+'/movie/1/newest',51)
-	addDir(menu_name+'افلام رائجة',website0a+'/movie/1/popular',51)
-	addDir(menu_name+'اخر اضافات الافلام',website0a+'/movie/1/latest',51)
-	addDir(menu_name+'افلام كلاسيكية',website0a+'/movie/1/classic',51)
-	addDir('=========================','',9999)
-	addDir(menu_name+'اختيار افلام مرتبة بسنة الانتاج',website0a+'/movie/1/yop',57)
-	addDir(menu_name+'اختيار افلام مرتبة بالافضل تقييم',website0a+'/movie/1/review',57)
-	addDir(menu_name+'اختيار افلام مرتبة بالاكثر مشاهدة',website0a+'/movie/1/views',57)
-	xbmcplugin.endOfDirectory(addon_handle)
+	addMenuItem('dir',menu_name+'احدث الافلام',website0a+'/movie/1/newest',51)
+	addMenuItem('dir',menu_name+'افلام رائجة',website0a+'/movie/1/popular',51)
+	addMenuItem('dir',menu_name+'اخر اضافات الافلام',website0a+'/movie/1/latest',51)
+	addMenuItem('dir',menu_name+'افلام كلاسيكية',website0a+'/movie/1/classic',51)
+	addMenuItem('dir','=========================','',9999)
+	addMenuItem('dir',menu_name+'اختيار افلام مرتبة بسنة الانتاج',website0a+'/movie/1/yop',57)
+	addMenuItem('dir',menu_name+'اختيار افلام مرتبة بالافضل تقييم',website0a+'/movie/1/review',57)
+	addMenuItem('dir',menu_name+'اختيار افلام مرتبة بالاكثر مشاهدة',website0a+'/movie/1/views',57)
 	return
 
 def SERIES_MENU():
-	addDir(menu_name+'احدث المسلسلات',website0a+'/series/1/newest',51)
-	addDir(menu_name+'مسلسلات رائجة',website0a+'/series/1/popular',51)
-	addDir(menu_name+'اخر اضافات المسلسلات',website0a+'/series/1/latest',51)
-	addDir(menu_name+'مسلسلات كلاسيكية',website0a+'/series/1/classic',51)
-	addDir('=========================','',9999)
-	addDir(menu_name+'اختيار مسلسلات مرتبة بسنة الانتاج',website0a+'/series/1/yop',57)
-	addDir(menu_name+'اختيار مسلسلات مرتبة بالافضل تقييم',website0a+'/series/1/review',57)
-	addDir(menu_name+'اختيار مسلسلات مرتبة بالاكثر مشاهدة',website0a+'/series/1/views',57)
-	xbmcplugin.endOfDirectory(addon_handle)
+	addMenuItem('dir',menu_name+'احدث المسلسلات',website0a+'/series/1/newest',51)
+	addMenuItem('dir',menu_name+'مسلسلات رائجة',website0a+'/series/1/popular',51)
+	addMenuItem('dir',menu_name+'اخر اضافات المسلسلات',website0a+'/series/1/latest',51)
+	addMenuItem('dir',menu_name+'مسلسلات كلاسيكية',website0a+'/series/1/classic',51)
+	addMenuItem('dir','=========================','',9999)
+	addMenuItem('dir',menu_name+'اختيار مسلسلات مرتبة بسنة الانتاج',website0a+'/series/1/yop',57)
+	addMenuItem('dir',menu_name+'اختيار مسلسلات مرتبة بالافضل تقييم',website0a+'/series/1/review',57)
+	addMenuItem('dir',menu_name+'اختيار مسلسلات مرتبة بالاكثر مشاهدة',website0a+'/series/1/views',57)
 	return
 
 def TITLES(url):
@@ -72,8 +70,8 @@ def TITLES(url):
 			count_items += 1
 			img = website0b + '/img/program/' + img + '-2.jpg'
 			link = website0a + '/program/' + id
-			if type=='movie': addLink(menu_name+title,link,53,img)
-			if type=='series': addDir(menu_name+'مسلسل '+title,link+'?ep='+episodes_count+'='+title+'='+img,52,img)
+			if type=='movie': addMenuItem('link',menu_name+title,link,53,img)
+			if type=='series': addMenuItem('dir',menu_name+'مسلسل '+title,link+'?ep='+episodes_count+'='+title+'='+img,52,img)
 	else:
 		if type=='movie': type1='movies'
 		elif type=='series': type1='series'
@@ -85,15 +83,14 @@ def TITLES(url):
 			count_items += 1
 			img = website0b + '/img/program/' + img + '-2.jpg'
 			link = website0a + '/program/' + id
-			if type=='movie': addLink(menu_name+title,link,53,img)
-			if type=='series': addDir(menu_name+'مسلسل '+title,link+'?ep='+episodes_count+'='+title+'='+img,52,img)
+			if type=='movie': addMenuItem('link',menu_name+title,link,53,img)
+			if type=='series': addMenuItem('dir',menu_name+'مسلسل '+title,link+'?ep='+episodes_count+'='+title+'='+img,52,img)
 	title='صفحة '
 	if count_items==16:
 		for count_page in range(1,13) :
 			if not page==str(count_page):
 				url = website0a+'/filter-programs/'+type+'/'+str(count_page)+'/'+sort + filter
-				addDir(menu_name+title+str(count_page),url,51)
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',menu_name+title+str(count_page),url,51)
 	return
 
 def EPISODES(url):
@@ -115,8 +112,7 @@ def EPISODES(url):
 	for episode in range(episodes_count,0,-1):
 		link = url + '?ep=' + str(episode)
 		title = '_MOD_مسلسل '+name+' - الحلقة '+str(episode)
-		addLink(menu_name+title,link,53,img)
-	xbmcplugin.endOfDirectory(addon_handle)
+		addMenuItem('link',menu_name+title,link,53,img)
 	return
 
 def PLAY(url):
@@ -173,7 +169,7 @@ def PLAY(url):
 	url = items_url[selection]
 	#url = mixARABIC(url)
 	PLAY_VIDEO(url,script_name)
-	return ''
+	return
 
 def FILTERS(url,type):
 	#xbmcgui.Dialog().ok(url,url)
@@ -188,17 +184,20 @@ def FILTERS(url,type):
 	items = re.findall('option value="(.*?)">(.*?)</option',block,re.DOTALL)
 	if type==1:
 		for subgenre,title in reversed(items):
-			addDir(menu_name+title,url+'?subgenre='+subgenre,58)
+			addMenuItem('dir',menu_name+title,url+'?subgenre='+subgenre,58)
 	elif type==2:
 		parts = url.split('?')
 		url = parts[0]
 		subgenre = parts[1]
 		for country,title in reversed(items):
-			addDir(menu_name+title,url+'?country='+country+'&'+subgenre,51)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',menu_name+title,url+'?country='+country+'&'+subgenre,51)
 	return
 
 def SEARCH(search=''):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	#xbmcgui.Dialog().ok(search,search)
@@ -226,11 +225,10 @@ def SEARCH(search=''):
 					title = '_MOD_مسلسل '+title
 					url = url.replace('?ep=1','?ep=0')
 					url = url+'='+quote(title)+'='+img
-					addDir(menu_name+title,url,52,img)
+					addMenuItem('dir',menu_name+title,url,52,img)
 				else:
 					title = '_MOD_فيلم '+title
-					addLink(menu_name+title,url,53,img)
-	xbmcplugin.endOfDirectory(addon_handle)
+					addMenuItem('link',menu_name+title,url,53,img)
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
 	return
 

@@ -11,35 +11,37 @@ website1  = 'http://93.190.24.122'
 
 def MAIN(mode,url,page,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==20: LANGUAGE_MENU()
-	elif mode==21: MAIN_MENU(url)
-	elif mode==22: TITLES(url,page)
-	elif mode==23: EPISODES(url,page)
-	elif mode==24: PLAY(url)
-	elif mode==25: MUSIC_MENU(url)
-	elif mode==27: LIVE(url)
-	elif mode==28: LIVE_MENU()
-	elif mode==29: SEARCH(url,text)
-	return
+	if   mode==20: results = LANGUAGE_MENU()
+	elif mode==21: results = MENU(url)
+	elif mode==22: results = TITLES(url,page)
+	elif mode==23: results = EPISODES(url,page)
+	elif mode==24: results = PLAY(url)
+	elif mode==25: results = MUSIC_MENU(url)
+	elif mode==27: results = LIVE(url)
+	elif mode==28: results = LIVE_MENU()
+	elif mode==29: results = SEARCH(url,text)
+	else: results = False
+	return results
 
 def LANGUAGE_MENU():
-	addDir(menu_name+'عربي',website0a,21,'','101')
-	addDir(menu_name+'English',website0b,21,'','101')
-	addDir(menu_name+'فارسى',website0c,21,'','101')
-	addDir(menu_name+'فارسى 2',website0d,21,'','101')
-	xbmcplugin.endOfDirectory(addon_handle)
+	addMenuItem('dir',menu_name+'عربي',website0a,21,'','101')
+	addMenuItem('dir',menu_name+'English',website0b,21,'','101')
+	addMenuItem('dir',menu_name+'فارسى',website0c,21,'','101')
+	addMenuItem('dir',menu_name+'فارسى 2',website0d,21,'','101')
 	return
 
 def LIVE_MENU():
-	addDir(menu_name+'عربي',website0a,27)
-	addDir(menu_name+'English',website0b,27)
-	addDir(menu_name+'فارسى',website0c,27)
-	addDir(menu_name+'فارسى 2',website0d,27)
-	xbmcplugin.endOfDirectory(addon_handle)
+	addMenuItem('dir',menu_name+'عربي',website0a,27)
+	addMenuItem('dir',menu_name+'English',website0b,27)
+	addMenuItem('dir',menu_name+'فارسى',website0c,27)
+	addMenuItem('dir',menu_name+'فارسى 2',website0d,27)
 	return
 
-def MAIN_MENU(website0):
-	menu=['Series', 'Program', 'Music']
+def MENU(website0):
+	if website0=='IFILM':
+		website = 'IFILM'
+		website0 = website0a
+	else: website = ''
 	html = openURL_cached(LONG_CACHE,website0,'','','','IFILM-MAIN_MENU-1st')
 	html_blocks=re.findall('main-body.*?menu(.*?)nav',html,re.DOTALL)
 	#html_blocks=re.findall('input_Search_" placeholder="(.*?)"',html,re.DOTALL)
@@ -63,22 +65,23 @@ def MAIN_MENU(website0):
 		name2 = 'سريال ها مرتب سازى براساس'
 		name3 = 'سريال ها مرتب حروف الفبا'
 		name4 = 'پخش زنده از اي فيلم كانال'
-	addDir(menu_name+name4,website0,27,'','','IsPlayable=False')
-	addDir(menu_name+name0,website0,29)
+	if website=='':
+		addMenuItem('dir',menu_name+name4,website0,27,'','','IsPlayable=False')
+		addMenuItem('dir',menu_name+name0,website0,29)
+	menu = ['Series', 'Program', 'Music']
 	block = html_blocks[0]
-	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
+	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
 		if any(value in link for value in menu):
 			url = website0 + link
 			if 'Series' in link:
-				addDir(menu_name+name1,url,22,'','100')
-				addDir(menu_name+name2,url,22,'','101')
-				addDir(menu_name+name3,url,22,'','201')
+				addMenuItem('dir',website+'::'+menu_name+name1,url,22,'','100')
+				addMenuItem('dir',website+'::'+menu_name+name2,url,22,'','101')
+				addMenuItem('dir',website+'::'+menu_name+name3,url,22,'','201')
 			elif 'Music' in link:
-				addDir(menu_name+title,url,25,'','101')
+				addMenuItem('dir',website+'::'+menu_name+title,url,25,'','101')
 			elif 'Program':
-				addDir(menu_name+title,url,22,'','101')
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',website+'::'+menu_name+title,url,22,'','101')
 	return
 
 def MUSIC_MENU(url):
@@ -87,12 +90,11 @@ def MUSIC_MENU(url):
 	html_blocks = re.findall('Music-tools-header(.*?)Music-body',html,re.DOTALL)
 	block = html_blocks[0]
 	title = re.findall('<p>(.*?)</p>',block,re.DOTALL)[0]
-	addDir(menu_name+title,url,22,'','101')
+	addMenuItem('dir',menu_name+title,url,22,'','101')
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
 		link = website0 + link
-		addDir(menu_name+title,link,23,'','101')
-	xbmcplugin.endOfDirectory(addon_handle)
+		addMenuItem('dir',menu_name+title,link,23,'','101')
 	return
 
 def TITLES(url,page):
@@ -112,7 +114,7 @@ def TITLES(url,page):
 			title = unescapeHTML(title)
 			link = website0 + link
 			img = website0 + quote(img)
-			addDir(menu_name+title,link,23,img,order+'01')
+			addMenuItem('dir',menu_name+title,link,23,img,order+'01')
 	count_items=0
 	if type=='Series': category='3'
 	if type=='Program': category='7'
@@ -128,7 +130,7 @@ def TITLES(url,page):
 			count_items += 1
 			link = website0 + '/' + type + '/Content/' + id
 			img = website0 + quote(img)
-			addDir(menu_name+title,link,23,img,order+'01')
+			addMenuItem('dir',menu_name+title,link,23,img,order+'01')
 	if type=='Music':
 		html = openURL_cached(REGULAR_CACHE,website0+'/Music/Index?page='+page,'','','','IFILM-TITLES-3rd')
 		html_blocks = re.findall('pagination-demo(.*?)pagination-demo',html,re.DOTALL)
@@ -138,7 +140,7 @@ def TITLES(url,page):
 			count_items += 1
 			img = website0 + img
 			link = website0 + link
-			addDir(menu_name+title,link,23,img,'101')
+			addMenuItem('dir',menu_name+title,link,23,img,'101')
 	if count_items>20:
 		title='صفحة '
 		if lang=='en': title = 'Page '
@@ -147,8 +149,7 @@ def TITLES(url,page):
 		for count_page in range(1,11) :
 			if not page==str(count_page):
 				counter = '0'+str(count_page)
-				addDir(menu_name+title+str(count_page),url,22,'',order+counter[-2:])
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',menu_name+title+str(count_page),url,22,'',order+counter[-2:])
 	return
 
 def EPISODES(url,page):
@@ -175,7 +176,7 @@ def EPISODES(url,page):
 				link1 = link + linklang + id + '/' + str(episode) + '.mp4' 
 				name1 = name + title + str(episode)
 				name1 = unescapeHTML(name1)
-				addLink(menu_name+name1,link1,24,img1)
+				addMenuItem('link',menu_name+name1,link1,24,img1)
 	if type=='Program':
 		url2 = website0+'/Home/PageingAttachmentItem?id='+str(id)+'&page='+page+'&size=30&orderby=1'
 		html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-EPISODES-2nd')
@@ -190,7 +191,7 @@ def EPISODES(url,page):
 			link1 = website1 + quote(link)
 			name = escapeUNICODE(name)
 			name1 = name + title + str(episode)
-			addLink(menu_name+name1,link1,24,img1)
+			addMenuItem('link',menu_name+name1,link1,24,img1)
 	if type=='Music':
 		if 'Content' in url and 'category' not in url:
 			url2 = website0+'/Music/GetTracksBy?id='+str(id)+'&page='+page+'&size=30&type=0'
@@ -203,7 +204,7 @@ def EPISODES(url,page):
 				name1 = name + ' - ' + title
 				name1 = name1.strip(' ')
 				name1 = escapeUNICODE(name1)
-				addLink(menu_name+name1,link1,24,img1)
+				addMenuItem('link',menu_name+name1,link1,24,img1)
 		elif 'Clips' in url:
 			url2 = website0+'/Music/GetTracksBy?id=0&page='+page+'&size=30&type=15'
 			html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-EPISODES-4th')
@@ -214,7 +215,7 @@ def EPISODES(url,page):
 				link1 = website1 + quote(link)
 				name1 = title.strip(' ')
 				name1 = escapeUNICODE(name1)
-				addLink(menu_name+name1,link1,24,img1)
+				addMenuItem('link',menu_name+name1,link1,24,img1)
 		elif 'category' in url:
 			if 'category=6' in url:
 				html = openURL_cached(REGULAR_CACHE,website0+'/Music/GetTracksBy?id=0&page='+page+'&size=30&type=6','','','','IFILM-EPISODES-5th')
@@ -228,7 +229,7 @@ def EPISODES(url,page):
 				name1 = name + ' - ' + title
 				name1 = name1.strip(' ')
 				name1 = escapeUNICODE(name1)
-				addLink(menu_name+name1,link1,24,img1)
+				addMenuItem('link',menu_name+name1,link1,24,img1)
 	if type=='Music' or type=='Program':
 		if count_items>25:
 			title='صفحة '
@@ -238,8 +239,7 @@ def EPISODES(url,page):
 			for count_page in range(1,11):
 				if not page==str(count_page):
 					counter = '0'+str(count_page)
-					addDir(menu_name+title+str(count_page),url,23,'',order+counter[-2:])
-	xbmcplugin.endOfDirectory(addon_handle)
+					addMenuItem('dir',menu_name+title+str(count_page),url,23,'',order+counter[-2:])
 	return
 
 def PLAY(url):
@@ -272,14 +272,19 @@ def LIVE(url):
 	return
 
 def SEARCH(url,search=''):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
-	if url=='':
+	if url=='' and category:
 		urlLIST = [ website0a , website0b , website0c , website0d ]
 		nameLIST = [ 'عربي' , 'English' , 'فارسى' , 'فارسى 2' ]
 		selection = xbmcgui.Dialog().select('اختر اللغة المناسبة:', nameLIST)
 		if selection == -1 : return ''
 		url = urlLIST[selection]
+	else: url = website0a
 	new_search = search.replace(' ','+')
 	lang = LANG(url)
 	url2 = url + "/Home/Search?searchstring=" + new_search
@@ -306,8 +311,7 @@ def SEARCH(url,search=''):
 				title = name + title
 				link = url + '/' + type + '/Content/' + id
 				img = url + quote(img)
-				addDir(menu_name+title,link,23,img,'101')
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',menu_name+title,link,23,img,'101')
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
 	return
 

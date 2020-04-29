@@ -60,8 +60,7 @@ def PLAY(linkLIST,script_name,text=''):
 	#for i in range(0,size):
 	#	title = serversLIST[i]
 	#	link = urlLIST[i]
-	#	addLink(menu_name+title,link,160,'','',script_name)
-	#xbmcplugin.endOfDirectory(addon_handle)
+	#	addMenuItem('link',menu_name+title,link,160,'','',script_name)
 
 def PLAY_LINK(url,script_name,text=''):
 	#xbmcgui.Dialog().ok('',titleLIST[0])
@@ -530,10 +529,10 @@ def EGYBEST(url):
 	url2 = url.split('name=',1)[0].strip('?').strip('/').strip('&')
 	titleLIST,linkLIST,items,url3 = [],[],[],''
 	headers = { 'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-	response = openURL_requests_cached(NO_CACHE,'GET',url2,'',headers,False,'','RESOLVERS-EGYBEST-1st')
+	response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'',headers,False,'','RESOLVERS-EGYBEST-1st')
 	if 'Location' in response.headers:
 		url3 = response.headers['Location']
-		response = openURL_requests_cached(NO_CACHE,'GET',url3,'',headers,False,'','RESOLVERS-EGYBEST-2nd')
+		response = openURL_requests_cached(SHORT_CACHE,'GET',url3,'',headers,False,'','RESOLVERS-EGYBEST-2nd')
 	if 'Location' in response.headers:
 		url3 = response.headers['Location']
 	xbmcgui.Dialog().ok(url3,response.html)
@@ -543,10 +542,10 @@ def EGYBEST(url):
 		if '__watch' in url: url3 = url3.replace('/f/','/v/')
 		PHPSID = url2.split('?PHPSID=')[1]
 		headers = { 'User-Agent':headers['User-Agent'] , 'Cookie':'PHPSID='+PHPSID }
-		response = openURL_requests_cached(NO_CACHE,'GET',url3,'',headers,False,'','EGYBEST-PLAY-3rd')
+		response = openURL_requests_cached(SHORT_CACHE,'GET',url3,'',headers,False,'','EGYBEST-PLAY-3rd')
 		html = response.text
 		#xbmc.log(html)
-		#html = openURL_cached(NO_CACHE,url3,'',headers,'','RESOLVERS-EGYBEST-3rd')
+		#html = openURL_cached(SHORT_CACHE,url3,'',headers,'','RESOLVERS-EGYBEST-3rd')
 		if '/f/' in url3: items = re.findall('<h2>.*?href="(.*?)"',html,re.DOTALL)
 		elif '/v/' in url3: items = re.findall('id="video".*?src="(.*?)"',html,re.DOTALL)
 		if items: return [],[''],[ items[0] ]
@@ -672,7 +671,7 @@ def UQLOAD(url):
 	# https://uqload.com/embed-iaj1zudyf89v.html
 	url = url.replace('embed-','')
 	headers = { 'User-Agent' : '' }
-	html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-UQLOAD-1st')
+	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-UQLOAD-1st')
 	items = re.findall('sources: \["(.*?)"',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(url,items[0])
 	if items:
@@ -838,10 +837,10 @@ def YOUTUBE(url):
 	id = url.split('/')[-1]
 	id = id.replace('watch?v=','')
 	if 'embed' in url: url = WEBSITES['YOUTUBE'][0]+'/watch?v='+id
-	#html = openURL_cached(NO_CACHE,'http://localhost:55055/shutdown','','','','RESOLVERS-YOUTUBE-1st')
+	#html = openURL_cached(SHORT_CACHE,'http://localhost:55055/shutdown','','','','RESOLVERS-YOUTUBE-1st')
 	subtitleURL,dashURL,hlsURL,finalURL = '','','',''
 	#headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36'}
-	html = openURL_cached(NO_CACHE,url,'','','','RESOLVERS-YOUTUBE-2nd')
+	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-YOUTUBE-2nd')
 	#xbmc.log('===========================================',level=xbmc.LOGNOTICE)
 	html = html.replace('\\u0026','&&').replace('\\','')
 	#xbmc.log(html,level=xbmc.LOGNOTICE)
@@ -1086,7 +1085,7 @@ def YOUTUBE(url):
 		allowMPD = True
 		if 'codecs' in dict.keys():
 			if 'av0' in dict['codecs']: allowMPD = False
-			elif kodi_version.split(' ')[0]<'17.9':
+			elif kodi_version<18:
 				if 'avc' not in dict['codecs'] and 'mp4a' not in dict['codecs']: allowMPD = False
 		if dict['type2']=='Video' and dict['init']!='0-0' and allowMPD==True:
 			mpdvideoTitleLIST.append(dict['title'])
@@ -1317,7 +1316,7 @@ def	XFILESHARING(url):
 	headers = { 'User-Agent':'' , 'Content-Type':'application/x-www-form-urlencoded' }
 	payload = { 'id':id , 'op':'download2' }
 	data = urllib.urlencode(payload)
-	html = openURL_cached(NO_CACHE,url,data,headers,'','RESOLVERS-XFILESHARING-1st')
+	html = openURL_cached(SHORT_CACHE,url,data,headers,'','RESOLVERS-XFILESHARING-1st')
 	#xbmcgui.Dialog().ok(url,html)
 	#LOG_THIS('NOTICE','----------------------------------')
 	#LOG_THIS('NOTICE',html)

@@ -12,20 +12,21 @@ proxy = ''
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if   mode==70: MENU()
-	elif mode==71: CATEGORIES(url+proxy)
-	elif mode==72: TITLES(url+proxy,text)
-	elif mode==73: SECTIONS(url+proxy)
-	elif mode==74: PLAY(url+proxy)
-	elif mode==79: SEARCH(text)
-	return
+	if   mode==70: results = MENU(url)
+	elif mode==71: results = CATEGORIES(url+proxy)
+	elif mode==72: results = TITLES(url+proxy,text)
+	elif mode==73: results = SECTIONS(url+proxy)
+	elif mode==74: results = PLAY(url+proxy)
+	elif mode==79: results = SEARCH(text)
+	else: results = False
+	return results
 
-def MENU():
-	addDir(menu_name+'بحث في الموقع','',79)
-	addDir(menu_name+'المميزة',website0a+proxy,72,'','','featured')
-	addDir(menu_name+'المزيد',website0a+proxy,72,'','','more')
-	addLink('[COLOR FFC89008]====================[/COLOR]','',9999,'','','IsPlayable=no')
-	#addDir(menu_name+'الاخبار',website0a+proxy,72,'','','news')
+def MENU(website=''):
+	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',79)
+	addMenuItem('dir',website+'::'+menu_name+'المميزة',website0a+proxy,72,'','','featured')
+	addMenuItem('dir',website+'::'+menu_name+'المزيد',website0a+proxy,72,'','','more')
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999,'','','IsPlayable=no')
+	#addMenuItem('dir',website+'::'+menu_name+'الاخبار',website0a+proxy,72,'','','news')
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات','المصارعة الحرة']
 	html = openURL_cached(LONG_CACHE,website0a+proxy,'',headers,'','AKOAM-MENU-1st')
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
@@ -34,9 +35,9 @@ def MENU():
 		items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 		for link,title in items:
 			if title not in ignoreLIST:
-				addDir(menu_name+title,link,71)
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',website+'::'+menu_name+title,link,71)
 	return
+	
 
 def CATEGORIES(url):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKOAM-CATEGORIES-1st')
@@ -46,9 +47,8 @@ def CATEGORIES(url):
 		items = re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 		for link,title in items:
 			title = title.strip(' ')
-			addDir(menu_name+title,link,72)
-		addDir(menu_name+'جميع الفروع',url,72)
-		xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',menu_name+title,link,72)
+		addMenuItem('dir',menu_name+'جميع الفروع',url,72)
 	else: TITLES(url,'')
 	return
 
@@ -78,16 +78,15 @@ def TITLES(url,type):
 		title = title.strip(' ').replace('\t','').replace('\n','')
 		title = unescapeHTML(title)
 		if any(value in title for value in noEpisodesLIST):
-			addLink(menu_name+title,link,73,img)
+			addMenuItem('link',menu_name+title,link,73,img)
 		else: 
-			addDir(menu_name+title,link,73,img)
+			addMenuItem('dir',menu_name+title,link,73,img)
 	html_blocks = re.findall('pagination(.*?)</div',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall("<li>.*?href='(.*?)'>(.*?)<",block,re.DOTALL)
 		for link,title in items:
-			addDir(menu_name+'صفحة '+title,link,72,'','',type)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',menu_name+'صفحة '+title,link,72,'','',type)
 	return
 
 def SECTIONS(url):
@@ -109,7 +108,7 @@ def SECTIONS(url):
 	items = re.findall('<br />\n<a href="(.*?)".*?<span style="color:.*?">(.*?)</span>',html,re.DOTALL)
 	for link,title in items:
 		title = unescapeHTML(title)
-		addDir(menu_name+title,link,73)
+		addMenuItem('dir',menu_name+title,link,73)
 	html_blocks = re.findall('class="sub_title".*?<h1.*?>(.*?)</h1>.*?class="main_img".*?src="(.*?)".*?ad-300-250(.*?)ako-feedback',html,re.DOTALL)
 	if not html_blocks:
 		xbmcgui.Dialog().notification('خطأ خارجي','لا يوجد ملف فيديو')
@@ -154,12 +153,10 @@ def SECTIONS(url):
 				#else: title = name + ' - ' + titleLIST[i]
 				title = name + ' - ' + titleLIST[i]
 				link = url + '?section='+str(size-i)
-				addLink(menu_name+title,link,74,img)
-			xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('link',menu_name+title,link,74,img)
 	else:
-		addLink(menu_name+'الرابط ليس فيديو','',9999,img)
+		addMenuItem('link',menu_name+'الرابط ليس فيديو','',9999,img)
 		#xbmcgui.Dialog().notification('خطأ خارجي','الرابط ليس فيديو')
-		xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def PLAY(url):
@@ -194,16 +191,19 @@ def PLAY(url):
 		#xbmcgui.Dialog().select('',linkLIST)
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name)
-		return
 	return
 
 def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		exit = False
+	else: exit = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	new_search = search.replace(' ','%20')
 	#xbmcgui.Dialog().ok(str(len(search)) , str(len(new_search)) )
 	url = website0a + '/search/' + new_search + proxy
-	TITLES(url,'search')
+	results = TITLES(url,'search')
 	return
 
 

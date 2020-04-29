@@ -12,46 +12,40 @@ website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==90: MENU()
-	elif mode==91: ITEMS(url)
-	elif mode==92: PLAY(url)
-	elif mode==94: LATEST()
-	elif mode==95: EPISODES(url)
-	elif mode==99: SEARCH(text)
-	return
+	if   mode==90: results = MENU(url)
+	elif mode==91: results = ITEMS(url)
+	elif mode==92: results = PLAY(url)
+	elif mode==94: results = LATEST()
+	elif mode==95: results = EPISODES(url)
+	elif mode==99: results = SEARCH(text)
+	else: results = False
+	return results
 
-def MENU():
-	addDir(menu_name+'بحث في الموقع','',99)
-	addDir(menu_name+'المضاف حديثا','',94)
-	addDir(menu_name+'الأحدث',website0a+'/?type=latest',91)
-	addDir(menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
-	addDir(menu_name+'الأكثر مشاهدة',website0a+'/?type=view',91)
-	addDir(menu_name+'المثبت',website0a+'/?type=pin',91)
-	addDir(menu_name+'جديد الافلام',website0a+'/?type=newMovies',91)
-	addDir(menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
-	addLink('[COLOR FFC89008]====================[/COLOR]','',9999,'','','IsPlayable=no')
-	#addDir(menu_name+'جديد الموقع',website0a,91)
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
+def MENU(website=''):
+	if website=='': addMenuItem('dir',website+'::'+menu_name+'بحث في الموقع','',99)
+	addMenuItem('dir',website+'::'+menu_name+'المضاف حديثا','',94)
+	addMenuItem('dir',website+'::'+menu_name+'الأحدث',website0a+'/?type=latest',91)
+	addMenuItem('dir',website+'::'+menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
+	addMenuItem('dir',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/?type=view',91)
+	addMenuItem('dir',website+'::'+menu_name+'المثبت',website0a+'/?type=pin',91)
+	addMenuItem('dir',website+'::'+menu_name+'جديد الافلام',website0a+'/?type=newMovies',91)
+	addMenuItem('dir',website+'::'+menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999,'','','IsPlayable=no')
+	#addMenuItem('dir',website+'::'+menu_name+'جديد الموقع',website0a,91)
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
 	#upper menu
 	html_blocks = re.findall('class="mainmenu(.*?)nav',html,re.DOTALL)
-	if html_blocks: block1 = html_blocks[0]
-	else: block1 = ''
-	#bottom menu
-	html_blocks = re.findall('class="f-cats(.*?)div',html,re.DOTALL)
-	if html_blocks: block2 = html_blocks[0].replace('</a></li>',' أخرى</a></li>')
-	else: block2 = ''
-	#xbmcgui.Dialog().ok(block,str(items))
-	block = block1 + block2
+	block = html_blocks[0]
 	items = re.findall('<li><a href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 	ignoreLIST = ['افلام للكبار فقط','رياضة']
 	for link,title in items:
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
-			addDir(menu_name+title,link,91)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',website+'::'+menu_name+title,link,91)
 	return
 
 def ITEMS(url):
+	#xbmcgui.Dialog().ok(str(url),str(''))
 	if '/search.php' in url:
 		parts = url.split('?')
 		url,search = parts
@@ -74,10 +68,10 @@ def ITEMS(url):
 			if episode:
 				title = '_MOD_'+episode[0]
 				if title not in allTitles:
-					addDir(menu_name+title,link,95,img)
+					addMenuItem('dir',menu_name+title,link,95,img)
 					allTitles.append(title)
-		elif '/video/' in link: addLink(menu_name+title,link,92,img)
-		else: addDir(menu_name+title,link,91,img)
+		elif '/video/' in link: addMenuItem('link',menu_name+title,link,92,img)
+		else: addMenuItem('dir',menu_name+title,link,91,img)
 	html_blocks = re.findall('class="pagination(.*?)div',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -85,8 +79,7 @@ def ITEMS(url):
 		for link,title in items:
 			title = unescapeHTML(title)
 			title = title.replace('الصفحة ','')
-			addDir(menu_name+'صفحة '+title,link,91)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',menu_name+'صفحة '+title,link,91)
 	return
 
 def EPISODES(url):
@@ -101,8 +94,7 @@ def EPISODES(url):
 	items = re.findall('href="(.*?)".*?name">(.*?)<',block,re.DOTALL)
 	for link,title in items:
 		title = name+' - '+title
-		addLink(menu_name+title,link,92,img)
-	xbmcplugin.endOfDirectory(addon_handle)
+		addMenuItem('link',menu_name+title,link,92,img)
 	return
 
 def PLAY(url):
@@ -152,15 +144,17 @@ def LATEST():
 	block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)" title="(.*?)"',block,re.DOTALL)
 	for img,link,title in items:
-		if '/video/' in link: addLink(menu_name+title,link,92,img)
-		else: addDir(menu_name+title,link,91,img)
-	xbmcplugin.endOfDirectory(addon_handle)
+		if '/video/' in link: addMenuItem('link',menu_name+title,link,92,img)
+		else: addMenuItem('dir',menu_name+title,link,91,img)
 	return
 
 def SEARCH(search=''):
+	#xbmcgui.Dialog().ok(str(search),str(''))
+	if '::' in search: search = search.split('::')[0]
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.replace(' ','+')
+	#xbmcgui.Dialog().ok(str(search),str(''))
 	url = website0a + '/search.php?'+search
 	ITEMS(url)
 	return

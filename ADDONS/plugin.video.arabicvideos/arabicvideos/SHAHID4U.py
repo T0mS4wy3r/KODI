@@ -9,29 +9,31 @@ ignoreLIST = ['مسلسلات انمي','الرئيسية','عروض مصارع�
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==110: MENU()
-	elif mode==111: TITLES(url)
-	elif mode==112: PLAY(url)
-	elif mode==113: EPISODES(url)
-	elif mode==114: FILTERS_MENU(url,'FILTERS::'+text)
-	elif mode==115: FILTERS_MENU(url,'CATEGORIES::'+text)
-	elif mode==119: SEARCH(text)
-	return
+	if   mode==110: results = MENU(url)
+	elif mode==111: results = TITLES(url)
+	elif mode==112: results = PLAY(url)
+	elif mode==113: results = EPISODES(url)
+	elif mode==114: results = FILTERS_MENU(url,'FILTERS::'+text)
+	elif mode==115: results = FILTERS_MENU(url,'CATEGORIES::'+text)
+	elif mode==119: results = SEARCH(text)
+	else: results = False
+	return results
 
-def MENU():
-	addDir(menu_name+'بحث في الموقع','',119)
-	addDir(menu_name+'فلتر محدد',website0a,115)
-	addDir(menu_name+'فلتر كامل',website0a,114)
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	#addDir(menu_name+'فلتر','',114,website0a)
+def MENU(website=''):
+	if website=='': 
+		addMenuItem('dir',menu_name+'بحث في الموقع','',119)
+		addMenuItem('dir',menu_name+'فلتر محدد',website0a,115)
+		addMenuItem('dir',menu_name+'فلتر كامل',website0a,114)
+		addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+		#addMenuItem('dir',menu_name+'فلتر','',114,website0a)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
 	for link,title in items:
 		url = website0a+'/getposts?type=one&data='+link
-		addDir(menu_name+title,url,111)
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+		addMenuItem('dir',website+'::'+menu_name+title,url,111)
+	if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
@@ -46,10 +48,10 @@ def MENU():
 			link = link.replace('ى','ي')
 		"""
 		title = title.strip(' ')
-		if not any(value in title for value in ignoreLIST):
+		#if not any(value in title for value in ignoreLIST):
 		#	if any(value in title for value in keepLIST):
-			addDir(menu_name+title,link,111)
-	xbmcplugin.endOfDirectory(addon_handle)
+		if title not in ignoreLIST:
+			addMenuItem('dir',website+'::'+menu_name+title,link,111)
 	return
 
 def TITLES(url):
@@ -68,15 +70,15 @@ def TITLES(url):
 		title = unescapeHTML(title)
 		title = title.strip(' ')
 		if '/film/' in link or any(value in title for value in itemLIST):
-			addLink(menu_name+title,link,112,img)
+			addMenuItem('link',menu_name+title,link,112,img)
 		elif '/episode/' in link and 'الحلقة' in title:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode:
 				title = '_MOD_' + episode[0]
 				if title not in allTitles:
-					addDir(menu_name+title,link,113,img)
+					addMenuItem('dir',menu_name+title,link,113,img)
 					allTitles.append(title)
-		else: addDir(menu_name+title,link,113,img)
+		else: addMenuItem('dir',menu_name+title,link,113,img)
 	html_blocks = re.findall('class="pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -85,8 +87,7 @@ def TITLES(url):
 			link = unescapeHTML(link)
 			title = unescapeHTML(title)
 			title = title.replace('الصفحة ','')
-			if title!='': addDir(menu_name+'صفحة '+title,link,111)
-	xbmcplugin.endOfDirectory(addon_handle)
+			if title!='': addMenuItem('dir',menu_name+'صفحة '+title,link,111)
 	return
 
 def EPISODES(url):
@@ -112,11 +113,10 @@ def EPISODES(url):
 	episodesCount = str(items).count('/episode/')
 	if seasonsCount>1 and episodesCount>0 and '/season/' not in url:
 		for link,title,sequence in items:
-			if '/season/' in link: addDir(menu_name+title,link,113)
+			if '/season/' in link: addMenuItem('dir',menu_name+title,link,113)
 	else:
 		for link,title,sequence in items:
-			if '/season/' not in link: addLink(menu_name+title,link,112)
-	xbmcplugin.endOfDirectory(addon_handle)
+			if '/season/' not in link: addMenuItem('link',menu_name+title,link,112)
 	return
 
 def PLAY(url):
@@ -136,7 +136,7 @@ def PLAY(url):
 		items1 = re.findall('data-embedd="(.*?)".*?alt="(.*?)"',html2,re.DOTALL)
 		items2 = re.findall('data-embedd=".*?(http.*?)("|&quot;)',html2,re.DOTALL)
 		items3 = re.findall('src=&quot;(.*?)&quot;.*?>(.*?)<',html2,re.DOTALL|re.IGNORECASE)
-		items4 = re.findall('data-embedd="(.*?)">\n.*?server_image">\n(.*?)\n',html2,re.DOTALL)
+		items4 = re.findall('data-embedd="(.*?)">\n*.*?server_image">\n(.*?)\n',html2)
 		items5 = re.findall('src=&quot;(.*?)&quot;.*?alt="(.*?)"',html2,re.DOTALL|re.IGNORECASE)
 		items = items1+items2+items3+items4+items5
 		for server,title in items:
@@ -214,15 +214,17 @@ def PLAY(url):
 		RESOLVERS.PLAY(linkLIST,script_name)
 	return
 
-
-
 def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.replace(' ','+')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SHAHID4U-SEARCH-1st')
 	html_blocks = re.findall('chevron-select(.*?)</div>',html,re.DOTALL)
-	if html_blocks:
+	if category and html_blocks:
 		block = html_blocks[0]
 		items = re.findall('value="(.*?)".*?>(.*?)<',block,re.DOTALL)
 		categoryLIST,filterLIST = [],[]
@@ -260,9 +262,9 @@ def FILTERS_MENU(url,filter):
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'modified_filters')
 		if filter_values=='': url2 = url
 		else: url2 = url+'/getposts?'+filter_values
-		addDir(menu_name+'أظهار قائمة الفيديو التي تم اختيارها ',url2,111)
-		addDir(menu_name+' [[   '+filter_show+'   ]]',url2,111)
-		addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+		addMenuItem('dir',menu_name+'أظهار قائمة الفيديو التي تم اختيارها ',url2,111)
+		addMenuItem('dir',menu_name+' [[   '+filter_show+'   ]]',url2,111)
+		addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','SHAHID4U-FILTERS_MENU-1st')
 	html_blocks = re.findall('<form class(.*?)</form>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -280,13 +282,13 @@ def FILTERS_MENU(url,filter):
 				else: FILTERS_MENU(url2,'CATEGORIES::'+new_filter)
 				return
 			else:
-				if category2==menu_list[-1]: addDir(menu_name+'الجميع ',url2,111)
-				else: addDir(menu_name+'الجميع ',url2,115,'','',new_filter)
+				if category2==menu_list[-1]: addMenuItem('dir',menu_name+'الجميع ',url2,111)
+				else: addMenuItem('dir',menu_name+'الجميع ',url2,115,'','',new_filter)
 		elif type=='FILTERS':
 			new_options = filter_options+'&'+category2+'=0'
 			new_values = filter_values+'&'+category2+'=0'
 			new_filter = new_options+'::'+new_values
-			addDir(menu_name+'الجميع :'+name,url2,114,'','',new_filter)
+			addMenuItem('dir',menu_name+'الجميع :'+name,url2,114,'','',new_filter)
 		dict[category2] = {}
 		for value,option in items:
 			if option in ignoreLIST: continue
@@ -298,13 +300,12 @@ def FILTERS_MENU(url,filter):
 			new_filter2 = new_options+'::'+new_values
 			title = option+' :'#+dict[category2]['0']
 			title = option+' :'+name
-			if type=='FILTERS': addDir(menu_name+title,url,114,'','',new_filter2)
+			if type=='FILTERS': addMenuItem('dir',menu_name+title,url,114,'','',new_filter2)
 			elif type=='CATEGORIES' and menu_list[-2]+'=' in filter_options:
 				clean_filter = RECONSTRUCT_FILTER(new_values,'modified_filters')
 				url3 = url+'/getposts?'+clean_filter
-				addDir(menu_name+title,url3,111)
-			else: addDir(menu_name+title,url,115,'','',new_filter2)
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',menu_name+title,url3,111)
+			else: addMenuItem('dir',menu_name+title,url,115,'','',new_filter2)
 	return
 
 def RECONSTRUCT_FILTER(filters,mode):

@@ -72,21 +72,21 @@ xbmcgui.Dialog().ok('yes exists: ',list)
 WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'ALARAB'		:['https://vod.alarab.com']
 			,'ALFATIMI'		:['http://alfatimi.tv']
-			,'ALKAWTHAR'	:['http://www.alkawthartv.com']
+			,'ALKAWTHAR'	:['https://www.alkawthartv.com']
 			,'ALMAAREF'		:['http://www.almaareftv.com/old','http://www.almaareftv.com']
 			,'ARABLIONZ'	:['https://arablionz.com']
 			,'EGYBESTVIP'	:['https://egybest.vip']
 			,'HELAL'		:['https://www.4helal.co']
 			,'IFILM'		:['http://ar.ifilmtv.com','http://en.ifilmtv.com','http://fa.ifilmtv.com','http://fa2.ifilmtv.com']
-			,'LIVETV'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport']
 			,'PANET'		:['http://www.panet.co.il']
 			,'SHAHID4U'		:['https://shahid4u.net']
 			,'SHOOFMAX'		:['https://shoofmax.com','https://static.shoofmax.com']
-			,'YOUTUBE'		:['https://www.youtube.com']
-			,'IPTV'			:['https://nowhere.com']
 			,'AKWAM'		:['https://akwam.net']
 			,'ARABSEED'		:['https://arabseed.net']
-			#,'EGY4BEST'	:['https://egybest.vip']
+			,'YOUTUBE'		:['https://www.youtube.com']
+			,'LIVETV'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport']
+			,'IPTV'			:['https://nowhere.com']
+			,'EGY4BEST'	:['https://egybest.vip']
 			#,'EGYBEST'		:['https://egy.best']
 			#,'HALACIMA'	:['https://www.halacima.co']
 			#,'MOVIZLAND'	:['https://movizland.online','https://m.movizland.online']
@@ -105,9 +105,10 @@ addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 
 menu_path = urllib2.unquote(addon_path)
 menu_label = xbmc.getInfoLabel('ListItem.Label').replace('[COLOR FFC89008]','').replace('[/COLOR]','')
-if menu_label=='' or menu_path=='plugin://plugin.video.arabicvideos/': menu_label = 'Main Menu'
+if menu_label=='': menu_label = 'Main Menu'
 
-kodi_version = xbmc.getInfoLabel( "System.BuildVersion" )	
+kodi_release = xbmc.getInfoLabel("System.BuildVersion")
+kodi_version = float(kodi_release.split(' ')[0])
 icon = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id, 'icon.png'))
 fanart = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id , 'fanart.jpg'))
 
@@ -126,6 +127,40 @@ now = time.time()
 #REGULAR_CACHE = 0
 #SHORT_CACHE = 0
 
+def MAIN_DISPATCHER(mode='',url='',text='',page=''):
+	mode = int(mode)
+	mode2 = int(mode/10)
+	#xbmcgui.Dialog().ok(str(mode),str(mode2))
+	results = None
+	if   mode2==0:  import SERVICES 	; results = SERVICES.MAIN(mode,text)
+	elif mode2==1:  import ALARAB 		; results = ALARAB.MAIN(mode,url,text)
+	elif mode2==2:  import IFILM 		; results = IFILM.MAIN(mode,url,page,text)
+	elif mode2==3:  import PANET 		; results = PANET.MAIN(mode,url,page,text)
+	elif mode2==4:  import ALMAAREF 	; results = ALMAAREF.MAIN(mode,url,text)
+	elif mode2==5:  import SHOOFMAX 	; results = SHOOFMAX.MAIN(mode,url,text)
+	elif mode2==6:  import ALFATIMI 	; results = ALFATIMI.MAIN(mode,url,text)
+	elif mode2==7:  import AKOAM 		; results = AKOAM.MAIN(mode,url,text)
+	elif mode2==8:  import HALACIMA 	; results = HALACIMA.MAIN(mode,url,page,text)
+	elif mode2==9:  import HELAL 		; results = HELAL.MAIN(mode,url,text)
+	elif mode2==10: import LIVETV 		; results = LIVETV.MAIN(mode,url)
+	elif mode2==11: import SHAHID4U 	; results = SHAHID4U.MAIN(mode,url,text)
+	elif mode2==12: import EGYBEST 		; results = EGYBEST.MAIN(mode,url,page,text)
+	elif mode2==13: import ALKAWTHAR	; results = ALKAWTHAR.MAIN(mode,url,page,text)
+	elif mode2==14: import YOUTUBE 		; results = YOUTUBE.MAIN(mode,url,text)
+	elif mode2==15: import SERVICES 	; results = SERVICES.MAIN(mode,text)
+	elif mode2==16: import RANDOMS	 	; results = RANDOMS.MAIN(mode,url,text)
+	elif mode2==17: import SERVICES 	; results = SERVICES.MAIN(mode,text)
+	elif mode2==18: import MOVIZLAND	; results = MOVIZLAND.MAIN(mode,url,text)
+	elif mode2==19: import SERVICES 	; results = SERVICES.MAIN(mode,text)
+	elif mode2==20: import ARABLIONZ	; results = ARABLIONZ.MAIN(mode,url,text)
+	elif mode2==21: import SERIES4WATCH ; results = SERIES4WATCH.MAIN(mode,url,text)
+	elif mode2==22: import EGYBESTVIP 	; results = EGYBESTVIP.MAIN(mode,url,page,text)
+	elif mode2==23: import IPTV 		; results = IPTV.MAIN(mode,url,text)
+	elif mode2==24: import AKWAM 		; results = AKWAM.MAIN(mode,url,text)
+	elif mode2==25: import ARABSEED 	; results = ARABSEED.MAIN(mode,url,text)
+	elif mode2==26: import MENUS 		; results = MENUS.MAIN(mode,url,text)
+	return results
+
 def LOG_MENU_LABEL(script_name,label,mode,path):
 	id = '	[ '+addon_name.upper()+'-'+addon_version+'-'+script_name+' ]'
 	message = id+'	Label: [ '+label+' ]			Mode: [ '+str(mode)+' ]	Path: [ '+path+' ]'
@@ -138,6 +173,9 @@ def LOG_THIS(level,message):
 	else: loglevel = xbmc.LOGNOTICE
 	lines = message.split('   ')
 	tabs,tab = '','      '
+	shift = tab+tab+tab+tab+'  '
+	if kodi_version>=18: shift = shift+'           '
+	#xbmcgui.Dialog().ok(str(kodi_version),'')
 	#loglines = lines[0] + '\r'
 	loglines = lines[0]
 	for line in lines[1:]:
@@ -146,7 +184,7 @@ def LOG_THIS(level,message):
 		#	line = line.replace('\nResolver 2:','\n'+tabs+'Resolver 2:')
 		#	line = line.replace('\nResolver 3:','\n'+tabs+'Resolver 3:')
 		tabs = tabs+tab
-		loglines += '\r  '+tab+tab+tab+tab+tabs+line
+		loglines += '\r'+shift+tabs+line
 	loglines += '_'
 	xbmc.log(loglines, level=loglevel)
 	return
@@ -259,6 +297,7 @@ NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
 				,'SERVICES-TEST_ALL_WEBSITES-2nd'
 				,'EGYBESTVIP-PLAY-2nd'
 				,'EGYBESTVIP-PLAY-3rd'
+				,'HELAL-ITEMS-1st'
 				]
 
 def EXIT_IF_SOURCE(source,code,reason):
@@ -274,50 +313,68 @@ def DELETE_DATABASE_FILES():
 		if 'webcache_' in filename and '.db' in filename:
 			filename = os.path.join(addoncachefolder,filename)
 			os.remove(filename)
-	return ''
-
-def addDir(name,url='',mode='',iconimage='',page='',text=''):
-	if iconimage=='': iconimage = icon
-	#xbmc.log(LOGGING(script_name)+'      name:['+name+']', level=xbmc.LOGNOTICE)
-	name2 = re.findall('&&_(\D\D\w)__MOD_(.*?)&&','&&'+name+'&&',re.DOTALL)
-	if name2: name = ';[COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
-	name2 = re.findall('&&_(\D\D\w)_(.*?)&&','&&'+name+'&&',re.DOTALL)
-	if name2: name = ',[COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
-	u = 'plugin://'+addon_id+'/?mode='+str(mode)
-	if url!='': u = u+'&url='+quote(url)
-	#xbmcgui.Dialog().ok(quote(url),'addDir')
-	if page!='': u = u+'&page='+quote(page)
-	if text!='': u = u+'&text='+quote(text)
-	listitem = xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
-	listitem.setInfo( type="Video", infoLabels={ "Title": name } )
-	listitem.setProperty('fanart_image', fanart)
-	#listitem.setProperty('IsPlayable', 'true')
-	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=listitem,isFolder=True)
 	return
 
-def addLink(name,url,mode,iconimage='',duration='',text=''):
-	if iconimage=='': iconimage = icon
+contentsDICT = {}
+menuItemsLIST = []
+
+def addMenuItem(type,name,url,mode,image='',page='',text=''):
+	if type=='dir' and '::' in name:
+		website,name = name.split('::',1)
+		if website!='' and '_' in name:
+			nameonly = name.split('_')[2]
+			nameonly = nameonly.replace('ـ','').replace('  ',' ').replace('إ','ا').replace('آ','ا')
+			nameonly = nameonly.replace('ة','ه').replace('و ','و').replace('أ','ا')
+			nameonly = nameonly.replace('لأ','لا').replace('لإ','لا').replace('لآ','لا')
+			nameonly = nameonly.strip(' ')
+			cond1 = ('العاب' not in nameonly and 'خيال' not in nameonly)
+			cond2 = ('الان' not in nameonly and 'حاليه' not in nameonly)
+			if cond1 and cond2: nameonly = nameonly.replace('ال','')
+			nameonly = nameonly.replace('اخري','اخرى').replace('اجنبى','اجنبي').replace('عائليه','عائلي')
+			nameonly = nameonly.replace('اجنبيه','اجنبي').replace('عربيه','عربي').replace('رومانسيه','رومانسي')
+			nameonly = nameonly.replace(' | افلام اون لاين','').replace('انيميشن','انميشن').replace('غربيه','غربي')
+			nameonly = nameonly.replace('تاريخي','تاريخ').replace('خيال علمي','خيال').replace('موسيقيه','موسيقى')
+			nameonly = nameonly.replace('هندى','هندي').replace('هنديه','هندي').replace('وثائقيه','وثائقي')
+			nameonly = nameonly.replace('تليفزيونيه','تلفزيون').replace('تلفزيونيه','تلفزيون')
+			nameonly = nameonly.replace('الحاليه','حاليه').replace('موسیقی','موسيقى').replace('الانمي','انمي')
+			nameonly = nameonly.replace('المسلسلات','مسلسلات').replace('البرامج','برامج')
+			if nameonly not in contentsDICT.keys(): contentsDICT[nameonly] = {}
+			contentsDICT[nameonly][website] = [name,url,mode,image,page,text]
+			return
+	menuItemsLIST.append([type,name,url,mode,image,page,text])
+	return
+
+def addKodiMenuItem(type,name,url,mode,image='',text1='',text2=''):
+	if image=='': image = icon
+	if type=='dir': start1,start2 = ';',','
+	else: start1,start2 = escapeUNICODE('\u02d1'),' '
 	name2 = re.findall('&&_(\D\D\w)__MOD_(.*?)&&','&&'+name+'&&',re.DOTALL)
-	if name2: name = escapeUNICODE('\u02d1')+'[COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
+	if name2: name = start1+'[COLOR FFC89008]'+name2[0][0]+'  [/COLOR]'+name2[0][1]
 	name2 = re.findall('&&_(\D\D\w)_(.*?)&&','&&'+name+'&&',re.DOTALL)
-	if name2: name = ' [COLOR FFC89008]'+name2[0][0]+' [/COLOR]'+name2[0][1]
-	if 'IsPlayable=no' in text: IsPlayable = 'no'
+	if name2: name = start2+'[COLOR FFC89008]'+name2[0][0]+'  [/COLOR]'+name2[0][1]
+	if 'IsPlayable=no' in text2: IsPlayable = 'no'
 	else: IsPlayable='yes'
 	u = 'plugin://'+addon_id+'/?mode='+str(mode)
 	if url!='': u = u+'&url='+quote(url)
-	#xbmcgui.Dialog().ok(quote(url),'addLink')
-	if text!='': u = u+'&text=' +quote(text)
-	listitem = xbmcgui.ListItem(name, iconImage=iconimage, thumbnailImage=iconimage)
+	if type=='dir':
+		if text1!='': u = u+'&page='+quote(text1)
+	if text2!='': u = u+'&text='+quote(text2)
+	listitem = xbmcgui.ListItem(name, iconImage=image, thumbnailImage=image)
 	listitem.setProperty('fanart_image', fanart)
-	listitem.setInfo('Video', {'mediatype': 'video'})
-	if duration!='':
-		duration = '0:0:0:0:0:' + duration
-		dummy,days,hours,minutes,seconds = duration.rsplit(':',4)
-		duration = int(days)*24*HOUR+int(hours)*HOUR+int(minutes)*60+int(seconds)
-		listitem.setInfo('Video', {'duration': duration})
-	if IsPlayable=='yes': listitem.setProperty('IsPlayable', 'true')
-	xbmcplugin.setContent(addon_handle, 'videos')
-	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=listitem,isFolder=False)
+	if type=='link':
+		listitem.setInfo('Video', {'mediatype': 'video'})
+		if text1!='':
+			duration = '0:0:0:0:0:' + text1
+			dummy,days,hours,minutes,seconds = duration.rsplit(':',4)
+			duration = int(days)*24*HOUR+int(hours)*HOUR+int(minutes)*60+int(seconds)
+			listitem.setInfo('Video', {'duration': duration})
+		if IsPlayable=='yes': listitem.setProperty('IsPlayable', 'true')
+		xbmcplugin.setContent(addon_handle, 'videos')
+		isFolder = False
+	else:
+		listitem.setInfo( type="Video", infoLabels={ "Title": name } )
+		isFolder = True
+	xbmcplugin.addDirectoryItem(handle=addon_handle,url=u,listitem=listitem,isFolder=isFolder)
 	return
 
 def openURL_WEBPROXIES(url,data='',headers='',showDialogs='',source=''):
@@ -981,68 +1038,6 @@ def EXIT_PROGRAM(source=''):
 	sys.exit()
 	#raise SystemExit
 
-def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
-	if 'problem=yes' in text: problem='yes'
-	else: problem='no'
-	sendit,html = 1,''
-	if showDialogs=='yes':
-		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
-		if sendit==0: 
-			xbmcgui.Dialog().ok('تم الغاء الارسال','تم الغاء الارسال بناء على طلبك')
-			return ''
-	if sendit==1:
-		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
-		kodi_version = xbmc.getInfoLabel( "System.BuildVersion" )	
-		kodiName = xbmc.getInfoLabel( "System.FriendlyName" )
-		message = message+' \\n\\n==== ==== ==== \\nAddon Version: '+addon_version+' :\\nEmail Sender: '+dummyClientID(32)+' :\\nKodi Version: '+kodi_version+' :\\nKodi Name: '+kodiName
-		#xbmc.sleep(4000)
-		#playerTitle = xbmc.getInfoLabel( "Player.Title" )
-		#playerPath = xbmc.getInfoLabel( "Player.Filenameandpath" )
-		#if playerTitle != '': message += ' :\\nPlayer Title: '+playerTitle
-		#if playerPath != '': message += ' :\\nPlayer Path: '+playerPath
-		#xbmcgui.Dialog().ok(playerTitle,playerPath)
-		if url != '': message += ' :\\nURL: ' + url
-		if source != '': message += ' :\\nSource: ' + source
-		message += ' :\\n'
-		if showDialogs=='yes': xbmcgui.Dialog().notification('جاري الارسال','الرجاء الانتظار')
-		logfileNEW = ''
-		if problem=='yes':
-			dataNEW,counts = [],0
-			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
-			#logfile = 'S://DOWNLOADS/6ac26462c99fc35816f3532bb17608f4-5.8.1.log'
-			f = open(logfile,'rb')
-			size = os.path.getsize(logfile)
-			if size>600000: f.seek(-600000, os.SEEK_END)
-			data = f.readlines()
-			for line in reversed(data):
-				if "extension '' is not currently supported" in line: continue
-				if 'Checking for Malicious scripts' in line: continue
-				if 'Previous line repeats' in line: continue
-				if 'PVR IPTV Simple Client' in line: continue
-				if 'this hash function is broken' in line: continue
-				if 'uses plain HTTP for add-on downloads' in line: continue
-				if 'NOTICE: ADDON:' in line and line.endswith('installed\n'): continue
-				dataNEW.append(line)
-				counts += 1
-				if counts==1000: break
-			dataNEW = reversed(dataNEW)
-			logfileNEW = ''.join(dataNEW)
-			#logfileNEW = ''.join(dataNEW[-1000:])
-			logfileNEW = base64.b64encode(logfileNEW)
-		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
-		payload = { 'subject' : quote(subject) , 'message' : quote(message) , 'logfile' : logfileNEW }
-		data = urllib.urlencode(payload)
-		html = openURL_cached(NO_CACHE,url,data,'','','LIBRARY-SEND_EMAIL-1st')
-		result = html[0:6]
-		if showDialogs=='yes':
-			if result == 'Error ':
-				xbmcgui.Dialog().notification('للأسف','فشل في الارسال')
-				xbmcgui.Dialog().ok('Failed sending the message','خطأ وفشل في ارسال الرسالة')
-			else:
-				xbmcgui.Dialog().notification('تم الارسال','بنجاح')
-				xbmcgui.Dialog().ok('Message sent','تم ارسال الرسالة بنجاح')
-	return html
-
 def EXTRACT_M3U8(url,headers=''):
 	#headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36' }
 	#url = 'https://vd84.mycdn.me/video.m3u8'
@@ -1154,32 +1149,6 @@ def HTTPS(show=True):
 		if show: xbmcgui.Dialog().ok('الاتصال المشفر','جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل عندك على كودي ... وعندك كودي قادر على استخدام المواقع المشفرة')
 	return worked
 
-def ENABLE_MPD(showDialogs=True):
-	#result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.adaptive", "enabled":false }}')
-	#xbmcgui.Dialog().ok('',str(result))
-	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)')
-	if enabled==0:
-		yes = xbmcgui.Dialog().yesno('هذه الاضافة عندك غير مفعلة','يجب تفعيل اضافة inputstream.adaptive لكي تعمل عندك فيديوهات نوع mpd فهل تريد تفعيل هذه الاضافة الان ؟','','','كلا','نعم')
-		if yes==1:
-			result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.adaptive", "enabled":true }}')
-			if 'OK' in result: xbmcgui.Dialog().ok('تم التفعيل','')
-			else: xbmcgui.Dialog().ok('التفعيل فشل','اضافة inputstream.adaptive غير موجودة عندك ويجب ان تقوم بتصيبها قبل محاولة تفعيلها')
-	elif showDialogs==True: xbmcgui.Dialog().ok('هذه الاضافة عندك مفعلة','')
-	return
-
-def ENABLE_RTMP(showDialogs=True):
-	#result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.rtmp", "enabled":false }}')
-	#xbmcgui.Dialog().ok('',str(result))
-	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.rtmp)')
-	if enabled==0:
-		yes = xbmcgui.Dialog().yesno('هذه الاضافة عندك غير مفعلة','يجب تفعيل اضافة inputstream.rtmp لكي تعمل عندك فيديوهات نوع rtmp فهل تريد تفعيل هذه الاضافة الان ؟','','','كلا','نعم')
-		if yes==1:
-			result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.rtmp", "enabled":true }}')
-			if 'OK' in result: xbmcgui.Dialog().ok('تم التفعيل','')
-			else: xbmcgui.Dialog().ok('التفعيل فشل','اضافة inputstream.rtmp غير موجودة عندك ويجب ان تقوم بتصيبها قبل محاولة تفعيلها')
-	elif showDialogs==True: xbmcgui.Dialog().ok('هذه الاضافة عندك مفعلة','')
-	return
-
 def DNS_RESOLVER(url,dnsserver=''):
 	if url.replace('.','').isdigit(): return [url]
 	if dnsserver=='': dnsserver = '8.8.8.8'
@@ -1246,6 +1215,32 @@ def RATING_CHECK(script_name,url,ratingLIST):
 		xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
 		return True
 	else: return False
+
+def ENABLE_MPD(showDialogs=True):
+	#result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.adaptive", "enabled":false }}')
+	#xbmcgui.Dialog().ok('',str(result))
+	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)')
+	if enabled==0:
+		yes = xbmcgui.Dialog().yesno('هذه ألإضافة عندك غير مفعلة','يجب تفعيل إضافة inputstream.adaptive لكي تعمل عندك فيديوهات نوع mpd فهل تريد تفعيل هذه الاضافة الان ؟','','','كلا','نعم')
+		if yes==1:
+			result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.adaptive", "enabled":true }}')
+			if 'OK' in result: xbmcgui.Dialog().ok('تم التفعيل','')
+			else: xbmcgui.Dialog().ok('التفعيل فشل','إضافة inputstream.adaptive غير موجودة عندك ويجب أن تقوم بتصيبها قبل محاولة تفعيلها')
+	elif showDialogs==True: xbmcgui.Dialog().ok('هذه ألإضافة عندك مفعلة','')
+	return
+
+def ENABLE_RTMP(showDialogs=True):
+	#result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.rtmp", "enabled":false }}')
+	#xbmcgui.Dialog().ok('',str(result))
+	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.rtmp)')
+	if enabled==0:
+		yes = xbmcgui.Dialog().yesno('هذه الإضافة عندك غير مفعلة','يجب تفعيل إضافة inputstream.rtmp لكي تعمل عندك فيديوهات نوع rtmp فهل تريد تفعيل هذه الاضافة الان ؟','','','كلا','نعم')
+		if yes==1:
+			result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.rtmp", "enabled":true }}')
+			if 'OK' in result: xbmcgui.Dialog().ok('تم التفعيل','')
+			else: xbmcgui.Dialog().ok('التفعيل فشل','إضافة inputstream.rtmp غير موجودة عندك ويجب أن تقوم بتصيبها قبل محاولة تفعيلها')
+	elif showDialogs==True: xbmcgui.Dialog().ok('هذه الإضافة عندك مفعلة','')
+	return
 
 
 

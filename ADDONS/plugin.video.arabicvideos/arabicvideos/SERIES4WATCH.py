@@ -8,32 +8,35 @@ website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==210: MENU()
-	elif mode==211: TITLES(url)
-	elif mode==212: PLAY(url)
-	elif mode==213: EPISODES(url)
-	elif mode==214: FILTER_MENU(url)
-	elif mode==215: FILTER_SELECT(url)
-	elif mode==218: TERMINATED_CHANGED()
-	elif mode==219: SEARCH(text)
-	return
+	if   mode==210: results = MENU(url)
+	elif mode==211: results = TITLES(url)
+	elif mode==212: results = PLAY(url)
+	elif mode==213: results = EPISODES(url)
+	elif mode==214: results = FILTER_MENU(url)
+	elif mode==215: results = FILTER_SELECT(url)
+	elif mode==218: results = TERMINATED_CHANGED()
+	elif mode==219: results = SEARCH(text)
+	else: results = False
+	return results
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
 	xbmcgui.Dialog().ok('الموقع تغير بالكامل',message)
+	return
 
-def MENU():
-	addDir(menu_name+'بحث في الموقع','',219)
-	#addDir(menu_name+'فلتر','',114,website0a)
+def MENU(website=''):
+	if website=='':
+		addMenuItem('dir',menu_name+'بحث في الموقع','',219)
+		#addMenuItem('dir',menu_name+'فلتر','',114,website0a)
 	url = website0a+'/getpostsPin?type=one&data=pin&limit=25'
-	addDir(menu_name+'المميزة',url,211)
+	addMenuItem('dir',website+'::'+menu_name+'المميزة',url,211)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SERIES4WATCH-MENU-1st')
 	html_blocks = re.findall('FiltersButtons(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?</i>(.*?)<',block,re.DOTALL)
 	for link,title in items:#[1:-1]:
 		url = website0a+'/getposts?type=one&data='+link
-		addDir(menu_name+title,url,211)
+		addMenuItem('dir',website+'::'+menu_name+title,url,211)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(http.*?)">(.*?)<',block,re.DOTALL)
@@ -43,8 +46,7 @@ def MENU():
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
 		#	if any(value in title for value in keepLIST):
-			addDir(menu_name+title,link,211)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',website+'::'+menu_name+title,link,211)
 	return
 
 def TITLES(url):
@@ -54,9 +56,7 @@ def TITLES(url):
 	else:
 		html_blocks = re.findall('MediaGrid"(.*?)class="pagination"',html,re.DOTALL)
 		if html_blocks: block = html_blocks[0]
-		else:
-			xbmcplugin.endOfDirectory(addon_handle)
-			return
+		else: return
 	items = re.findall('src="(.*?)".*?href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
 	allTitles = []
 	itemLIST = ['مشاهدة','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
@@ -66,15 +66,15 @@ def TITLES(url):
 		title = unescapeHTML(title)
 		title = title.strip(' ')
 		if '/film/' in link or any(value in title for value in itemLIST):
-			addLink(menu_name+title,link,212,img)
+			addMenuItem('link',menu_name+title,link,212,img)
 		elif '/episode/' in link and 'الحلقة' in title:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode:
 				title = '_MOD_' + episode[0]
 				if title not in allTitles:
-					addDir(menu_name+title,link,213,img)
+					addMenuItem('dir',menu_name+title,link,213,img)
 					allTitles.append(title)
-		else: addDir(menu_name+title,link,213,img)
+		else: addMenuItem('dir',menu_name+title,link,213,img)
 	html_blocks = re.findall('class="pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -83,8 +83,7 @@ def TITLES(url):
 			link = unescapeHTML(link)
 			title = unescapeHTML(title)
 			title = title.replace('الصفحة ','')
-			if title!='': addDir(menu_name+'صفحة '+title,link,211)
-	xbmcplugin.endOfDirectory(addon_handle)
+			if title!='': addMenuItem('dir',menu_name+'صفحة '+title,link,211)
 	return
 
 def EPISODES(url):
@@ -109,11 +108,10 @@ def EPISODES(url):
 	episodesCount = str(items).count('/episode/')
 	if seasonsCount>1 and episodesCount>0 and '/season/' not in url:
 		for link,title,sequence in items:
-			if '/season/' in link: addDir(menu_name+title,link,213)
+			if '/season/' in link: addMenuItem('dir',menu_name+title,link,213)
 	else:
 		for link,title,sequence in items:
-			if '/season/' not in link: addLink(menu_name+title,link,212)
-	xbmcplugin.endOfDirectory(addon_handle)
+			if '/season/' not in link: addMenuItem('link',menu_name+title,link,212)
 	return
 
 def PLAY(url):
@@ -186,6 +184,10 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.replace(' ','+')
@@ -207,7 +209,6 @@ def SEARCH(search):
 		category = categoryLIST[selection]
 		url = website0a + '/search?s='+search+'&category='+category
 		TITLES(url)
-	else: xbmcplugin.endOfDirectory(addon_handle)
 	return
 	"""
 

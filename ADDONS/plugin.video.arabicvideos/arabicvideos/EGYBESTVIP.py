@@ -19,34 +19,34 @@ website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if   mode==220: MAIN_MENU()
-	elif mode==221: FILTERS_MENU(url)
-	elif mode==222: TITLES(url,page)
-	elif mode==223: PLAY(url)
-	elif mode==229: SEARCH(text)
-	return
+	if   mode==220: results = MENU(url)
+	elif mode==221: results = FILTERS_MENU(url)
+	elif mode==222: results = TITLES(url,page)
+	elif mode==223: results = PLAY(url)
+	elif mode==229: results = SEARCH(text)
+	else: results = False
+	return results
 
-def MAIN_MENU():
-	#addDir(menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
-	#addDir(menu_name+'تحذير','',226)
+def MENU(website=''):
+	#addMenuItem('dir',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
+	#addMenuItem('dir',menu_name+'تحذير','',226)
 	#xbmcgui.Dialog().ok(website0a, html)
 	#html_blocks=re.findall('id="menu"(.*?)mainLoad',html,re.DOTALL)
 	#block = html_blocks[0]
 	#items=re.findall('href="(.*?)".*?i>(.*?)\n',block,re.DOTALL)
 	#for url,title in items:
-	#	if url!=website0a: addDir(menu_name+title,url,221)
-	addDir(menu_name+'بحث في الموقع','',229)
-	addDir(menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
-	addDir(menu_name+'الافلام مصنفة',website0a+'/movies',221)
-	addDir(menu_name+'المسلسلات مصنفة',website0a+'/tv',221)
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	#	if url!=website0a: addMenuItem('dir',menu_name+title,url,221)
+	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',229)
+	addMenuItem('dir',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
+	addMenuItem('dir',website+'::'+menu_name+'الافلام',website0a+'/movies',221)
+	addMenuItem('dir',website+'::'+menu_name+'المسلسلات',website0a+'/tv',221)
+	if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBESTVIP-MAIN_MENU-1st')
 	html_blocks=re.findall('class="ba mgb(.*?)>EgyBest</a>',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addDir(menu_name+title,link,222,'','1')
-	xbmcplugin.endOfDirectory(addon_handle)
+		addMenuItem('dir',website+'::'+menu_name+title,link,222,'','1')
 	return
 	"""
 	# egybest1.com
@@ -55,12 +55,12 @@ def MAIN_MENU():
 	#items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	items=re.findall('<a href="(.*?)".*?[1/][i"]>(.*?)</a',block,re.DOTALL)
 	for link,title in items:
-		if 'torrent' not in link: addDir(menu_name+title,link,222)
+		if 'torrent' not in link: addMenuItem('dir',menu_name+title,link,222)
 	html_blocks=re.findall('class="card(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		if 'torrent' not in link: addDir(menu_name+title,link,222)
+		if 'torrent' not in link: addMenuItem('dir',menu_name+title,link,222)
 	"""
 
 def FILTERS_MENU(url):
@@ -69,7 +69,7 @@ def FILTERS_MENU(url):
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?</i>(.*?)[\r\n]+',block,re.DOTALL)
 	for link,title in items:
-		addDir(menu_name+title,link,222,'','1')
+		addMenuItem('dir',menu_name+title,link,222,'','1')
 	html_blocks=re.findall('class="sub_nav(.*?)id="movies',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".+?>(.*?)<',block,re.DOTALL)
@@ -77,8 +77,7 @@ def FILTERS_MENU(url):
 		if link=='#': name = title
 		else:
 			title = title + '  :  ' + 'فلتر ' + name
-			addDir(menu_name+title,link,222,'','1')
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',menu_name+title,link,222,'','1')
 	return
 
 def TITLES(url,page):
@@ -121,9 +120,9 @@ def TITLES(url,page):
 		url2 = website0a + link
 		"""
 		if '/movie/' in link or '/episode' in link:
-			addLink(menu_name+title,link.rstrip('/'),223,img)
+			addMenuItem('link',menu_name+title,link.rstrip('/'),223,img)
 		else:
-			addDir(menu_name+title,link,222,img,'1')
+			addMenuItem('dir',menu_name+title,link,222,img,'1')
 	count = len(items)
 	if (count==16 and '/movies' in url) \
 		or (count==16 and '/trending' in url) \
@@ -137,12 +136,11 @@ def TITLES(url,page):
 						if int(page/10)*10==i:
 							for j in range(i,i+10,1):
 								if not page==j and j!=0:
-									addDir(menu_name+'صفحة '+str(j),url,222,'',str(j))
-						elif i!=0: addDir(menu_name+'صفحة '+str(i),url,222,'',str(i))
-						else: addDir(menu_name+'صفحة '+str(1),url,222,'',str(1))
-				elif n!=0: addDir(menu_name+'صفحة '+str(n),url,222,'',str(n))
-				else: addDir(menu_name+'صفحة '+str(1),url,222,'','1')
-	xbmcplugin.endOfDirectory(addon_handle)
+									addMenuItem('dir',menu_name+'صفحة '+str(j),url,222,'',str(j))
+						elif i!=0: addMenuItem('dir',menu_name+'صفحة '+str(i),url,222,'',str(i))
+						else: addMenuItem('dir',menu_name+'صفحة '+str(1),url,222,'',str(1))
+				elif n!=0: addMenuItem('dir',menu_name+'صفحة '+str(n),url,222,'',str(n))
+				else: addMenuItem('dir',menu_name+'صفحة '+str(1),url,222,'','1')
 	return
 
 def PLAY(url):
@@ -191,11 +189,22 @@ def PLAY(url):
 				linkLIST.append(link+'?name='+server+'__download__mp4__'+quality)
 	#selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', linkLIST)
 	#if selection == -1 : return
-	import RESOLVERS
-	RESOLVERS.PLAY(linkLIST,script_name)
+	newLIST = []
+	for link in linkLIST:
+		if 'faselhd.co' in link: continue
+		if 'egybest.vip?name' in link: continue
+		newLIST.append(link)
+	if len(newLIST)==0: xbmcgui.Dialog().ok('الفيديو لا يعمل في هذا البرنامج','هذا الفيديو يستخدم روابط غير معروفة في هذا البرنامج والمبرمج لم يستطيع إيحاد حل لهذه المشكلة')
+	else:
+		import RESOLVERS
+		RESOLVERS.PLAY(newLIST,script_name)
 	return
 
 def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','+')
@@ -204,6 +213,7 @@ def SEARCH(search):
 	if token:
 		url = website0a+'/search?_token='+token[0]+'&q='+new_search
 		TITLES(url,'1')
+		#xbmcgui.Dialog().ok('', '')
 	return
 
 

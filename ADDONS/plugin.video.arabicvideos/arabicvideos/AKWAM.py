@@ -12,21 +12,22 @@ proxy = ''
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if   mode==240: MENU()
-	elif mode==241: TITLES(url+proxy,text)
-	elif mode==242: EPISODES(url+proxy)
-	elif mode==243: PLAY(url+proxy)
-	elif mode==244: FILTERS_MENU(url+proxy,'FILTERS::'+text)
-	elif mode==245: FILTERS_MENU(url+proxy,'CATEGORIES::'+text)
-	elif mode==249: SEARCH(text)
-	return
+	if   mode==240: results = MENU(url)
+	elif mode==241: results = TITLES(url+proxy,text)
+	elif mode==242: results = EPISODES(url+proxy)
+	elif mode==243: results = PLAY(url+proxy)
+	elif mode==244: results = FILTERS_MENU(url+proxy,'FILTERS::'+text)
+	elif mode==245: results = FILTERS_MENU(url+proxy,'CATEGORIES::'+text)
+	elif mode==249: results = SEARCH(text)
+	else: results = False
+	return results
 
-def MENU():
-	addDir(menu_name+'بحث في الموقع','',249)
-	addDir(menu_name+'المميزة',website0a+proxy,241,'','','featured')
-	#addDir(menu_name+'المزيد',website0a+proxy,242,'','','more')
-	#addDir(menu_name+'الاخبار',website0a+proxy,242,'','','news')
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+def MENU(website=''):
+	if website=='': addMenuItem('dir',website+'::'+menu_name+'بحث في الموقع','',249)
+	addMenuItem('dir',website+'::'+menu_name+'المميزة',website0a+proxy,241,'','','featured')
+	#addMenuItem('dir',website+'::'+menu_name+'المزيد',website0a+proxy,242,'','','more')
+	#addMenuItem('dir',website+'::'+menu_name+'الاخبار',website0a+proxy,242,'','','news')
+	if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html = openURL_cached(LONG_CACHE,website0a+proxy,'',headers,'','AKWAM-MENU-1st')
 	html_blocks = re.findall('class="menu(.*?)<nav',html,re.DOTALL)
 	if html_blocks:
@@ -36,13 +37,12 @@ def MENU():
 		for link,title in items:
 			if title not in ignoreLIST:
 				title = title+' مصنفة'
-				addDir(menu_name+title,link,245)
-		addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+				addMenuItem('dir',website+'::'+menu_name+title,link,245)
+		if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 		for link,title in items:
 			if title not in ignoreLIST:
 				title = title+' مفلترة'
-				addDir(menu_name+title,link,244)
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',website+'::'+menu_name+title,link,244)
 	return
 
 def TITLES(url,type=''):
@@ -57,8 +57,8 @@ def TITLES(url,type=''):
 		items = re.findall('src="(.*?)".*?href="(.*?)".*?text-white">(.*?)<',block,re.DOTALL)
 		for img,link,title in items:
 			if '/series/' in link or '/shows/' in link:
-				addDir(menu_name+title,link,242,img)
-			else: addLink(menu_name+title,link,243,img)
+				addMenuItem('dir',menu_name+title,link,242,img)
+			else: addMenuItem('link',menu_name+title,link,243,img)
 	html_blocks = re.findall('pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -67,17 +67,20 @@ def TITLES(url,type=''):
 			if title=='&lsaquo;': title = 'سابقة'
 			if title=='&rsaquo;': title = 'لاحقة'
 			link = unescapeHTML(link)
-			addDir(menu_name+'صفحة '+title,link,241)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',menu_name+'صفحة '+title,link,241)
 	return
 
 def SEARCH(search):
 	# https://akwam.net/search?q=%D8%A8%D8%AD%D8%AB
+	if '::' in search:
+		search = search.split('::')[0]
+		exit = False
+	else: exit = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	new_search = search.replace(' ','%20')
 	url = website0a + '/search?q=' + new_search + proxy
-	TITLES(url)
+	results = TITLES(url)
 	return
 
 def EPISODES(url):
@@ -85,15 +88,14 @@ def EPISODES(url):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKWAM-EPISODES-1st')
 	if '-episodes' not in html:
 		img = xbmc.getInfoLabel('ListItem.Icon')
-		addLink(menu_name+'رابط التشغيل',url,243,img)
+		addMenuItem('link',menu_name+'رابط التشغيل',url,243,img)
 	else:
 		html_blocks = re.findall('-episodes">(.*?)col-lg-8',html,re.DOTALL)
 		block = html_blocks[0]
 		episodes = re.findall('href="(.*?)".*?>(.*?)<.*?src="(.*?)"',block,re.DOTALL)
 		for link,title,img in episodes:
 			if 'الحلقات' in title: continue
-			addLink(menu_name+title,link,243,img)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('link',menu_name+title,link,243,img)
 	return
 
 def PLAY(url):
@@ -198,9 +200,9 @@ def FILTERS_MENU(url,filter):
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'all')
 		if filter_values=='': url2 = url
 		else: url2 = url+'?'+filter_values
-		addDir(menu_name+'أظهار قائمة الفيديو التي تم اختيارها',url2,241,'','1')
-		addDir(menu_name+' [[   '+filter_show+'   ]]',url2,241,'','1')
-		addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+		addMenuItem('dir',menu_name+'أظهار قائمة الفيديو التي تم اختيارها',url2,241,'','1')
+		addMenuItem('dir',menu_name+' [[   '+filter_show+'   ]]',url2,241,'','1')
+		addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','AKWAM-FILTERS_MENU-1st')
 	html_blocks = re.findall('<form id(.*?)</form>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -219,13 +221,13 @@ def FILTERS_MENU(url,filter):
 				else: FILTERS_MENU(url2,'CATEGORIES::'+new_filter)
 				return
 			else:
-				if category2==menu_list[-1]: addDir(menu_name+'الجميع',url2,241,'','1')
-				else: addDir(menu_name+'الجميع',url2,245,'','',new_filter)
+				if category2==menu_list[-1]: addMenuItem('dir',menu_name+'الجميع',url2,241,'','1')
+				else: addMenuItem('dir',menu_name+'الجميع',url2,245,'','',new_filter)
 		elif type=='FILTERS':
 			new_options = filter_options+'&'+category2+'=0'
 			new_values = filter_values+'&'+category2+'=0'
 			new_filter = new_options+'::'+new_values
-			addDir(menu_name+'الجميع : '+name,url2,244,'','',new_filter)
+			addMenuItem('dir',menu_name+'الجميع : '+name,url2,244,'','',new_filter)
 		dict[category2] = {}
 		for value,option in items:
 			if option in ignoreLIST: continue
@@ -237,13 +239,12 @@ def FILTERS_MENU(url,filter):
 			new_filter2 = new_options+'::'+new_values
 			title = option+' : '#+dict[category2]['0']
 			title = option+' : '+name
-			if type=='FILTERS': addDir(menu_name+title,url,244,'','',new_filter2)
+			if type=='FILTERS': addMenuItem('dir',menu_name+title,url,244,'','',new_filter2)
 			elif type=='CATEGORIES' and menu_list[-2]+'=' in filter_options:
 				clean_filter = RECONSTRUCT_FILTER(new_values,'all')
 				url3 = url+'?'+clean_filter
-				addDir(menu_name+title,url3,241,'','1')
-			else: addDir(menu_name+title,url,245,'','',new_filter2)
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',menu_name+title,url3,241,'','1')
+			else: addMenuItem('dir',menu_name+title,url,245,'','',new_filter2)
 	return
 
 def RECONSTRUCT_FILTER(filters,mode):

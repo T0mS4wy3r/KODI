@@ -9,31 +9,32 @@ website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==180: MENU()
-	elif mode==181: TITLES(url,text)
-	elif mode==182: PLAY(url)
-	elif mode==183: EPISODES(url)
-	elif mode==188: TERMINATED_CHANGED()
-	elif mode==189: SEARCH(text)
-	return
+	if   mode==180: results = MENU(url)
+	elif mode==181: results = TITLES(url,text)
+	elif mode==182: results = PLAY(url)
+	elif mode==183: results = EPISODES(url)
+	elif mode==188: results = TERMINATED_CHANGED()
+	elif mode==189: results = SEARCH(text)
+	else: results = False
+	return results
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
 	xbmcgui.Dialog().ok('الموقع تغير بالكامل',message)
+	return
 
-def MENU():
-	addDir(menu_name+'بحث في الموقع','',189)
-	addDir(menu_name+'بوكس اوفيس موفيز لاند',website0a,181,'','','box-office')
-	addDir(menu_name+'أحدث الافلام',website0a,181,'','','latest-movies')
-	addDir(menu_name+'تليفزيون موفيز لاند',website0a,181,'','','tv')
-	addDir(menu_name+'الاكثر مشاهدة',website0a,181,'','','top-views')
-	addDir(menu_name+'أقوى الافلام الحالية',website0a,181,'','','top-movies')
+def MENU(website=''):
+	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',189)
+	addMenuItem('dir',website+'::'+menu_name+'بوكس اوفيس موفيز لاند',website0a,181,'','','box-office')
+	addMenuItem('dir',website+'::'+menu_name+'أحدث الافلام',website0a,181,'','','latest-movies')
+	addMenuItem('dir',website+'::'+menu_name+'تليفزيون موفيز لاند',website0a,181,'','','tv')
+	addMenuItem('dir',website+'::'+menu_name+'الاكثر مشاهدة',website0a,181,'','','top-views')
+	addMenuItem('dir',website+'::'+menu_name+'أقوى الافلام الحالية',website0a,181,'','','top-movies')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','MOVIZLAND-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)".*?">(.*?)<',html,re.DOTALL)
 	for link,title in items:
-		addDir(menu_name+title,link,181)
+		addMenuItem('dir',website+'::'+menu_name+title,link,181)
 	#xbmcgui.Dialog().ok(html,html)
-	xbmcplugin.endOfDirectory(addon_handle)
 	return
 
 def TITLES(url,type=''):
@@ -68,22 +69,21 @@ def TITLES(url,type=''):
 			if episode:
 				title = '_MOD_' + episode[0][0]
 				if title not in allTitles:
-					addDir(menu_name+title,link,183,img)
+					addMenuItem('dir',menu_name+title,link,183,img)
 					allTitles.append(title)
 		elif any(value in title for value in itemLIST):
 			link = link + '?servers=' + link2
-			addLink(menu_name+title,link,182,img)
+			addMenuItem('link',menu_name+title,link,182,img)
 		else:
 			link = link + '?servers=' + link2
-			addDir(menu_name+title,link,183,img)
+			addMenuItem('dir',menu_name+title,link,183,img)
 	if type=='':
 		items = re.findall('\n<li><a href="(.*?)".*?>(.*?)<',html,re.DOTALL)
 		for link,title in items:
 			title = unescapeHTML(title)
 			title = title.replace('الصفحة ','')
 			if title!='':
-				addDir(menu_name+'صفحة '+title,link,181)
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',menu_name+'صفحة '+title,link,181)
 	return
 
 def EPISODES(url):
@@ -108,13 +108,12 @@ def EPISODES(url):
 			else: title = ''
 			title = name + ' - ' + 'الحلقة' + title
 			title = unescapeHTML(title)
-			addLink(menu_name+title,link,182,img)
+			addMenuItem('link',menu_name+title,link,182,img)
 	if not items:
 		title = unescapeHTML(title)
 		if 'بجودة ' in title or 'بجوده ' in title:
 			title = '_MOD_' + title.replace('بجودة ','').replace('بجوده ','')
-		addLink(menu_name+title,url,182,img)
-	xbmcplugin.endOfDirectory(addon_handle)
+		addMenuItem('link',menu_name+title,url,182,img)
 	return
 
 def PLAY(url):
@@ -163,7 +162,7 @@ def PLAY(url):
 						title = title.replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ')
 						titleLIST2.append(title)
 					selection = xbmcgui.Dialog().select('أختر الفيديو المطلوب:', titleLIST2)
-					if selection == -1 : return '' 
+					if selection == -1 : return
 					title = titleLIST2[selection]
 					block = html_blocks[selection]
 				link = re.findall('href="(http://moshahda\..*?/\w+.html)"',block,re.DOTALL)
@@ -205,19 +204,22 @@ def PLAY(url):
 		link2LIST.append(link2)
 		name2LIST.append(name2)
 	#z = 
-		
 
 
 	if len(linkLIST)==0:
 		xbmcgui.Dialog().ok('مشكلة','غير قادر على ايجاد ملف الفيديو المناسب')
 	else:
 		#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', linkLIST)
-		#if selection == -1 : return ''
+		#if selection == -1 : return
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name)
-	return ''
+	return
 
 def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.replace(' ','+')
@@ -228,9 +230,11 @@ def SEARCH(search):
 	for category,title in items:
 		categoryLIST.append(category)
 		filterLIST.append(title)
-	selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', filterLIST)
-	if selection == -1 : return
-	category = categoryLIST[selection]
+	if category:
+		selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', filterLIST)
+		if selection == -1 : return
+		category = categoryLIST[selection]
+	else: category = ''
 	url = website0a + '/?s='+search+'&mcat='+category
 	#xbmcgui.Dialog().ok(url,url)
 	TITLES(url)

@@ -6,25 +6,12 @@ script_name='SERVICES'
 
 def MAIN(mode,text=''):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode in [0,1]: FIX_KEYBOARD(mode,text)
-	elif mode==2: SEND_MESSAGE(text)
-	elif mode==3: DMCA()
-	elif mode==4: HTTPS_TEST()
-	#elif mode==5: EGYBEST_ADBLOCKER()
-	elif mode==6: GLOBAL_SEARCH_MENU(text)
-	elif mode==7: VERSIONS()
-	elif mode==8: RANDOM()
-	elif mode==9: DELETE_CACHE()
-	elif mode==170: TV_CHANNELS_MENU()
-	elif mode==171: SSL_WARNING()
-	elif mode==173: ENABLE_MPD()
-	elif mode==174: ENABLE_RTMP()
-	elif mode==175: TEST_ALL_WEBSITES()
-	elif mode==176: ANALYTICS_REPORT()
-	elif mode==177: RESOLVEURL_SETTINGS()
-	elif mode==178: YOUTUBE_DL_SETTINGS()
-	elif mode==179: TESTINGS()
-	elif mode==150: MAIN_MENU()
+	#if mode in [0,1]: FIX_SKIN_KEYBOARD(mode,text)
+	if   mode==  2: SEND_MESSAGE(text)
+	elif mode==  3: DMCA()
+	elif mode==  4: HTTPS_TEST()
+	elif mode==  7: VERSIONS()
+	elif mode==  9: DELETE_CACHE()
 	elif mode==151: NO_ARABIC_FONTS()
 	elif mode==152: HTTPS_FAILED()
 	elif mode==153: LINKS_NOT_WORKING()
@@ -33,51 +20,86 @@ def MAIN(mode,text=''):
 	elif mode==156: UNKNOWN_SERVERS()
 	elif mode==157: PRIVATE_PUBLIC_SERVERS()
 	elif mode==158: SLOW_VIDES()
+	elif mode==159: CHECK_FOR_ADDONS_UPDATES()
+	elif mode==171: SSL_WARNING()
+	elif mode==172: INSTALL_REPOSITORY(True)
+	elif mode==173: ENABLE_MPD()
+	elif mode==174: ENABLE_RTMP()
+	elif mode==175: TEST_ALL_WEBSITES()
+	elif mode==176: ANALYTICS_REPORT()
+	elif mode==177: RESOLVEURL_SETTINGS()
+	elif mode==178: YOUTUBE_DL_SETTINGS()
+	elif mode==179: TESTINGS()
 	elif mode==190: WHAT_IS_CACHE()
 	elif mode==191: WHAT_DOT_COMMA_MEANS()
 	elif mode==192: SOLVE_TEMP_PROBLEM()
 	elif mode==193: WHY_IGNORE_SSL_CERTIFICATE()
 	elif mode==194: MPD_NOT_WORKING()
 	elif mode==195: WEBSITES_BLOCKED()
-	elif mode==196: HOW_TO_CONTACT_US()
+	elif mode==196: CONTACT_ME()
 	elif mode==197: KODI_SKIN()
 	return
 
-def MAIN_MENU():
-	#addDir('[COLOR FFC89008]ـ Problems & Questions  قائمة مشاكل وأسئلة  .1 [/COLOR]','',150)
-	#addLink('[COLOR FFC89008]  2.  [/COLOR]'+'فحص جميع مواقع البرنامج','',175,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]  1.  [/COLOR]'+'Can\'t see Arabic Text or Letters','',151)
-	addLink('[COLOR FFC89008]  2.  [/COLOR]'+'DMCA  قانون الألفية للملكية الرقمية','',3,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]  3.  [/COLOR]'+'فحص الإصدار الأخير والتحديثات','',7,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]  4.  [/COLOR]'+'فحص تفعيل فيديوهات mpd','',173,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]  5.  [/COLOR]'+'فحص تفعيل فيديوهات rtmp','',174,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]  6.  [/COLOR]'+'فحص اتصال المواقع المشفرة','',4,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]  7.  [/COLOR]'+'مسح كاش البرنامج','',9,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]  8.  [/COLOR]'+'إرسال سجل الأخطاء والاستخدام للمبرمج','',2,'','','IsPlayable=no,problem=yes')
-	addLink('[COLOR FFC89008]  9.  [/COLOR]'+'إبلاغ المبرمج بوجود مشكلة','',2,'','','IsPlayable=no,problem=yes')
-	addLink('[COLOR FFC89008]10.  [/COLOR]'+'إرسال رسالة إلى المبرمج','',2,'','','IsPlayable=no,problem=no')
-	addLink('[COLOR FFC89008]11.  [/COLOR]'+'تحذير يخص شهادة التشفير','',171,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]12.  [/COLOR]'+'اعدادت ResolveURL','',177)
-	addLink('[COLOR FFC89008]13.  [/COLOR]'+'اعدادت Youtube-DL','',178)
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]14.  [/COLOR]'+'ما هي افضل واجهة للبرنامج','',197)
-	addLink('[COLOR FFC89008]15.  [/COLOR]'+'ما هي افضل واجهة للبرنامج','',197)
-	addLink('[COLOR FFC89008]16.  [/COLOR]'+'لماذا بعض المواقع لا تعمل','',195)
-	addLink('[COLOR FFC89008]17.  [/COLOR]'+'كيف تحل مشكلة حجب بعض المواقع','',195)
-	addLink('[COLOR FFC89008]18.  [/COLOR]'+'بعض الفيديوهات بطيئة وتقطع','',158)
-	addLink('[COLOR FFC89008]19.  [/COLOR]'+'كيف تحل بنفسك مشكلة مؤقته','',192)
-	addLink('[COLOR FFC89008]20.  [/COLOR]'+'بعض الروابط لا تعمل','',153)
-	addLink('[COLOR FFC89008]21.  [/COLOR]'+'بعض الروابط بطيئة','',155)
-	addLink('[COLOR FFC89008]22.  [/COLOR]'+'لماذا يوجد سيرفرات مجهولة','',156)
-	addLink('[COLOR FFC89008]23.  [/COLOR]'+'ما هي السيرفرات العامة والخاصة','',157)
-	addLink('[COLOR FFC89008]24.  [/COLOR]'+'ما معنى هذه العلامات بالبرنامج ,'+escapeUNICODE('\u02d1')+';','',191)
-	addLink('[COLOR FFC89008]25.  [/COLOR]'+'ما هو آخر إصدار لكودي وللبرنامج','',7)
-	addLink('[COLOR FFC89008]26.  [/COLOR]'+'ما هو الكاش وكم مقداره بالبرنامج','',190)
-	addLink('[COLOR FFC89008]27.  [/COLOR]'+'الفيديوهات نوع mpd لا تعمل','',194)
-	addLink('[COLOR FFC89008]28.  [/COLOR]'+'المواقع المشفرة لا تعمل','',152)
-	addLink('[COLOR FFC89008]29.  [/COLOR]'+'لماذا لا نفحص شهادة التشفير','',193)
-	addLink('[COLOR FFC89008]30.  [/COLOR]'+'أين مواقع الأفلام والمسلسلات الأجنبية','',154)
-	xbmcplugin.endOfDirectory(addon_handle)
+def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
+	if 'problem=yes' in text: problem='yes'
+	else: problem='no'
+	sendit,html = 1,''
+	if showDialogs=='yes':
+		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
+		if sendit==0: 
+			xbmcgui.Dialog().ok('تم الغاء الارسال','تم الغاء الارسال بناء على طلبك')
+			return ''
+	if sendit==1:
+		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
+		kodiName = xbmc.getInfoLabel( "System.FriendlyName" )
+		message = message+' \\n\\n==== ==== ==== \\nAddon Version: '+addon_version+' :\\nEmail Sender: '+dummyClientID(32)+' :\\nKodi Version: '+kodi_release+' :\\nKodi Name: '+kodiName
+		#xbmc.sleep(4000)
+		#playerTitle = xbmc.getInfoLabel( "Player.Title" )
+		#playerPath = xbmc.getInfoLabel( "Player.Filenameandpath" )
+		#if playerTitle != '': message += ' :\\nPlayer Title: '+playerTitle
+		#if playerPath != '': message += ' :\\nPlayer Path: '+playerPath
+		#xbmcgui.Dialog().ok(playerTitle,playerPath)
+		if url != '': message += ' :\\nURL: ' + url
+		if source != '': message += ' :\\nSource: ' + source
+		message += ' :\\n'
+		if showDialogs=='yes': xbmcgui.Dialog().notification('جاري ألإرسال','الرجاء الانتظار')
+		logfileNEW = ''
+		if problem=='yes':
+			dataNEW,counts = [],0
+			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
+			#logfile = 'S://DOWNLOADS/6ac26462c99fc35816f3532bb17608f4-5.8.1.log'
+			f = open(logfile,'rb')
+			size = os.path.getsize(logfile)
+			if size>600000: f.seek(-600000, os.SEEK_END)
+			data = f.readlines()
+			for line in reversed(data):
+				if "extension '' is not currently supported" in line: continue
+				if 'Checking for Malicious scripts' in line: continue
+				if 'Previous line repeats' in line: continue
+				if 'PVR IPTV Simple Client' in line: continue
+				if 'this hash function is broken' in line: continue
+				if 'uses plain HTTP for add-on downloads' in line: continue
+				if 'NOTICE: ADDON:' in line and line.endswith('installed\n'): continue
+				dataNEW.append(line)
+				counts += 1
+				if counts==1000: break
+			dataNEW = reversed(dataNEW)
+			logfileNEW = ''.join(dataNEW)
+			#logfileNEW = ''.join(dataNEW[-1000:])
+			logfileNEW = base64.b64encode(logfileNEW)
+		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
+		payload = { 'subject' : quote(subject) , 'message' : quote(message) , 'logfile' : logfileNEW }
+		data = urllib.urlencode(payload)
+		html = openURL_cached(NO_CACHE,url,data,'','','SERVICES-SEND_EMAIL-1st')
+		result = html[0:6]
+		if showDialogs=='yes':
+			if result == 'Error ':
+				xbmcgui.Dialog().notification('للأسف','فشل في الإرسال')
+				xbmcgui.Dialog().ok('Failed sending the message','خطأ وفشل في إرسال الرسالة')
+			else:
+				xbmcgui.Dialog().notification('تم الإرسال','بنجاح')
+				xbmcgui.Dialog().ok('Message sent','تم إرسال الرسالة بنجاح')
+	return html
 
 def NO_ARABIC_FONTS():
 	message1 = '1.   If you can\'t see Arabic Letters then go to "Kodi Interface Settings" and change the font to "Arial"'
@@ -88,6 +110,7 @@ def NO_ARABIC_FONTS():
 	xbmcgui.Dialog().ok('Font Problem',message1,message2)
 	yes = xbmcgui.Dialog().yesno('Font settings','Do you want to go to "Kodi Interface Settings" now?','هل تريد الذهاب إلى لوحة إعدادات واجهة كودي ألآن؟')
 	if yes==1: xbmc.executebuiltin("ActivateWindow(InterfaceSettings)")
+	return
 
 def HTTPS_FAILED():
 	message1 = 'بعض المواقع تحتاج ربط مشفر وقد يكون جهازك غير قادر على الربط المشفر أو هناك مشكلة في شهادة التشفير الخاصة بكودي عندك علما انه تم فحص البرنامج على كودي الإصدارات'
@@ -96,31 +119,38 @@ def HTTPS_FAILED():
 	#message2 = 'شهادة التشفير هي ملف يحتوي على شفرة خاصة أو تواقيع خاصة لشركات معروفة وله تاريخ صلاحية ونفاذ والغرض منه هو تبادل المعلومات بطريقة مشفرة يصعب اختراقها وفهمها'
 	#xbmcgui.Dialog().ok('شهادة التشفير - SSL Certificate',message2)
 	LATEST_KODI()
+	return
 
 def LINKS_NOT_WORKING():
 	xbmcgui.Dialog().ok('روابط لا تعمل','غالبا السبب هو من الموقع الأصلي المغذي للبرنامج وللتأكد قم بتشغيل الرابط الذي لا يعمل ثم قم بإرسال مشكلة إلى المبرمج من القائمة الرئيسية للبرنامج')
+	return
 
 def NO_FORIGN_LANGUAGE_VIDEOS():
 	message = 'هذا البرنامج مخصص فقط للغة العربية ولكن هذا لا يمنع وجود مواقع فيها أفلام ومسلسلات مترجمة أو مدبلجة إلى اللغة العربية والى لغات اخرى ولا يوجد سبب للتكرار'
 	xbmcgui.Dialog().ok('مواقع أجنبية',message)
+	return
 
 def SLOW_LINKS():
 	message = 'الروابط البطيئة لا علاقة لها بالبرنامج وغالبا السبب هو من الموقع الأصلي المغذي للبرنامج'
 	xbmcgui.Dialog().ok('روابط بطيئة',message)
+	return
 
 def UNKNOWN_SERVERS():
 	message = 'هي سيرفرات لا يستطيع البرنامج استخدامها بسبب كونها محمية من المصدر أو بحاجة إلى اشتراك رسمي أو جديدة أو لا يعرفها البرنامج'
 	xbmcgui.Dialog().ok('سيرفرات سيئة أو مجهولة',message)
+	return
 
 def PRIVATE_PUBLIC_SERVERS():
 	message = 'السيرفرات العامة هي سيرفرات خارجية وغير جيدة لان الكثير منها ممنوع أو محذوف أو خطأ بسبب حقوق الطبع وحقوق الألفية الرقمية ولا توجد طريقة لفحصها أو إصلاحها \n\n السيرفرات الخاصة هي سيرفرات يتحكم فيها الموقع الأصلي وهي جيدة نسبيا ولا توجد طريقة لفحصها أو إصلاحها \n\n الرجاء قبل الإبلاغ عن مشكلة وقبل مراسلة المبرمج افحص نفس الفيديو وافحص نفس السيرفر على الموقع الأصلي'
 	xbmcgui.Dialog().textviewer('مواقع تستخدم سيرفرات عامة',message)
+	return
 
 def SLOW_VIDES():
 	message1 = 'ابتعد عن ملفات الدقة العالية'
-	message2 = 'ابتعد عن ملفات ال m3u8'
+	message2 = 'ابتعد عن ملفات أل m3u8'
 	message3 = 'ابتعد عن ملفات التحميل والداونلود download'
 	xbmcgui.Dialog().ok('لتسريع عمل الفيديوهات',message1,message2,message3)
+	return
 
 def WHAT_IS_CACHE():
 	message2 = 'الكاش هو مخزن مؤقت للمعلومات يستخدمه البرنامج لخزن صفحات الإنترنيت وروابط الفيديوهات'
@@ -129,18 +159,22 @@ def WHAT_IS_CACHE():
 	message2 += '\n\n' + 'متوسط المدى للصفحات التي قد تتغير ومدته ' + str(REGULAR_CACHE/60/60) + ' ساعة'
 	message2 += '\n\n' + 'قصير المدى للصفحات التي تتغير دائما ومدته ' + str(SHORT_CACHE/60/60) + ' ساعة'
 	xbmcgui.Dialog().textviewer('ما هو الكاش المستخدم في البرنامج',message2)
+	return
 
 def WHAT_DOT_COMMA_MEANS():
 	message = 'الفاصلة تعني مجلد بنفس اسمه الأصلي والنقطة تعني أن الاسم الأصلي تم تعديله وفاصلة ونقطة تعنى مجلد وتم تعديل اسمه وبدون علامة تعني ملف بنفس اسمه الأصلي'
 	xbmcgui.Dialog().ok('ما معنى هذه العلامات ,'+escapeUNICODE('\u02d1')+';',message)
+	return
 
 def SOLVE_TEMP_PROBLEM():
 	message = 'إذا واجهتك مشكلة في الشبكة وتم حلها ... أو انك تظن أن الموقع الأصلي كان فيه مشكلة مؤقته وتم حلها ... فإذن جرب مسح كاش البرنامج لكي يقوم البرنامج بطلب الصفحة الصحيحة وتخزينها بدلا من الصفحة القديمة'
 	xbmcgui.Dialog().ok('كيف تحل مشكلة مؤقته',message)
+	return
 
 def WHY_IGNORE_SSL_CERTIFICATE():
 	message = 'الغرض من شهادة التشفير هو ضمان صحة وسرية المعلومات المتبادلة بين البرنامج والموقع المشفر وهذا الضمان غير مطلوب ولا حاجة له عند الاتصال او الربط مع مواقع الفيديوهات المشفرة'
 	xbmcgui.Dialog().ok('لماذا لا نفحص شهادة التشفير',message)
+	return
 
 def MPD_NOT_WORKING():
 	message1 = 'يجب تفعيل إضافة اسمها inputstream.adaptive لكي يعمل هذا النوع من الفيديوهات'
@@ -148,6 +182,7 @@ def MPD_NOT_WORKING():
 	message3 = 'وبعدها سوف تعمل هذه الفيديوهات'
 	xbmcgui.Dialog().ok('الفيديوهات نوع mpd لا تعمل',message1)
 	ENABLE_MPD()
+	return
 
 def WEBSITES_BLOCKED():
 	message  = 'مؤخرا قامت بعض شركات الأنترنيت الدولي بوضع عائق ضد البرامج مثل كودي لتسمح فقط لبعض مستخدمي المتصفح بالدخول لمواقع الفيديو'
@@ -155,8 +190,8 @@ def WEBSITES_BLOCKED():
 	#message += 'والذي صنعته شركة جوجل خصيصا لمنع برامج مثل كودي من تصفح الأنترنيت'
 	message += '\n\ونتيجة لهذا العائق فانه تقريبا جميع مستخدمي برنامج كودي لا يستطيعون الدخول لجميع مواقع البرنامج حتى مع استخدام'
 	message += '\n[COLOR FFC89008]ـ  VPN  أو  Proxy  أو  DNS  أو أي حل بسيط آخر[/COLOR]\n'
-	message += '\nلان هذا لن يحل المشكلة وانما فقط سيقوم باصلاح بعض المواقع وإعاقة مواقع اخري كانت تعمل سابقا بدون مشاكل'
-	xbmcgui.Dialog().textviewer('عائق ضد كودي والبرامج الاخرى عدا المتصفح',message)
+	message += '\nلان هذا لن يحل المشكلة وإنما فقط سيقوم بإصلاح بعض المواقع وإعاقة مواقع اخرى كانت تعمل سابقا بدون مشاكل'
+	xbmcgui.Dialog().textviewer('عائق ضد كودي والبرامج الأخرى عدا المتصفح',message)
 	message = 'المواقع التي تأثرت بالعائق عند بعض الناس هي:'
 	message += '\n'+'[COLOR FFC89008]akoam  egybest  egybestvip  movizland  series4watch  shahid4u[/COLOR]'
 	message += '\n\n'+'الدول التي تأثرت بالعائق عند بعض الناس هي:'
@@ -165,19 +200,21 @@ def WEBSITES_BLOCKED():
 	message += '[COLOR FFC89008]ارسل رسالة مؤدبة إلى المبرمج واكتب فيها اسم بلدك وأسماء المواقع التي لا تستطيع دخولها[/COLOR]'
 	xbmcgui.Dialog().textviewer('المواقع والدول التي تأثرت بالعائق',message)
 	#SEND_MESSAGE('IsPlayable=no,problem=no')
-	#message = '\n\n'+'ولقد لاحظنا ايضا ان المواقع المعاقة تختلف باختلاف البلد وتختلف باختلاف شركة الانترنيت في ذلك البلد وهذا معناه انه حتى لو تم استخدام VPN أو Proxy أو أي وسيلة اخرى فان المواقع المعاقة سوف تختلف ولكنها لن تعمل جميعها'
-	#message += 'لحل المشكلة قم بعملين:    الأول: أرسل سجل الاخطاء والاستخدام الى المبرمج (من قائمة خدمات البرنامج) واكتب معه اسم بلدك واسم شركة الإنترنيت وأسماء المواقع التي لا تعمل عندك'
-	#message += '\n\n'+'والثاني: جرب استخدام VPN وعند البعض قد تحتاج فقط تغيير DNS والاحسن ان يكون في بلد اخر علما ان استخدام Proxy قد يحل مشكلة بعض المواقع ولكن ليس في جميع الدول'
+	#message = '\n\n'+'ولقد لاحظنا ايضا أن المواقع المعاقة تختلف باختلاف البلد وتختلف باختلاف شركة الانترنيت في ذلك البلد وهذا معناه انه حتى لو تم استخدام VPN أو Proxy أو أي وسيلة اخرى فان المواقع المعاقة سوف تختلف ولكنها لن تعمل جميعها'
+	#message += 'لحل المشكلة قم بعملين:    الأول: أرسل سجل الأخطاء والاستخدام إلى المبرمج (من قائمة خدمات البرنامج) واكتب معه اسم بلدك واسم شركة الإنترنيت وأسماء المواقع التي لا تعمل عندك'
+	#message += '\n\n'+'والثاني: جرب استخدام VPN وعند البعض قد تحتاج فقط تغيير DNS والأحسن أن يكون في بلد اخر علما ان استخدام Proxy قد يحل مشكلة بعض المواقع ولكن ليس في جميع الدول'
 	#xbmcgui.Dialog().textviewer('مشكلة عند بعض الناس',message)
 	#yes = xbmcgui.Dialog().yesno('فحص جميع مواقع البرنامج','هذا الفحص هو لمعرفة هل المشكلة من عندك ام من البرنامج. سيقوم البرنامج الآن بفحص مواقعه مرتين الأولى بوضعك الطبيعي والثانية باستخدام بروكسي مجاني انت تختاره من القائمة التي ستظهر لاحقا. هل تريد الاستمرار؟','','','كلا','نعم')
 	#if yes==1:
 	#TEST_ALL_WEBSITES()
+	return
 
-def HOW_TO_CONTACT_US():
-	xbmcgui.Dialog().ok('ثلاثة طرق للتواصل مع المبرمج','إما باستخدام الفيسبوك "الحاج عماد مهدي" أو إرسال رسالة أو مشكلة من قائمة خدمات البرنامج أو فتح موضوع للنقاش بهذا الرابط','https://github.com/emadmahdi/KODI/issues')
+def CONTACT_ME():
+	xbmcgui.Dialog().ok('ثلاث طرق للتواصل مع المبرمج','إما باستخدام الفيسبوك "الحاج عماد مهدي" أو إرسال رسالة أو مشكلة من قائمة خدمات البرنامج أو فتح موضوع للنقاش بهذا الرابط','https://github.com/emadmahdi/KODI/issues')
+	return
 
 def DELETE_CACHE():
-	#MAIN(190)
+	#WHAT_IS_CACHE()
 	yes = xbmcgui.Dialog().yesno('هل تريد مسح جميع الكاش ؟','الكاش يعمل على تسريع عمل البرنامج ومسحه يسبب إعادة طلب جميع الصفحات من الأنترنيت عند الحاجة إليها والمسح ليس فيه أي ضرر وبالعكس فان المسح ممكن أن يحل بعض مشاكل البرنامج','','','كلا','نعم')
 	if yes==1: 
 		DELETE_DATABASE_FILES()
@@ -186,11 +223,10 @@ def DELETE_CACHE():
 
 def HTTPS_TEST():
 	working = HTTPS(True)
-	if not working:
-		MAIN(152)
+	if not working: HTTPS_FAILED()
 	return
 
-def FIX_KEYBOARD(mode,text):
+def FIX_SKIN_KEYBOARD(mode,text):
 	import xbmc,unicodedata,email.charset
 	import xbmcgui
 	#import simplejson as json
@@ -231,8 +267,8 @@ def SEND_MESSAGE(text=''):
 		yes = xbmcgui.Dialog().yesno('','هل لديك مشكلة تريد أبلاغ المبرمج عنها ؟','','','كلا','نعم')
 		if yes==1: problem='yes'
 	if problem=='yes':
-		yes = DELETE_CACHE()
-		if yes==1: return ''
+		#yes = DELETE_CACHE()
+		#if yes==1: return ''
 		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بإرسال سجل الأخطاء والاستخدام إلى المبرمج لكي يستطيع المبرمج معرفة المشكلة وإصلاحها','','','كلا','نعم')
 		if logs==0:
 			xbmcgui.Dialog().ok('تم إلغاء الإرسال','للأسف بدون سجل الأخطاء والاستخدام المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
@@ -250,7 +286,7 @@ def SEND_MESSAGE(text=''):
 				return ''
 		xbmcgui.Dialog().ok('المبرمج لا يعلم الغيب','اذا كانت لديك مشكلة فالرجاء قراءة قسم المشاكل والاسئلة واذا لم تجد الحل هناك فحاول كتابة جميع تفاصيل المشكلة لان المبرمج لا يعلم الغيب')
 		"""
-	xbmcgui.Dialog().ok('ملاحظة مهمة','اكتب الآن رسالة إلى المبرمج وإذا كنت تحتاج جواب من المبرمج فلا تنسى إضافة عنوان بريدك ألإلكتروني إلى الرسالة')
+	xbmcgui.Dialog().ok('ملاحظة مهمة','اكتب الآن رسالة إلى المبرمج واكتب فيها عنوان بريدك ألإلكتروني ... والأفضل أن تراسل المبرمج على الفيسبوك وأسمه "الحاج عماد مهدي"')
 	search = KEYBOARD('Write a message   اكتب رسالة')
 	if search == '':
 		xbmcgui.Dialog().ok('تم إلغاء الإرسال','تم إلغاء الإرسال لأنك لم تكتب أي شيء')
@@ -285,129 +321,54 @@ def SEND_MESSAGE(text=''):
 	return ''
 
 def DMCA():
-	text = 'نفي: البرنامج لا يوجد له اي سيرفر يستضيف اي محتويات. البرنامج يستخدم روابط وتضمين لمحتويات مرفوعة على سيرفرات خارجية. البرنامج غير مسؤول عن اي محتويات تم تحميلها على سيرفرات ومواقع خارجية "مواقع طرف 3". جميع الاسماء والماركات والصور والمنشورات هي خاصة باصحابها. البرنامج لا ينتهك حقوق الطبع والنشر وقانون الألفية للملكية الرقمية DMCA اذا كان لديك شكوى خاصة بالروابط والتضامين الخارجية فالرجاء التواصل مع ادارة هذه السيرفرات والمواقع الخارجية'
+	text = 'هذا البرنامج لا يوجد له أي سيرفر يستضيف أي محتويات. البرنامج يستخدم روابط وتضمين لمحتويات مرفوعة على سيرفرات خارجية. البرنامج غير مسؤول عن أي محتويات تم تحميلها على سيرفرات ومواقع خارجية "مواقع طرف ثالث". جميع الأسماء والماركات والصور والمنشورات هي خاصة باصحابها. البرنامج لا ينتهك حقوق الطبع والنشر وقانون الألفية للملكية الرقمية DMCA إذا كان لديك شكوى خاصة بالروابط والتضامين الخارجية فالرجاء التواصل مع إدارة هذه السيرفرات والمواقع الخارجية. هذا البرنامج هو ببساطة متصفح لمواقع الويب'
 	xbmcgui.Dialog().textviewer('حقوق الطبع والنشر وقانون الألفية للملكية الرقمية',text)
-	text = 'Disclaimer: The program does not host any content on any server. The program just use linking to or embedding content that was uploaded to popular Online Video hosting sites. All trademarks, Videos, trade names, service marks, copyrighted work, logos referenced herein belong to their respective owners/companies. The program is not responsible for what other people upload to 3rd party sites. We urge all copyright owners, to recognize that the links contained within this site are located somewhere else on the web or video embedded are from other various site. If you have any legal issues please contact appropriate media file owners/hosters.'
+	text = 'This program does not host any content on any server. It only uses links to embedded content that was uploaded to popular online video hosting sites. All trademarks, videos, trade names, service marks, copyrighted work, logos referenced herein belong to their respective owners / companies. The program is not responsible for what other people upload to 3rd party sites. We urge all copyright owners, to recognize that the links contained within this program are located somewhere else on the web or video embedded are from other various sites. If you have any legal issues please contact appropriate media file owners / hosters. This program is simply a web browser.'
 	xbmcgui.Dialog().textviewer('Digital Millennium Copyright Act (DMCA)',text)
 	return
 
-def GLOBAL_SEARCH_MENU(search=''):
-	if search=='': search = KEYBOARD()
-	if search == '': return
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Global Search For: [ '+search+' ]')
-	search = search.lower()
-	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة - قليلة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('1.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - خدمة IPTV','',239,'','',search)
-	addDir('2.  [COLOR FFC89008]IFL    [/COLOR]'+search+' - موقع قناة آي فيلم','',29,'','',search)
-	addDir('3.  [COLOR FFC89008]MRF  [/COLOR]'+search+' - موقع قناة المعارف','',49,'','',search)
-	addDir('4.  [COLOR FFC89008]KWT  [/COLOR]'+search+' - موقع قناة الكوثر','',139,'','',search)
-	addDir('5.  [COLOR FFC89008]FTM  [/COLOR]'+search+' - موقع المنبر الفاطمي','',69,'','',search)
-	addDir('6.  [COLOR FFC89008]YUT  [/COLOR]'+search+' - موقع يوتيوب','',149,'','',search)
-	addDir('7.  [COLOR FFC89008]KLA  [/COLOR]'+search+' - موقع كل العرب','',19,'','',search)
-	addDir('8.  [COLOR FFC89008]PNT  [/COLOR]'+search+' - موقع بانيت','',39,'','',search)
-	addDir('9.  [COLOR FFC89008]SHF  [/COLOR]'+search+' - موقع شوف ماكس','',59,'','',search)
-	addDir('10. [COLOR FFC89008]AKW  [/COLOR]'+search+' - موقع أكوام الجديد','',249,'','',search)
-	#addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('11. [COLOR FFC89008]AKO  [/COLOR]'+search+' - موقع أكوام القديم','',79,'','',search)
-	addDir('12. [COLOR FFC89008]EGV  [/COLOR]'+search+' - موقع إيجي بيست vip','',229,'','',search)
-	addDir('13. [COLOR FFC89008]ARS  [/COLOR]'+search+' - موقع عرب سييد','',259,'','',search)
-	#addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addLink('[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',157,'','','IsPlayable=no')
-	addDir('14. [COLOR FFC89008]HEL  [/COLOR]'+search+' - موقع هلال يوتيوب','',99,'','',search)
-	addDir('15. [COLOR FFC89008]SHA  [/COLOR]'+search+' - موقع شاهد فوريو','',119,'','',search)
-	addDir('16. [COLOR FFC89008]ARL  [/COLOR]'+search+' - موقع عرب ليونز','',209,'','',search)
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	#addDir('16. [COLOR FFC89008]HLA  [/COLOR]'+search+' - موقع هلا سيما','',88,'','',search) # 89
-	#addDir('17. [COLOR FFC89008]SFW  [/COLOR]'+search+' - موقع سيريس فور وتش','',218,'','',search) # 219
-	#addDir('18. [COLOR FFC89008]MVZ  [/COLOR]'+search+' - موقع موفيز لاند','',188,'','',search)# 189
-	#addDir('19. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',128,'','',search)# 129
-	xbmcplugin.endOfDirectory(addon_handle)
-	return
-
-def TV_CHANNELS_MENU():
-	addDir('1.  [COLOR FFC89008]IPT   [/COLOR]'+'للمشتركين بخدمة IPTV','',230)
-	addDir('2.  [COLOR FFC89008]TV0  [/COLOR]'+'قنوات من مواقعها الأصلية','',100)
-	addDir('3.  [COLOR FFC89008]YUT  [/COLOR]'+'قنوات عربية من يوتيوب','',147)
-	addDir('4.  [COLOR FFC89008]YUT  [/COLOR]'+'قنوات أجنبية من يوتيوب','',148)
-	addDir('5.  [COLOR FFC89008]IFL    [/COLOR]'+'قناة آي فيلم من موقعهم','',28)
-	#addDir('5.  [COLOR FFC89008]MRF  [/COLOR]'+'من موقع قناة المعارف','',41)
-	#addDir('6.  [COLOR FFC89008]KWT  [/COLOR]'+'من موقع قناة الكوثر','',135)
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addDir('6.  [COLOR FFC89008]TV1  [/COLOR]'+'قنوات تلفزيونية عامة','',101)
-	addDir('7.  [COLOR FFC89008]TV2  [/COLOR]'+'قنوات تلفزيونية خاصة','',102)
-	addDir('8.  [COLOR FFC89008]TV3  [/COLOR]'+'قنوات تلفزيونية للفحص','',103)
-	xbmcplugin.endOfDirectory(addon_handle)
-	return
-
 def VERSIONS():
+	#url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
+	#url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
 	xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
-	#xbmc.log('BBBB: 1111:', level=xbmc.LOGNOTICE)
-	threads22 = CustomThread()
-	#xbmc.log('BBBB: 2222:', level=xbmc.LOGNOTICE)
-	threads22.start_new_thread('22',LATEST_KODI)
-	#xbmc.log('BBBB: 3333:', level=xbmc.LOGNOTICE)
-	#xbmcgui.Dialog().notification('thread submitted','')
-	#	url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
-	#   url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
 	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS/addons.xml'
-	html = openURL_PROXY(url,'','','','SERVICES-VERSIONS-1st')
+	html = openURL_cached(NO_CACHE,url,'','','','SERVICES-VERSIONS-1st')
 	latest_ADDON_VER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
 	current_ADDON_VER = addon_version
 	latest_REPO_VER = re.findall('name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]
 	current_REPO_VER = xbmc.getInfoLabel('System.AddonVersion(repository.emad)')
-	if latest_ADDON_VER > current_ADDON_VER:
-		message1 = 'الرجاء تحديث البرنامج لحل المشاكل'
-		message3 = '\n\n' + 'جرب إغلاق كودي وتشغيله وانتظر التحديث الأوتوماتيكي'
+	if latest_ADDON_VER > current_ADDON_VER or latest_REPO_VER > current_REPO_VER:
+		need_update = True
+		message1 = 'الرجاء تحديث إضافات كودي لحل المشاكل'
+		message3 = '\n\n' + 'انت بحاجة لتحديث هذا البرنامج أو تحديث مخزن عماد'
 	else:
-		message1 = 'لا توجد اي تحديثات للبرنامج حاليا'
-		message3 = '\n\n' + 'الرجاء إبلاغ المبرمج عن أي مشكلة تواجهك'
+		need_update = False
+		message1 = 'لا توجد تحديثات للبرنامج أو المخزن حاليا'
+		message3 = '\n\n' + 'الرجاء إبلاغ المبرمج عن المشكلة التي تواجهك'
 	if current_REPO_VER=='': current_REPO_VER='لا يوجد'
 	else: current_REPO_VER = ' ' + current_REPO_VER
 	message2  = 'الإصدار الأخير للبرنامج المتوفر الآن هو :   ' + latest_ADDON_VER
 	message2 += '\n' + 'الإصدار الذي انت تستخدمه للبرنامج هو :   ' + current_ADDON_VER
 	message2 += '\n' + 'ألإصدار الأخير لمخزن عماد المتوفر الآن هو :   ' + latest_REPO_VER
 	message2 += '\n' + 'ألإصدار الذي انت تستخدمه لمخزن عماد هو :  ' + current_REPO_VER
-	message3 += '\n\n' + 'لكي يعمل التحديث الأوتوماتيكي يجب أن يكون لديك في كودي مخزن عماد EMAD Repository'
+	message3 += '\n\n' + 'لكي يعمل عندك التحديث الأوتوماتيكي ... يجب أن يكون لديك في كودي مخزن عماد EMAD Repository'
 	message3 += '\n\n' + 'ملفات التنصيب مع التعليمات متوفرة على هذا الرابط'
 	message3 += '\n' + 'https://github.com/emadmahdi/KODI'
 	xbmcgui.Dialog().textviewer(message1,message2+message3)
+	#threads22 = CustomThread()
+	#threads22.start_new_thread('22',LATEST_KODI)
+	#xbmcgui.Dialog().notification('thread submitted','')
+	LATEST_KODI()
+	if need_update:
+		INSTALL_REPOSITORY(False)
+		CHECK_FOR_ADDONS_UPDATES()
 	#LATEST_KODI()
 	#threads22.wait_finishing_all_threads()
 	return
 
-def RANDOM():
-	headers = { 'User-Agent' : '' }
-	url = 'https://www.bestrandoms.com/random-arabic-words'
-	payload = { 'quantity' : '5' }
-	data = urllib.urlencode(payload)
-	#xbmcgui.Dialog().ok('',str(data))
-	html = openURL_PROXY(url,data,headers,'','SERVICES-RANDOM-1st')
-	#html = openURL_cached(NO_CACHE,url,data,headers,'','SERVICES-RANDOM-1st')
-	html_blocks = re.findall('list-unstyled(.*?)clearfix',html,re.DOTALL)
-	block = html_blocks[0]
-	items = re.findall('<span>(.*?)</span>.*?<span>(.*?)</span>',block,re.DOTALL)
-	arbLIST,engLIST = [],[]
-	for arbWORD, engWORD in items:
-		arbLIST.append(arbWORD.lower())
-		engLIST.append(engWORD.lower())
-	list = ['كلمات عشوائية عربية','كلمات عشوائية إنكليزية']
-	while True:
-		#selection = xbmcgui.Dialog().select('اختر اللغة:', list)
-		#if selection == -1: return
-		#elif selection==0: list2 = arbLIST
-		#else: list2 = engLIST
-		list2 = arbLIST + engLIST
-		selection = xbmcgui.Dialog().select('اختر كلمة للبحث عنها:', list2)
-		if selection != -1: break
-		elif selection == -1: return
-	search = list2[selection]
-	GLOBAL_SEARCH_MENU(search)
-	return
-
 def SSL_WARNING():
 	xbmcgui.Dialog().ok('تحذير مهم','البرنامج لا يفحص شهادة التشفير عند الاتصال بالمواقع المشفرة ولهذا في حال وجود شهادة غير صحيحة أو منتهية الصلاحية أو مزيفة فان هذا لن يوقف الربط المشفر ولن يوقف عمل البرنامج')
-	MAIN(193)
+	WHY_IGNORE_SSL_CERTIFICATE()
 	return
 
 def LATEST_KODI():
@@ -422,7 +383,7 @@ def LATEST_KODI():
 	#xbmc.log('ZZZZ: 2222:', level=xbmc.LOGNOTICE)
 	latest_KODI_VER = re.findall('title="kodi-(.*?)-',html,re.DOTALL)[0]
 	#xbmc.log('ZZZZ: 3333:', level=xbmc.LOGNOTICE)
-	current_KODI_VER = xbmc.getInfoLabel( "System.BuildVersion" ).split(' ')[0]
+	current_KODI_VER = str(kodi_version)
 	#xbmc.log('ZZZZ: 4444:', level=xbmc.LOGNOTICE)
 	message4a = 'إصدار كودي الأخير المتوفر الآن هو :   ' + latest_KODI_VER
 	message4b = 'إصدار كودي الذي انت تستخدمه هو :   ' + current_KODI_VER
@@ -543,6 +504,7 @@ def ANALYTICS_REPORT():
 	"""
 	xbmcgui.Dialog().textviewer('مواقع اشتغلت مؤخراً في جميع دول العالم',message5)
 	xbmcgui.Dialog().textviewer('أعلى الدول التي استخدمت مؤخراً البرنامج',message4)
+	return
 
 def KODI_SKIN():
 	xbmcgui.Dialog().textviewer('واجهة كودي Kodi Skin','هذا البرنامج يعمل افضل باستخدام واجهة كودي التي اسمها\nkodi skin "[COLOR FFC89008]metropolisEMAD[/COLOR]"\n\nوهي موجودة في نفس موقع البرنامج\n[COLOR FFC89008]https://github.com/emadmahdi/KODI [/COLOR]\n\nهذه الرسالة وغيرها كثير موجودة في قائمة خدمات البرنامج')
@@ -555,6 +517,57 @@ def RESOLVEURL_SETTINGS():
 def YOUTUBE_DL_SETTINGS():
 	xbmc.executebuiltin('Addon.OpenSettings(script.module.youtube.dl)', True)
 	return
+
+def CHECK_FOR_ADDONS_UPDATES():
+	yes = xbmcgui.Dialog().yesno('تحديث جميع إضافات كودي','كودي يقوم بعملية تحديث جميع الإضافات أوتوماتيكيا كل 24 ساعة ولكن ممكن إجراءها الآن . هل تريد تحديث جميع إضافات كودي الآن ؟','','','كلا','نعم')
+	if yes==1:
+		xbmc.executebuiltin('UpdateAddonRepos')
+		xbmcgui.Dialog().ok('تحديث جميع إضافات كودي','تم إرسال طلب إلى كودي لكي يقوم بتحديث جميع إضافات كودي . بما فيها تحديث هذا البرنامج وتحديث مخزن عماد . يرجى إعطاء كودي 5 دقائق لكي ينهي عملية التحديثات')
+	return
+
+def INSTALL_REPOSITORY(show_ok_msg=True):
+	repo_addon = 'repository.emad'
+	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS/addons.xml'
+	html = openURL_cached(NO_CACHE,url,'','','','SERVICES-INSTALL_REPOSITORY-1st')
+	repo_version = re.findall('name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]
+	installed_repo_version = xbmc.getInfoLabel('System.AddonVersion('+repo_addon+')')
+	#installed_repo_version = '4.2.99999'
+	is_installed = (installed_repo_version!='')
+	is_old_version = (repo_version>installed_repo_version)
+	is_enabled = (xbmc.getCondVisibility('System.HasAddon('+repo_addon+')')==1)
+	#xbmcgui.Dialog().ok(str(is_enabled),str(is_old_version))
+	if is_installed and is_enabled and not is_old_version:
+		if show_ok_msg: xbmcgui.Dialog().ok('EMAD Repository مخزن عماد','المخزن موجود عندك ومفعل وجاهز للاستخدام v'+installed_repo_version)
+	elif is_installed and not is_enabled and not is_old_version:
+		yes = xbmcgui.Dialog().yesno('EMAD Repository مخزن عماد','مخزن عماد موجود عندك ولكن غير مفعل . هل تريد تصليح المشكلة الآن ؟','','','كلا','نعم')
+		if yes: 
+			xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"'+repo_addon+'","enabled":true}}')
+			xbmcgui.Dialog().ok('EMAD Repository مخزن عماد','تم تفعيل المخزن')
+	else:
+		yes = xbmcgui.Dialog().yesno('EMAD Repository مخزن عماد','مخزن عماد عندك فيه مشكلة ... أما قديم أو غير مفعل أو غير موجود عندك ... هل تريد تصحيح المشكلة الآن ؟','','','كلا','نعم')
+		if yes: 
+			xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"'+repo_addon+'","enabled":true}}')
+			repo_zipfile = repo_addon+'-'+repo_version+'.zip'
+			zipfile_url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS/'+repo_addon+'/'+repo_zipfile
+			zipfile_html = openURL_cached(LONG_CACHE,zipfile_url,'','','','SERVICES-INSTALL_REPOSITORY-2nd')
+			addons_folder = os.path.join(xbmc.translatePath('special://home'),'addons')
+			import zipfile,StringIO
+			stream = StringIO.StringIO(zipfile_html)
+			zf = zipfile.ZipFile(stream)
+			zf.extractall(addons_folder)
+			xbmc.sleep(1000)
+			xbmc.executebuiltin('UpdateLocalAddons')
+			xbmc.sleep(1000)
+			xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"'+repo_addon+'","enabled":true}}')
+			xbmcgui.Dialog().ok('EMAD Repository مخزن عماد','تم تنصيب وتفعيل المخزن في كودي','الإصدار رقم v'+repo_version)
+	return
+
+
+
+
+
+
+
 
 
 

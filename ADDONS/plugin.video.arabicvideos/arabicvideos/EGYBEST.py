@@ -13,36 +13,36 @@ website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if   mode==120: MAIN_MENU()
-	elif mode==121: FILTERS_MENU(url)
-	elif mode==122: TITLES(url,page)
-	elif mode==123: PLAY(url)
-	elif mode==125: GET_USERNAME_PASSWORD()
-	elif mode==126: WARNING()
-	elif mode==128: TERMINATED_ADBLOCKER()
-	elif mode==129: SEARCH(text)
-	return
+	if   mode==120: results = MENU(url)
+	elif mode==121: results = FILTERS_MENU(url)
+	elif mode==122: results = TITLES(url,page)
+	elif mode==123: results = PLAY(url)
+	elif mode==125: results = GET_USERNAME_PASSWORD()
+	elif mode==126: results = WARNING()
+	elif mode==128: results = TERMINATED_ADBLOCKER()
+	elif mode==129: results = SEARCH(text)
+	else: results = False
+	return results
 
 def TERMINATED_ADBLOCKER():
 	xbmcgui.Dialog().ok('مانع اعلانات','سيرفر ملفات الفيديو لهذا الموقع يستخدم مانع اعلانات والمبرمج لم يستطع تجاوزه لان كودي لا يفهم لغة البرمجة جافاسكربت ولهذا سيبقى الموقع مغلق الى ما شاء الله')
 	return
 
-def MAIN_MENU():
-	#addDir(menu_name+'تحذير','',126)
-	#addDir(menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
-	addDir(menu_name+'بحث في الموقع','',129)
+def MENU(website=''):
+	#addMenuItem('dir',menu_name+'تحذير','',126)
+	#addMenuItem('dir',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
+	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',129)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBEST-MAIN_MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
-	addDir(menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
-	addDir(menu_name+'الأفلام',website0a+'/movies/',121)
-	addDir(menu_name+'المسلسلات',website0a+'/tv/',121)
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	addMenuItem('dir',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
+	addMenuItem('dir',website+'::'+menu_name+'الأفلام',website0a+'/movies/',121)
+	addMenuItem('dir',website+'::'+menu_name+'المسلسلات',website0a+'/tv/',121)
+	if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html_blocks=re.findall('class="ba(.*?)class="mgb',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addDir(menu_name+title,link,122,'','1')
-	xbmcplugin.endOfDirectory(addon_handle)
+		addMenuItem('dir',website+'::'+menu_name+title,link,122,'','1')
 	return
 
 def FILTERS_MENU(link):
@@ -56,9 +56,9 @@ def FILTERS_MENU(link):
 	filter = filter.replace('-',' + ')
 	#xbmcgui.Dialog().ok(str(link), str(filter))
 	if '/trending/' not in link:
-		addDir(menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'','1')
-		addDir(menu_name+'[[   ' + filter + '   ]]',link,122,'','1')
-		addDir(menu_name+'===========================',link,9999)
+		addMenuItem('dir',menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'','1')
+		addMenuItem('dir',menu_name+'[[   ' + filter + '   ]]',link,122,'','1')
+		addMenuItem('dir',menu_name+'===========================',link,9999)
 	html = openURL_cached(LONG_CACHE,link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
 	html_blocks=re.findall('mainLoad(.*?)</div></div>',html,re.DOTALL)
 	if html_blocks:
@@ -69,7 +69,7 @@ def FILTERS_MENU(link):
 			elif '/tv/' in url and 'مسلسل' not in title: title = 'مسلسلات ' + title
 			if '/trending/' in url:
 				title = 'الاكثر مشاهدة ' + title
-				addDir(menu_name+title,url,122,'','1')
+				addMenuItem('dir',menu_name+title,url,122,'','1')
 			else:
 				link = link.replace('popular','')
 				link = link.replace('top','')
@@ -80,7 +80,7 @@ def FILTERS_MENU(link):
 				url = url.replace('/-','/')
 				url = url.rstrip('-')
 				url = url.replace('--','-')
-				addDir(menu_name+title,url,121)
+				addMenuItem('dir',menu_name+title,url,121)
 	html_blocks=re.findall('sub_nav(.*?)</div></div></div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -90,8 +90,7 @@ def FILTERS_MENU(link):
 			if any(value in title for value in ignoreLIST): continue
 			if '/movies/' in url: title = '_MOD_' + 'افلام ' + title
 			elif '/tv/' in url: title = '_MOD_' + 'مسلسلات ' + title
-			addDir(menu_name+title,url,121)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',menu_name+title,url,121)
 	return
 
 def TITLES(url,page):
@@ -119,10 +118,10 @@ def TITLES(url,page):
 		#xbmcgui.Dialog().notification(img,'')
 		url2 = website0a + link
 		if '/movie/' in url2 or '/episode/' in url2:
-			addLink(menu_name+title,url2.rstrip('/'),123,img)
+			addMenuItem('link',menu_name+title,url2.rstrip('/'),123,img)
 			found = True
 		else:
-			addDir(menu_name+title,url2,122,img,'1')
+			addMenuItem('dir',menu_name+title,url2,122,img,'1')
 			found = True
 	if found:
 		pagingLIST = ['/movies/','/tv/','/explore/','/trending/']
@@ -134,12 +133,11 @@ def TITLES(url,page):
 						if int(page/10)*10==i:
 							for j in range(i,i+10,1):
 								if not page==j and j!=0:
-									addDir(menu_name+'صفحة '+str(j),url,122,'',str(j))
-						elif i!=0: addDir(menu_name+'صفحة '+str(i),url,122,'',str(i))
-						else: addDir(menu_name+'صفحة '+str(1),url,122,'',str(1))
-				elif n!=0: addDir(menu_name+'صفحة '+str(n),url,122,'',str(n))
-				else: addDir(menu_name+'صفحة '+str(1),url,122,'','1')
-	xbmcplugin.endOfDirectory(addon_handle)
+									addMenuItem('dir',menu_name+'صفحة '+str(j),url,122,'',str(j))
+						elif i!=0: addMenuItem('dir',menu_name+'صفحة '+str(i),url,122,'',str(i))
+						else: addMenuItem('dir',menu_name+'صفحة '+str(1),url,122,'',str(1))
+				elif n!=0: addMenuItem('dir',menu_name+'صفحة '+str(n),url,122,'',str(n))
+				else: addMenuItem('dir',menu_name+'صفحة '+str(1),url,122,'','1')
 	return
 
 def PLAY(url):
@@ -163,14 +161,14 @@ def PLAY(url):
 		url2 = watchitem[0]#+'||MyProxyUrl=http://79.165.242.84:4145'
 		server = SERVER(url2)
 		#xbmcgui.Dialog().ok(server,'')
-		response = openURL_requests_cached(NO_CACHE,'GET',url2,'','',True,'','EGYBEST-PLAY-2nd')
+		response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'','',True,'','EGYBEST-PLAY-2nd')
 		#html2 = response.text
 		cookies = response.cookies.get_dict()
 		PHPSID = cookies['PHPSID']
 		#xbmcgui.Dialog().ok(server, str(PHPSID))
 		headers2 = headers
 		headers2['Cookie'] = 'PHPSID='+PHPSID
-		response = openURL_requests_cached(NO_CACHE,'GET',url2,'',headers2,False,'','EGYBEST-PLAY-3rd')
+		response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'',headers2,False,'','EGYBEST-PLAY-3rd')
 		html2 = response.text
 		#xbmc.log(html2, level=xbmc.LOGNOTICE)
 		#xbmcgui.Dialog().ok(url2, str(html2.count('404')))
@@ -349,6 +347,10 @@ def WARNING():
 	return
 
 def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	new_search = search.replace(' ','+')

@@ -6,14 +6,31 @@ website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==100: ITEMS('0')
-	elif mode==101: ITEMS('1')
-	elif mode==102: ITEMS('2')
-	elif mode==103: ITEMS('3')
-	elif mode==104: PLAY(url)
+	if   mode==100: results = MENU()
+	elif mode==101: results = ITEMS('0',True)
+	elif mode==102: results = ITEMS('1',True)
+	elif mode==103: results = ITEMS('2',True)
+	elif mode==104: results = ITEMS('3',True)
+	elif mode==105: results = PLAY(url)
+	else: results = False
+	return results
+
+def MENU():
+	addMenuItem('dir','  1.  [COLOR FFC89008]IPT    [/COLOR]'+'للمشتركين بخدمة IPTV','',230)
+	addMenuItem('dir','  2.  [COLOR FFC89008]TV0   [/COLOR]'+'قنوات من مواقعها الأصلية','',101)
+	addMenuItem('dir','  3.  [COLOR FFC89008]YUT   [/COLOR]'+'قنوات عربية من يوتيوب','',147)
+	addMenuItem('dir','  4.  [COLOR FFC89008]YUT   [/COLOR]'+'قنوات أجنبية من يوتيوب','',148)
+	addMenuItem('dir','  5.  [COLOR FFC89008]IFL    [/COLOR]'+'قناة آي فيلم من موقعهم','',28)
+	addMenuItem('link','  6.  [COLOR FFC89008]MRF  [/COLOR]'+'قناة المعارف من موقعهم','',41)
+	addMenuItem('link','  7.  [COLOR FFC89008]KWT  [/COLOR]'+'قناة الكوثر من موقعهم','',135)
+	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	addMenuItem('dir','  8.  [COLOR FFC89008]TV1  [/COLOR]'+'قنوات تلفزيونية عامة','',102)
+	addMenuItem('dir','  9.  [COLOR FFC89008]TV2  [/COLOR]'+'قنوات تلفزيونية خاصة','',103)
+	addMenuItem('dir','10.  [COLOR FFC89008]TV3  [/COLOR]'+'قنوات تلفزيونية للفحص','',104)
+	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	return
 
-def ITEMS(menu):
+def ITEMS(menu,show=True):
 	menu_name='_TV'+menu+'_'
 	client = dummyClientID(32)
 	payload = { 'id' : '' , 'user' : client , 'function' : 'list' , 'menu' : menu }
@@ -28,12 +45,13 @@ def ITEMS(menu):
 	#file.close()
 	items = re.findall('([^;\r\n]+?);;(.*?);;(.*?);;(.*?);;(.*?);;',html,re.DOTALL)
 	if 'Not Allowed' in html:
-		addLink(menu_name+'هذه الخدمة مخصصة للمبرمج فقط','',9999,'','','IsPlayable=no')
-		#addLink(menu_name+'للأسف لا توجد قنوات تلفزونية لك','',9999,'','','IsPlayable=no')
-		#addLink(menu_name+'هذه الخدمة مخصصة للاقرباء والاصدقاء فقط','',9999,'','','IsPlayable=no')
-		#addLink(menu_name+'=========================','',9999,'','','IsPlayable=no')
-		#addLink(menu_name+'Unfortunately, no TV channels for you','',9999,'','','IsPlayable=no')
-		#addLink(menu_name+'It is for relatives & friends only','',9999,'','','IsPlayable=no')
+		if show: addMenuItem('link',menu_name+'هذه الخدمة مخصصة للمبرمج فقط','',9999,'','','IsPlayable=no')
+		#if show: xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+		#addMenuItem('link',menu_name+'للأسف لا توجد قنوات تلفزونية لك','',9999,'','','IsPlayable=no')
+		#addMenuItem('link',menu_name+'هذه الخدمة مخصصة للاقرباء والاصدقاء فقط','',9999,'','','IsPlayable=no')
+		#addMenuItem('link',menu_name+'=========================','',9999,'','','IsPlayable=no')
+		#addMenuItem('link',menu_name+'Unfortunately, no TV channels for you','',9999,'','','IsPlayable=no')
+		#addMenuItem('link',menu_name+'It is for relatives & friends only','',9999,'','','IsPlayable=no')
 	else:
 		for i in range(len(items)):
 			name = items[i][3]
@@ -54,9 +72,9 @@ def ITEMS(menu):
 		for source,server,id2,name,img in items:
 			if '#' in source: continue
 			#if source in ['NT','YU','WS0','RL1','RL2']: continue
-			if source!='URL': name = name + '   [COLOR FFC89008]' + source + '[/COLOR]'
-			addLink(menu_name+' '+name,source+';;'+server+';;'+id2+';;'+menu,104,img,'','IsPlayable=no')
-	xbmcplugin.endOfDirectory(addon_handle)
+			if source!='URL': name = name+'   [COLOR FFC89008]'+source+'[/COLOR]'
+			url = source+';;'+server+';;'+id2+';;'+menu
+			addMenuItem('link',menu_name+' '+name,url,105,img,'','IsPlayable=no')
 	return
 
 def PLAY(id):

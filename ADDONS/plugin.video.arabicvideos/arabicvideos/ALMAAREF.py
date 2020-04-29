@@ -9,33 +9,34 @@ website0b = WEBSITES[script_name][1]
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==40: MENU()
-	elif mode==41: LIVE()
-	elif mode==42: EPISODES(url)
-	elif mode==43: PLAY(url)
-	elif mode==44: CATEGORIES(url,text)
-	elif mode==45: TITLES(url,text)
-	elif mode==46: PROGRAMS()
-	elif mode==47: PLAY_NEWWEBSITE(url)
-	elif mode==49: SEARCH(text)
-	return
+	if   mode==40: results = MENU(url)
+	elif mode==41: results = LIVE()
+	elif mode==42: results = EPISODES(url)
+	elif mode==43: results = PLAY(url)
+	elif mode==44: results = CATEGORIES(url,text)
+	elif mode==45: results = TITLES(url,text)
+	elif mode==46: results = PROGRAMS()
+	elif mode==47: results = PLAY_NEWWEBSITE(url)
+	elif mode==49: results = SEARCH(text)
+	else: results = False
+	return results
 
-def MENU():
-	addLink(menu_name+'البث الحي لقناة المعارف','',41,'','','IsPlayable=no')
-	addDir(menu_name+'بحث في الموقع','',49)
-	addDir(menu_name+'البرامج الحالية','',46)
+def MENU(website=''):
+	if website=='':
+		addMenuItem('link',menu_name+'البث الحي لقناة المعارف','',41,'','','IsPlayable=no')
+		addMenuItem('dir',menu_name+'بحث في الموقع','',49)
+	addMenuItem('dir',website+'::'+menu_name+'البرامج الحالية','',46)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALMAAREF-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)">(.*?)</a></h2>',html,re.DOTALL)
 	for link,name in items:
-		addDir(menu_name+name,link,45,'','','3')
+		addMenuItem('dir',website+'::'+menu_name+name,link,45,'','','3')
 	name = re.findall('recent-default.*?<h2>(.*?)</h2>',html,re.DOTALL)
 	if name:
-		addDir(menu_name+name[0],website0a,45,'','','2')
-	name = ['ارشيف لجميع البرامج']
+		addMenuItem('dir',website+'::'+menu_name+name[0],website0a,45,'','','2')
+	name = ['ارشيف البرامج']
 	#name = re.findall('categories"><div class="widget-top"><h4>(.*?)</h4>',html,re.DOTALL)
 	if name:
-		addDir(menu_name+name[0],website0a,44,'','','0')
-	xbmcplugin.endOfDirectory(addon_handle)
+		addMenuItem('dir',website+'::'+menu_name+name[0],website0a,44,'','','0')
 	return
 
 def TITLES(url,select):
@@ -49,7 +50,7 @@ def TITLES(url,select):
 			for img,url,title in items:
 				if not any(value in title for value in notvideosLIST):
 					title = unescapeHTML(title)
-					addDir(menu_name+title,url,42,img)
+					addMenuItem('dir',menu_name+title,url,42,img)
 	elif select=='3':
 		html_blocks3=re.findall('archive-box(.*?)script',html,re.DOTALL)
 		if html_blocks3:
@@ -58,7 +59,7 @@ def TITLES(url,select):
 			for url,title,img in items:
 				if not any(value in title for value in notvideosLIST):
 					title = unescapeHTML(title)
-					addDir(menu_name+title,url,42,img)
+					addMenuItem('dir',menu_name+title,url,42,img)
 	html_blocks4=re.findall('class="pagination"(.*?)<h',html,re.DOTALL)
 	if html_blocks4:
 		block = html_blocks4[0]
@@ -66,8 +67,7 @@ def TITLES(url,select):
 		for url,title in items:
 			title = unescapeHTML(title)
 			title = 'صفحة ' + title
-			addDir(menu_name+title,url,45,'','',select)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',menu_name+title,url,45,'','',select)
 	return
 
 def EPISODES(url):
@@ -89,15 +89,15 @@ def EPISODES(url):
 				title = title.split(' ')[-1]
 				title = '_MOD_' + name + ' - ' + title
 				duration = re.findall('length_formatted":"(.*?)"',meta,re.DOTALL)
-				if duration: addLink(menu_name+title,link,43,img2,duration[0])
-				else: addLink(menu_name+title,link,43,img2)
+				if duration: addMenuItem('link',menu_name+title,link,43,img2,duration[0])
+				else: addMenuItem('link',menu_name+title,link,43,img2)
 		else:
 			items=re.findall('itemprop="name">(.*?)<.*?contentUrl" content="(.*?)".*?image.*?url":"(.*?)"',html,re.DOTALL)
 			for title,link,img in items:
 				img = img.replace('\/','/')
 				title = escapeUNICODE(title)
 				link = escapeUNICODE(link)
-				addLink(menu_name+title,link,43,img)
+				addMenuItem('link',menu_name+title,link,43,img)
 			#PLAY_FROM_DIRECTORY(url)
 	else:
 		html_blocks=re.findall('id="dropdown-menu-series"(.*?)</ul>',html,re.DOTALL)
@@ -107,8 +107,7 @@ def EPISODES(url):
 			items=re.findall('href="(.*?)" title="(.*?)"',block,re.DOTALL)
 			for link,title in items:
 				title = unescapeHTML(title)
-				addLink(menu_name+title,link,47)
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('link',menu_name+title,link,47)
 	return
 
 def PLAY(url):
@@ -138,13 +137,12 @@ def CATEGORIES(url,category):
 				title = '_MOD_' + title.replace(re.findall(' \(.*?\)',title)[0],'')
 			url = website0a + '/' + link
 			if cat == '-165': title = '_MOD_' + 'السيد صباح شبر (60)'
-			if '-' in cat: addDir(menu_name+title,url,44,'','',cat)
-			else: addDir(menu_name+title,url,42)
+			if '-' in cat: addMenuItem('dir',menu_name+title,url,44,'','',cat)
+			else: addMenuItem('dir',menu_name+title,url,42)
 			exist=True
-	if exist: xbmcplugin.endOfDirectory(addon_handle)
-	else: TITLES(url,'3')
+	if not exist: TITLES(url,'3')
 	return
-	
+
 def PROGRAMS():
 	#xbmcgui.Dialog().ok(type, url)
 	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','ALMAAREF-PROGRAMS-1st')
@@ -152,8 +150,7 @@ def PROGRAMS():
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addDir(menu_name+title,link,44)
-	xbmcplugin.endOfDirectory(addon_handle)
+		addMenuItem('dir',menu_name+title,link,44)
 	return
 
 def LIVE():
@@ -165,6 +162,10 @@ def LIVE():
 	return
 
 def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		exit = False
+	else: exit = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	new_search = search.replace(' ','%20')

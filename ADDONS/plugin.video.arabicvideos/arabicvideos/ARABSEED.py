@@ -5,25 +5,27 @@ script_name='ARABSEED'
 headers = { 'User-Agent' : '' }
 menu_name='_ARS_'
 website0a = WEBSITES[script_name][0]
-ignoreLIST = ['الرئيسية','مصارعه']
+ignoreLIST = ['الرئيسية','مصارعه','مسلسلات']
 
 def MAIN(mode,url,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==250: MENU()
-	elif mode==251: TITLES(url)
-	elif mode==252: PLAY(url)
-	elif mode==253: EPISODES(url)
-	elif mode==254: FILTERS_MENU(url,'FILTERS::'+text)
-	elif mode==255: FILTERS_MENU(url,'CATEGORIES::'+text)
-	elif mode==259: SEARCH(text)
-	return
+	if   mode==250: results = MENU(url)
+	elif mode==251: results = TITLES(url)
+	elif mode==252: results = PLAY(url)
+	elif mode==253: results = EPISODES(url)
+	elif mode==254: results = FILTERS_MENU(url,'FILTERS::'+text)
+	elif mode==255: results = FILTERS_MENU(url,'CATEGORIES::'+text)
+	elif mode==259: results = SEARCH(text)
+	else: results = False
+	return results
 
-def MENU():
-	addDir(menu_name+'بحث في الموقع','',259)
-	addDir(menu_name+'فلتر محدد',website0a,255)
-	addDir(menu_name+'فلتر كامل',website0a,254)
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	#addDir(menu_name+'فلتر','',254,website0a)
+def MENU(website=''):
+	if website=='':
+		addMenuItem('dir',menu_name+'بحث في الموقع','',259)
+		addMenuItem('dir',menu_name+'فلتر محدد',website0a,255)
+		addMenuItem('dir',menu_name+'فلتر كامل',website0a,254)
+		addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	#addMenuItem('dir',website+'::'+menu_name+'فلتر','',254,website0a)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ARABSEED-MENU-1st')
 	html_blocks = re.findall('navigation-menu(.*?)</header>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -31,8 +33,8 @@ def MENU():
 	"""
 	for link,title in items:
 		url = website0a+'/getposts?type=one&data='+link
-		addDir(menu_name+title,url,251)
-	addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+		addMenuItem('dir',website+'::'+menu_name+title,url,251)
+	if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html_blocks = re.findall('navigation-menu(.*?)div',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(\/.*?)">(.*?)<',block,re.DOTALL)
@@ -41,11 +43,11 @@ def MENU():
 	for link,title in items:
 		if 'javascript' in link: continue
 		#title = title.strip(' ')
-		if not any(value in title for value in ignoreLIST):
+		#if not any(value in title for value in ignoreLIST):
 		#	if any(value in title for value in keepLIST):
-			url = website0a+link
-			addDir(menu_name+title,link,251)
-	xbmcplugin.endOfDirectory(addon_handle)
+		if title not in ignoreLIST:
+			if 'http' not in link: link = website0a+link
+			addMenuItem('dir',website+'::'+menu_name+title,link,251)
 	return
 
 def TITLES(url):
@@ -61,11 +63,11 @@ def TITLES(url):
 		#link = unquote(link).strip('/')
 		#title = title.strip(' ')
 		#if '/film/' in link or any(value in title for value in itemLIST):
-		#	addLink(menu_name+title,link,252,img)
+		#	addMenuItem('link',menu_name+title,link,252,img)
 		#elif '/episode/' in link and 'الحلقة' in title:
 		title = unescapeHTML(title)
 		if any(value in title for value in itemLIST):
-			addLink(menu_name+title,link,252,img)
+			addMenuItem('link',menu_name+title,link,252,img)
 		else:
 			mod = ''
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
@@ -75,7 +77,7 @@ def TITLES(url):
 			if title not in allTitles:
 				allTitles.append(title)
 				title = mod+title
-				addDir(menu_name+title,link,253,img)
+				addMenuItem('dir',menu_name+title,link,253,img)
 	html_blocks = re.findall('class="pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -84,8 +86,7 @@ def TITLES(url):
 			#link = unescapeHTML(link)
 			#title = unescapeHTML(title)
 			#title = title.replace('الصفحة ','')
-			if title!='': addDir(menu_name+'صفحة '+title,link,251)
-	xbmcplugin.endOfDirectory(addon_handle)
+			if title!='': addMenuItem('dir',menu_name+'صفحة '+title,link,251)
 	return
 
 def EPISODES(url):
@@ -95,8 +96,7 @@ def EPISODES(url):
 	name = xbmc.getInfoLabel('ListItem.Label')
 	for episode,link in items:
 		title = 'الحلقة '+episode
-		addLink(menu_name+title,link,252)
-	xbmcplugin.endOfDirectory(addon_handle)
+		addMenuItem('link',menu_name+title,link,252)
 	return
 	"""
 	items.append(url)
@@ -114,10 +114,10 @@ def EPISODES(url):
 	episodesCount = str(items).count('/episode/')
 	if seasonsCount>1 and episodesCount>0 and '/season/' not in url:
 		for link,title,sequence in items:
-			if '/season/' in link: addDir(menu_name+title,link,253)
+			if '/season/' in link: addMenuItem('dir',menu_name+title,link,253)
 	else:
 		for link,title,sequence in items:
-			if '/season/' not in link: addLink(menu_name+title,link,252)
+			if '/season/' not in link: addMenuItem('link',menu_name+title,link,252)
 	"""
 
 def PLAY(url):
@@ -137,7 +137,7 @@ def PLAY(url):
 		items1 = re.findall('data-embedd="(.*?)".*?alt="(.*?)"',html2,re.DOTALL)
 		items2 = re.findall('data-embedd=".*?(http.*?)("|&quot;)',html2,re.DOTALL)
 		items3 = re.findall('src=&quot;(.*?)&quot;.*?>(.*?)<',html2,re.DOTALL|re.IGNORECASE)
-		items4 = re.findall('data-embedd="(.*?)">\n.*?server_image">\n(.*?)\n',html2,re.DOTALL)
+		items4 = re.findall('data-embedd="(.*?)">\n*.*?server_image">\n(.*?)\n',html2)
 		items5 = re.findall('src=&quot;(.*?)&quot;.*?alt="(.*?)"',html2,re.DOTALL|re.IGNORECASE)
 		items = items1+items2+items3+items4+items5
 		for server,title in items:
@@ -215,15 +215,17 @@ def PLAY(url):
 		RESOLVERS.PLAY(linkLIST,script_name)
 	return
 
-
-
 def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.replace(' ','+')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ARABSEED-SEARCH-1st')
 	html_blocks = re.findall('name="category(.*?)</div>',html,re.DOTALL)
-	if html_blocks:
+	if category and html_blocks:
 		block = html_blocks[0]
 		items = re.findall('value="(.*?)".*?>(.*?)<',block,re.DOTALL)
 		categoryLIST,filterLIST = [''],['الكل']
@@ -261,9 +263,9 @@ def FILTERS_MENU(url,filter):
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'modified_filters')
 		if filter_values=='': url2 = url
 		else: url2 = url+'/getposts?'+filter_values
-		addDir(menu_name+'أظهار قائمة الفيديو التي تم اختيارها ',url2,251)
-		addDir(menu_name+' [[   '+filter_show+'   ]]',url2,251)
-		addLink('[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+		addMenuItem('dir',menu_name+'أظهار قائمة الفيديو التي تم اختيارها ',url2,251)
+		addMenuItem('dir',menu_name+' [[   '+filter_show+'   ]]',url2,251)
+		addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','ARABSEED-FILTERS_MENU-1st')
 	html_blocks = re.findall('class="Filters(.*?)hideTilteHome',html,re.DOTALL)
 	#xbmcgui.Dialog().ok('',str(html_blocks))
@@ -282,13 +284,13 @@ def FILTERS_MENU(url,filter):
 				else: FILTERS_MENU(url2,'CATEGORIES::'+new_filter)
 				return
 			else:
-				if category2==menu_list[-1]: addDir(menu_name+'الجميع ',url2,251)
-				else: addDir(menu_name+'الجميع ',url2,255,'','',new_filter)
+				if category2==menu_list[-1]: addMenuItem('dir',menu_name+'الجميع ',url2,251)
+				else: addMenuItem('dir',menu_name+'الجميع ',url2,255,'','',new_filter)
 		elif type=='FILTERS':
 			new_options = filter_options+'&'+category2+'=0'
 			new_values = filter_values+'&'+category2+'=0'
 			new_filter = new_options+'::'+new_values
-			addDir(menu_name+'الجميع :'+name,url2,254,'','',new_filter)
+			addMenuItem('dir',menu_name+'الجميع :'+name,url2,254,'','',new_filter)
 		dict[category2] = {}
 		for value,option in items:
 			if option in ignoreLIST: continue
@@ -300,13 +302,12 @@ def FILTERS_MENU(url,filter):
 			new_filter2 = new_options+'::'+new_values
 			title = option+' :'#+dict[category2]['0']
 			title = option+' :'+name
-			if type=='FILTERS': addDir(menu_name+title,url,254,'','',new_filter2)
+			if type=='FILTERS': addMenuItem('dir',menu_name+title,url,254,'','',new_filter2)
 			elif type=='CATEGORIES' and menu_list[-2]+'=' in filter_options:
 				clean_filter = RECONSTRUCT_FILTER(new_values,'modified_filters')
 				url3 = url+'/getposts?'+clean_filter
-				addDir(menu_name+title,url3,251)
-			else: addDir(menu_name+title,url,255,'','',new_filter2)
-	xbmcplugin.endOfDirectory(addon_handle)
+				addMenuItem('dir',menu_name+title,url3,251)
+			else: addMenuItem('dir',menu_name+title,url,255,'','',new_filter2)
 	return
 
 def RECONSTRUCT_FILTER(filters,mode):

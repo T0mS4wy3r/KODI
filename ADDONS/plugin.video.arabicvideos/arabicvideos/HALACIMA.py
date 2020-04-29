@@ -8,25 +8,27 @@ website0a = WEBSITES[script_name][0]
 
 def MAIN(mode,url,page,text):
 	LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if mode==80: MENU()
-	elif mode==81: ITEMS(url)
-	elif mode==82: PLAY(url)
-	elif mode==84: ITEMS('/category/','','newly',page)
-	elif mode==85: ITEMS('/category/','','featured',page)
-	elif mode==86: ITEMS('/category/','','views',page)
-	elif mode==88: TERMINATED_CHANGED()
-	elif mode==89: SEARCH(text)
-	return
+	if   mode==80: results = MENU(url)
+	elif mode==81: results = ITEMS(url)
+	elif mode==82: results = PLAY(url)
+	elif mode==84: results = ITEMS('/category/','','newly',page)
+	elif mode==85: results = ITEMS('/category/','','featured',page)
+	elif mode==86: results = ITEMS('/category/','','views',page)
+	elif mode==88: results = TERMINATED_CHANGED()
+	elif mode==89: results = SEARCH(text)
+	else: results = False
+	return results
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
 	xbmcgui.Dialog().ok('الموقع تغير بالكامل',message)
+	return
 
-def MENU():
-	addDir(menu_name+'بحث في الموقع','',89)
-	addDir(menu_name+'المضاف حديثا','',84,'','0')
-	addDir(menu_name+'افلام ومسلسلات مميزة','',85,'','0')
-	addDir(menu_name+'الاكثر مشاهدة','',86,'','0')
+def MENU(website=''):
+	if website=='': addMenuItem('dir',website+'::'+menu_name+'بحث في الموقع','',89)
+	addMenuItem('dir',website+'::'+menu_name+'المضاف حديثا','',84,'','0')
+	addMenuItem('dir',website+'::'+menu_name+'افلام ومسلسلات مميزة','',85,'','0')
+	addMenuItem('dir',website+'::'+menu_name+'الاكثر مشاهدة','',86,'','0')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
@@ -37,8 +39,7 @@ def MENU():
 	for link,title in items:
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
-			addDir(menu_name+title,link,81)
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',website+'::'+menu_name+title,link,81)
 	return
 
 def ITEMS(url,html='',type='',page='0'):
@@ -94,19 +95,18 @@ def ITEMS(url,html='',type='',page='0'):
 	#z = set(z)
 	z = sorted(z, reverse=True, key=lambda key: int(key[2]))
 	for title,link,episodeNo,img in z:
-		if '/download-view-online/' in link: addLink(menu_name+title,link,82,img)
-		else: addDir(menu_name+title,link,81,img)
+		if '/download-view-online/' in link: addMenuItem('link',menu_name+title,link,82,img)
+		else: addMenuItem('dir',menu_name+title,link,81,img)
 	html_blocks = re.findall('pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('<li><a href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 		for link,title in items:
 			title = title.replace('الصفحة ','')
-			addDir(menu_name+'صفحة '+title,link,81)
-	if type=='lastRecent': addDir(menu_name+'صفحة المزيد','',84,'',str(page+1))
-	elif type=='pin': addDir(menu_name+'صفحة المزيد','',85,'',str(page+1))
-	elif type=='views': addDir(menu_name+'صفحة المزيد','',86,'',str(page+1))
-	xbmcplugin.endOfDirectory(addon_handle)
+			addMenuItem('dir',menu_name+'صفحة '+title,link,81)
+	if type=='lastRecent': addMenuItem('dir',menu_name+'صفحة المزيد','',84,'',str(page+1))
+	elif type=='pin': addMenuItem('dir',menu_name+'صفحة المزيد','',85,'',str(page+1))
+	elif type=='views': addMenuItem('dir',menu_name+'صفحة المزيد','',86,'',str(page+1))
 	return
 
 def PLAY(url):
@@ -147,6 +147,10 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	#search = search.replace(' ','+')
