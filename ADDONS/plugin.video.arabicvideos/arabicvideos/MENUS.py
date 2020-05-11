@@ -11,8 +11,10 @@ def MAIN(mode,url,text=''):
 	elif mode==262: results = GLOBAL_SEARCH_MENU(text,True)
 	elif mode==263: results = ANSWERS_MENU()
 	elif mode==264: results = SERVICES_MENU()
-	elif mode==265: results = LAST_VIDEOS_MENU()
-	elif mode==266: results = DELETE_LAST_VIDEOS_MENU()
+	elif mode==265: results = LAST_VIDEOS_MENU('VOD')
+	elif mode==266: results = DELETE_LAST_VIDEOS_MENU('VOD')
+	elif mode==267: results = LAST_VIDEOS_MENU('LIVE')
+	elif mode==268: results = DELETE_LAST_VIDEOS_MENU('LIVE')
 	else: results = False
 	return results
 
@@ -20,22 +22,24 @@ def MAIN_MENU():
 	#addMenuItem('link','Testing - watched enabled','',179,'','','IsPlayable=yes')
 	#addMenuItem('link','Testing - watched disabled','',179,'','','IsPlayable=no')
 	addMenuItem('dir','[COLOR FFC89008]  1.  [/COLOR]'+'قائمة المواقع','',261)
-	addMenuItem('dir','[COLOR FFC89008]  2.  [/COLOR]'+'قائمة الاقسام','',165,'','','WEBSITES')
-	addMenuItem('dir','[COLOR FFC89008]  3.  [/COLOR]'+'قائمة  القنوات','',100)
-	addMenuItem('dir','[COLOR FFC89008]  4.  [/COLOR]'+'قائمة العشوائية','',160)
-	addMenuItem('dir','[COLOR FFC89008]  5.  [/COLOR]'+'قائمة اشتراك IPTV','',230)
-	addMenuItem('dir','[COLOR FFC89008]  6.  [/COLOR]'+'IPTV قائمة أقسام الـ','',165,'','','IPTV')
-	addMenuItem('dir','[COLOR FFC89008]  7.  [/COLOR]'+'بحث في جميع المواقع','',262)
-	addMenuItem('dir','[COLOR FFC89008]  8.  [/COLOR]'+'اخر 12 فيديو تم تشغيلها','',265)
+	addMenuItem('dir','[COLOR FFC89008]  2.  [/COLOR]'+'قائمة الاقسام','',165,'','','VOD')
+	addMenuItem('dir','[COLOR FFC89008]  3.  [/COLOR]'+'قائمة العشوائية','',160)
+	addMenuItem('dir','[COLOR FFC89008]  4.  [/COLOR]'+'بحث في جميع المواقع','',262)
+	addMenuItem('dir','[COLOR FFC89008]  5.  [/COLOR]'+'اخر 25 فيديو تم تشغيلها','',265)
 	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addMenuItem('link','[COLOR FFC89008]  9.  [/COLOR]'+'تقرير عن استخدام البرنامج','',176)
-	addMenuItem('link','[COLOR FFC89008]10.  [/COLOR]البرنامج إصدار رقم ( '+addon_version+' )','',7,'','','IsPlayable=no')
+	addMenuItem('dir','[COLOR FFC89008]  6.  [/COLOR]'+'قائمة القنوات','',100)
+	addMenuItem('dir','[COLOR FFC89008]  7.  [/COLOR]'+'قائمة اشتراك IPTV','',230)
+	addMenuItem('dir','[COLOR FFC89008]  8.  [/COLOR]'+'IPTV قائمة أقسام الـ','',165,'','','LIVE')
+	addMenuItem('dir','[COLOR FFC89008]  9.  [/COLOR]'+'اخر 25 قناة تم تشغيلها','',267)
+	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	addMenuItem('link','[COLOR FFC89008]10.  [/COLOR]'+'تقرير عن استخدام البرنامج','',176)
+	addMenuItem('link','[COLOR FFC89008]11.  [/COLOR]البرنامج إصدار رقم ( '+addon_version+' )','',7,'','','IsPlayable=no')
 	#addMenuItem('dir','[COLOR FFC89008]10.  [/COLOR]'+'ـ Services Menu  قائمة الخدمات','',172)
 	#addMenuItem('dir','  4.  [COLOR FFC89008]ـ Services Menu  قائمة الخدمات[/COLOR]','',264)
 	#addMenuItem('link','  5.  [COLOR FFC89008]البرنامج إصدار رقم ('+addon_version+')[/COLOR]','',7,'','','IsPlayable=no')
-	addMenuItem('dir','[COLOR FFC89008]11.  [/COLOR]ـ Answers Menu  قائمة الاجوبة','',263)
-	addMenuItem('dir','[COLOR FFC89008]12.  [/COLOR]ـ Services Menu  قائمة الخدمات','',264)
-	addMenuItem('link','[COLOR FFC89008]13.  [/COLOR]ـ Contact Me  كيف تتصل بالمبرمج','',196,'','','IsPlayable=no')
+	addMenuItem('dir','[COLOR FFC89008]12.  [/COLOR]ـ Answers Menu  قائمة الاجوبة','',263)
+	addMenuItem('dir','[COLOR FFC89008]13.  [/COLOR]ـ Services Menu  قائمة الخدمات','',264)
+	addMenuItem('link','[COLOR FFC89008]14.  [/COLOR]ـ Contact Me  كيف تتصل بالمبرمج','',196,'','','IsPlayable=no')
 	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	return
 
@@ -145,23 +149,27 @@ def GLOBAL_SEARCH_MENU(search='',show=True):
 	#addMenuItem('dir','19. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',128,'','',search)# 129
 	return
 
-def LAST_VIDEOS_MENU():
-	addMenuItem('dir','مسح هذه القائمة','',266,'','','IsPlayable=no')
+def LAST_VIDEOS_MENU(mode):
+	if mode=='VOD': mode = 266 ; filename = lastvodfile
+	elif mode=='LIVE': mode = 268 ; filename = lastlivefile
+	else: return
+	addMenuItem('dir','مسح هذه القائمة','',mode,'','','IsPlayable=no')
 	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	if os.path.exists(lastvideosfile):
-		with open(lastvideosfile,'r') as f: videoLIST = f.read()
+	if os.path.exists(filename):
+		with open(filename,'r') as f: videoLIST = f.read()
 		videoLIST = eval(videoLIST)
-		#LOG_THIS('NOTICE',str(videoLIST))
-		for name,url,mode,image,page,text in videoLIST:
-			addMenuItem('link',name,url,mode,image,page,text)
+		for name,url,mode2,image,page,text in videoLIST:
+			addMenuItem('link',name,url,mode2,image,page,text)
 	return
 
-def DELETE_LAST_VIDEOS_MENU():
-	if os.path.exists(lastvideosfile): os.remove(lastvideosfile)
-	addMenuItem('dir','مسح هذه القائمة','',266,'','','IsPlayable=no')
+def DELETE_LAST_VIDEOS_MENU(mode):
+	if mode=='VOD': mode = 266 ; filename = lastvodfile
+	elif mode=='LIVE': mode = 268 ; filename = lastlivefile
+	else: return
+	if os.path.exists(filename): os.remove(filename)
+	addMenuItem('dir','مسح هذه القائمة','',mode,'','','IsPlayable=no')
 	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
 	return
-
 
 
 

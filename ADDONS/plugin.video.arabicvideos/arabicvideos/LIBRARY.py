@@ -114,7 +114,8 @@ fanart = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id , '
 
 addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
 dbfile = os.path.join(addoncachefolder,"webcache_"+addon_version+".db")
-lastvideosfile = os.path.join(addoncachefolder,"played_videos.lst")
+lastvodfile = os.path.join(addoncachefolder,"lastvodfile.lst")
+lastlivefile = os.path.join(addoncachefolder,"lastlivefile.lst")
 
 MINUTE = 60
 HOUR = 60*MINUTE
@@ -122,6 +123,7 @@ LONG_CACHE = 24*HOUR*3
 REGULAR_CACHE = 16*HOUR
 SHORT_CACHE = 2*HOUR
 NO_CACHE = 0
+UNLIMITED_CACHE = 24*HOUR*365
 now = time.time()
 
 #LONG_CACHE = 0
@@ -309,18 +311,20 @@ def EXIT_IF_SOURCE(source,code,reason):
 		if condition1: EXIT_PROGRAM(source)
 	return
 
-def DELETE_DATABASE_FILES():
+def CLEAN_KODI_CACHE_FOLDER():
+	exceptionLIST = [dbfile,lastvodfile,lastlivefile]
 	for filename in os.listdir(addoncachefolder):
-		if 'webcache_' in filename and '.db' in filename:
-			filename = os.path.join(addoncachefolder,filename)
-			os.remove(filename)
+		filename_full = os.path.join(addoncachefolder,filename)
+		if filename_full not in exceptionLIST:
+			try: os.remove(filename_full)
+			except: pass
 	return
 
 contentsDICT = {}
 menuItemsLIST = []
 
 def addMenuItem(type,name,url,mode,image='',page='',text=''):
-	if type=='dir' and '::' in name:
+	if type=='dir' and '::' in name and 'IPTV' not in name:
 		website,name = name.split('::',1)
 		if website!='' and '_' in name:
 			if 'مصنف' in name or 'فلتر' in name: return
@@ -489,7 +493,7 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs='',source=''):
 		html = '___Error___:'+str(code)+':'+reason
 	return html
 
-def openURL_requests_cached(cacheperiod,method,url,data='',headers='',allow_redirects=True,showDialogs='',source=''):
+def openURL_requests_cached_OLD(cacheperiod,method,url,data='',headers='',allow_redirects=True,showDialogs='',source=''):
 	if cacheperiod==0: return openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
 	conn = sqlite3.connect(dbfile)
@@ -521,7 +525,28 @@ def openURL_requests_cached(cacheperiod,method,url,data='',headers='',allow_redi
 	#xbmcgui.Dialog().notification(message,'')
 	return response
 
-def openURL_cached(cacheperiod,url,data='',headers='',showDialogs='',source=''):
+def openURL_requests_cached(expiry,method,url,data='',headers='',allow_redirects=True,showDialogs='',source=''):
+	if expiry==0: return openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
+	response = READ_FROM_SQL3('OPENURL_REQUESTS',[method,url,data,headers,allow_redirects,showDialogs,source])
+	if response: return response
+	response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
+	html = response.html
+	if '___Error___' not in html:
+		WRITE_TO_SQL3('OPENURL_REQUESTS',[method,url,data,headers,allow_redirects,showDialogs,source],response,expiry)
+	return response
+
+def openURL_cached(expiry,url,data='',headers='',showDialogs='',source=''):
+	#xbmcgui.Dialog().ok('OPENURL_CACHED 111','')
+	if expiry==0: return openURL(url,data,headers,showDialogs,source)
+	html = READ_FROM_SQL3('OPENURL',[url,data,headers,showDialogs,source])
+	#xbmcgui.Dialog().ok('OPENURL_CACHED 222',html)
+	if html: return html
+	html = openURL(url,data,headers,showDialogs,source)
+	if '___Error___' not in html:
+		WRITE_TO_SQL3('OPENURL',[url,data,headers,showDialogs,source],html,expiry)
+	return html
+
+def openURL_cached_OLD(cacheperiod,url,data='',headers='',showDialogs='',source=''):
 	#url = url+'||MyProxyUrl=http://41.33.212.68:4145'
 	#cacheperiod = 0
 	#t1 = time.time()
@@ -949,7 +974,45 @@ def KEYBOARD(heading='لوحة المفاتيج',default=''):
 	new_search = mixARABIC(search)
 	return new_search
 
+def EXTRACT_KODI_PATH(addon_path):
+	args = { 'mode':'260' , 'url':'' , 'text':'' , 'page':'' }
+	if '?' in addon_path:
+		params = addon_path[1:].split('&')
+		for param in params:
+			key,value = param.split('=',1)
+			args[key] = value
+	mode = args['mode']
+	url = urllib2.unquote(args['url'])
+	text = urllib2.unquote(args['text'])
+	page = urllib2.unquote(args['page'])
+	name = xbmc.getInfoLabel('ListItem.Label')
+	image = xbmc.getInfoLabel('ListItem.Icon')
+	return name,url,mode,image,page,text
+
+def ADD_TO_LAST_VIDEO_FILES():
+	name,url,mode,image,page,text = EXTRACT_KODI_PATH(addon_path)
+	vod_play_modes = [12,24,33,43,53,63,74,82,92,112,123,134,143,182,202,212,223,236,243,252]
+	live_play_modes = [235,105]
+	if int(mode)in vod_play_modes: filename = lastvodfile
+	elif int(mode)in live_play_modes: filename = lastlivefile
+	else: filename = ''
+	if filename!='':
+		if os.path.exists(filename):
+			with open(filename,'r') as f: oldLIST = f.read()
+			oldLIST = eval(oldLIST)
+		else: oldLIST = []
+		if name!='..' and name!='':
+			newItem = (name,url,mode,image,page,text)
+			if newItem in oldLIST:
+				index = oldLIST.index(newItem)
+				del oldLIST[index]
+			newLIST = [newItem]+oldLIST
+			newLIST = str(newLIST[:25])
+			with open(filename,'w') as f: f.write(newLIST)
+	return
+
 def PLAY_VIDEO(url3,website='',showWatched='yes'):
+	ADD_TO_LAST_VIDEO_FILES()
 	#showWatched = 'no'
 	#url3 = 's:\emad.m3u8999'
 	result,subtitlemessage = 'canceled0',''
@@ -1258,6 +1321,57 @@ def ENABLE_RTMP(showDialogs=True):
 			else: xbmcgui.Dialog().ok('التفعيل فشل','إضافة inputstream.rtmp غير موجودة عندك ويجب أن تقوم بتصيبها قبل محاولة تفعيلها')
 	elif showDialogs==True: xbmcgui.Dialog().ok('هذه الإضافة عندك مفعلة','')
 	return
+
+def WRITE_TO_SQL3(table,column,data,expiry):
+	if expiry==NO_CACHE: return
+	expiry = expiry+now
+	conn = sqlite3.connect(dbfile)
+	c = conn.cursor()
+	conn.text_factory = str
+	c.execute('CREATE TABLE IF NOT EXISTS '+table+' (expiry,column,data)')
+	#data = str(data)
+	#data = data.replace('},','},\n')
+	text = cPickle.dumps(data)
+	compressed = zlib.compress(text)
+	t = (expiry,str(column),sqlite3.Binary(compressed))
+	c.execute('INSERT INTO '+table+' VALUES (?,?,?)',t)
+	conn.commit()
+	conn.close()
+	return
+
+def READ_FROM_SQL3(table,column):
+	conn = sqlite3.connect(dbfile)
+	c = conn.cursor()
+	conn.text_factory = str
+	t = (str(column),)
+	data = None
+	try:
+		c.execute('DELETE FROM '+table+' WHERE expiry<'+str(now))
+		c.execute('SELECT data FROM '+table+' WHERE column=?',t)
+	except: pass
+	rows = c.fetchall()
+	conn.commit()
+	conn.close()
+	if rows:
+		compressed = rows[0][0]
+		text = zlib.decompress(compressed)
+		data = cPickle.loads(text)
+		#data = eval(data)
+	return data
+
+def DELETE_FROM_SQL3(table,column=None):
+	conn = sqlite3.connect(dbfile)
+	c = conn.cursor()
+	conn.text_factory = str
+	if column==None: c.execute('DROP TABLE IF EXISTS '+table)
+	else:
+		t = (str(column),)
+		try: c.execute('DELETE FROM '+table+' WHERE column=?',t)
+		except: pass
+	conn.commit()
+	conn.close()
+	return
+
 
 
 

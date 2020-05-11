@@ -1,4 +1,12 @@
 ﻿
+v6.5.2	2020-05-11
+Increased last videos count
+Added last channels menu
+Used SLQ3 for sections list of IPTV & VOD
+Fixed random functions of random menu
+Minor fixes & improvements
+
+
 v6.5.1	2020-05-05
 Changed filters exit in ARABSEED, ARABLIONZ & SHAHID4U
 Fixed ARABLIONZ url quote problem

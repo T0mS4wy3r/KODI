@@ -322,7 +322,7 @@ def RESOLVE(url):
 	#allerrors = allerrors.replace('\n',' ... ')
 	return allerrors,titleLIST,linkLIST
 
-def SERVERS_cached(linkLIST,script_name=''):
+def SERVERS_cached_OLD(linkLIST,script_name=''):
 	#t1 = time.time()
 	cacheperiod = LONG_CACHE
 	conn = sqlite3.connect(dbfile)
@@ -344,7 +344,27 @@ def SERVERS_cached(linkLIST,script_name=''):
 	#xbmcgui.Dialog().notification(message,str(int(t2-t1))+' ms')
 	return serversLIST,urlLIST
 
-def SERVERS(linkLIST,script_name=''):
+def SERVERS_cached(linkLIST2,script_name2=''):
+	expiry = LONG_CACHE
+	data = READ_FROM_SQL3('SERVERS',[linkLIST2,script_name2])
+	if data:
+		titleLIST,linkLIST = zip(*data)
+		return titleLIST,linkLIST
+	titleLIST,linkLIST,serversDICT = [],[],[]
+	for link in linkLIST2:
+		if link=='': continue
+		serverNAME = RESOLVABLE(link)
+		serversDICT.append( [serverNAME,link] )
+	sortedDICT = sorted(serversDICT, reverse=True, key=lambda key: key[0])
+	for server,link in sortedDICT:
+		server = server.replace('%','')
+		titleLIST.append(server)
+		linkLIST.append(link)
+	data = zip(titleLIST,linkLIST)
+	WRITE_TO_SQL3('SERVERS',[linkLIST2,script_name2],data,expiry)
+	return titleLIST,linkLIST
+
+def SERVERS_OLD(linkLIST,script_name=''):
 	serversLIST,urlLIST,unknownLIST,serversDICT = [],[],[],[]
 	#linkLIST = list(set(linkLIST))
 	#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', linkLIST)

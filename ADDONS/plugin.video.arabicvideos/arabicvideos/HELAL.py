@@ -89,12 +89,12 @@ def EPISODES(url):
 	img = re.findall('image":.*?"(.*?)"',html,re.DOTALL)[0]
 	name = re.findall('itemprop="title">(.*?)<',html,re.DOTALL)
 	if name: name = name[1]
-	else: name = xbmc.getInfoLabel('ListItem.Label')
-	#name = name.replace('_MOD_','').replace('HEL ','')
+	else:
+		name = xbmc.getInfoLabel('ListItem.Label')
+		if '[/COLOR]' in name: name = name.split('[/COLOR]',1)[1]
 	items = re.findall('href="(.*?)".*?name">(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		title = name+' - '+title
-		addMenuItem('link',menu_name+title,link,92,img)
+		addMenuItem('link',menu_name+name+' - '+title,link,92,img)
 	return
 
 def PLAY(url):

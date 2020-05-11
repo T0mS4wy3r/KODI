@@ -74,7 +74,7 @@ def ITEMS(menu,show=True):
 			#if source in ['NT','YU','WS0','RL1','RL2']: continue
 			if source!='URL': name = name+'   [COLOR FFC89008]'+source+'[/COLOR]'
 			url = source+';;'+server+';;'+id2+';;'+menu
-			addMenuItem('link',menu_name+' '+name,url,105,img,'','IsPlayable=no')
+			addMenuItem('link',menu_name+''+name,url,105,img,'','IsPlayable=no')
 	return
 
 def PLAY(id):
