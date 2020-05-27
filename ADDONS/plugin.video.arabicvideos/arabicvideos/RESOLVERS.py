@@ -6,7 +6,7 @@ script_name='RESOLVERS'
 #doNOTresolveMElist = [ 'mystream','vimple','vidbom','gounlimited' ]
 doNOTresolveMElist = []
 
-def PLAY(linkLIST,script_name,text=''):
+def PLAY(linkLIST,script_name,type=''):
 	linkLIST = list(set(linkLIST))
 	count_watch = str(linkLIST).count('__watch')
 	count_download = str(linkLIST).count('__download')
@@ -23,7 +23,7 @@ def PLAY(linkLIST,script_name,text=''):
 			errormsg = ''
 			if len(linkLIST)==1: selection = 0
 			else: selection = xbmcgui.Dialog().select(select_header, titleLIST)
-			if selection == -1: result = 'canceled1'
+			if selection == -1: result = 'canceled_1st_menu'
 			else:
 				title = titleLIST[selection]
 				url = linkLIST[selection]
@@ -35,16 +35,17 @@ def PLAY(linkLIST,script_name,text=''):
 					result = 'unresolved'
 				else:
 					LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing Selected Server   Server: [ '+title+' ]   URL: [ '+url+' ]')
-					result,errormsg = PLAY_LINK(url,script_name,text)
+					result,errormsg = PLAY_LINK(url,script_name,type)
 			if '\n' not in errormsg: error1,error2 = errormsg,''
 			else: error1,error2 = errormsg.split('\n',1)
-			if result in ['playing','canceled1'] or len(linkLIST)==1: break
+			#xbmcgui.Dialog().ok(result,errormsg)
+			if result in ['playing','canceled_1st_menu'] or len(linkLIST)==1: break
 			elif result in ['failed','timeout','tried']: break
-			elif result not in ['canceled2','https']: xbmcgui.Dialog().ok('السيرفر لم يعمل','جرب سيرفر غيره',error1,error2)
+			elif result not in ['canceled_2nd_menu','https']: xbmcgui.Dialog().ok('السيرفر لم يعمل','جرب سيرفر غيره',error1,error2)
 	if result=='unresolved' and len(titleLIST)>0: xbmcgui.Dialog().ok('سيرفر هذا الفيديو لم يعمل','جرب فيديو غيره',errormsg)
 	elif result in ['failed','timeout']: xbmcgui.Dialog().ok('الفيديو لم يعمل',errormsg)
 	"""
-	elif result in ['Canceled1','Canceled2']:
+	elif result in ['canceled_1st_menu','canceled_2nd_menu']:
 		#LOG_THIS('NOTICE',LOGGING(script_name)+'   Test:   '+sys.argv[0]+sys.argv[2])
 		xbmcplugin.setResolvedUrl(addon_handle, False, xbmcgui.ListItem())
 		play_item = xbmcgui.ListItem(path='plugin://plugin.video.arabicvideos/?mode=143&url=https://www.youtube.com/watch%3Fv%3Dgwb1pxVtw9Q')
@@ -60,19 +61,17 @@ def PLAY(linkLIST,script_name,text=''):
 	#for i in range(0,size):
 	#	title = serversLIST[i]
 	#	link = urlLIST[i]
-	#	addMenuItem('link',menu_name+title,link,160,'','',script_name)
+	#	addMenuItem('video',menu_name+title,link,160,'','',script_name)
 
-def PLAY_LINK(url,script_name,text=''):
-	#xbmcgui.Dialog().ok('',titleLIST[0])
+def PLAY_LINK(url,script_name,type=''):
+	#xbmcgui.Dialog().ok(url,'')
 	url = url.strip(' ').strip('&').strip('?').strip('/')
 	errormsg,titleLIST,linkLIST = RESOLVE(url)
-	if 'IsPlayable=no' in text: IsPlayable = 'no'
-	else: IsPlayable='yes'
 	if linkLIST:
 		while True:
 			if len(linkLIST)==1: selection = 0
 			else: selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
-			if selection == -1: result = 'canceled2'
+			if selection == -1: result = 'canceled_2nd_menu'
 			else:
 				videoURL = linkLIST[selection]
 				title = titleLIST[selection]
@@ -82,8 +81,8 @@ def PLAY_LINK(url,script_name,text=''):
 					if linkLIST2: videoURL = linkLIST2[0]
 					else: videoURL = ''
 				if videoURL=='': result = 'unresolved'
-				else: result = PLAY_VIDEO(videoURL,script_name,IsPlayable)
-			if result in ['playing','canceled2'] or len(linkLIST)==1: break
+				else: result = PLAY_VIDEO(videoURL,script_name,type)
+			if result in ['playing','canceled_2nd_menu'] or len(linkLIST)==1: break
 			elif result in ['failed','timeout','tried']: break
 			else: xbmcgui.Dialog().ok('الملف لم يعمل','جرب ملف غيره')
 		"""
@@ -95,7 +94,7 @@ def PLAY_LINK(url,script_name,text=''):
 	else:
 		result = 'unresolved'
 		videofiletype = re.findall('(\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
-		if videofiletype: result = PLAY_VIDEO(url,script_name,IsPlayable)
+		if videofiletype: result = PLAY_VIDEO(url,script_name,type)
 	return result,errormsg
 	#title = xbmc.getInfoLabel( "ListItem.Label" )
 	#if 'سيرفر عام مجهول' in title:
@@ -384,7 +383,7 @@ def SERVERS_OLD(linkLIST,script_name=''):
 	#	for link in unknownLIST:
 	#		message += link + '\\n'
 	#	subject = 'Unknown Resolvers = ' + str(lines)
-	#	result = SEND_EMAIL(subject,message,'no','','FROM-RESOLVERS-'+script_name)
+	#	result = SEND_EMAIL(subject,message,False,'','FROM-RESOLVERS-'+script_name)
 	return serversLIST,urlLIST
 
 def	EXTERNAL_RESOLVER_2(url):
@@ -556,7 +555,7 @@ def EGYBEST(url):
 		response = openURL_requests_cached(SHORT_CACHE,'GET',url3,'',headers,False,'','RESOLVERS-EGYBEST-2nd')
 	if 'Location' in response.headers:
 		url3 = response.headers['Location']
-	xbmcgui.Dialog().ok(url3,response.html)
+	#xbmcgui.Dialog().ok(url3,response.content)
 	if 'http' in url3:
 		# https://vidstream.top/f/KcLxaW7twB/?vclid=e4f9c370b562664b276ba926964e62cc87d0ae5f1f08bd0c6f427dc5ZLLLZaruvLZLnLZXnXnnTLnrXHsZnZLZoruvLZLnLZXvZfEATHZXomqrgXinfHuqoAqFvnCXLXGHUsZnZLZoBVLZLnLZeeeLRtrrZLcWifpLZnZLZavrlZLnLZrfdwGEzAHRXNdWfeWrXNLZnZLZBUjLZLnLZrXuqEsrmSpfifpLZLN
 		# https://vidstream.top/v/KcLxaW7twB/?vclid=58888a3c0b432423a217819ac7b6b5ebdc5fe250434aec29a2321f5bSVVVXrSGTVXViVXtTXpagMmXtruoSHtOipmGorgoDTijtVtEmQeXiXVXWSGTVXViVXtitiiMViStmeXiXVXWTSCXViVXSpAvEawgmBtLAzpszStLVXiXVXrPYVXViVXsssVBNSSXVRzOpfVXiXVXPQcVXViVXStGoaeSuxfpOpfVXVL
@@ -564,7 +563,7 @@ def EGYBEST(url):
 		PHPSID = url2.split('?PHPSID=')[1]
 		headers = { 'User-Agent':headers['User-Agent'] , 'Cookie':'PHPSID='+PHPSID }
 		response = openURL_requests_cached(SHORT_CACHE,'GET',url3,'',headers,False,'','EGYBEST-PLAY-3rd')
-		html = response.text
+		html = response.content
 		#xbmc.log(html)
 		#html = openURL_cached(SHORT_CACHE,url3,'',headers,'','RESOLVERS-EGYBEST-3rd')
 		if '/f/' in url3: items = re.findall('<h2>.*?href="(.*?)"',html,re.DOTALL)
@@ -612,14 +611,35 @@ def ARABLIONZ(link):
 
 def ARABSEED(url):
 	#xbmcgui.Dialog().ok(url,url)
+	if '/Server.php' in url:
+		headers2 = { 'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8' }
+		url2,data2 = URLDECODE(url)
+		#xbmcgui.Dialog().ok(url2,str(data2))
+		response = openURL_requests_cached(LONG_CACHE,'POST',url2,data2,headers2,True,'','RESOLVERS-ARABSEED-1st')
+		html = response.content
+		items = re.findall('SRC="(.*?)"',html,re.DOTALL|re.IGNORECASE)
+		#xbmcgui.Dialog().ok(str(items),html)
+		link = items[0]
+		if 'arabseed' not in link:
+			errormsg,titleLIST,linkLIST = RESOLVE(link)
+			return errormsg,titleLIST,linkLIST
+		else: url = link
 	if '.mp4.html' in url:
 		errormsg,titleLIST,linkLIST = XFILESHARING(url)
 		return errormsg,titleLIST,linkLIST
 	else:
-		html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-ARABLIONZ-1st')
+		html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-ARABSEED-2nd')
 		links = re.findall('<source src="(.*?)"',html,re.DOTALL)
 		if links: return '',[''],[ links[0] ]
 		return 'Error: Resolver ARABSEED Failed',[],[]
+"""
+			response = openURL_requests_cached(SHORT_CACHE,'GET',link,'',headers2,True,'','RESOLVERS-ARABSEED-2nd')
+			html = response.content
+			items = re.findall('<source src="(.*?)"',html,re.DOTALL|re.IGNORECASE)
+			link = items[0]
+			return '',[''],[link]
+		else: 
+"""
 
 def SHAHID4U(link):
 	# https://shahid4u.net/?postid=142302&serverid=4
@@ -634,7 +654,7 @@ def AKOAM(url,named):
 	#xbmcgui.Dialog().ok(url,named)
 	# http://go.akoam.net/5cf68c23e6e79
 	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','',True,'','RESOLVERS-AKOAM-1st')
-	html = response.text
+	html = response.content
 	cookies = response.cookies.get_dict()
 	cookie = cookies['golink']
 	cookie = unquote(escapeUNICODE(cookie))
@@ -656,7 +676,7 @@ def AKOAM(url,named):
 		url3 = url2.replace(serverOLD,serverNEW.encode('utf8'))
 		headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' , 'Referer':url3 }
 		response = openURL_requests_cached(SHORT_CACHE,'POST', url3, '', headers, False,'','RESOLVERS-AKOAM-3rd')
-		html = response.text
+		html = response.content
 		#xbmc.log(str(url3), level=xbmc.LOGERROR)
 		items = re.findall('direct_link":"(.*?)"',html,re.DOTALL|re.IGNORECASE)
 		if not items:
@@ -1445,247 +1465,5 @@ def ESTREAM(url):
 	if items: return '',[''],[ items[0] ]
 	else: return 'Error: Resolver ESTREAM Failed',[],[]
 
-
-
-
-
-
-
-
-#####################################################
-#         FAILED
-#	NOT WORKING ANYMORE
-#####################################################
-"""
-def THEVIDEO_PROBLEM(url):
-	# https://thevideo.me/embed-xldtqj5deiyj-780x439.html
-	url = url.replace('embed-','')
-	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-THEVIDEO-1st')
-	items = re.findall('direct link" value="(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(items),html)
-	if items:
-		link = items[0].rstrip('/')
-		title,url = VEVIO(link)
-		return title,url
-	else: return ['Error: ESTREAM Resolver failed'],[]
-
-def HELAL_PROBLEM(url):
-	# https://playr.4helal.tv/4qlqt9d3813e
-	headers = { 'User-Agent' : '' }
-	#url = url.replace('http:','https:')
-	html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-VIDBOB-1st')
-	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(items[0].rstrip('/'),'')
-	if items:
-		url = items[0].replace('https:','http:')
-		return [url],[url]
-	else: return ['Error: ESTREAM Resolver failed'],[]
-
-def VIMPLE_PROBLEM(link):
-	id = link.split('id=')[1]
-	headers = { 'User-Agent' : '' }
-	url = 'http://player.vimple.ru/iframe/' + id
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-VIMPLE-1st')
-	items = re.findall('true,"url":"(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0].replace('\/','/')
-		return [url],[url]
-	else: return ['Error: ESTREAM Resolver failed'],[]
-
-def VIDSHARE_PROBLEM(url):
-	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-VIDSHARE-1st')
-	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return ['Error: ESTREAM Resolver failed'],[]
-
-def INTOUPLOAD_PROBLEM(url):
-	# https://intoupload.net/w2j4lomvzopd
-	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-INTOUPLOAD-1st')
-	html_blocks = re.findall('POST.*?(.*?)clearfix',html,re.DOTALL)
-	block = html_blocks[0]
-	items = re.findall('op" value="(.*?)".*?id" value="(.*?)".*?rand" value="(.*?)".*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);',block,re.DOTALL)
-	op,id,rand,pos1,num1,pos2,num2,pos3,num3,pos4,num4 = items
-	captcha = { int(pos1):chr(int(num1)) , int(pos2):chr(int(num2)) , int(pos3):chr(int(num3)) , int(pos4):chr(int(num4)) }
-	code = ''
-	for char in sorted(captcha):
-		code += captcha[char]
-	#xbmcgui.Dialog().ok(code,str(captcha))
-	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
-	payload = { 'id':id , 'op':op , 'code':code , 'rand':rand }
-	data = urllib.urlencode(payload)
-	progress = xbmcgui.DialogProgress()
-	progress.create('Waiting 15 seconds ...')
-	for i in range(0,15):
-		progress.update(i*100/15,str(15-i))
-		xbmc.sleep(1000)
-		if progress.iscanceled(): return
-	progress.close()
-	html = openURL_cached(SHORT_CACHE,url,data,headers,'','RESOLVERS-INTOUPLOAD-2nd')
-	items = re.findall('target_type.*?href="(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return ['Error: ESTREAM Resolver failed'],[]
-
-def VIDBOM_PROBLEM(url):
-	# https://www.vidbom.com/embed-05ycj7325jae.html
-	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-VIDBOM-1st')
-	xbmc.sleep(1500)
-	items = re.findall('file: "(.*?)"',html,re.DOTALL)
-	slidesURL = items[0].rstrip('/')
-	html2 = openURL_cached(SHORT_CACHE,slidesURL,'','','','RESOLVERS-VIDBOM-2nd')
-	xbmc.sleep(1500)
-	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return ['Error: ESTREAM Resolver failed'],[]
-
-def GOUNLIMITED_OLD(url):
-	url = url.replace('embed-','')
-	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
-	items = re.findall('data(.*?)hide.*?embed(.*?)hash',html,re.DOTALL)
-	id = items[0][0].replace('|','')
-	hash = items[0][1].split('|')
-	newhash = ''
-	for i in reversed(hash):
-		newhash += i + '-'
-	newhash = newhash.strip('-')
-	#url = 'https://gounlimited.to/dl?op=view&file_code='+id+'&hash='+newhash+'&embed=&adb=1'
-	#html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
-	url = "https://gounlimited.to/dl"
-	querystring = { "op":"view","file_code":"o1yo2xwdmk0l","hash":newhash,"embed":"","adb":"1" }
-	headers = {
-		'accept': "*/*",
-		'dnt': "1",
-		'x-requested-with': "XMLHttpRequest",
-		'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36",
-		'referer': "https://gounlimited.to/o1yo2xwdmk0l.html",
-		'accept-encoding': "gzip, deflate, br",
-		'accept-language': "en-US,en;q=0.9,ar;q=0.8"
-		}
-	import requests
-	html = requests.request('GET', url, headers=headers, params=querystring)
-	items = re.findall('video="" src="(.*?)"',html.text,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(html.content),str(len(html.content)))
-	if items:
-		url = items[0]
-		return [url],[url]
-	else: return ['Error: ESTREAM Resolver failed'],[]
-
-def VEVIO_PROBLEM(url):
-	# https://vev.io/qnoxd4yqyy30
-	id = url.split('/')[-1]
-	url = 'https://vev.io/api/serve/video/' + id
-	headers = { 'User-Agent' : '' }
-	titleLIST,linkLIST = [],[]
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-VEVIO-1st')
-	html_blocks = re.findall('qualities":\{(.*?)\}',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall('"(.*?)":"(.*?)"',block,re.DOTALL)
-		for label,link in items:
-			titleLIST.append(label)
-			linkLIST.append(link)
-	return titleLIST,linkLIST
-
-def GOUNLIMITED_PROBLEM(url):
-	# https://gounlimited.to/embed-wqsi313vbpua.html
-	# http://gounlimited.to/embed-bhczqclxokgq.html
-	url = url.replace('https:','http:')
-	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
-	html_blocks = re.findall('function\(p,a,c,k,e,d\)(.*?)split',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall(",'(.*?)'",block,re.DOTALL)
-		items = items[-1].split('|')
-		link = items[12]+'://'+items[85]+'.'+items[11]+'.'+items[10]+'/'+items[84]+'/v.mp4'
-		return [link],[link]
-	else: return ['Error: ESTREAM Resolver failed'],[]
-	#link = 'https://shuwaikh.gounlimited.to/'+id+'/v.mp4'
-	#link = 'https://fs67.gounlimited.to/'+id+'/v.mp4'
-
-def VIDHD_PROBLEM(url):
-	# https://vidhd.net/562ghl3hr1cw.html
-	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-LIIVIDEO-1st')
-	items = re.findall('file:"(.*?)",label:"(.*?)"',html,re.DOTALL)
-	titleLIST,linkLIST = [],[]
-	for link,label in items:
-		titleLIST.append(label)
-		linkLIST.append(link)
-	html_blocks = re.findall('function\(p,a,c,k,e,d\)(.*?)split',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall(",'(.*?)'",block,re.DOTALL)
-		items = items[-1].split('|')
-		server = items[7]+'://'+items[19]+'.'+items[6]+'.'+items[4]
-		html_blocks = re.findall('\|image(\|.*?\|)sources\|',block,re.DOTALL)
-		if html_blocks:
-			block = html_blocks[0]
-			items = re.findall('\|(\w+)\|(\w+)',block,re.DOTALL)
-			for label,id in items:
-				link = server+'/'+id+'/v.mp4'
-				titleLIST.append(label)
-				linkLIST.append(link)
-	return titleLIST,linkLIST
-	#link = https://s2.vidhd.net/kmxsuzrepjumwmesrluuynfphmbrrpofmbwknihn4l6rdua3pwajpcxqvboq/v.mp4
-"""
-
-
-"""
-def CHECK(url):
-	result = 'unknown'
-	if   '1fichier'		in url: result = 'known'
-	elif '4helal'		in url: result = 'known'
-	elif 'allmyvideos'	in url: result = 'known'
-	elif 'allvid'		in url: result = 'known'
-	elif 'bestcima'		in url: result = 'known'
-	elif 'cloudy.ec'	in url: result = 'known'
-	elif 'dailymotion'	in url: result = 'known'
-	elif 'downace'		in url: result = 'known'
-	#elif 'estream'		in url: result = 'known'
-	elif 'filerio'		in url: result = 'known'
-	elif 'firedrive'	in url: result = 'known'
-	elif 'flashx'		in url: result = 'known'
-	elif 'govid'		in url: result = 'known'
-	elif 'hqq'			in url: result = 'known'
-	elif 'media4up'		in url: result = 'known'
-	#elif 'mystream'		in url: result = 'known'
-	elif 'nitroflare'	in url: result = 'known'
-	elif 'nowvideo'		in url: result = 'known'
-	elif 'ok.ru'		in url: result = 'known'
-	elif 'oload'		in url: result = 'known'
-	elif 'openload'		in url: result = 'known'
-	elif 'streamango'	in url: result = 'known'
-	elif 'streamin'		in url: result = 'known'
-	elif 'streammango'	in url: result = 'known'
-	elif 'thevid.net'	in url: result = 'known'
-	elif 'upload'		in url: result = 'known'
-	elif 'uptobox'		in url: result = 'known'
-	elif 'videobam'		in url: result = 'known'
-	elif 'videorev'		in url: result = 'known'
-	elif 'vidfast'		in url: result = 'known'
-	elif 'vidgg'		in url: result = 'known'
-	elif 'vidlox'		in url: result = 'known'
-	elif 'vidzi'		in url: result = 'known'
-	elif 'watchers'		in url: result = 'known'
-	elif 'watchers.to'	in url: result = 'known'
-	elif 'wintv.live'	in url: result = 'known'
-	elif 'youwatch'		in url: result = 'known'
-	elif 'vidto.me'		in url: result = 'known'
-	elif 'archive'		in url: result = 'known'
-	elif 'publicvideohost' in url: result = 'known'
-	#elif 'vidbom'		in url: result = 'known'
-	else:
-		link = 'http://emadmahdi.pythonanywhere.com/check?url=' + url
-		result = openURL_cached(SHORT_CACHE,link,'','','','RESOLVERS-CHECK-1st')
-	return result
-"""
 
 

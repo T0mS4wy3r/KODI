@@ -21,14 +21,14 @@ def MAIN(mode,url,page,text):
 	return results
 
 def MENU(website=''):
-	#if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',39)
-	addMenuItem('dir',website+'::'+menu_name+'مسلسلات وبرامج',website0a+'/series',31)
-	addMenuItem('dir',website+'::'+menu_name+'المسلسلات الاكثر مشاهدة',website0a+'/series',37)
-	addMenuItem('dir',website+'::'+menu_name+'افلام حسب النوع',website0a+'/movies',35)
-	addMenuItem('dir',website+'::'+menu_name+'افلام حسب الممثل',website0a+'/movies',36)
-	addMenuItem('dir',website+'::'+menu_name+'احدث الافلام',website0a+'/movies',32)
-	addMenuItem('dir',website+'::'+menu_name+'مسرحيات',website0a+'/movies/genre/4/1',32)
-	return
+	#if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39)
+	addMenuItem('folder',website+'::'+menu_name+'مسلسلات وبرامج',website0a+'/series',31)
+	addMenuItem('folder',website+'::'+menu_name+'المسلسلات الاكثر مشاهدة',website0a+'/series',37)
+	addMenuItem('folder',website+'::'+menu_name+'افلام حسب النوع',website0a+'/movies',35)
+	#addMenuItem('folder',website+'::'+menu_name+'افلام حسب الممثل',website0a+'/movies',36)
+	addMenuItem('folder',website+'::'+menu_name+'احدث الافلام',website0a+'/movies',32)
+	addMenuItem('folder',website+'::'+menu_name+'مسرحيات',website0a+'/movies/genre/4/1',32)
+	return ''
 
 def CATEGORIES(url,select=''):
 	type = url.split('/')[3]
@@ -43,7 +43,7 @@ def CATEGORIES(url,select=''):
 				if 'كليبات مضحكة' in name: continue
 				url = website0a + link
 				name = name.strip(' ')
-				addMenuItem('dir',menu_name+name,url,32)
+				addMenuItem('folder',menu_name+name,url,32)
 		if select=='4':
 			html_blocks=re.findall('video-details-panel(.*?)v></a></div>',html,re.DOTALL)
 			block= html_blocks[0]
@@ -51,7 +51,7 @@ def CATEGORIES(url,select=''):
 			for link,img,title in items:
 				url = website0a + link
 				title = title.strip(' ')
-				addMenuItem('dir',menu_name+title,url,32,img)
+				addMenuItem('folder',menu_name+title,url,32,img)
 		#xbmcgui.Dialog().ok(url,'')
 	if type=='movies':
 		html = openURL_cached(LONG_CACHE,url,'',headers,'','PANET-CATEGORIES-2nd')
@@ -62,7 +62,7 @@ def CATEGORIES(url,select=''):
 			for value,name in items:
 				url = website0a + '/movies/genre/' + value
 				name = name.strip(' ')
-				addMenuItem('dir',menu_name+name,url,32)
+				addMenuItem('folder',menu_name+name,url,32)
 		elif select=='2':
 			html_blocks=re.findall('moviesActor(.*?)select',html,re.DOTALL)
 			block = html_blocks[0]
@@ -70,7 +70,7 @@ def CATEGORIES(url,select=''):
 			for value,name in items:
 				name = name.strip(' ')
 				url = website0a + '/movies/actor/' + value
-				addMenuItem('dir',menu_name+name,url,32)
+				addMenuItem('folder',menu_name+name,url,32)
 	return
 
 def ITEMS(url):
@@ -85,7 +85,7 @@ def ITEMS(url):
 		for link,img,name in items:
 			url = website0a + link 
 			name = name.strip(' ')
-			addMenuItem('dir',menu_name+name,url,32,img)
+			addMenuItem('folder',menu_name+name,url,32,img)
 	if type=='movies':
 		html_blocks = re.findall('advBarMars(.+?)panet-pagination',html,re.DOTALL)
 		block = html_blocks[0]
@@ -93,7 +93,7 @@ def ITEMS(url):
 		for link,img,name in items:
 			name = name.strip(' ')
 			url = website0a + link
-			addMenuItem('link',menu_name+name,url,33,img)
+			addMenuItem('video',menu_name+name,url,33,img)
 	if type=='episodes':
 		page = url.split('/')[-1]
 		#xbmcgui.Dialog().ok(url,'')
@@ -107,7 +107,7 @@ def ITEMS(url):
 				if count==10: break
 				name = title + ' - ' + episode
 				url = website0a + link
-				addMenuItem('link',menu_name+name,url,33,img)
+				addMenuItem('video',menu_name+name,url,33,img)
 		html_blocks = re.findall('advBarMars.*?advBarMars(.+?)panet-pagination',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('panet-thumbnail.*?href="(.*?)""><img src="(.*?)".*?panet-title"><h2>(.*?)</h2.*?panet-info"><h2>(.*?)</h2',block,re.DOTALL)
@@ -116,14 +116,14 @@ def ITEMS(url):
 			title = title.strip(' ')
 			name = title + ' - ' + episode
 			url = website0a + link
-			addMenuItem('link',menu_name+name,url,33,img)
+			addMenuItem('video',menu_name+name,url,33,img)
 	html_blocks = re.findall('glyphicon-chevron-right(.+?)data-revive-zoneid="4"',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('<li><a href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,page in items:
 		url = website0a + link 
 		name = 'صفحة ' + page
-		addMenuItem('dir',menu_name+name,url,32)
+		addMenuItem('folder',menu_name+name,url,32)
 	return
 
 def PLAY(url):
@@ -138,7 +138,7 @@ def PLAY(url):
 		html = openURL_cached(SHORT_CACHE,url,'',headers,'','PANET-PLAY-2nd')
 		items = re.findall('contentURL" content="(.*?)"',html,re.DOTALL)
 		url = items[0]
-	PLAY_VIDEO(url,script_name)
+	PLAY_VIDEO(url,script_name,'video')
 	return
 
 def SEARCH(search,page):
@@ -169,15 +169,15 @@ def SEARCH(search,page):
 	if items:
 		for title,link in items:
 			url = website0a + link.replace('\/','/')
-			if '/movies/' in url: addMenuItem('link',menu_name+'فيلم '+title,url,33)
-			elif '/series/' in url: addMenuItem('dir',menu_name+'مسلسل '+title,url+'/1',32)
+			if '/movies/' in url: addMenuItem('video',menu_name+'فيلم '+title,url,33)
+			elif '/series/' in url: addMenuItem('folder',menu_name+'مسلسل '+title,url+'/1',32)
 	count=re.findall('"total":(.*?)}',html,re.DOTALL)
 	if count:
 		pages = int(  (int(count[0])+9)   /10 )+1
 		for page2 in range(1,pages):
 			page2 = str(page2)
 			if page2!=page:
-				addMenuItem('dir','صفحة '+page2,'',39,'',page2+'/'+type,search)
+				addMenuItem('folder','صفحة '+page2,'',39,'',page2+'/'+type,search)
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
 	return
 

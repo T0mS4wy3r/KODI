@@ -25,11 +25,13 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	if website=='': addMenuItem('dir',website+'::'+menu_name+'بحث في الموقع','',89)
-	addMenuItem('dir',website+'::'+menu_name+'المضاف حديثا','',84,'','0')
-	addMenuItem('dir',website+'::'+menu_name+'افلام ومسلسلات مميزة','',85,'','0')
-	addMenuItem('dir',website+'::'+menu_name+'الاكثر مشاهدة','',86,'','0')
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
+	if website=='': addMenuItem('folder',website+'::'+menu_name+'بحث في الموقع','',89)
+	addMenuItem('folder',website+'::'+menu_name+'المضاف حديثا','',84,'','0')
+	addMenuItem('folder',website+'::'+menu_name+'افلام ومسلسلات مميزة','',85,'','0')
+	addMenuItem('folder',website+'::'+menu_name+'الاكثر مشاهدة','',86,'','0')
+	if website=='': showDialogs = True
+	else: showDialogs = False
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'HALACIMA-MENU-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
 	block = html_blocks[1]
@@ -39,8 +41,8 @@ def MENU(website=''):
 	for link,title in items:
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
-			addMenuItem('dir',website+'::'+menu_name+title,link,81)
-	return
+			addMenuItem('folder',website+'::'+menu_name+title,link,81)
+	return html
 
 def ITEMS(url,html='',type='',page='0'):
 	page = int(page)
@@ -95,18 +97,18 @@ def ITEMS(url,html='',type='',page='0'):
 	#z = set(z)
 	z = sorted(z, reverse=True, key=lambda key: int(key[2]))
 	for title,link,episodeNo,img in z:
-		if '/download-view-online/' in link: addMenuItem('link',menu_name+title,link,82,img)
-		else: addMenuItem('dir',menu_name+title,link,81,img)
+		if '/download-view-online/' in link: addMenuItem('video',menu_name+title,link,82,img)
+		else: addMenuItem('folder',menu_name+title,link,81,img)
 	html_blocks = re.findall('pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('<li><a href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 		for link,title in items:
 			title = title.replace('الصفحة ','')
-			addMenuItem('dir',menu_name+'صفحة '+title,link,81)
-	if type=='lastRecent': addMenuItem('dir',menu_name+'صفحة المزيد','',84,'',str(page+1))
-	elif type=='pin': addMenuItem('dir',menu_name+'صفحة المزيد','',85,'',str(page+1))
-	elif type=='views': addMenuItem('dir',menu_name+'صفحة المزيد','',86,'',str(page+1))
+			addMenuItem('folder',menu_name+'صفحة '+title,link,81)
+	if type=='lastRecent': addMenuItem('folder',menu_name+'صفحة المزيد','',84,'',str(page+1))
+	elif type=='pin': addMenuItem('folder',menu_name+'صفحة المزيد','',85,'',str(page+1))
+	elif type=='views': addMenuItem('folder',menu_name+'صفحة المزيد','',86,'',str(page+1))
 	return
 
 def PLAY(url):
@@ -143,7 +145,7 @@ def PLAY(url):
 	threads.wait_finishing_all_threads()
 	linkLIST = linkLIST + threads.resultsDICT.values()
 	import RESOLVERS
-	RESOLVERS.PLAY(linkLIST,script_name)
+	RESOLVERS.PLAY(linkLIST,script_name,'video')
 	return
 
 def SEARCH(search):

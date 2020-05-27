@@ -10,7 +10,7 @@ def MAIN(mode,text=''):
 	if   mode==  2: SEND_MESSAGE(text)
 	elif mode==  3: DMCA()
 	elif mode==  4: HTTPS_TEST()
-	elif mode==  7: VERSIONS()
+	elif mode==  7: BUSY_DIALOG('start') ; VERSIONS() ; BUSY_DIALOG('stop')
 	elif mode==  9: DELETE_CACHE()
 	elif mode==151: NO_ARABIC_FONTS()
 	elif mode==152: HTTPS_FAILED()
@@ -26,7 +26,7 @@ def MAIN(mode,text=''):
 	elif mode==173: ENABLE_MPD()
 	elif mode==174: ENABLE_RTMP()
 	elif mode==175: TEST_ALL_WEBSITES()
-	elif mode==176: ANALYTICS_REPORT()
+	elif mode==176: BUSY_DIALOG('start') ; ANALYTICS_REPORT() ; BUSY_DIALOG('stop')
 	elif mode==177: RESOLVEURL_SETTINGS()
 	elif mode==178: YOUTUBE_DL_SETTINGS()
 	elif mode==179: TESTINGS()
@@ -40,11 +40,11 @@ def MAIN(mode,text=''):
 	elif mode==197: KODI_SKIN()
 	return
 
-def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
-	if 'problem=yes' in text: problem='yes'
+def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
+	if 'IsProblem=True'.lower() in text.lower(): problem='yes'
 	else: problem='no'
 	sendit,html = 1,''
-	if showDialogs=='yes':
+	if showDialogs:
 		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
 		if sendit==0: 
 			xbmcgui.Dialog().ok('تم الغاء الارسال','تم الغاء الارسال بناء على طلبك')
@@ -62,7 +62,7 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 		if url != '': message += ' :\\nURL: ' + url
 		if source != '': message += ' :\\nSource: ' + source
 		message += ' :\\n'
-		if showDialogs=='yes': xbmcgui.Dialog().notification('جاري ألإرسال','الرجاء الانتظار')
+		if showDialogs: xbmcgui.Dialog().notification('جاري ألإرسال','الرجاء الانتظار')
 		logfileNEW = ''
 		if problem=='yes':
 			dataNEW,counts = [],0
@@ -88,11 +88,11 @@ def SEND_EMAIL(subject,message,showDialogs='yes',url='',source='',text=''):
 			#logfileNEW = ''.join(dataNEW[-1000:])
 			logfileNEW = base64.b64encode(logfileNEW)
 		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
-		payload = { 'subject' : quote(subject) , 'message' : quote(message) , 'logfile' : logfileNEW }
+		payload = { 'subject' : subject , 'message' : message , 'logfile' : logfileNEW }
 		data = urllib.urlencode(payload)
 		html = openURL_cached(NO_CACHE,url,data,'','','SERVICES-SEND_EMAIL-1st')
 		result = html[0:6]
-		if showDialogs=='yes':
+		if showDialogs:
 			if result == 'Error ':
 				xbmcgui.Dialog().notification('للأسف','فشل في الإرسال')
 				xbmcgui.Dialog().ok('Failed sending the message','خطأ وفشل في إرسال الرسالة')
@@ -199,7 +199,7 @@ def WEBSITES_BLOCKED():
 	message += '\n\n'+'المبرمج وجد طريقة لتجاوز العائق ولكنها تحتاج جهد كبير والمبرمج يظن المشكلة صغيرة ولا تستحق التعب فإذا لديك مشكلة بالدخول لبعض المواقع وأيضا لكي يتضح حجم المشكلة '
 	message += '[COLOR FFC89008]ارسل رسالة مؤدبة إلى المبرمج واكتب فيها اسم بلدك وأسماء المواقع التي لا تستطيع دخولها[/COLOR]'
 	xbmcgui.Dialog().textviewer('المواقع والدول التي تأثرت بالعائق',message)
-	#SEND_MESSAGE('IsPlayable=no,problem=no')
+	#SEND_MESSAGE('IsProblem=False')
 	#message = '\n\n'+'ولقد لاحظنا ايضا أن المواقع المعاقة تختلف باختلاف البلد وتختلف باختلاف شركة الانترنيت في ذلك البلد وهذا معناه انه حتى لو تم استخدام VPN أو Proxy أو أي وسيلة اخرى فان المواقع المعاقة سوف تختلف ولكنها لن تعمل جميعها'
 	#message += 'لحل المشكلة قم بعملين:    الأول: أرسل سجل الأخطاء والاستخدام إلى المبرمج (من قائمة خدمات البرنامج) واكتب معه اسم بلدك واسم شركة الإنترنيت وأسماء المواقع التي لا تعمل عندك'
 	#message += '\n\n'+'والثاني: جرب استخدام VPN وعند البعض قد تحتاج فقط تغيير DNS والأحسن أن يكون في بلد اخر علما ان استخدام Proxy قد يحل مشكلة بعض المواقع ولكن ليس في جميع الدول'
@@ -210,13 +210,13 @@ def WEBSITES_BLOCKED():
 	return
 
 def CONTACT_ME():
-	xbmcgui.Dialog().ok('ثلاث طرق للتواصل مع المبرمج','إما باستخدام الفيسبوك "الحاج عماد مهدي" أو إرسال رسالة أو مشكلة من قائمة خدمات البرنامج أو فتح موضوع للنقاش بهذا الرابط','https://github.com/emadmahdi/KODI/issues')
+	xbmcgui.Dialog().ok('ثلاث طرق للتواصل مع المبرمج','إما باستخدام الفيسبوك "الحاج عماد مهدي" أو إرسال رسالة أو مشكلة من قائمة خدمات البرنامج أو فتح نقاش بهذا الرابط وللعلم فان المبرمج لا يعلم الغيب','https://github.com/emadmahdi/KODI/issues')
 	return
 
 def DELETE_CACHE():
 	#WHAT_IS_CACHE()
 	yes = xbmcgui.Dialog().yesno('هل تريد مسح جميع الكاش ؟','الكاش يعمل على تسريع عمل البرنامج ومسحه يسبب إعادة طلب جميع الصفحات من الأنترنيت عند الحاجة إليها والمسح ليس فيه أي ضرر وبالعكس فان المسح ممكن أن يحل بعض مشاكل البرنامج','','','كلا','نعم')
-	if yes==1: 
+	if yes:
 		CLEAN_KODI_CACHE_FOLDER()
 		xbmcgui.Dialog().ok('تم مسح كاش البرنامج بالكامل','إذا كانت عندك مشكلة في احد المواقع فجرب الموقع الآن ... وأدا المشكلة مستمرة فإذن ارسل المشكلة إلى المبرمج')
 	return yes
@@ -261,10 +261,10 @@ def FIX_SKIN_KEYBOARD(mode,text):
 	return
 
 def SEND_MESSAGE(text=''):
-	if 'problem=yes' in text: problem='yes'
+	if 'IsProblem=True'.lower() in text.lower(): problem='yes'
 	else:
 		problem='no'
-		yes = xbmcgui.Dialog().yesno('','هل لديك مشكلة تريد أبلاغ المبرمج عنها ؟','','','كلا','نعم')
+		yes = xbmcgui.Dialog().yesno('','هل تريد أن ترسل رسالة أم تريد أن ترسل مشكلة ؟','','','إرسال رسالة','إرسال مشكلة')
 		if yes==1: problem='yes'
 	if problem=='yes':
 		#yes = DELETE_CACHE()
@@ -294,7 +294,7 @@ def SEND_MESSAGE(text=''):
 	message = search
 	subject = 'Message: From Arabic Videos'
 	text = 'problem='+problem
-	result = SEND_EMAIL(subject,message,'yes','','EMAIL-FROM-USERS',text)
+	result = SEND_EMAIL(subject,message,True,'','EMAIL-FROM-USERS',text)
 	#	url = 'my API and/or SMTP server'
 	#	payload = '{"api_key":"MY API KEY","to":["me@email.com"],"sender":"me@email.com","subject":"From Arabic Videos","text_body":"'+message+'"}'
 	#	#auth=("api", "my personal api key"),
@@ -330,7 +330,7 @@ def DMCA():
 def VERSIONS():
 	#url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
 	#url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
-	xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
+	#xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
 	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS/addons.xml'
 	html = openURL_cached(NO_CACHE,url,'','','','SERVICES-VERSIONS-1st')
 	latest_ADDON_VER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
@@ -358,10 +358,12 @@ def VERSIONS():
 	#threads22 = CustomThread()
 	#threads22.start_new_thread('22',LATEST_KODI)
 	#xbmcgui.Dialog().notification('thread submitted','')
+	#time.sleep(5)
 	LATEST_KODI()
 	if need_update:
 		INSTALL_REPOSITORY(False)
 		CHECK_FOR_ADDONS_UPDATES()
+	#time.sleep(5)
 	#LATEST_KODI()
 	#threads22.wait_finishing_all_threads()
 	return
@@ -484,10 +486,11 @@ def ANALYTICS_REPORT():
 	message2 = message2.strip(' ')
 	message3 = message3.strip(' ')
 	message4 = message4.strip('\n')
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   HighUsage: [ '+message1+' ]')
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   LowUsage: [ '+message2+' ]')
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   NoUsage: [ '+message3+' ]')
 	message6 = message1+'  '+message2
+	message7  = '\nHighUsage: [ '+message1+' ]'
+	message7 += '\nLowUsage : [ '+message2+' ]'
+	message7 += '\nNoUsage  : [ '+message3+' ]'
+	LOG_THIS('NOTICE',LOGGING(script_name)+message7)
 	message5  = 'مواقع شغل منها البرنامج مؤخراً فيديوهات بدون مشاكل'+'\n'
 	message5 += 'وهذا معناه إذا لديك مشكلة فهي ليست من البرنامج'+'\n'
 	message5 += '[COLOR FFC89008]'+message6+'[/COLOR]'+'\n\n'
@@ -668,6 +671,6 @@ def TESTINGS():
 	#xbmc.Player().play(url, play_item) 
 
 	#import RESOLVERS
-	#url = RESOLVERS.PLAY(urllist,script_name,'no')
+	#url = RESOLVERS.PLAY(urllist,script_name,'live')
 	#PLAY_VIDEO(url,script_name,'yes')
 	return

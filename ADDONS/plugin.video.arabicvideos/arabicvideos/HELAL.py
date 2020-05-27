@@ -22,17 +22,19 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('dir',website+'::'+menu_name+'بحث في الموقع','',99)
-	addMenuItem('dir',website+'::'+menu_name+'المضاف حديثا','',94)
-	addMenuItem('dir',website+'::'+menu_name+'الأحدث',website0a+'/?type=latest',91)
-	addMenuItem('dir',website+'::'+menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
-	addMenuItem('dir',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/?type=view',91)
-	addMenuItem('dir',website+'::'+menu_name+'المثبت',website0a+'/?type=pin',91)
-	addMenuItem('dir',website+'::'+menu_name+'جديد الافلام',website0a+'/?type=newMovies',91)
-	addMenuItem('dir',website+'::'+menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999,'','','IsPlayable=no')
-	#addMenuItem('dir',website+'::'+menu_name+'جديد الموقع',website0a,91)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
+	if website=='': addMenuItem('folder',website+'::'+menu_name+'بحث في الموقع','',99)
+	addMenuItem('folder',website+'::'+menu_name+'المضاف حديثا','',94)
+	addMenuItem('folder',website+'::'+menu_name+'الأحدث',website0a+'/?type=latest',91)
+	addMenuItem('folder',website+'::'+menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
+	addMenuItem('folder',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/?type=view',91)
+	addMenuItem('folder',website+'::'+menu_name+'المثبت',website0a+'/?type=pin',91)
+	addMenuItem('folder',website+'::'+menu_name+'جديد الافلام',website0a+'/?type=newMovies',91)
+	addMenuItem('folder',website+'::'+menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	#addMenuItem('folder',website+'::'+menu_name+'جديد الموقع',website0a,91)
+	if website=='': showDialogs = True
+	else: showDialogs = False
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'HELAL-MENU-1st')
 	#upper menu
 	html_blocks = re.findall('class="mainmenu(.*?)nav',html,re.DOTALL)
 	block = html_blocks[0]
@@ -41,14 +43,13 @@ def MENU(website=''):
 	for link,title in items:
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
-			addMenuItem('dir',website+'::'+menu_name+title,link,91)
-	return
+			addMenuItem('folder',website+'::'+menu_name+title,link,91)
+	return html
 
 def ITEMS(url):
 	#xbmcgui.Dialog().ok(str(url),str(''))
 	if '/search.php' in url:
-		parts = url.split('?')
-		url,search = parts
+		url,search = url.split('?')
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 't' : search }
 		data = urllib.urlencode(payload)
@@ -68,10 +69,10 @@ def ITEMS(url):
 			if episode:
 				title = '_MOD_'+episode[0]
 				if title not in allTitles:
-					addMenuItem('dir',menu_name+title,link,95,img)
+					addMenuItem('folder',menu_name+title,link,95,img)
 					allTitles.append(title)
-		elif '/video/' in link: addMenuItem('link',menu_name+title,link,92,img)
-		else: addMenuItem('dir',menu_name+title,link,91,img)
+		elif '/video/' in link: addMenuItem('video',menu_name+title,link,92,img)
+		else: addMenuItem('folder',menu_name+title,link,91,img)
 	html_blocks = re.findall('class="pagination(.*?)div',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -79,7 +80,7 @@ def ITEMS(url):
 		for link,title in items:
 			title = unescapeHTML(title)
 			title = title.replace('الصفحة ','')
-			addMenuItem('dir',menu_name+'صفحة '+title,link,91)
+			addMenuItem('folder',menu_name+'صفحة '+title,link,91)
 	return
 
 def EPISODES(url):
@@ -94,7 +95,7 @@ def EPISODES(url):
 		if '[/COLOR]' in name: name = name.split('[/COLOR]',1)[1]
 	items = re.findall('href="(.*?)".*?name">(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addMenuItem('link',menu_name+name+' - '+title,link,92,img)
+		addMenuItem('video',menu_name+name+' - '+title,link,92,img)
 	return
 
 def PLAY(url):
@@ -131,11 +132,11 @@ def PLAY(url):
 	import concurrent.futures
 	with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
 		responcesDICT = dict( (executor.submit(openURL, urlLIST[i], '', headers,'','HELAL-PLAY-2nd'), i) for i in range(0,count) )
-	for response in concurrent.futures.as_completed(responcesDICT):
-		linkLIST.append( response.result() )
+	for response22 in concurrent.futures.as_completed(responcesDICT):
+		linkLIST.append( response22.result() )
 	"""
 	import RESOLVERS
-	RESOLVERS.PLAY(linkLIST,script_name)
+	RESOLVERS.PLAY(linkLIST,script_name,'video')
 	return
 
 def LATEST():
@@ -144,8 +145,8 @@ def LATEST():
 	block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)" title="(.*?)"',block,re.DOTALL)
 	for img,link,title in items:
-		if '/video/' in link: addMenuItem('link',menu_name+title,link,92,img)
-		else: addMenuItem('dir',menu_name+title,link,91,img)
+		if '/video/' in link: addMenuItem('video',menu_name+title,link,92,img)
+		else: addMenuItem('folder',menu_name+title,link,91,img)
 	return
 
 def SEARCH(search=''):

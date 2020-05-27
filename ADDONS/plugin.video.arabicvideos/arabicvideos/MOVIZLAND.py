@@ -24,18 +24,20 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',189)
-	addMenuItem('dir',website+'::'+menu_name+'بوكس اوفيس موفيز لاند',website0a,181,'','','box-office')
-	addMenuItem('dir',website+'::'+menu_name+'أحدث الافلام',website0a,181,'','','latest-movies')
-	addMenuItem('dir',website+'::'+menu_name+'تليفزيون موفيز لاند',website0a,181,'','','tv')
-	addMenuItem('dir',website+'::'+menu_name+'الاكثر مشاهدة',website0a,181,'','','top-views')
-	addMenuItem('dir',website+'::'+menu_name+'أقوى الافلام الحالية',website0a,181,'','','top-movies')
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','MOVIZLAND-MENU-1st')
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',189)
+	addMenuItem('folder',website+'::'+menu_name+'بوكس اوفيس موفيز لاند',website0a,181,'','','box-office')
+	addMenuItem('folder',website+'::'+menu_name+'أحدث الافلام',website0a,181,'','','latest-movies')
+	addMenuItem('folder',website+'::'+menu_name+'تليفزيون موفيز لاند',website0a,181,'','','tv')
+	addMenuItem('folder',website+'::'+menu_name+'الاكثر مشاهدة',website0a,181,'','','top-views')
+	addMenuItem('folder',website+'::'+menu_name+'أقوى الافلام الحالية',website0a,181,'','','top-movies')
+	if website=='': showDialogs = True
+	else: showDialogs = False
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'MOVIZLAND-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)".*?">(.*?)<',html,re.DOTALL)
 	for link,title in items:
-		addMenuItem('dir',website+'::'+menu_name+title,link,181)
+		addMenuItem('folder',website+'::'+menu_name+title,link,181)
 	#xbmcgui.Dialog().ok(html,html)
-	return
+	return html
 
 def TITLES(url,type=''):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','MOVIZLAND-ITEMS-1st')
@@ -69,21 +71,21 @@ def TITLES(url,type=''):
 			if episode:
 				title = '_MOD_' + episode[0][0]
 				if title not in allTitles:
-					addMenuItem('dir',menu_name+title,link,183,img)
+					addMenuItem('folder',menu_name+title,link,183,img)
 					allTitles.append(title)
 		elif any(value in title for value in itemLIST):
 			link = link + '?servers=' + link2
-			addMenuItem('link',menu_name+title,link,182,img)
+			addMenuItem('video',menu_name+title,link,182,img)
 		else:
 			link = link + '?servers=' + link2
-			addMenuItem('dir',menu_name+title,link,183,img)
+			addMenuItem('folder',menu_name+title,link,183,img)
 	if type=='':
 		items = re.findall('\n<li><a href="(.*?)".*?>(.*?)<',html,re.DOTALL)
 		for link,title in items:
 			title = unescapeHTML(title)
 			title = title.replace('الصفحة ','')
 			if title!='':
-				addMenuItem('dir',menu_name+'صفحة '+title,link,181)
+				addMenuItem('folder',menu_name+'صفحة '+title,link,181)
 	return
 
 def EPISODES(url):
@@ -108,12 +110,12 @@ def EPISODES(url):
 			else: title = ''
 			title = name + ' - ' + 'الحلقة' + title
 			title = unescapeHTML(title)
-			addMenuItem('link',menu_name+title,link,182,img)
+			addMenuItem('video',menu_name+title,link,182,img)
 	if not items:
 		title = unescapeHTML(title)
 		if 'بجودة ' in title or 'بجوده ' in title:
 			title = '_MOD_' + title.replace('بجودة ','').replace('بجوده ','')
-		addMenuItem('link',menu_name+title,url,182,img)
+		addMenuItem('video',menu_name+title,url,182,img)
 	return
 
 def PLAY(url):
@@ -212,7 +214,7 @@ def PLAY(url):
 		#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', linkLIST)
 		#if selection == -1 : return
 		import RESOLVERS
-		RESOLVERS.PLAY(linkLIST,script_name)
+		RESOLVERS.PLAY(linkLIST,script_name,'video')
 	return
 
 def SEARCH(search):

@@ -20,22 +20,22 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',69)
-	addMenuItem('dir',website+'::'+menu_name+'ما يتم مشاهدته الان',website0a,64,'','','recent_viewed_vids')
-	addMenuItem('dir',website+'::'+menu_name+'الاكثر مشاهدة',website0a,64,'','','most_viewed_vids')
-	addMenuItem('dir',website+'::'+menu_name+'اضيفت مؤخرا',website0a,64,'','','recently_added_vids')
-	addMenuItem('dir',website+'::'+menu_name+'فيديو عشوائي',website0a,64,'','','random_vids')
-	addMenuItem('dir',website+'::'+menu_name+'افلام ومسلسلات',website0a,61,'','','-1')
-	addMenuItem('dir',website+'::'+menu_name+'البرامج الدينية',website0a,61,'','','-2')
-	addMenuItem('dir',website+'::'+menu_name+'English Videos',website0a,61,'','','-3')
-	return
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',69)
+	addMenuItem('folder',website+'::'+menu_name+'ما يتم مشاهدته الان',website0a,64,'','','recent_viewed_vids')
+	addMenuItem('folder',website+'::'+menu_name+'الاكثر مشاهدة',website0a,64,'','','most_viewed_vids')
+	addMenuItem('folder',website+'::'+menu_name+'اضيفت مؤخرا',website0a,64,'','','recently_added_vids')
+	addMenuItem('folder',website+'::'+menu_name+'فيديو عشوائي',website0a,64,'','','random_vids')
+	addMenuItem('folder',website+'::'+menu_name+'افلام ومسلسلات',website0a,61,'','','-1')
+	addMenuItem('folder',website+'::'+menu_name+'البرامج الدينية',website0a,61,'','','-2')
+	addMenuItem('folder',website+'::'+menu_name+'English Videos',website0a,61,'','','-3')
+	return ''
 
 def TITLES(url,category):
 	#xbmcgui.Dialog().ok('', category)
 	cat = ''
 	if category not in ['-1','-2','-3']: cat = '?cat='+category
 	url2 = website0a+'/menu_level.php'+cat
-	html = openURL_cached(REGULAR_CACHE,url2,'','','','ALFATIMI-TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url2,'','',True,'ALFATIMI-TITLES-1st')
 	items = re.findall('href=\'(.*?)\'.*?>(.*?)<.*?>(.*?)</span>',html,re.DOTALL)
 	startAdd,found = False,False
 	for link,title,count in items:
@@ -47,14 +47,14 @@ def TITLES(url,category):
 		elif startAdd 	or (category=='-1' and cat in moviesLIST) \
 						or (category=='-2' and cat not in englishLIST and cat not in moviesLIST) \
 						or (category=='-3' and cat in englishLIST):
-							if count=='1': addMenuItem('link',menu_name+title,link,63)
-							else: addMenuItem('dir',menu_name+title,link,61,'','',cat)
+							if count=='1': addMenuItem('video',menu_name+title,link,63)
+							else: addMenuItem('folder',menu_name+title,link,61,'','',cat)
 							found = True
 	if not found: EPISODES(url)
 	return
 
 def EPISODES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'','','','ALFATIMI-EPISODES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'','',True,'ALFATIMI-EPISODES-1st')
 	#xbmcgui.Dialog().ok(url , html)
 	html_blocks = re.findall('pagination(.*?)id="footer',html,re.DOTALL)
 	block = html_blocks[0]
@@ -63,7 +63,7 @@ def EPISODES(url):
 	for img,title,link in items:
 		title = title.replace('Add','').replace('to Quicklist','').strip(' ')
 		if 'http' not in link: link = 'http:'+link
-		addMenuItem('link',menu_name+title,link,63,img)
+		addMenuItem('video',menu_name+title,link,63,img)
 	html_blocks=re.findall('(.*?)div',block,re.DOTALL)
 	block=html_blocks[0]
 	block=re.findall('pagination(.*?)</div>',html,re.DOTALL)[0]
@@ -73,17 +73,17 @@ def EPISODES(url):
 		link = url2 + link
 		title = unescapeHTML(page2)
 		title = 'صفحة ' + title
-		addMenuItem('dir',menu_name+title,link,62)
+		addMenuItem('folder',menu_name+title,link,62)
 	return link
 
 def PLAY(url):
 	if 'videos.php' in url: url = EPISODES(url)
-	html = openURL_cached(LONG_CACHE,url,'','','','ALFATIMI-PLAY-1st')
+	html = openURL_cached(LONG_CACHE,url,'','',True,'ALFATIMI-PLAY-1st')
 	items = re.findall('playlistfile:"(.*?)"',html,re.DOTALL)
 	url = items[0]
 	if 'http' not in url: url = 'http:'+url
 	#xbmcgui.Dialog().ok(url,'')
-	PLAY_VIDEO(url,script_name)
+	PLAY_VIDEO(url,script_name,'video')
 	return
 
 def MOSTS(category):
@@ -91,12 +91,12 @@ def MOSTS(category):
 	url = 'http://alfatimi.tv/ajax.php'
 	headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 	data = urllib.urlencode(payload)
-	html = openURL_cached(SHORT_CACHE,url,data,headers,'','ALFATIMI-MOSTS-1st')
+	html = openURL_cached(SHORT_CACHE,url,data,headers,True,'ALFATIMI-MOSTS-1st')
 	items = re.findall('href="(.*?)".*?title="(.*?)".*?src="(.*?)".*?href',html,re.DOTALL)
 	for link,title,img in items:
 		title = title.strip(' ')
 		if 'http' not in link: link = 'http:'+link
-		addMenuItem('link',menu_name+title,link,63,img)
+		addMenuItem('video',menu_name+title,link,63,img)
 	return
 
 def SEARCH(search):

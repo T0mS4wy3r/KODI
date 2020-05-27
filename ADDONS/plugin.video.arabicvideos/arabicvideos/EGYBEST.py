@@ -29,21 +29,23 @@ def TERMINATED_ADBLOCKER():
 	return
 
 def MENU(website=''):
-	#addMenuItem('dir',menu_name+'تحذير','',126)
-	#addMenuItem('dir',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
-	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',129)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBEST-MAIN_MENU-1st')
+	#addMenuItem('folder',menu_name+'تحذير','',126)
+	#addMenuItem('folder',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',129)
+	if website=='': showDialogs = True
+	else: showDialogs = False
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'EGYBEST-MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
-	addMenuItem('dir',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
-	addMenuItem('dir',website+'::'+menu_name+'الأفلام',website0a+'/movies/',121)
-	addMenuItem('dir',website+'::'+menu_name+'المسلسلات',website0a+'/tv/',121)
-	if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+	addMenuItem('folder',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
+	addMenuItem('folder',website+'::'+menu_name+'الأفلام',website0a+'/movies/',121)
+	addMenuItem('folder',website+'::'+menu_name+'المسلسلات',website0a+'/tv/',121)
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks=re.findall('class="ba(.*?)class="mgb',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addMenuItem('dir',website+'::'+menu_name+title,link,122,'','1')
-	return
+		addMenuItem('folder',website+'::'+menu_name+title,link,122,'','1')
+	return html
 
 def FILTERS_MENU(link):
 	filter = link.split('/')[-1]
@@ -56,9 +58,9 @@ def FILTERS_MENU(link):
 	filter = filter.replace('-',' + ')
 	#xbmcgui.Dialog().ok(str(link), str(filter))
 	if '/trending/' not in link:
-		addMenuItem('dir',menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'','1')
-		addMenuItem('dir',menu_name+'[[   ' + filter + '   ]]',link,122,'','1')
-		addMenuItem('dir',menu_name+'===========================',link,9999)
+		addMenuItem('folder',menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'','1')
+		addMenuItem('folder',menu_name+'[[   ' + filter + '   ]]',link,122,'','1')
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html = openURL_cached(LONG_CACHE,link,'',headers,'','EGYBEST-FILTERS_MENU-1st')
 	html_blocks=re.findall('mainLoad(.*?)</div></div>',html,re.DOTALL)
 	if html_blocks:
@@ -69,7 +71,7 @@ def FILTERS_MENU(link):
 			elif '/tv/' in url and 'مسلسل' not in title: title = 'مسلسلات ' + title
 			if '/trending/' in url:
 				title = 'الاكثر مشاهدة ' + title
-				addMenuItem('dir',menu_name+title,url,122,'','1')
+				addMenuItem('folder',menu_name+title,url,122,'','1')
 			else:
 				link = link.replace('popular','')
 				link = link.replace('top','')
@@ -80,7 +82,7 @@ def FILTERS_MENU(link):
 				url = url.replace('/-','/')
 				url = url.rstrip('-')
 				url = url.replace('--','-')
-				addMenuItem('dir',menu_name+title,url,121)
+				addMenuItem('folder',menu_name+title,url,121)
 	html_blocks=re.findall('sub_nav(.*?)</div></div></div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -90,7 +92,7 @@ def FILTERS_MENU(link):
 			if any(value in title for value in ignoreLIST): continue
 			if '/movies/' in url: title = '_MOD_' + 'افلام ' + title
 			elif '/tv/' in url: title = '_MOD_' + 'مسلسلات ' + title
-			addMenuItem('dir',menu_name+title,url,121)
+			addMenuItem('folder',menu_name+title,url,121)
 	return
 
 def TITLES(url,page):
@@ -118,10 +120,10 @@ def TITLES(url,page):
 		#xbmcgui.Dialog().notification(img,'')
 		url2 = website0a + link
 		if '/movie/' in url2 or '/episode/' in url2:
-			addMenuItem('link',menu_name+title,url2.rstrip('/'),123,img)
+			addMenuItem('video',menu_name+title,url2.rstrip('/'),123,img)
 			found = True
 		else:
-			addMenuItem('dir',menu_name+title,url2,122,img,'1')
+			addMenuItem('folder',menu_name+title,url2,122,img,'1')
 			found = True
 	if found:
 		pagingLIST = ['/movies/','/tv/','/explore/','/trending/']
@@ -133,11 +135,11 @@ def TITLES(url,page):
 						if int(page/10)*10==i:
 							for j in range(i,i+10,1):
 								if not page==j and j!=0:
-									addMenuItem('dir',menu_name+'صفحة '+str(j),url,122,'',str(j))
-						elif i!=0: addMenuItem('dir',menu_name+'صفحة '+str(i),url,122,'',str(i))
-						else: addMenuItem('dir',menu_name+'صفحة '+str(1),url,122,'',str(1))
-				elif n!=0: addMenuItem('dir',menu_name+'صفحة '+str(n),url,122,'',str(n))
-				else: addMenuItem('dir',menu_name+'صفحة '+str(1),url,122,'','1')
+									addMenuItem('folder',menu_name+'صفحة '+str(j),url,122,'',str(j))
+						elif i!=0: addMenuItem('folder',menu_name+'صفحة '+str(i),url,122,'',str(i))
+						else: addMenuItem('folder',menu_name+'صفحة '+str(1),url,122,'',str(1))
+				elif n!=0: addMenuItem('folder',menu_name+'صفحة '+str(n),url,122,'',str(n))
+				else: addMenuItem('folder',menu_name+'صفحة '+str(1),url,122,'','1')
 	return
 
 def PLAY(url):
@@ -162,14 +164,14 @@ def PLAY(url):
 		server = SERVER(url2)
 		#xbmcgui.Dialog().ok(server,'')
 		response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'','',True,'','EGYBEST-PLAY-2nd')
-		#html2 = response.text
+		#html2 = response.content
 		cookies = response.cookies.get_dict()
 		PHPSID = cookies['PHPSID']
 		#xbmcgui.Dialog().ok(server, str(PHPSID))
 		headers2 = headers
 		headers2['Cookie'] = 'PHPSID='+PHPSID
 		response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'',headers2,False,'','EGYBEST-PLAY-3rd')
-		html2 = response.text
+		html2 = response.content
 		#xbmc.log(html2, level=xbmc.LOGNOTICE)
 		#xbmcgui.Dialog().ok(url2, str(html2.count('404')))
 		items = re.findall('source src="(.*?)"',html2,re.DOTALL)
@@ -202,7 +204,7 @@ def PLAY(url):
 	if EGUDI=='': return
 	headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 	response = openURL_requests_cached(SHORT_CACHE,'GET', url, '', headers, False,'','EGYBEST-PLAY-2nd')
-	html = response.text
+	html = response.content
 	#xbmcgui.Dialog().ok(url,html)
 	items = re.findall('#EXT-X-STREAM.*?RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
 	if items:
@@ -219,7 +221,7 @@ def PLAY(url):
 		url = website0a + '/api?call=' + link
 		headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 		response = openURL_requests_cached(SHORT_CACHE,'GET', url, '', headers, False,'','EGYBEST-PLAY-3rd')
-		html = response.text
+		html = response.content
 		#xbmcgui.Dialog().ok(url,html)
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
 		items = re.findall('"url":"(.*?)"',html,re.DOTALL)
@@ -228,7 +230,7 @@ def PLAY(url):
 		#url = website0a + '/api?call=' + link
 		#headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 		#response = openURL_requests_cached(SHORT_CACHE,'GET', url, '', headers, False,'','EGYBEST-PLAY-4th')
-		#html = response.text
+		#html = response.content
 		#xbmc.log(escapeUNICODE(html), level=xbmc.LOGNOTICE)
 		#items = re.findall('"url":"(.*?)"',html,re.DOTALL)
 		url = items[0]
@@ -242,11 +244,11 @@ def PLAY(url):
 	#xbmcgui.Dialog().ok(url,url[-45:])
 	"""
 	#WARNING() ; return
-	#result = PLAY_VIDEO(url,script_name,'yes')
+	#result = PLAY_VIDEO(url,script_name,'video')
 	#if result!='playing': WARNING()
 	#xbmcgui.Dialog().ok(url,'')
 	import RESOLVERS
-	RESOLVERS.PLAY(linkLIST,script_name)
+	RESOLVERS.PLAY(linkLIST,script_name,'video')
 	return
 
 def GET_USERNAME_PASSWORD():
@@ -282,7 +284,7 @@ def GET_PLAY_TOKENS():
 	if EGUDI!='':
 		headers = { 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 		response = openURL_requests_cached(SHORT_CACHE,'GET', website0a, '', headers, False,'','EGYBEST-GET_PLAY_TOKENS-1st')
-		register = re.findall('ssl.egexa.com\/register',response.text,re.DOTALL)
+		register = re.findall('ssl.egexa.com\/register',response.content,re.DOTALL)
 		if register:
 			settings.setSetting('egybest.EGUDI','')
 			settings.setSetting('egybest.EGUSID','')
@@ -313,9 +315,9 @@ def GET_PLAY_TOKENS():
 	}
 	response = openURL_requests_cached(SHORT_CACHE,'POST', url, payload, headers, False,'','EGYBEST-GET_PLAY_TOKENS-2nd')
 	cookies = response.cookies.get_dict()
-	#xbmc.log(response.text, level=xbmc.LOGNOTICE)
+	#xbmc.log(response.content, level=xbmc.LOGNOTICE)
 
-	if '"action":"captcha"' in response.text:
+	if '"action":"captcha"' in response.content:
 		xbmcgui.Dialog().ok('مشكلة جدا مزعجة تخص جهازك فقط','موقع ايجي بيست يرفض دخولك اليهم بإستخدام كودي ... حاول فصل الانترنيت واعادة ربطها لتحصل على عنوان IP جديد ... او اعد المحاولة بعد عدة ايام او عدة اسابيع')
 		return ['','','']
 
@@ -332,7 +334,7 @@ def GET_PLAY_TOKENS():
 	headers = { 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 	response = openURL_requests_cached(SHORT_CACHE,'GET', url, '', headers, True,'','EGYBEST-GET_PLAY_TOKENS-3rd')
 	cookies = response.cookies.get_dict()
-	#xbmcgui.Dialog().ok(str(response.text),str(cookies))
+	#xbmcgui.Dialog().ok(str(response.content),str(cookies))
 	EGUDI = cookies['EGUDI']
 	EGUSID = cookies['EGUSID']
 	EGUSS = cookies['EGUSS']

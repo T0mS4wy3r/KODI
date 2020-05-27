@@ -23,21 +23,21 @@ def MAIN(mode,url,text):
 
 def MENU(website=''):
 	if website=='':
-		addMenuItem('link',menu_name+'البث الحي لقناة المعارف','',41,'','','IsPlayable=no')
-		addMenuItem('dir',menu_name+'بحث في الموقع','',49)
-	addMenuItem('dir',website+'::'+menu_name+'البرامج الحالية','',46)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALMAAREF-MENU-1st')
+		addMenuItem('live',menu_name+'البث الحي لقناة المعارف','',41)
+		addMenuItem('folder',menu_name+'بحث في الموقع','',49)
+	addMenuItem('folder',website+'::'+menu_name+'البرامج الحالية','',46)
+	if website=='': showDialogs = True
+	else: showDialogs = False
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'ALMAAREF-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)">(.*?)</a></h2>',html,re.DOTALL)
 	for link,name in items:
-		addMenuItem('dir',website+'::'+menu_name+name,link,45,'','','3')
+		addMenuItem('folder',website+'::'+menu_name+name,link,45,'','','3')
 	name = re.findall('recent-default.*?<h2>(.*?)</h2>',html,re.DOTALL)
-	if name:
-		addMenuItem('dir',website+'::'+menu_name+name[0],website0a,45,'','','2')
+	if name: addMenuItem('folder',website+'::'+menu_name+name[0],website0a,45,'','','2')
 	name = ['ارشيف البرامج']
 	#name = re.findall('categories"><div class="widget-top"><h4>(.*?)</h4>',html,re.DOTALL)
-	if name:
-		addMenuItem('dir',website+'::'+menu_name+name[0],website0a,44,'','','0')
-	return
+	if name: addMenuItem('folder',website+'::'+menu_name+name[0],website0a,44,'','','0')
+	return html
 
 def TITLES(url,select):
 	notvideosLIST = ['تطبيقات الاجهزة الذكية','جدول البرامج','اوقات برامجنا']
@@ -50,7 +50,7 @@ def TITLES(url,select):
 			for img,url,title in items:
 				if not any(value in title for value in notvideosLIST):
 					title = unescapeHTML(title)
-					addMenuItem('dir',menu_name+title,url,42,img)
+					addMenuItem('folder',menu_name+title,url,42,img)
 	elif select=='3':
 		html_blocks3=re.findall('archive-box(.*?)script',html,re.DOTALL)
 		if html_blocks3:
@@ -59,7 +59,7 @@ def TITLES(url,select):
 			for url,title,img in items:
 				if not any(value in title for value in notvideosLIST):
 					title = unescapeHTML(title)
-					addMenuItem('dir',menu_name+title,url,42,img)
+					addMenuItem('folder',menu_name+title,url,42,img)
 	html_blocks4=re.findall('class="pagination"(.*?)<h',html,re.DOTALL)
 	if html_blocks4:
 		block = html_blocks4[0]
@@ -67,7 +67,7 @@ def TITLES(url,select):
 		for url,title in items:
 			title = unescapeHTML(title)
 			title = 'صفحة ' + title
-			addMenuItem('dir',menu_name+title,url,45,'','',select)
+			addMenuItem('folder',menu_name+title,url,45,'','',select)
 	return
 
 def EPISODES(url):
@@ -89,15 +89,16 @@ def EPISODES(url):
 				title = title.split(' ')[-1]
 				title = '_MOD_' + name + ' - ' + title
 				duration = re.findall('length_formatted":"(.*?)"',meta,re.DOTALL)
-				if duration: addMenuItem('link',menu_name+title,link,43,img2,duration[0])
-				else: addMenuItem('link',menu_name+title,link,43,img2)
+				if duration: duration = duration[0]
+				else:  duration = ''
+				addMenuItem('video',menu_name+title,link,43,img2,duration)
 		else:
 			items=re.findall('itemprop="name">(.*?)<.*?contentUrl" content="(.*?)".*?image.*?url":"(.*?)"',html,re.DOTALL)
 			for title,link,img in items:
 				img = img.replace('\/','/')
 				title = escapeUNICODE(title)
 				link = escapeUNICODE(link)
-				addMenuItem('link',menu_name+title,link,43,img)
+				addMenuItem('video',menu_name+title,link,43,img)
 			#PLAY_FROM_DIRECTORY(url)
 	else:
 		html_blocks=re.findall('id="dropdown-menu-series"(.*?)</ul>',html,re.DOTALL)
@@ -107,12 +108,12 @@ def EPISODES(url):
 			items=re.findall('href="(.*?)" title="(.*?)"',block,re.DOTALL)
 			for link,title in items:
 				title = unescapeHTML(title)
-				addMenuItem('link',menu_name+title,link,47)
+				addMenuItem('video',menu_name+title,link,47)
 	return
 
 def PLAY(url):
 	url = url.replace(' ','%20')
-	PLAY_VIDEO(url,script_name)
+	PLAY_VIDEO(url,script_name,'video')
 	return
 
 def PLAY_NEWWEBSITE(url):
@@ -137,8 +138,8 @@ def CATEGORIES(url,category):
 				title = '_MOD_' + title.replace(re.findall(' \(.*?\)',title)[0],'')
 			url = website0a + '/' + link
 			if cat == '-165': title = '_MOD_' + 'السيد صباح شبر (60)'
-			if '-' in cat: addMenuItem('dir',menu_name+title,url,44,'','',cat)
-			else: addMenuItem('dir',menu_name+title,url,42)
+			if '-' in cat: addMenuItem('folder',menu_name+title,url,44,'','',cat)
+			else: addMenuItem('folder',menu_name+title,url,42)
 			exist=True
 	if not exist: TITLES(url,'3')
 	return
@@ -150,7 +151,7 @@ def PROGRAMS():
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addMenuItem('dir',menu_name+title,link,44)
+		addMenuItem('folder',menu_name+title,link,44)
 	return
 
 def LIVE():
@@ -158,7 +159,7 @@ def LIVE():
 	items = re.findall('sourceURL":"(.*?)"',html,re.DOTALL)
 	url = unquote(items[0])
 	#xbmcgui.Dialog().ok(url,str(html))
-	PLAY_VIDEO(url,script_name,'no')
+	PLAY_VIDEO(url,script_name,'live')
 	return
 
 def SEARCH(search):

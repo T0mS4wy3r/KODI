@@ -6,37 +6,37 @@ menu_name='_IPT_'
 
 def MAIN(mode,url,text):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if   mode==230: results = MAIN_MENU()
+	if   mode==230: results = MENU()
 	elif mode==231: results = ADD_ACCOUNT()
-	elif mode==232: results = CREATE_STREAMS()
+	elif mode==232: results = BUSY_DIALOG('start') ; CREATE_STREAMS() ; BUSY_DIALOG('stop')
 	elif mode==233: results = GROUPS(url,text,'')
 	elif mode==234: results = ITEMS(url,text)
 	elif mode==235: results = PLAY(url,'LIVE')
 	elif mode==236: results = PLAY(url,'VOD')
 	elif mode==237: results = DELETE_IPTV_FROM_SQL3(True)
-	elif mode==238: results = ITEMS(url,text)
+	#elif mode==238: results = ITEMS(url,text)
 	elif mode==239: results = SEARCH(text)
 	else: results = False
 	return results
 
-def MAIN_MENU():
-	addMenuItem('dir','  1.  [COLOR FFC89008]IPT  [/COLOR]'+'بحث في ملفات IPTV','',239)
-	addMenuItem('dir','  2.  [COLOR FFC89008]IPT  [/COLOR]'+'اضافة اشتراك IPTV','',231)
-	addMenuItem('dir','  3.  [COLOR FFC89008]IPT  [/COLOR]'+'جلب ملفات IPTV','',232)
-	addMenuItem('dir','  4.  [COLOR FFC89008]IPT  [/COLOR]'+'مسح ملفات IPTV','',237)
-	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addMenuItem('dir','  5.  [COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة ومرتبة','LIVE_GROUPED',233)
-	addMenuItem('dir','  6.  [COLOR FFC89008]IPT  [/COLOR]'+'أفلام مصنفة ومرتبة','VOD_MOVIES',233)
-	addMenuItem('dir','  7.  [COLOR FFC89008]IPT  [/COLOR]'+'مسلسلات مصنفة ومرتبة','VOD_SERIES',233)
-	addMenuItem('dir','  8.  [COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مجهولة','VOD_UNKNOWN',233)
-	#addMenuItem('dir',menu_name+'قنوات مجهولة','LIVE_UNKNOWN',233)
-	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addMenuItem('dir','  9.  [COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة من أسمائها','LIVE_FROM_NAME',233)
-	addMenuItem('dir','10.  [COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مصنفة من أسمائها','VOD_FROM_NAME',233)
-	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	addMenuItem('dir','11.  [COLOR FFC89008]IPT  [/COLOR]'+'القنوات الاصلية بدون تغيير','LIVE_ORIGINAL',233)
-	addMenuItem('dir','12.  [COLOR FFC89008]IPT  [/COLOR]'+'الفيديوهات الاصلية بدون تغيير','VOD_ORIGINAL',233)
-	addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+def MENU():
+	addMenuItem('folder','  1.  [COLOR FFC89008]IPT  [/COLOR]'+'بحث في ملفات IPTV','',239)
+	addMenuItem('link','  2.  [COLOR FFC89008]IPT  [/COLOR]'+'اضافة اشتراك IPTV','',231)
+	addMenuItem('link','  3.  [COLOR FFC89008]IPT  [/COLOR]'+'جلب ملفات IPTV','',232)
+	addMenuItem('link','  4.  [COLOR FFC89008]IPT  [/COLOR]'+'مسح ملفات IPTV','',237)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder','  5.  [COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة ومرتبة','LIVE_GROUPED',233)
+	addMenuItem('folder','  6.  [COLOR FFC89008]IPT  [/COLOR]'+'أفلام مصنفة ومرتبة','VOD_MOVIES',233)
+	addMenuItem('folder','  7.  [COLOR FFC89008]IPT  [/COLOR]'+'مسلسلات مصنفة ومرتبة','VOD_SERIES',233)
+	addMenuItem('folder','  8.  [COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مجهولة','VOD_UNKNOWN',233)
+	#addMenuItem('folder',menu_name+'قنوات مجهولة','LIVE_UNKNOWN',233)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder','  9.  [COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة من أسمائها','LIVE_FROM_NAME',233)
+	addMenuItem('folder','10.  [COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مصنفة من أسمائها','VOD_FROM_NAME',233)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder','11.  [COLOR FFC89008]IPT  [/COLOR]'+'القنوات الاصلية بدون تغيير','LIVE_ORIGINAL',233)
+	addMenuItem('folder','12.  [COLOR FFC89008]IPT  [/COLOR]'+'الفيديوهات الاصلية بدون تغيير','VOD_ORIGINAL',233)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
 def GROUPS(TYPE,GROUP,website):
@@ -65,7 +65,8 @@ def GROUPS(TYPE,GROUP,website):
 			title = title2
 			if title in unique: continue
 			unique.append(title)
-			addMenuItem('dir',menu_name2+title,TYPE,233,'','',group)
+			if 'RANDOM' in website: addMenuItem('folder',menu_name2+title,TYPE,167,'','',group)
+			else: addMenuItem('folder',menu_name2+title,TYPE,233,'','',group)
 		else:
 			title = group2
 			if title in unique: continue
@@ -73,8 +74,8 @@ def GROUPS(TYPE,GROUP,website):
 			if GROUP=='' and TYPE!='VOD_ORIGINAL': img = ''
 			if title=='!!__UNKNOWN__!!': img = ''
 			if TYPE!='VOD_SERIES' or GROUP=='' or title2 in GROUP:
-				if 'RANDOM' in website: addMenuItem('dir',menu_name2+title,TYPE,238,img,'',group)
-				else: addMenuItem('dir',menu_name2+title,TYPE,234,img,'',group)
+				if 'RANDOM' in website: addMenuItem('folder',menu_name2+title,TYPE,167,img,'',group)
+				else: addMenuItem('folder',menu_name2+title,TYPE,234,img,'',group)
 	WRITE_TO_SQL3('IPTV_GROUPS',[TYPE,GROUP,website],menuItemsLIST,UNLIMITED_CACHE)
 	menuItemsLIST[:] = previous_menuItemsLIST+menuItemsLIST
 	return
@@ -90,8 +91,8 @@ def ITEMS(TYPE,GROUP):
 			title = dict['title']
 			url = dict['url']
 			img = dict['img']
-			if 'LIVE' in TYPE: addMenuItem('link',menu_name+' '+title,url,235,img,'','IsPlayable=no')
-			else: addMenuItem('link',menu_name+' '+title,url,236,img,'','IsPlayable=yes')
+			if 'LIVE' in TYPE: addMenuItem('live',menu_name+' '+title,url,235,img)
+			else: addMenuItem('video',menu_name+' '+title,url,236,img)
 	#xbmcgui.Dialog().ok('OUT',str(menuItemsLIST))
 	WRITE_TO_SQL3('IPTV_ITEMS',[TYPE,GROUP],menuItemsLIST,UNLIMITED_CACHE)
 	menuItemsLIST[:] = previous_menuItemsLIST+menuItemsLIST
@@ -99,8 +100,8 @@ def ITEMS(TYPE,GROUP):
 
 def PLAY(url,type):
 	#xbmcgui.Dialog().ok(url,'')
-	if 'LIVE' in type: PLAY_VIDEO(url,script_name,'no')
-	else: PLAY_VIDEO(url,script_name,'yes')
+	if 'LIVE' in type: PLAY_VIDEO(url,script_name,'live')
+	else: PLAY_VIDEO(url,script_name,'video')
 	return
 
 def ADD_ACCOUNT():
@@ -145,8 +146,8 @@ def SEARCH(search=''):
 			url = dict['url']
 			img = dict['img']
 			if '.mp4' in url or '.mkv' in url or '.avi' in url or '.mp3' in url:
-				addMenuItem('link',menu_name+' '+title,url,236,img,'','IsPlayable=yes')
-			else: addMenuItem('link',menu_name+' '+title,url,235,img,'','IsPlayable=no')
+				addMenuItem('video',menu_name+' '+title,url,236,img)
+			else: addMenuItem('live',menu_name+' '+title,url,235,img)
 	return
 
 def CREATE_STREAMS():

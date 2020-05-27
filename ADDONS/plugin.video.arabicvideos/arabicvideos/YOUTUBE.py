@@ -5,12 +5,12 @@ script_name='YOUTUBE'
 menu_name='_YUT_'
 website0a = WEBSITES[script_name][0]
 
-def MAIN(mode,url,text):
+def MAIN(mode,url,text,type):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if   mode==140: results = MENU()
 	elif mode==141: results = TITLES(url)
 	elif mode==142: results = PLAYLIST_ITEMS(url)
-	elif mode==143: results = PLAY(url,text)
+	elif mode==143: results = PLAY(url,type)
 	#elif mode==144: results = SETTINGS()
 	elif mode==145: results = CHANNEL_MENU(url)
 	elif mode==146: results = CHANNEL_ITEMS(url)
@@ -21,24 +21,24 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU():
-	addMenuItem('dir',menu_name+'بحث في الموقع','',149)
-	addMenuItem('dir',menu_name+'العراق خطبة المرجعية',website0a+'/playlist?list=PL4jUq6pnG36QjuXDhNnIlriuzroTFtmfr',142)
-	addMenuItem('dir',menu_name+'قناة كربلاء الفضائية',website0a+'/user/karbalatvchannel',145)
-	addMenuItem('dir',menu_name+'العتبة الحسينية المقدسة',website0a+'/user/ImamHussaindotorg',145)
-	addMenuItem('dir',menu_name+'بحث عن خطبة المرجعية',website0a+'/results?search_query=قناة+كربلاء+الفضائية+خطبة+الجمعة&sp=CAISAhAB',141)
-	addMenuItem('dir',menu_name+'بحث عن قنوات عربية بث مباشر','',147)
-	addMenuItem('dir',menu_name+'بحث عن قنوات أجنبية بث مباشر','',148)
-	addMenuItem('dir',menu_name+'بحث عن مسلسلات عربية',website0a+'/results?search_query=مسلسل&sp=EgIQAw==',141)
-	addMenuItem('dir',menu_name+'بحث عن افلام عربية',website0a+'/results?search_query=فيلم',141)
-	addMenuItem('dir',menu_name+'بحث عن مسرحيات عربية',website0a+'/results?search_query=مسرحية',141)
-	addMenuItem('dir',menu_name+'بحث عن مسلسلات اجنبية',website0a+'/results?search_query=series&sp=EgIQAw==',141)
-	addMenuItem('dir',menu_name+'بحث عن افلام اجنبية',website0a+'/results?search_query=movie',141)
-	addMenuItem('dir',menu_name+'بحث عن مسلسلات كارتون',website0a+'/results?search_query=كارتون&sp=EgIQAw==',141)
-	addMenuItem('dir',menu_name+'شوف دراما الاولى',website0a+'/channel/UCgd_tWU4X7s10DKdgt-XDNQ',145)
-	addMenuItem('dir',menu_name+'شوف دراما الثانية',website0a+'/channel/UC25ZB5ZMqLQwxFDV9FHvF8g',145)
-	addMenuItem('dir',menu_name+'شوف دراما الثالثة',website0a+'/channel/UCQOz2_AhxeHUbNMYan-6ZQQ',145)
-	addMenuItem('dir',menu_name+'شبكة وطن',website0a+'/user/WatanNetwork',145)
-	#addMenuItem('dir',menu_name+'اعدادات اضافة يوتيوب','',144)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',149)
+	addMenuItem('folder',menu_name+'العراق خطبة المرجعية',website0a+'/playlist?list=PL4jUq6pnG36QjuXDhNnIlriuzroTFtmfr',142)
+	addMenuItem('folder',menu_name+'قناة كربلاء الفضائية',website0a+'/user/karbalatvchannel',145)
+	addMenuItem('folder',menu_name+'العتبة الحسينية المقدسة',website0a+'/user/ImamHussaindotorg',145)
+	addMenuItem('folder',menu_name+'بحث عن خطبة المرجعية',website0a+'/results?search_query=قناة+كربلاء+الفضائية+خطبة+الجمعة&sp=CAISAhAB',141)
+	addMenuItem('folder',menu_name+'بحث عن قنوات عربية بث مباشر','',147)
+	addMenuItem('folder',menu_name+'بحث عن قنوات أجنبية بث مباشر','',148)
+	addMenuItem('folder',menu_name+'بحث عن مسلسلات عربية',website0a+'/results?search_query=مسلسل&sp=EgIQAw==',141)
+	addMenuItem('folder',menu_name+'بحث عن افلام عربية',website0a+'/results?search_query=فيلم',141)
+	addMenuItem('folder',menu_name+'بحث عن مسرحيات عربية',website0a+'/results?search_query=مسرحية',141)
+	addMenuItem('folder',menu_name+'بحث عن مسلسلات اجنبية',website0a+'/results?search_query=series&sp=EgIQAw==',141)
+	addMenuItem('folder',menu_name+'بحث عن افلام اجنبية',website0a+'/results?search_query=movie',141)
+	addMenuItem('folder',menu_name+'بحث عن مسلسلات كارتون',website0a+'/results?search_query=كارتون&sp=EgIQAw==',141)
+	addMenuItem('folder',menu_name+'شوف دراما الاولى',website0a+'/channel/UCgd_tWU4X7s10DKdgt-XDNQ',145)
+	addMenuItem('folder',menu_name+'شوف دراما الثانية',website0a+'/channel/UC25ZB5ZMqLQwxFDV9FHvF8g',145)
+	addMenuItem('folder',menu_name+'شوف دراما الثالثة',website0a+'/channel/UCQOz2_AhxeHUbNMYan-6ZQQ',145)
+	addMenuItem('folder',menu_name+'شبكة وطن',website0a+'/user/WatanNetwork',145)
+	#addMenuItem('folder',menu_name+'اعدادات اضافة يوتيوب','',144)
 	#yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
 	#if yes:
 	#	url = 'plugin://plugin.video.youtube'
@@ -56,21 +56,21 @@ def LIVE_ENGLISH():
 	return
 
 def CHANNEL_MENU(url):
-	addMenuItem('dir',menu_name+'فيديوهات',url+'/videos',146)
-	addMenuItem('dir',menu_name+'قوائم',url+'/playlists',146)
-	addMenuItem('dir',menu_name+'قنوات',url+'/channels',146)
+	addMenuItem('folder',menu_name+'فيديوهات',url+'/videos',146)
+	addMenuItem('folder',menu_name+'قوائم',url+'/playlists',146)
+	addMenuItem('folder',menu_name+'قنوات',url+'/channels',146)
 	return
 
-def PLAY(url,text):
+def PLAY(url,type):
 	#url = url+'&'
 	#items = re.findall('v=(.*?)&',url,re.DOTALL)
 	#id = items[0]
 	#xbmcgui.Dialog().ok(url,'')
 	#link = 'plugin://plugin.video.youtube/play/?video_id='+id
-	#PLAY_VIDEO(link,script_name)
+	#PLAY_VIDEO(link,script_name,'video')
 	linkLIST = [url]
 	import RESOLVERS
-	RESOLVERS.PLAY(linkLIST,script_name,text)
+	RESOLVERS.PLAY(linkLIST,script_name,type)
 	return
 
 def PLAYLIST_ITEMS(url):
@@ -95,13 +95,13 @@ def PLAYLIST_ITEMS(url):
 			title = title.replace('\n','')
 			title = unescapeHTML(title)
 			link = website0a+link
-			addMenuItem('link',menu_name+title,link,143,img,duration)
+			addMenuItem('video',menu_name+title,link,143,img,duration)
 		html_blocks = re.findall('items-load-more-button(.*?)load-more-loading',html,re.DOTALL)
 		if html_blocks:
 			block = html_blocks[0]
 			items = re.findall('href="(.*?)"',block,re.DOTALL)
 			for link in items:
-				addMenuItem('dir',menu_name+'صفحة اخرى',website0a+link,142)
+				addMenuItem('folder',menu_name+'صفحة اخرى',website0a+link,142)
 	else: PLAYLIST_ITEMS_PLAYER(url)
 	return
 
@@ -119,9 +119,9 @@ def PLAYLIST_ITEMS_PLAYER(url):
 		title = unescapeHTML(title)
 		img = items2[i]
 		link = website0a+link
-		addMenuItem('link',menu_name+title,link,143,img)
+		addMenuItem('video',menu_name+title,link,143,img)
 		i = i+1
-	addMenuItem('dir',menu_name+'صفحة اخرى',link,142)
+	addMenuItem('folder',menu_name+'صفحة اخرى',link,142)
 	return
 
 def CHANNEL_ITEMS(url):
@@ -144,16 +144,16 @@ def CHANNEL_ITEMS(url):
 			title = title.replace('\n','')
 			link = website0a+link
 			title = unescapeHTML(title)
-			if 'list=' in link: addMenuItem('dir',menu_name+'LIST'+count+':  '+title,link,142,img)
-			elif '/channel/' in link: addMenuItem('dir',menu_name+'CHNL:  '+title,link,145,img)
-			elif live!='': addMenuItem('link',menu_name+live+title,link,143,img,'','IsPlayable=no')
-			else: addMenuItem('link',menu_name+title,link,143,img,duration)
+			if 'list=' in link: addMenuItem('folder',menu_name+'LIST'+count+':  '+title,link,142,img)
+			elif '/channel/' in link: addMenuItem('folder',menu_name+'CHNL:  '+title,link,145,img)
+			elif live!='': addMenuItem('live',menu_name+live+title,link,143,img,'','showWatched=False')
+			else: addMenuItem('video',menu_name+title,link,143,img,duration)
 		html_blocks = re.findall('items-load-more-button(.*?)load-more-loading',html,re.DOTALL)
 		if html_blocks:
 			block = html_blocks[0]
 			items = re.findall('href="(.*?)"',block,re.DOTALL)
 			for link in items:
-				addMenuItem('dir',menu_name+'صفحة اخرى',website0a+link,146)
+				addMenuItem('folder',menu_name+'صفحة اخرى',website0a+link,146)
 	return
 
 def TITLES(url):
@@ -191,17 +191,17 @@ def TITLES(url):
 		if 'http' not in link: link = website0a+link
 		title = title.replace('\n','')
 		title = unescapeHTML(title)
-		if 'list=' in link: addMenuItem('dir',menu_name+'LIST'+counts+':  '+title,link,142,img)
-		elif '/channel/' in link: addMenuItem('dir',menu_name+'CHNL'+counts+':  '+title,link,145,img)
-		elif '/user/' in link: addMenuItem('dir',menu_name+'USER'+counts+':  '+title,link,145,img)
-		elif live!='': addMenuItem('link',menu_name+live+title,link,143,img,'','IsPlayable=no')
-		else: addMenuItem('link',menu_name+title,link,143,img,duration)
+		if 'list=' in link: addMenuItem('folder',menu_name+'LIST'+counts+':  '+title,link,142,img)
+		elif '/channel/' in link: addMenuItem('folder',menu_name+'CHNL'+counts+':  '+title,link,145,img)
+		elif '/user/' in link: addMenuItem('folder',menu_name+'USER'+counts+':  '+title,link,145,img)
+		elif live!='': addMenuItem('live',menu_name+live+title,link,143,img,'','showWatched=False')
+		else: addMenuItem('video',menu_name+title,link,143,img,duration)
 	html_blocks = re.findall('search-pager(.*?)footer-container',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?button-content">(.*?)<',block,re.DOTALL)
 		for link,title in items:
-			addMenuItem('dir',menu_name+'صفحة '+title,website0a+link,141)
+			addMenuItem('folder',menu_name+'صفحة '+title,website0a+link,141)
 	return
 
 """

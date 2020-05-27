@@ -26,17 +26,19 @@ def TERMINATED_CHANGED():
 
 def MENU(website=''):
 	if website=='':
-		addMenuItem('dir',menu_name+'بحث في الموقع','',219)
-		#addMenuItem('dir',menu_name+'فلتر','',114,website0a)
+		addMenuItem('folder',menu_name+'بحث في الموقع','',219)
+		#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	url = website0a+'/getpostsPin?type=one&data=pin&limit=25'
-	addMenuItem('dir',website+'::'+menu_name+'المميزة',url,211)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SERIES4WATCH-MENU-1st')
+	addMenuItem('folder',website+'::'+menu_name+'المميزة',url,211)
+	if website=='': showDialogs = True
+	else: showDialogs = False
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'SERIES4WATCH-MENU-1st')
 	html_blocks = re.findall('FiltersButtons(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?</i>(.*?)<',block,re.DOTALL)
 	for link,title in items:#[1:-1]:
 		url = website0a+'/getposts?type=one&data='+link
-		addMenuItem('dir',website+'::'+menu_name+title,url,211)
+		addMenuItem('folder',website+'::'+menu_name+title,url,211)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(http.*?)">(.*?)<',block,re.DOTALL)
@@ -46,8 +48,8 @@ def MENU(website=''):
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
 		#	if any(value in title for value in keepLIST):
-			addMenuItem('dir',website+'::'+menu_name+title,link,211)
-	return
+			addMenuItem('folder',website+'::'+menu_name+title,link,211)
+	return html
 
 def TITLES(url):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-TITLES-1st')
@@ -66,15 +68,15 @@ def TITLES(url):
 		title = unescapeHTML(title)
 		title = title.strip(' ')
 		if '/film/' in link or any(value in title for value in itemLIST):
-			addMenuItem('link',menu_name+title,link,212,img)
+			addMenuItem('video',menu_name+title,link,212,img)
 		elif '/episode/' in link and 'الحلقة' in title:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
 			if episode:
 				title = '_MOD_' + episode[0]
 				if title not in allTitles:
-					addMenuItem('dir',menu_name+title,link,213,img)
+					addMenuItem('folder',menu_name+title,link,213,img)
 					allTitles.append(title)
-		else: addMenuItem('dir',menu_name+title,link,213,img)
+		else: addMenuItem('folder',menu_name+title,link,213,img)
 	html_blocks = re.findall('class="pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -83,7 +85,7 @@ def TITLES(url):
 			link = unescapeHTML(link)
 			title = unescapeHTML(title)
 			title = title.replace('الصفحة ','')
-			if title!='': addMenuItem('dir',menu_name+'صفحة '+title,link,211)
+			if title!='': addMenuItem('folder',menu_name+'صفحة '+title,link,211)
 	return
 
 def EPISODES(url):
@@ -108,10 +110,10 @@ def EPISODES(url):
 	episodesCount = str(items).count('/episode/')
 	if seasonsCount>1 and episodesCount>0 and '/season/' not in url:
 		for link,title,sequence in items:
-			if '/season/' in link: addMenuItem('dir',menu_name+title,link,213)
+			if '/season/' in link: addMenuItem('folder',menu_name+title,link,213)
 	else:
 		for link,title,sequence in items:
-			if '/season/' not in link: addMenuItem('link',menu_name+title,link,212)
+			if '/season/' not in link: addMenuItem('video',menu_name+title,link,212)
 	return
 
 def PLAY(url):
@@ -180,7 +182,7 @@ def PLAY(url):
 		xbmcgui.Dialog().ok('','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
-		RESOLVERS.PLAY(linkLIST,script_name)
+		RESOLVERS.PLAY(linkLIST,script_name,'video')
 	return
 
 def SEARCH(search):

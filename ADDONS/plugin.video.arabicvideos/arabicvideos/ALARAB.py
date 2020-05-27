@@ -25,50 +25,52 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',19)
-	addMenuItem('dir',website+'::'+menu_name+'اخر الاضافات','',14)
-	addMenuItem('dir',website+'::'+menu_name+'مسلسلات رمضان','',15)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',19)
+	addMenuItem('folder',website+'::'+menu_name+'اخر الاضافات','',14)
+	addMenuItem('folder',website+'::'+menu_name+'مسلسلات رمضان','',15)
+	if website=='': showDialogs = True
+	else: showDialogs = False
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'ALARAB-MENU-1st')
 	html_blocks=re.findall('id="nav-slider"(.*?)</div>',html,re.DOTALL)
 	block1 = html_blocks[0]
 	items = re.findall('href="(.*?)".*?>(.*?)<',block1,re.DOTALL)
 	for link,title in items:
 		link = website0a+link
 		title = title.strip(' ')
-		addMenuItem('dir',website+'::'+menu_name+title,link,11)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999,'','','IsPlayable=no')
+		addMenuItem('folder',website+'::'+menu_name+title,link,11)
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('id="navbar"(.*?)</div>',html,re.DOTALL)
 	block2 = html_blocks[0]
 	items = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	for link,title in items:
 		link = website0a+link
-		addMenuItem('dir',website+'::'+menu_name+title,link,11)
-	return
+		addMenuItem('folder',website+'::'+menu_name+title,link,11)
+	return html
 
 def RAMADAN_MENU():
-	addMenuItem('dir',menu_name+'المسلسلات العربية',website0a+'/view-8/مسلسلات-عربية',11)
-	addMenuItem('dir',menu_name+'مسلسلات رمضان 2020','',16)
-	addMenuItem('dir',menu_name+'مسلسلات رمضان 2019',website0a+'/ramadan2019/مصرية',11)
-	addMenuItem('dir',menu_name+'مسلسلات رمضان 2018',website0a+'/ramadan2018/مصرية',11)
-	addMenuItem('dir',menu_name+'مسلسلات رمضان 2017',website0a+'/ramadan2017/مصرية',11)
-	addMenuItem('dir',menu_name+'مسلسلات رمضان 2016',website0a+'/ramadan2016/مصرية',11)
+	addMenuItem('folder',menu_name+'المسلسلات العربية',website0a+'/view-8/مسلسلات-عربية',11)
+	addMenuItem('folder',menu_name+'مسلسلات رمضان 2020','',16)
+	addMenuItem('folder',menu_name+'مسلسلات رمضان 2019',website0a+'/ramadan2019/مصرية',11)
+	addMenuItem('folder',menu_name+'مسلسلات رمضان 2018',website0a+'/ramadan2018/مصرية',11)
+	addMenuItem('folder',menu_name+'مسلسلات رمضان 2017',website0a+'/ramadan2017/مصرية',11)
+	addMenuItem('folder',menu_name+'مسلسلات رمضان 2016',website0a+'/ramadan2016/مصرية',11)
 	return
 
 def LATEST():
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','ALARAB-LATEST-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,True,'ALARAB-LATEST-1st')
 	#xbmcgui.Dialog().ok('',html)
 	html_blocks=re.findall('heading-top(.*?)div class=',html,re.DOTALL)
 	block = html_blocks[0]+html_blocks[1]
 	items=re.findall('href="(.*?)".*?src="(.*?)" alt="(.*?)"',block,re.DOTALL)
 	for link,img,title in items:
 		url = website0a + link
-		if 'series' in url: addMenuItem('dir',menu_name+title,url,11,img)
-		else: addMenuItem('link',menu_name+title,url,12,img)
+		if 'series' in url: addMenuItem('folder',menu_name+title,url,11,img)
+		else: addMenuItem('video',menu_name+title,url,12,img)
 	return
 
 def TITLES(url):
 	#xbmcgui.Dialog().ok('111',url)
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'ALARAB-TITLES-1st')
 	html_blocks = re.findall('video-category(.*?)right_content',html,re.DOTALL)
 	block = html_blocks[0]
 	found = False
@@ -111,25 +113,25 @@ def TITLES(url):
 			allTitles.append(title2)
 			#xbmc.log(title2, level=xbmc.LOGNOTICE)
 			if '/q/' in url and ('الحلقة' in title or 'الحلقه' in title):
-				addMenuItem('dir',menu_name+title2,link,13,img)
+				addMenuItem('folder',menu_name+title2,link,13,img)
 				found = True
 			elif 'series' in link:
-				addMenuItem('dir',menu_name+title,link,11,img)
+				addMenuItem('folder',menu_name+title,link,11,img)
 				found = True
 			else:
 				#if 'مسلسل' not in title and 'الحلقة' in title: title = 'مسلسل '+title
-				addMenuItem('link',menu_name+title,link,12,img)
+				addMenuItem('video',menu_name+title,link,12,img)
 				found = True
 	#xbmcgui.Dialog().ok('333',url)
 	if found:
 		items = re.findall('tsc_3d_button red.*?href="(.*?)" title="(.*?)"',block,re.DOTALL)
 		for link,page in items:
 			url = website0a + link
-			addMenuItem('dir',menu_name+page,url,11)
+			addMenuItem('folder',menu_name+page,url,11)
 	return
 
 def EPISODES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-EPISODES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'ALARAB-EPISODES-1st')
 	series = re.findall('href="(/series.*?)"',html,re.DOTALL)
 	url2 = website0a+series[0]
 	results = TITLES(url2)
@@ -137,7 +139,7 @@ def EPISODES(url):
 
 """
 def EPISODES_OLD(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-EPISODES_OLD-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'ALARAB-EPISODES_OLD-1st')
 	html_blocks = re.findall('banner-right(.*?)classic-channel',html,re.DOTALL)
 	#xbmcgui.Dialog().ok(url,'step 2')
 	block = html_blocks[0]
@@ -151,7 +153,7 @@ def EPISODES_OLD(url):
 		if title not in allTitles:
 			link = website0a+unquote(link)
 			title = title.strip(' ')
-			addMenuItem('link',menu_name+'مسلسل '+title,link,12,img)
+			addMenuItem('video',menu_name+'مسلسل '+title,link,12,img)
 			allTitles.append(title)
 	#xbmcgui.Dialog().ok(url,'step 5')
 	return
@@ -160,13 +162,13 @@ def EPISODES_OLD(url):
 def PLAY(url):
 	#xbmcgui.Dialog().ok(url,str(url))
 	linkLIST,titleLIST,videodeliveryID = [],[],[]
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','ALARAB-PLAY-1st')
+	html = openURL_cached(SHORT_CACHE,url,'',headers,True,'ALARAB-PLAY-1st')
 	if 'vid=' in html:
 		# https://vod.alarab.com/v101949-_حلقة_25_حكايتي_HD_رمضان_252019
 		url2 = re.findall('class="resp.*?src="(.*?)"',html,re.DOTALL)
 		if url2:
 			url2 = url2[0]
-			html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','ALARAB-PLAY-2nd')
+			html2 = openURL_cached(LONG_CACHE,url2,'',headers,True,'ALARAB-PLAY-2nd')
 			url3 = re.findall('source src="(.*?)"',html2,re.DOTALL)
 			if url3:
 				url3 = url3[0]
@@ -180,7 +182,7 @@ def PLAY(url):
 		if id:
 			url2 = 'https://alarabplayers.alarab.com/vod.php?vid='+id
 			headers['Referer'] = url
-			html2 = openURL_cached(SHORT_CACHE,url2,'',headers,'','ALARAB-PLAY-3rd')
+			html2 = openURL_cached(SHORT_CACHE,url2,'',headers,True,'ALARAB-PLAY-3rd')
 			html += html2
 		html_blocks = re.findall('playerInstance.setup(.*?)primary',html,re.DOTALL)
 		for block in html_blocks:
@@ -224,7 +226,7 @@ def PLAY(url):
 			titleLIST.append(title)
 			linkLIST.append(url3)
 		"""
-		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-PLAY-3rd')
+		html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'ALARAB-PLAY-3rd')
 		xbmcgui.Dialog().ok(url,str(html))
 		items2 = re.findall('RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
 		if items2:
@@ -240,7 +242,7 @@ def PLAY(url):
 		#	titleLIST.append('ملف التشغيل')
 		#xbmcgui.Dialog().ok('',str(linkLIST))
 		#url = website0a + '/download.php?file='+id
-		#html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALARAB-PLAY-4th')
+		#html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'ALARAB-PLAY-4th')
 		#items = re.findall('</h2>.*?href="(.*?mp4)"',html,re.DOTALL)
 		#if items:
 		#	linkLIST.append(items[0])
@@ -264,12 +266,12 @@ def PLAY(url):
 		url = new_linkLIST[selection]
 	if 'youtu' in url:
 		import RESOLVERS
-		RESOLVERS.PLAY_LINK(url,script_name)
-	else: PLAY_VIDEO(url,script_name)
+		RESOLVERS.PLAY_LINK(url,script_name,'video')
+	else: PLAY_VIDEO(url,script_name,'video')
 	return
 
 def RAMADAN():
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-RAMADAN-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,True,'ALARAB-RAMADAN-1st')
 	html_blocks=re.findall('id="content_sec"(.*?)id="left_content"',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
@@ -278,7 +280,7 @@ def RAMADAN():
 	for link,title in items:
 		url = website0a + link
 		title = title.strip(' ') + ' ' + year
-		addMenuItem('dir',menu_name+title,url,11)
+		addMenuItem('folder',menu_name+title,url,11)
 	return
 
 def SEARCH(search):

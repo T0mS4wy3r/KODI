@@ -5,26 +5,18 @@ from LIBRARY import *
 script_name = 'MAIN'
 
 
+type,name99,url99,mode,image99,page99,text = EXTRACT_KODI_PATH()
+mode2 = int(mode)
+mode3 = int(mode2/10)
+
+
 #xbmcgui.Dialog().ok('test 111',str(addon_handle))
-
-
-name,url,mode,image,page,text = EXTRACT_KODI_PATH(addon_path)
-
-
 LOG_THIS('NOTICE','============================================================================================')
 if 'mode' not in addon_path:
 	message = 'Version: [ '+addon_version+' ]   Kodi: [ '+kodi_release+' ]'
 	#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   '+message)
 else: LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-
-#response = openURL_requests('GET','http://example.com||MyDNSUrl=')
-#html = response.text
-#xbmcgui.Dialog().ok('',str(html))
-#html = openURL('http://example.com||MyProxyUrl=http://198.50.147.158:3128')
-#xbmcgui.Dialog().ok('',str(html))
-#html = openURL('http://example.com||MyProxyUrl=')
-#xbmcgui.Dialog().ok('',str(html))
 
 
 if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
@@ -42,109 +34,62 @@ else:
 	IPTV.CREATE_STREAMS()
 
 
-"""
-conn = sqlite3.connect(dbfile)
-c = conn.cursor()
-if newdb:
-	#c.execute('PRAGMA auto_vacuum = NONE')
-	c.execute('CREATE TABLE htmlcache (expiry,url,data,headers,source,html)')
-	c.execute('CREATE TABLE responsecache (expiry,url,data,headers,allow_redirects,source,response)')
-	c.execute('CREATE TABLE serverscache (expiry,linkLIST,serversLIST,urlLIST)')
-else:
-	c.execute('DELETE FROM htmlcache WHERE expiry<'+str(now))
-	c.execute('DELETE FROM responsecache WHERE expiry<'+str(now))
-	c.execute('DELETE FROM serverscache WHERE expiry<'+str(now))
-conn.commit()
-conn.close()
-"""
-
-	
-if not (menu_label=='..' and mode=='164' and text=='VOD'):
-	results = MAIN_DISPATCHER(mode,url,text,page)
+#if menu_label!='Main Menu' or (menu_label=='Main Menu' and mode2==260):
 
 
-if addon_handle==-1: sys.exit(0)
+if mode3==16 and menu_label!='Main Menu':
+	results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text)
+	newFILE = str(menuItemsLIST)
+	with open(lastrandomfile,'w') as f: f.write(newFILE)
+	#LOG_THIS('NOTICE','Write last random file   mode: [ '+mode+' ]   path: [ '+addon_path+' ]')
+	#xbmcgui.Dialog().ok('write random list','')
+elif mode3==16 and menu_label=='Main Menu':
+	with open(lastrandomfile,'r') as f: oldFILE = f.read()
+	menuItemsLIST = eval(oldFILE)
+	#LOG_THIS('NOTICE','Read last random file   mode: [ '+mode+' ]   path: [ '+addon_path+' ]')
+	#xbmcgui.Dialog().ok('read random list','')
+else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text)
 
 
-if int(mode) in [161,163,164] or (int(mode) in [166] and 'RANDOM' in text) or mode=='238':
-	menuItemsLIST2 = []
-	for type,name,url,mode2,image,text1,text2 in menuItemsLIST:
-		if 'صفحة' not in name: menuItemsLIST2.append([type,name,url,mode2,image,text1,text2])
-	if int(mode) in [161]: header_count = 2
-	else: header_count = 3
-	count = 6+header_count
-	size = len(menuItemsLIST2)
-	if size>count: size = count-header_count
-	else: size = size-header_count
-	if size>0: menuItemsLIST = menuItemsLIST2[0:header_count]+random.sample(menuItemsLIST2[header_count:],size)
+#xbmcgui.Dialog().ok(addon_path,str(addon_handle))
 
 
-for type,name,url,mode2,image,text1,text2 in menuItemsLIST:
-	addKodiMenuItem(type,name,url,mode2,image,text1,text2)
+if addon_handle>-1:
+
+	UPDATE_RANDOM_MENUS = mode2 in [165] and 'DELETE' in text
+	FILTERING_MENUS = mode2 in [114,204,244,254] and text!=''
+	DELETE_LAST_VIDEOS = mode2 in [266,268]
+	SEARCH_MODES = mode2 in [19,29,39,49,59,69,79,99,119,139,149,209,229,249,259]
+
+	# kodi defaults
+	succeeded,updateListing,cacheToDisc = True,False,True
+
+	if menuItemsLIST:
+		#xbmcgui.Dialog().ok(addon_path,str(addon_handle))
+		KodiMenuList = []
+		for type99,name99,url99,mode99,image99,page99,text99 in menuItemsLIST:
+			kodiMenuItem = getKodiMenuItem(type99,name99,url99,mode99,image99,page99,text99)
+			KodiMenuList.append(kodiMenuItem)
+		xbmcplugin.addDirectoryItems(addon_handle,KodiMenuList,len(KodiMenuList))
+
+	if type=='folder' or SEARCH_MODES or UPDATE_RANDOM_MENUS: succeeded = True
+	else: succeeded = False
+
+	if FILTERING_MENUS or DELETE_LAST_VIDEOS or UPDATE_RANDOM_MENUS: updateListing = True
+	else: updateListing = False
+
+	xbmcplugin.endOfDirectory(addon_handle,succeeded,updateListing,cacheToDisc)
+
+	#PLAY_VIDEO_MODES = mode2 in [12,24,33,43,53,63,74,82,92,105,112,123,134,143,182,202,212,223,243,252]
+	#xbmcgui.Dialog().ok(str(succeeded),str(updateListing),str(cacheToDisc))
+	#xbmcgui.Dialog().ok(addon_path,str(addon_handle))
 
 
-search_modes = [19,29,39,49,59,69,79,99,119,139,149,209,229,249,259]
-website_mainmenu_modes = [11,51,61,64,91,111,132,181,201,211,251]
-filter_modes = [114,204,244,254]
-menu_update1 = (int(mode) in filter_modes+[266,268])
-menu_update2 = (int(mode)==165 and 'DELETE' in text)
-allowed_empty_modes1 = (int(mode) in search_modes+website_mainmenu_modes+[265])
-allowed_empty_modes2 = (len(menuItemsLIST)>0)
-#xbmcgui.Dialog().ok(mode,text)
-if menu_update1 or menu_update2: xbmcplugin.endOfDirectory(addon_handle,True,True,True)
-elif allowed_empty_modes1 or allowed_empty_modes2: xbmcplugin.endOfDirectory(addon_handle,True,False,True)
-else: xbmcplugin.endOfDirectory(addon_handle,False,False,True)
+	#DELETE_LAST_VIDEOS = mode2 in [266,268]
+	#if DELETE_LAST_VIDEOS: succeeded = True ; updateListing = True
 
 
 
-
-
-"""
-#if menu_label=='Main Menu' and mode!='260': menuItemsLIST = []
-#if 'قنوات' not in menu_label and mode=='161':
-#	xbmcplugin.endOfDirectory(addon_handle,False,False,True)
-#	sys.exit(0)
-#else:
-
-if menu_label=='..':
-	remianing = int(mode)%10
-	if remianing==9 and text=='': sys.exit(0)
-	if mode=='164' and text=='VOD': sys.exit(0)
-#else: MAIN_DISPATCHER(mode,url,text,page)
-
-
-#if menu_label=='Main Menu' and mode!='260': menuItemsLIST = []
-#else: 
-
-if menu_label=='..':
-	remianing = int(mode)%10
-	if remianing==9 and text=='': sys.exit()
-	if mode=='164' and text=='VOD': sys.exit()
-#if menu_label=='Main Menu' and mode!='260': sys.exit()
-#if menu_label=='': sys.exit()
-#if mode=='161' and menu_label=='': sys.exit()
-
-
-mode2 = int(mode)
-mode3 = int(mode2/10)
-WEBSITES_TV = [27,41,135]
-IPTV = [231,232,237,239]
-PLAY = [12,24,33,43,53,63,74,82,92,105,112,123,134,143,182,202,212,223,243,252]
-NOT_FOLDER_MODES = WEBSITES_TV+IPTV+PLAY
-if mode3 not in [0,15,17,19] and mode2 not in NOT_FOLDER_MODES:
-	#if menu_label!='Main Menu':
-	xbmcplugin.endOfDirectory(addon_handle)
-"""
-
-
-#try: xbmcplugin.endOfDirectory(addon_handle)
-#except: pass
-
-#raise SystemExit
-#sys.exit(0)
-
-#if addon_handle > -1:
-#xbmc.Player().play()
 
 
 

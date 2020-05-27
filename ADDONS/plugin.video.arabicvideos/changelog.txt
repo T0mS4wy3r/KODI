@@ -1,4 +1,22 @@
 ﻿
+v6.6.0	2020-05-27
+Rewrote RANDOM functions
+Separated IPTV to VOD & LIVE
+Added more random menus
+Updated ARABSEED for the new website
+Rewrote kodi menu exit
+Added kodi menu item types
+Added bulk kodi menu items
+Fixed PLAY video types
+Rewrote all last videos functions
+Added a file for last random menus
+Used "requests" instead of "urllib2"
+Fixed sending messages when using Arabic
+Added errors handling for "requests"
+Added "showDialogs" to many functions
+Minor fixes & improvements
+
+
 v6.5.2	2020-05-11
 Increased last videos count
 Added last channels menu

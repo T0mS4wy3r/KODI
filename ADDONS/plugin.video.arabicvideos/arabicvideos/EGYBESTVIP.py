@@ -28,26 +28,28 @@ def MAIN(mode,url,page,text):
 	return results
 
 def MENU(website=''):
-	#addMenuItem('dir',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
-	#addMenuItem('dir',menu_name+'تحذير','',226)
+	#addMenuItem('folder',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
+	#addMenuItem('folder',menu_name+'تحذير','',226)
 	#xbmcgui.Dialog().ok(website0a, html)
 	#html_blocks=re.findall('id="menu"(.*?)mainLoad',html,re.DOTALL)
 	#block = html_blocks[0]
 	#items=re.findall('href="(.*?)".*?i>(.*?)\n',block,re.DOTALL)
 	#for url,title in items:
-	#	if url!=website0a: addMenuItem('dir',menu_name+title,url,221)
-	if website=='': addMenuItem('dir',menu_name+'بحث في الموقع','',229)
-	addMenuItem('dir',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
-	addMenuItem('dir',website+'::'+menu_name+'الافلام',website0a+'/movies',221)
-	addMenuItem('dir',website+'::'+menu_name+'المسلسلات',website0a+'/tv',221)
-	if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBESTVIP-MAIN_MENU-1st')
+	#	if url!=website0a: addMenuItem('folder',menu_name+title,url,221)
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',229)
+	addMenuItem('folder',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
+	addMenuItem('folder',website+'::'+menu_name+'الافلام',website0a+'/movies',221)
+	addMenuItem('folder',website+'::'+menu_name+'المسلسلات',website0a+'/tv',221)
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	if website=='': showDialogs = True
+	else: showDialogs = False
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'EGYBESTVIP-MENU-1st')
 	html_blocks=re.findall('class="ba mgb(.*?)>EgyBest</a>',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addMenuItem('dir',website+'::'+menu_name+title,link,222,'','1')
-	return
+		addMenuItem('folder',website+'::'+menu_name+title,link,222,'','1')
+	return html
 	"""
 	# egybest1.com
 	html_blocks=re.findall('id="menu"(.*?)</div>',html,re.DOTALL)
@@ -55,12 +57,12 @@ def MENU(website=''):
 	#items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	items=re.findall('<a href="(.*?)".*?[1/][i"]>(.*?)</a',block,re.DOTALL)
 	for link,title in items:
-		if 'torrent' not in link: addMenuItem('dir',menu_name+title,link,222)
+		if 'torrent' not in link: addMenuItem('folder',menu_name+title,link,222)
 	html_blocks=re.findall('class="card(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		if 'torrent' not in link: addMenuItem('dir',menu_name+title,link,222)
+		if 'torrent' not in link: addMenuItem('folder',menu_name+title,link,222)
 	"""
 
 def FILTERS_MENU(url):
@@ -69,7 +71,7 @@ def FILTERS_MENU(url):
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?</i>(.*?)[\r\n]+',block,re.DOTALL)
 	for link,title in items:
-		addMenuItem('dir',menu_name+title,link,222,'','1')
+		addMenuItem('folder',menu_name+title,link,222,'','1')
 	html_blocks=re.findall('class="sub_nav(.*?)id="movies',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".+?>(.*?)<',block,re.DOTALL)
@@ -77,7 +79,7 @@ def FILTERS_MENU(url):
 		if link=='#': name = title
 		else:
 			title = title + '  :  ' + 'فلتر ' + name
-			addMenuItem('dir',menu_name+title,link,222,'','1')
+			addMenuItem('folder',menu_name+title,link,222,'','1')
 	return
 
 def TITLES(url,page):
@@ -120,9 +122,9 @@ def TITLES(url,page):
 		url2 = website0a + link
 		"""
 		if '/movie/' in link or '/episode' in link:
-			addMenuItem('link',menu_name+title,link.rstrip('/'),223,img)
+			addMenuItem('video',menu_name+title,link.rstrip('/'),223,img)
 		else:
-			addMenuItem('dir',menu_name+title,link,222,img,'1')
+			addMenuItem('folder',menu_name+title,link,222,img,'1')
 	count = len(items)
 	if (count==16 and '/movies' in url) \
 		or (count==16 and '/trending' in url) \
@@ -136,11 +138,11 @@ def TITLES(url,page):
 						if int(page/10)*10==i:
 							for j in range(i,i+10,1):
 								if not page==j and j!=0:
-									addMenuItem('dir',menu_name+'صفحة '+str(j),url,222,'',str(j))
-						elif i!=0: addMenuItem('dir',menu_name+'صفحة '+str(i),url,222,'',str(i))
-						else: addMenuItem('dir',menu_name+'صفحة '+str(1),url,222,'',str(1))
-				elif n!=0: addMenuItem('dir',menu_name+'صفحة '+str(n),url,222,'',str(n))
-				else: addMenuItem('dir',menu_name+'صفحة '+str(1),url,222,'','1')
+									addMenuItem('folder',menu_name+'صفحة '+str(j),url,222,'',str(j))
+						elif i!=0: addMenuItem('folder',menu_name+'صفحة '+str(i),url,222,'',str(i))
+						else: addMenuItem('folder',menu_name+'صفحة '+str(1),url,222,'',str(1))
+				elif n!=0: addMenuItem('folder',menu_name+'صفحة '+str(n),url,222,'',str(n))
+				else: addMenuItem('folder',menu_name+'صفحة '+str(1),url,222,'','1')
 	return
 
 def PLAY(url):
@@ -191,13 +193,13 @@ def PLAY(url):
 	#if selection == -1 : return
 	newLIST = []
 	for link in linkLIST:
-		if 'faselhd.co' in link: continue
+		if 'faselhd' in link: continue
 		if 'egybest.vip?name' in link: continue
 		newLIST.append(link)
 	if len(newLIST)==0: xbmcgui.Dialog().ok('الفيديو لا يعمل في هذا البرنامج','هذا الفيديو يستخدم روابط غير معروفة في هذا البرنامج والمبرمج لم يستطيع إيحاد حل لهذه المشكلة')
 	else:
 		import RESOLVERS
-		RESOLVERS.PLAY(newLIST,script_name)
+		RESOLVERS.PLAY(newLIST,script_name,'video')
 	return
 
 def SEARCH(search):

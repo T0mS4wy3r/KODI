@@ -23,12 +23,14 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('dir',website+'::'+menu_name+'بحث في الموقع','',249)
-	addMenuItem('dir',website+'::'+menu_name+'المميزة',website0a+proxy,241,'','','featured')
-	#addMenuItem('dir',website+'::'+menu_name+'المزيد',website0a+proxy,242,'','','more')
-	#addMenuItem('dir',website+'::'+menu_name+'الاخبار',website0a+proxy,242,'','','news')
-	if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	html = openURL_cached(LONG_CACHE,website0a+proxy,'',headers,'','AKWAM-MENU-1st')
+	if website=='': addMenuItem('folder',website+'::'+menu_name+'بحث في الموقع','',249)
+	addMenuItem('folder',website+'::'+menu_name+'المميزة',website0a+proxy,241,'','','featured')
+	#addMenuItem('folder',website+'::'+menu_name+'المزيد',website0a+proxy,242,'','','more')
+	#addMenuItem('folder',website+'::'+menu_name+'الاخبار',website0a+proxy,242,'','','news')
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	if website=='': showDialogs = True
+	else: showDialogs = False
+	html = openURL_cached(LONG_CACHE,website0a+proxy,'',headers,showDialogs,'AKWAM-MENU-1st')
 	html_blocks = re.findall('class="menu(.*?)<nav',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -37,17 +39,17 @@ def MENU(website=''):
 		for link,title in items:
 			if title not in ignoreLIST:
 				title = title+' مصنفة'
-				addMenuItem('dir',website+'::'+menu_name+title,link,245)
-		if website=='': addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
+				addMenuItem('folder',website+'::'+menu_name+title,link,245)
+		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		for link,title in items:
 			if title not in ignoreLIST:
 				title = title+' مفلترة'
-				addMenuItem('dir',website+'::'+menu_name+title,link,244)
-	return
+				addMenuItem('folder',website+'::'+menu_name+title,link,244)
+	return html
 
 def TITLES(url,type=''):
 	#xbmcgui.Dialog().ok(url,'TITLES')
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKWAM-TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'AKWAM-TITLES-1st')
 	if type=='featured':
 		html_blocks = re.findall('swiper-container(.*?)swiper-button-prev',html,re.DOTALL)
 	else:
@@ -57,8 +59,8 @@ def TITLES(url,type=''):
 		items = re.findall('src="(.*?)".*?href="(.*?)".*?text-white">(.*?)<',block,re.DOTALL)
 		for img,link,title in items:
 			if '/series/' in link or '/shows/' in link:
-				addMenuItem('dir',menu_name+title,link,242,img)
-			else: addMenuItem('link',menu_name+title,link,243,img)
+				addMenuItem('folder',menu_name+title,link,242,img)
+			else: addMenuItem('video',menu_name+title,link,243,img)
 	html_blocks = re.findall('pagination(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -67,7 +69,7 @@ def TITLES(url,type=''):
 			if title=='&lsaquo;': title = 'سابقة'
 			if title=='&rsaquo;': title = 'لاحقة'
 			link = unescapeHTML(link)
-			addMenuItem('dir',menu_name+'صفحة '+title,link,241)
+			addMenuItem('folder',menu_name+'صفحة '+title,link,241)
 	return
 
 def SEARCH(search):
@@ -83,25 +85,25 @@ def SEARCH(search):
 
 def EPISODES(url):
 	#xbmcgui.Dialog().ok(url,'EPISODES_AKWAM')
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','AKWAM-EPISODES-1st')
+	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'AKWAM-EPISODES-1st')
 	if '-episodes' not in html:
 		img = xbmc.getInfoLabel('ListItem.Icon')
-		addMenuItem('link',menu_name+'رابط التشغيل',url,243,img)
+		addMenuItem('video',menu_name+'رابط التشغيل',url,243,img)
 	else:
 		html_blocks = re.findall('-episodes">(.*?)col-lg-8',html,re.DOTALL)
 		block = html_blocks[0]
 		episodes = re.findall('href="(http.*?)".*?>(.*?)<.*?src="(.*?)"',block,re.DOTALL)
 		for link,title,img in episodes:
 			if 'الحلقات' in title or 'مواسم اخرى' in title: continue
-			if '/series/' in link: addMenuItem('dir',menu_name+title,link,242,img)
-			else: addMenuItem('link',menu_name+title,link,243,img)
+			if '/series/' in link: addMenuItem('folder',menu_name+title,link,242,img)
+			else: addMenuItem('video',menu_name+title,link,243,img)
 	return
 
 def PLAY(url):
 	#xbmcgui.Dialog().ok(url,'PLAY')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#with open('S:\\emad.html', 'w') as f: f.write(html)
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','AKWAM-PLAY-1st')
+	html = openURL_cached(LONG_CACHE,url,'',headers,True,'AKWAM-PLAY-1st')
 	ratingLIST = re.findall('class="badge.*?>.*?(\w*).*?<',html,re.DOTALL)
 	if RATING_CHECK(script_name,url,ratingLIST): return
 	buttons = re.findall('li><a href="#(.*?)".*?>(.*?)<',html,re.DOTALL)
@@ -146,17 +148,17 @@ def PLAY(url):
 	title = titleLIST[selection]
 	if 'akwam' in link: url2 = link
 	else:
-		html2 = openURL_cached(LONG_CACHE,link,'',headers,'','AKWAM-PLAY-2nd')
+		html2 = openURL_cached(LONG_CACHE,link,'',headers,True,'AKWAM-PLAY-2nd')
 		#xbmcgui.Dialog().ok(link,html2)
 		url2 = re.findall('class="content.*?href="(.*?)"',html2,re.DOTALL)
 		url2 = unquote(url2[0])
 	url3 = ''
 	if 'تحميل' in title:
-		html3 = openURL_cached(SHORT_CACHE,url2,'',headers,'','AKWAM-PLAY-3rd')
+		html3 = openURL_cached(SHORT_CACHE,url2,'',headers,True,'AKWAM-PLAY-3rd')
 		url3 = re.findall('btn-loader.*?href="(.*?)"',html3,re.DOTALL)
 		url3 = unquote(url3[0])
 	if 'مشاهدة' in title:
-		html4 = openURL_cached(SHORT_CACHE,url2,'',headers,'','AKWAM-PLAY-4th')
+		html4 = openURL_cached(SHORT_CACHE,url2,'',headers,True,'AKWAM-PLAY-4th')
 		#xbmcgui.Dialog().ok(url2,html4)
 		links = re.findall('<source.*?src="(.*?)".*?size="(.*?)"',html4,re.DOTALL)
 		#xbmcgui.Dialog().ok(url2,str(links))
@@ -174,7 +176,7 @@ def PLAY(url):
 			if selection==-1: return
 			url3 = linkLIST[selection]
 	if url3=='': xbmcgui.Dialog().ok('','لا يوجد ملف تشغيل لهذا الفيديو')
-	else: PLAY_VIDEO(url3,script_name,'yes')
+	else: PLAY_VIDEO(url3,script_name,'video')
 	return
 
 def FILTERS_MENU(url,filter):
@@ -199,10 +201,10 @@ def FILTERS_MENU(url,filter):
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'all')
 		if filter_values=='': url2 = url
 		else: url2 = url+'?'+filter_values
-		addMenuItem('dir',menu_name+'أظهار قائمة الفيديو التي تم اختيارها',url2,241,'','1')
-		addMenuItem('dir',menu_name+' [[   '+filter_show+'   ]]',url2,241,'','1')
-		addMenuItem('link','[COLOR FFC89008]=========================[/COLOR]','',9999,'','','IsPlayable=no')
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','AKWAM-FILTERS_MENU-1st')
+		addMenuItem('folder',menu_name+'أظهار قائمة الفيديو التي تم اختيارها',url2,241,'','1')
+		addMenuItem('folder',menu_name+' [[   '+filter_show+'   ]]',url2,241,'','1')
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	html = openURL_cached(LONG_CACHE,url,'',headers,True,'AKWAM-FILTERS_MENU-1st')
 	html_blocks = re.findall('<form id(.*?)</form>',html,re.DOTALL)
 	block = html_blocks[0]
 	select_blocks = re.findall('<select.*?name="(.*?)".*?">(.*?)<(.*?)</select>',block,re.DOTALL)
@@ -220,13 +222,13 @@ def FILTERS_MENU(url,filter):
 				else: FILTERS_MENU(url2,'CATEGORIES::'+new_filter)
 				return
 			else:
-				if category2==menu_list[-1]: addMenuItem('dir',menu_name+'الجميع',url2,241,'','1')
-				else: addMenuItem('dir',menu_name+'الجميع',url2,245,'','',new_filter)
+				if category2==menu_list[-1]: addMenuItem('folder',menu_name+'الجميع',url2,241,'','1')
+				else: addMenuItem('folder',menu_name+'الجميع',url2,245,'','',new_filter)
 		elif type=='FILTERS':
 			new_options = filter_options+'&'+category2+'=0'
 			new_values = filter_values+'&'+category2+'=0'
 			new_filter = new_options+'::'+new_values
-			addMenuItem('dir',menu_name+'الجميع : '+name,url2,244,'','',new_filter)
+			addMenuItem('folder',menu_name+'الجميع : '+name,url2,244,'','',new_filter)
 		dict[category2] = {}
 		for value,option in items:
 			if option in ignoreLIST: continue
@@ -238,12 +240,12 @@ def FILTERS_MENU(url,filter):
 			new_filter2 = new_options+'::'+new_values
 			title = option+' : '#+dict[category2]['0']
 			title = option+' : '+name
-			if type=='FILTERS': addMenuItem('dir',menu_name+title,url,244,'','',new_filter2)
+			if type=='FILTERS': addMenuItem('folder',menu_name+title,url,244,'','',new_filter2)
 			elif type=='CATEGORIES' and menu_list[-2]+'=' in filter_options:
 				clean_filter = RECONSTRUCT_FILTER(new_values,'all')
 				url3 = url+'?'+clean_filter
-				addMenuItem('dir',menu_name+title,url3,241,'','1')
-			else: addMenuItem('dir',menu_name+title,url,245,'','',new_filter2)
+				addMenuItem('folder',menu_name+title,url3,241,'','1')
+			else: addMenuItem('folder',menu_name+title,url,245,'','',new_filter2)
 	return
 
 def RECONSTRUCT_FILTER(filters,mode):
