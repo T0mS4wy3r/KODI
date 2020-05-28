@@ -41,8 +41,8 @@ def MAIN(mode,text=''):
 	return
 
 def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
-	if 'IsProblem=True'.lower() in text.lower(): problem='yes'
-	else: problem='no'
+	if 'PROBLEM' in text: problem = True
+	else: problem = False
 	sendit,html = 1,''
 	if showDialogs:
 		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
@@ -64,7 +64,7 @@ def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
 		message += ' :\\n'
 		if showDialogs: xbmcgui.Dialog().notification('جاري ألإرسال','الرجاء الانتظار')
 		logfileNEW = ''
-		if problem=='yes':
+		if problem:
 			dataNEW,counts = [],0
 			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
 			#logfile = 'S://DOWNLOADS/6ac26462c99fc35816f3532bb17608f4-5.8.1.log'
@@ -261,19 +261,19 @@ def FIX_SKIN_KEYBOARD(mode,text):
 	return
 
 def SEND_MESSAGE(text=''):
-	if 'IsProblem=True'.lower() in text.lower(): problem='yes'
+	if 'PROBLEM' in text: problem = True
 	else:
-		problem='no'
+		problem = False
 		yes = xbmcgui.Dialog().yesno('','هل تريد أن ترسل رسالة أم تريد أن ترسل مشكلة ؟','','','إرسال رسالة','إرسال مشكلة')
-		if yes==1: problem='yes'
-	if problem=='yes':
+		if yes==1: problem = True
+	if problem:
 		#yes = DELETE_CACHE()
 		#if yes==1: return ''
-		logs = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','سيقوم البرنامج بإرسال سجل الأخطاء والاستخدام إلى المبرمج لكي يستطيع المبرمج معرفة المشكلة وإصلاحها','','','كلا','نعم')
+		logs = xbmcgui.Dialog().yesno('إرسال سجل الأخطاء والاستخدام','هل تريد إرسال السجل إلى المبرمج لكي يستطيع المبرمج معرفة المشكلة وإصلاحها','','','إلغاء','إرسال السجل')
 		if logs==0:
 			xbmcgui.Dialog().ok('تم إلغاء الإرسال','للأسف بدون سجل الأخطاء والاستخدام المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
 			return ''
-		logs2 = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هل قمت قبل قليل بتشغيل الفيديو أو الرابط الذي أعطاك المشكلة لكي يتم تسجيل هذه المشكلة في سجل الأخطاء والاستخدام قبل إرساله للمبرمج','','','كلا','نعم')
+		logs2 = xbmcgui.Dialog().yesno('وضع المشكلة في السجل','قبل إرسال السجل عليك أن تقوم بتشغيل الفيديو أو الرابط الذي أعطاك المشكلة لكي يتم تسجيل هذه المشكلة في سجل الأخطاء والاستخدام قبل إرساله للمبرمج','','','لم اسجلها','تم تسجيلها')
 		if logs2==0:
 			xbmcgui.Dialog().ok('تم إلغاء الإرسال','للأسف بدون تسجيل المشكلة في سجل الأخطاء والاستخدام فان المبرمج لا يستطيع معرفة المشكلة ولا حلها لان المبرمج لا يعلم الغيب')
 			return ''
@@ -286,14 +286,14 @@ def SEND_MESSAGE(text=''):
 				return ''
 		xbmcgui.Dialog().ok('المبرمج لا يعلم الغيب','اذا كانت لديك مشكلة فالرجاء قراءة قسم المشاكل والاسئلة واذا لم تجد الحل هناك فحاول كتابة جميع تفاصيل المشكلة لان المبرمج لا يعلم الغيب')
 		"""
-	xbmcgui.Dialog().ok('ملاحظة مهمة','اكتب الآن رسالة إلى المبرمج واكتب فيها عنوان بريدك ألإلكتروني ... والأفضل أن تراسل المبرمج على الفيسبوك وأسمه "الحاج عماد مهدي"')
+	xbmcgui.Dialog().ok('ملاحظة مهمة','اكتب الآن رسالة للمبرمج واكتب المشكلة والايميل والأفضل مراسلة المبرمج على الفيسبوك "الحاج عماد مهدي" أو فتح نقاش بهذا الرابط وللعلم المبرمج لا يعلم الغيب','https://github.com/emadmahdi/KODI/issues')
 	search = KEYBOARD('Write a message   اكتب رسالة')
 	if search == '':
 		xbmcgui.Dialog().ok('تم إلغاء الإرسال','تم إلغاء الإرسال لأنك لم تكتب أي شيء')
 		return ''
 	message = search
 	subject = 'Message: From Arabic Videos'
-	text = 'problem='+problem
+	if problem: text = 'PROBLEM'
 	result = SEND_EMAIL(subject,message,True,'','EMAIL-FROM-USERS',text)
 	#	url = 'my API and/or SMTP server'
 	#	payload = '{"api_key":"MY API KEY","to":["me@email.com"],"sender":"me@email.com","subject":"From Arabic Videos","text_body":"'+message+'"}'

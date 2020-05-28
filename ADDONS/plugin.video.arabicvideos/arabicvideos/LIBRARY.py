@@ -258,7 +258,7 @@ def EXPLAIN_ERRORS(code,reason,showDialogs):
 	blocked1 = (code in [0,104,10061,111])
 	blocked2 = ('Blocked by Cloudflare' in reason)
 	blocked3 = ('Blocked by 5 seconds browser check' in reason)
-	messageENGLISH = 'Error '+str(code)+': '+reason
+	messageARABIC,messageENGLISH = '','Error '+str(code)+': '+reason
 	if dns or blocked1 or blocked2 or blocked3:
 		block_meessage = 'نوع من الحجب ضد كودي مصدره الأنترنيت الخاص بك.'
 		if showDialogs: block_meessage += ' هل تريد تفاصيل اكثر ؟'
@@ -427,6 +427,22 @@ def getKodiMenuItem(type,name,url,mode,image,text1,text2):
 		listitem.setInfo(type="video",infoLabels={"Title":name})
 	#xbmcplugin.addDirectoryItem(handle=addon_handle,url=path,listitem=listitem,isFolder=isFolder)
 	return (path,listitem,isFolder)
+
+def EXTRACT_KODI_PATH():
+	args1 = { 'type':'' , 'mode':'' , 'url':'' , 'text':'' , 'page':'' , 'name':'' , 'image':'' }
+	url2,args2 = URLDECODE(addon_path)
+	args = dict(args1.items()+args2.items())
+	mode = args['mode']#.strip(' ')
+	url = urllib2.unquote(args['url'])#.strip(' ')
+	text = urllib2.unquote(args['text'])#.strip(' ')
+	page = urllib2.unquote(args['page'])#.strip(' ')
+	type = urllib2.unquote(args['type'])#.strip(' ')
+	name = urllib2.unquote(args['name'])#.strip(' ')
+	image = urllib2.unquote(args['image'])#.strip(' ')
+	#name = xbmc.getInfoLabel('ListItem.Label')
+	#image = xbmc.getInfoLabel('ListItem.Icon')
+	if mode=='': type = 'folder' ; mode = 260
+	return type,name,url,mode,image,page,text
 
 def openURL_requests_cached(expiry,method,url,data,headers,allow_redirects,showDialogs,source):
 	if expiry==0: return openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
@@ -639,22 +655,6 @@ def KEYBOARD(heading='لوحة المفاتيج',default=''):
 		return ''
 	new_search = mixARABIC(search)
 	return new_search
-
-def EXTRACT_KODI_PATH():
-	args1 = { 'type':'' , 'mode':'' , 'url':'' , 'text':'' , 'page':'' , 'name':'' , 'image':'' }
-	url2,args2 = URLDECODE(addon_path)
-	args = dict(args1.items()+args2.items())
-	mode = args['mode']#.strip(' ')
-	url = urllib2.unquote(args['url'])#.strip(' ')
-	text = urllib2.unquote(args['text'])#.strip(' ')
-	page = urllib2.unquote(args['page'])#.strip(' ')
-	type = urllib2.unquote(args['type'])#.strip(' ')
-	name = urllib2.unquote(args['name'])#.strip(' ')
-	image = urllib2.unquote(args['image'])#.strip(' ')
-	#name = xbmc.getInfoLabel('ListItem.Label')
-	#image = xbmc.getInfoLabel('ListItem.Icon')
-	if mode=='': type = 'folder' ; mode = 260
-	return type,name,url,mode,image,page,text
 
 def ADD_TO_LAST_VIDEO_FILES():
 	#vod_play_modes = [12,24,33,43,53,63,74,82,92,112,123,134,143,182,202,212,223,236,243,252]

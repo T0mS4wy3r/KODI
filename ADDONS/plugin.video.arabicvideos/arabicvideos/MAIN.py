@@ -29,7 +29,7 @@ else:
 	import SERVICES
 	SERVICES.KODI_SKIN()
 	SERVICES.INSTALL_REPOSITORY(False)
-	xbmcgui.Dialog().ok('IPTV','تم مسح الكاش أو تم تحديث البرنامج .. فإذا كنت تستخدم خدمة IPTV .. فيجب أن تجلب ملفات IPTV جديدة .. للتخلص من هذه الرسالة تستطيع الدخول إلى قائمة IPTV ومسح الملفات القديمة')
+	xbmcgui.Dialog().ok('IPTV','تم مسح الكاش أو تحديث البرنامج . فإذا كنت تستخدم IPTV فقم بجلب ملفات IPTV جديدة أو للتخلص من هذه الرسالة ادخل إلى قائمة IPTV وامسح الملفات القديمة')
 	import IPTV
 	IPTV.CREATE_STREAMS()
 
@@ -56,7 +56,7 @@ else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text)
 
 if addon_handle>-1:
 
-	UPDATE_RANDOM_MENUS = mode2 in [165] and 'DELETE' in text
+	UPDATE_RANDOM_MENUS = mode3==16 and 'UPDATE_' in text
 	FILTERING_MENUS = mode2 in [114,204,244,254] and text!=''
 	DELETE_LAST_VIDEOS = mode2 in [266,268]
 	SEARCH_MODES = mode2 in [19,29,39,49,59,69,79,99,119,139,149,209,229,249,259]
@@ -75,6 +75,8 @@ if addon_handle>-1:
 	if type=='folder' or SEARCH_MODES or UPDATE_RANDOM_MENUS: succeeded = True
 	else: succeeded = False
 
+	# updateListing = True => means this list is temporary and will be overwritten by the next list
+	# updateListing = False => means this list is permanent and the new list will generate new menu
 	if FILTERING_MENUS or DELETE_LAST_VIDEOS or UPDATE_RANDOM_MENUS: updateListing = True
 	else: updateListing = False
 

@@ -1,4 +1,10 @@
 ﻿
+v6.6.1	2020-05-28
+Fixed sending log file
+Fixed explaining errors
+Modified random file to support updating random sub-menus
+
+
 v6.6.0	2020-05-27
 Rewrote RANDOM functions
 Separated IPTV to VOD & LIVE
