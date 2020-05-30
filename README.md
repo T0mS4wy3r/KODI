@@ -42,7 +42,6 @@ New video plugin for KODI that provide Arabic video contents from the following 
 <br />
 <br />
 <h2>2. &nbsp; مخزن عماد &nbsp; repository.emad</h2>
-<br />
 هذا هو المخزن الخاص بكودي لجعل اضافات عماد يصلها التحديثات اوتوماتيكيا ... يجب تنصيبه عند تنصيب اضافة الفيديوهات العربية
 <br />
 This is kodi repository that keeps emad addons updated automatically ... should be installed along with Arabic Video Addon
