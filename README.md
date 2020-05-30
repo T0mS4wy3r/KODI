@@ -9,9 +9,8 @@ These addons modified to suit my personal needs
 <br />
 <br />
 <h2>1. برنامج الفيديوهات العربية <br />
-&nbsp; "Arabic Videos" is an addon for Kodi
-<br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(plugin.video.arabicvideos)</h2>
+&nbsp; "Arabic Videos": an addon for Kodi</h2>
+<h3>&nbsp; (plugin.video.arabicvideos)</h3>
 <br />
 برنامج الفيديوهات العربية (اضافة جديدة الى كودي) تسمح لكودي بان يتصفح بسهولة جميع المواقع المكتوبة ادناه
 <br />
