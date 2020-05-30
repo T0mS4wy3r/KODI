@@ -10,7 +10,7 @@ These addons modified to suit my personal needs
 <br />
 <h2>1. برنامج الفيديوهات العربية <br />
 &nbsp; "Arabic Videos": an addon for Kodi</h2>
-<h3>&nbsp; (plugin.video.arabicvideos)</h3>
+<h3>&nbsp; ( plugin.video.arabicvideos )</h3>
 <br />
 برنامج الفيديوهات العربية (اضافة جديدة الى كودي) تسمح لكودي بان يتصفح بسهولة جميع المواقع المكتوبة ادناه
 <br />
@@ -58,7 +58,7 @@ This is kodi repository that keeps emad addons updated automatically ... should 
 <br />
 <br />
 <br />
-الخطوة الثانية: تنزيل وتنصيب هذا البرنامج (الاضافة) على كودي
+الخطوة الثانية: تنزيل وتنصيب هذا البرنامج (هذه الإضافة) على كودي
 <br />
 <a href="http://www.husham.com/new-2018-arabic-videos-kodi-addon">2. &nbsp; صفحة باللغة الانكليزية توضح طريقة تنزيل وتنصيب هذه الاضافة على كودي بالصور والشرح - شكرا للاخ هشام</a>
 <br />
