@@ -21,7 +21,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',59)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',59)
 	addMenuItem('folder',website+'::'+menu_name+'المسلسلات','',56)
 	addMenuItem('folder',website+'::'+menu_name+'الافلام','',55)
 	return ''

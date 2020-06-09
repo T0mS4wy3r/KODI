@@ -6,9 +6,10 @@ menu_name='_IPT_'
 
 def MAIN(mode,url,text):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
+	#LOG_THIS('NOTICE','start')
 	if   mode==230: results = MENU()
 	elif mode==231: results = ADD_ACCOUNT()
-	elif mode==232: results = BUSY_DIALOG('start') ; CREATE_STREAMS() ; BUSY_DIALOG('stop')
+	elif mode==232: results = CREATE_STREAMS()
 	elif mode==233: results = GROUPS(url,text,'')
 	elif mode==234: results = ITEMS(url,text)
 	elif mode==235: results = PLAY(url,'LIVE')
@@ -17,25 +18,29 @@ def MAIN(mode,url,text):
 	#elif mode==238: results = ITEMS(url,text)
 	elif mode==239: results = SEARCH(text)
 	else: results = False
+	#LOG_THIS('NOTICE','end')
 	return results
 
 def MENU():
-	addMenuItem('folder','  1.  [COLOR FFC89008]IPT  [/COLOR]'+'بحث في ملفات IPTV','',239)
-	addMenuItem('link','  2.  [COLOR FFC89008]IPT  [/COLOR]'+'اضافة اشتراك IPTV','',231)
-	addMenuItem('link','  3.  [COLOR FFC89008]IPT  [/COLOR]'+'جلب ملفات IPTV','',232)
-	addMenuItem('link','  4.  [COLOR FFC89008]IPT  [/COLOR]'+'مسح ملفات IPTV','',237)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'بحث في ملفات IPTV','',239)
+	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'اضافة اشتراك IPTV','',231)
+	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'جلب ملفات IPTV','',232)
+	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'مسح ملفات IPTV','',237)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','  5.  [COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة ومرتبة','LIVE_GROUPED',233)
-	addMenuItem('folder','  6.  [COLOR FFC89008]IPT  [/COLOR]'+'أفلام مصنفة ومرتبة','VOD_MOVIES',233)
-	addMenuItem('folder','  7.  [COLOR FFC89008]IPT  [/COLOR]'+'مسلسلات مصنفة ومرتبة','VOD_SERIES',233)
-	addMenuItem('folder','  8.  [COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مجهولة','VOD_UNKNOWN',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة ومرتبة','LIVE_GROUPED',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'أفلام مصنفة ومرتبة','VOD_MOVIES',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'مسلسلات مصنفة ومرتبة','VOD_SERIES',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مجهولة','VOD_UNKNOWN',233)
 	#addMenuItem('folder',menu_name+'قنوات مجهولة','LIVE_UNKNOWN',233)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','  9.  [COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة من أسمائها','LIVE_FROM_NAME',233)
-	addMenuItem('folder','10.  [COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مصنفة من أسمائها','VOD_FROM_NAME',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة من أسمائها','LIVE_FROM_NAME',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مصنفة من أسمائها','VOD_FROM_NAME',233)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','11.  [COLOR FFC89008]IPT  [/COLOR]'+'القنوات الاصلية بدون تغيير','LIVE_ORIGINAL',233)
-	addMenuItem('folder','12.  [COLOR FFC89008]IPT  [/COLOR]'+'الفيديوهات الاصلية بدون تغيير','VOD_ORIGINAL',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة من أقسامها','LIVE_FROM_GROUP',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مصنفة من أقسامها','VOD_FROM_GROUP',233)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'القنوات الاصلية بدون تغيير','LIVE_ORIGINAL',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'الفيديوهات الاصلية بدون تغيير','VOD_ORIGINAL',233)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
@@ -46,6 +51,7 @@ def GROUPS(TYPE,GROUP,website):
 	if website=='': show = True
 	else: show = False
 	if not isIPTVFiles(show): return
+	#xbmcgui.Dialog().ok(TYPE,'')
 	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
 	groups,unique,logos = [],[],[]
 	for dict in streams:
@@ -54,7 +60,7 @@ def GROUPS(TYPE,GROUP,website):
 	if website!='':
 		website2 = website.split('::')[0]
 		website2 = website2.replace('_RANDOM','').replace('_LIVE','')
-		menu_name2 = '[COLOR FFC89008]'+website2+':[/COLOR] '
+		menu_name2 = ',[COLOR FFC89008]'+website2+':[/COLOR] '
 	else: menu_name2 = menu_name
 	z = zip(groups,logos)
 	z = sorted(z, reverse=False, key=lambda key: key[0])
@@ -81,6 +87,7 @@ def GROUPS(TYPE,GROUP,website):
 	return
 
 def ITEMS(TYPE,GROUP):
+	#LOG_THIS('NOTICE','before DATABASE')
 	results = READ_FROM_SQL3('IPTV_ITEMS',[TYPE,GROUP])
 	if results: menuItemsLIST[:] = menuItemsLIST+results ; return
 	else: previous_menuItemsLIST = menuItemsLIST[:] ; menuItemsLIST[:] = []
@@ -131,8 +138,8 @@ def SEARCH(search=''):
 	else:
 		if not isIPTVFiles(True): return
 		exit = True
-		searchTitle = ['الكل','قنوات','فيديوهات']
-		typeList = ['ALL','LIVE_FROM_NAME','VOD_FROM_NAME']
+		searchTitle = ['الكل','قنوات','أفلام','مسلسلات','أخرى']
+		typeList = ['ALL','LIVE_GROUPED','VOD_MOVIES','VOD_SERIES','VOD_UNKNOWN']
 		selection = xbmcgui.Dialog().select('أختر البحث المناسب', searchTitle)
 		if selection == -1: return
 		TYPE = typeList[selection]
@@ -140,20 +147,60 @@ def SEARCH(search=''):
 	if search == '': return
 	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
 	searchLower = search.lower()
+	uniqueLIST = []
 	for dict in streams:
 		title = dict['title']
-		if searchLower in title.lower():
+		group = dict['group']
+		img = dict['img']
+		if searchLower in group.lower():
+			if group not in uniqueLIST:
+				uniqueLIST.append(group)
+				if '____' in group: group2 = group.split('____',1)[1]
+				else: group2 = group
+				addMenuItem('folder',menu_name+group2,TYPE,234,img,'',group)
+		elif searchLower in title.lower():
 			url = dict['url']
-			img = dict['img']
 			if '.mp4' in url or '.mkv' in url or '.avi' in url or '.mp3' in url:
-				addMenuItem('video',menu_name+' '+title,url,236,img)
-			else: addMenuItem('live',menu_name+' '+title,url,235,img)
+				if '!!__UNKNOWN__!!' in group: group2 = ''
+				else: group2 = group+' '
+				addMenuItem('video',menu_name+group2+title,url,236,img)
+			else: addMenuItem('live',menu_name+group+title,url,235,img)
+	menuItemsLIST[:] = sorted(menuItemsLIST, reverse=False, key=lambda key: key[1])
 	return
 
+def CLEAN_NAME(title):
+	title = title.replace('  ',' ').replace('  ',' ').replace('  ',' ')
+	title = title.replace('||','|').replace('::',':').replace('--','-')
+	title = title.replace('[[','[').replace(']]',']')
+	title = title.replace('((','(').replace('))',')')
+	title = title.replace('<<','<').replace('>>','>')
+	#title = title.strip(' ').strip('|').strip('-').strip(':').strip('(').strip('[')
+	return title
+
+def SPLIT_NAME(title):
+	lowest,lang = 9999,''
+	first = title[0:2]
+	separators = [' ',':','-','|',']',')','#','.',',','$',"'",'!','@','%','&','*','^']
+	if   first[0]=='(': separators = [')']
+	elif first[0]=='[': separators = [']']
+	elif first[0]=='<': separators = ['>']
+	for i in separators:
+		position = title[2:].find(i)
+		#position = title[1:].replace(' ','').find(i)
+		if position>=0 and position<=lowest:
+			lowest = position
+			sep = i
+	if lowest==9999: lang = '!!__UNKNOWN__!!'
+	if lang=='': lang = first+title[2:].split(sep,1)[0]+sep.strip(' ')
+	return lang
+
 def CREATE_STREAMS():
+	BUSY_DIALOG('start') ; 
 	#LOG_THIS('NOTICE','EMAD 111')
 	answer = xbmcgui.Dialog().yesno('IPTV','هل تريد أن تجلب الان ملفات IPTV جديدة ؟','','','كلا','نعم')
-	if not answer: return
+	if not answer:
+		BUSY_DIALOG('stop')
+		return
 	settings = xbmcaddon.Addon(id=addon_id)
 	iptvURL = settings.getSetting('iptv.url')
 	headers = { 'User-Agent' : '' }
@@ -161,6 +208,7 @@ def CREATE_STREAMS():
 	except:
 		xbmcgui.Dialog().ok('فشل في جلب ملفات IPTV','قد يكون السبب هو عدم وجود اشتراك IPTV أو رابط الاشتراك غير صحيح','جرب إضافة الاشتراك مرة اخرى من قائمة ال IPTV')
 		LOG_THIS('ERROR',LOGGING(script_name)+'   No IPTV files could be downloaded')
+		BUSY_DIALOG('stop')
 		return
 	#m3u_filename = 'iptv_'+str(int(now))+'_.m3u'
 	#iptvFile = os.path.join(addoncachefolder,m3u_filename)
@@ -241,106 +289,47 @@ def CREATE_STREAMS():
 		if 'id' in dict.keys(): del dict['id']
 		if 'ID' in dict.keys(): del dict['ID']
 		if 'name' in dict.keys(): del dict['name']
-		if '\u' in dict['title'].lower(): dict['title'] = dict['title'].decode('unicode_escape')
 		title = dict['title']
-		title = title.replace('  ',' ').replace('  ',' ').replace('  ',' ')
-		title = title.replace('||','|').replace('::',':').replace('--','-')
-		title = title.replace('[[','[').replace(']]',']')
-		title = title.replace('((','(').replace('))',')')
-		title = title.replace('<<','<').replace('>>','>')
-		#title = title.strip(' ').strip('|').strip('-').strip(':').strip('(').strip('[')
-		lowest,lang = 9999,''
-		first = title[0:2]
-		separators = [' ',':','-','|',']',')','#','.',',','$',"'",'!','@','%','&','*','^']
-		if   first[0]=='(': separators = [')']
-		elif first[0]=='[': separators = [']']
-		elif first[0]=='<': separators = ['>']
-		for i in separators:
-			position = title[2:].find(i)
-			#position = title[1:].replace(' ','').find(i)
-			if position>=0 and position<=lowest:
-				lowest = position
-				sep = i
-		if lowest==9999: lang = '!!__UNKNOWN__!!'
-		#if   ' ' in title and lowest==9999: sep = ' '
-		#elif ' ' in title and lowest<9999:
-		#	spacePos = title.find(' ')
-		#	sepPos = title.find(sep)
-		#	if sep in [')',']','>'] and first not in ['(','[','<']: sep = ' '
-		#	elif sep not in [')',']','>'] and (sepPos-spacePos)!=1 and sepPos>=spacePos: sep = ' '
-		#else: lang = '!!__UNKNOWN__!!'
-		"""
-		elif lowest<9999 and ' ' in title and sep not in [')',']','|'] and (sepPos-spacePos)!=1 and sepPos>=spacePos:
-			sep = ' '
-		elif lowest<9999 and ' ' in title and sep in [')',']','|'] and first not in ['(','[','|']:
-			sep = ' '
-		elif lowest<9999: sep = sep
-		else: lang = '!!__UNKNOWN__!!'
-			#if (sepPos-spacePos)!=1 or sepPos>=spacePos: sep = ' '
-			#if (sepPos-spacePos)==1: sep = sep
-			#elif sepPos<spacePos: sep = sep
-			#else: sep = ' '
-			#if (sepPos-spacePos)==1 or sepPos<spacePos: sep = sep
-			#else: sep = ' '
-			#if (sepPos-spacePos)!=1 and sepPos>=spacePos: sep = ' '
-		"""
-		if lang=='': lang = first+title[2:].split(sep,1)[0]+sep.strip(' ')
-		dict['lang'] = lang.upper()
+		if '\u' in title.lower(): title = title.decode('unicode_escape')
+		title = CLEAN_NAME(title)
+		country = SPLIT_NAME(title)
+		language = SPLIT_NAME(group)
 		dict['title'] = title.upper()
+		dict['country'] = country.upper()
+		dict['language'] = language.upper()
 		#if 'AL - ' in dict['title']: dict['title'] = dict['title'].replace('AL - ','AL ')
 		#if 'EL - ' in dict['title']: dict['title'] = dict['title'].replace('EL - ','EL ')
 		streams_not_sorted.append(dict)
 	#LOG_THIS('NOTICE','EMAD 444')
 	streams_sorted = sorted(streams_not_sorted, reverse=False, key=lambda key: key['title'].lower())
 	grouped_streams = {}
-	types = ['ALL','LIVE_ORIGINAL','VOD_ORIGINAL','LIVE_FROM_NAME','VOD_FROM_NAME','LIVE_GROUPED','LIVE_UNKNOWN','VOD_MOVIES','VOD_SERIES','VOD_UNKNOWN','DUMMY']
+	types = ['ALL','LIVE_ORIGINAL','VOD_ORIGINAL','LIVE_FROM_NAME','VOD_FROM_NAME','LIVE_GROUPED','LIVE_UNKNOWN','VOD_MOVIES','VOD_SERIES','VOD_UNKNOWN','DUMMY','LIVE_FROM_GROUP','VOD_FROM_GROUP']
 	for type in types: grouped_streams[type] = []
 	#LOG_THIS('NOTICE','EMAD 444 CREATE STREAMS START creating 1st STREAMS dictionary')
 	for dict in streams_sorted:
-		grouped_streams['ALL'].append(dict)
 		type = dict['type']
-		dict2 = dict.copy()
-		del dict2['type']
-		del dict2['org_title']
-		del dict2['org_group']
-		dict3 = dict2.copy()
-		dict4 = dict2.copy()
-		del dict3['lang']
-		grouped_streams[type].append(dict3)
-		dict4['group'] = dict4['lang']
-		del dict4['lang']
-		if 'LIVE' in type: grouped_streams['LIVE_FROM_NAME'].append(dict4)
-		elif 'VOD' in type: grouped_streams['VOD_FROM_NAME'].append(dict4)
+		dict2 = {'group':dict['group'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
+		dict3 = {'group':dict['country'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
+		dict4 = {'group':dict['language'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
+		grouped_streams['ALL'].append(dict)
+		grouped_streams[type].append(dict2)
+		if  'LIVE' in type: grouped_streams['LIVE_FROM_NAME'].append(dict3)
+		elif 'VOD' in type: grouped_streams['VOD_FROM_NAME'].append(dict3)
+		if  'LIVE' in type: grouped_streams['LIVE_FROM_GROUP'].append(dict4)
+		elif 'VOD' in type: grouped_streams['VOD_FROM_GROUP'].append(dict4)
 	#LOG_THIS('NOTICE','EMAD 555 CREATE STREAMS finished 1st and START creating 2nd STREAMS dictionary')
 	for dict in streams_not_sorted:
 		type = dict['type']
-		dict2 = dict.copy()
-		dict2['title'] = dict2['org_title']
-		dict2['group'] = dict2['org_group'].replace('__MOVIES__','').replace('__SERIES__','')
-		del dict2['type']
-		del dict2['org_title']
-		del dict2['org_group']
-		del dict2['lang']
+		dict2 = {'group':dict['group'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
 		if 'LIVE' in type: grouped_streams['LIVE_ORIGINAL'].append(dict2)
 		elif 'VOD' in type: grouped_streams['VOD_ORIGINAL'].append(dict2)
 	grouped_streams['DUMMY'].append('')
 	#LOG_THIS('NOTICE','EMAD 666 CREATE STREAMS FINISHED')
-	"""
-	for dict in streams_sorted:
-		dict3 = dict.copy()
-		del dict3['group2']
-		if dict3['type']=='VOD_SERIES':
-			title = dict3['title']
-			series_title = re.findall('(.*?) [Ss]\d+ +[Ee]\d+',title,re.DOTALL)
-			if series_title: dict3['group'] = series_title[0]
-			else: dict3['group'] = '!!__UNKNOWN__!!'
-			dict3['type'] = 'VOD_EPISODES'
-			grouped_streams['VOD_EPISODES'].append(dict3)
-	"""
 	DELETE_IPTV_FROM_SQL3(False)
 	for TYPE in types:
 		WRITE_TO_SQL3('IPTV_STREAMS',TYPE,grouped_streams[TYPE],UNLIMITED_CACHE)
 	xbmcgui.Dialog().ok('IPTV','تم جلب ملفات IPTV جديدة')
+	BUSY_DIALOG('stop')
 	return
 
 def isIPTVFiles(show_msg=True):

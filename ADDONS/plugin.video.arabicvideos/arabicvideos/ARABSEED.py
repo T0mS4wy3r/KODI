@@ -23,20 +23,17 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': showDialogs = True
-	else: showDialogs = False
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ARABSEED-MENU-1st')
 	html_blocks2 = re.findall('navigation-menu(.*?)</header>',html,re.DOTALL)
 	block2 = html_blocks2[0]
 	items2 = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	server = SERVER(items2[0][0])
-	if website=='':
-		addMenuItem('folder',menu_name+'بحث في الموقع','',259)
-		addMenuItem('folder',menu_name+'فلتر محدد',server,255)
-		addMenuItem('folder',menu_name+'فلتر كامل',server,254)
-		addMenuItem('folder',menu_name+'المميزة',server,258)
-		addMenuItem('folder',menu_name+'الرئيسية',server,251)
-		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',259)
+	addMenuItem('folder',menu_name+'فلتر محدد',server,255)
+	addMenuItem('folder',menu_name+'فلتر كامل',server,254)
+	addMenuItem('folder',menu_name+'المميزة',server,258)
+	addMenuItem('folder',menu_name+'الرئيسية',server,251)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',website+'::'+menu_name+'فلتر','',254,server)
 	#html_blocks = re.findall('class="tabs-menu(.*?)</ul>',html,re.DOTALL)
 	#block = html_blocks[0]

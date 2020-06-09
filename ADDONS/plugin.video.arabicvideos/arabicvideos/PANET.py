@@ -16,12 +16,14 @@ def MAIN(mode,url,page,text):
 	elif mode==35: results = CATEGORIES(url,'1')
 	elif mode==36: results = CATEGORIES(url,'2')
 	elif mode==37: results = CATEGORIES(url,'4')
+	elif mode==38: results = LIVE()
 	elif mode==39: results = SEARCH(text,page)
 	else: results = False
 	return results
 
 def MENU(website=''):
 	#if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39)
+	addMenuItem('live',website+menu_name+'قناة هلا من موقع بانيت','',38)
 	addMenuItem('folder',website+'::'+menu_name+'مسلسلات وبرامج',website0a+'/series',31)
 	addMenuItem('folder',website+'::'+menu_name+'المسلسلات الاكثر مشاهدة',website0a+'/series',37)
 	addMenuItem('folder',website+'::'+menu_name+'افلام حسب النوع',website0a+'/movies',35)
@@ -179,6 +181,12 @@ def SEARCH(search,page):
 			if page2!=page:
 				addMenuItem('folder','صفحة '+page2,'',39,'',page2+'/'+type,search)
 	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
+	return
+
+def LIVE():
+	link = 'aHR0cDovL2dzdHJlYW00LnBhbmV0LmNvLmlsL2VkZ2VfYWJyL2hhbGFUVi9wbGF5bGlzdC5tM3U4'
+	link = base64.b64decode(link)
+	PLAY_VIDEO(link,script_name,'live')
 	return
 
 

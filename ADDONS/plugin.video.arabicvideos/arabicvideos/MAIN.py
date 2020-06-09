@@ -1,16 +1,12 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-
 script_name = 'MAIN'
 
 
-type,name99,url99,mode,image99,page99,text = EXTRACT_KODI_PATH()
-mode2 = int(mode)
-mode3 = int(mode2/10)
+type,name99,url99,mode,image99,page99,text,favourite = EXTRACT_KODI_PATH()
 
 
-#xbmcgui.Dialog().ok('test 111',str(addon_handle))
 LOG_THIS('NOTICE','============================================================================================')
 if 'mode' not in addon_path:
 	message = 'Version: [ '+addon_version+' ]   Kodi: [ '+kodi_release+' ]'
@@ -19,10 +15,27 @@ if 'mode' not in addon_path:
 else: LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 
 
+mode0 = int(mode)
+mode1 = int(mode0%10)
+mode2 = int(mode0/10)
+
+
+SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25]
+IPTV_MODES = mode2==23 and text!=''
+if type=='folder' and menu_label!='..' and (SITES_MODES or IPTV_MODES): ADD_TO_LAST_VIDEO_FILES()
+
+
+if favourite!='':
+	import FAVOURITES
+	FAVOURITES.FAVOURITES_DISPATCHER(favourite)
+	refreshLIST = ['REMOVE','UP','DOWN']
+	if any(value in favourite for value in refreshLIST):
+		# used because there is no addon_handle number to use for ending directory
+		xbmc.executebuiltin("Container.Refresh")
+
+
 if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
-if os.path.exists(dbfile): newdb = False
-else:
-	newdb = True
+if not os.path.exists(dbfile):
 	CLEAN_KODI_CACHE_FOLDER()
 	conn = sqlite3.connect(dbfile)
 	conn.close()
@@ -34,20 +47,21 @@ else:
 	IPTV.CREATE_STREAMS()
 
 
-#if menu_label!='Main Menu' or (menu_label=='Main Menu' and mode2==260):
+#xbmcgui.Dialog().ok(addon_path,str(addon_handle))
 
 
-if mode3==16 and menu_label!='Main Menu':
+SEARCH_MODES = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259]
+UPDATE_RANDOM_MENUS = mode2==16 and 'UPDATE' in text
+
+if (SEARCH_MODES and menu_label not in ['..','Main Menu']) or (UPDATE_RANDOM_MENUS and menu_label!='Main Menu'):
+	LOG_THIS('NOTICE','  .  Writing random list  .  path: [ '+addon_path+' ]')
 	results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text)
 	newFILE = str(menuItemsLIST)
 	with open(lastrandomfile,'w') as f: f.write(newFILE)
-	#LOG_THIS('NOTICE','Write last random file   mode: [ '+mode+' ]   path: [ '+addon_path+' ]')
-	#xbmcgui.Dialog().ok('write random list','')
-elif mode3==16 and menu_label=='Main Menu':
+elif (SEARCH_MODES and menu_label in ['..','Main Menu']) or (UPDATE_RANDOM_MENUS and menu_label=='Main Menu'):
+	LOG_THIS('NOTICE','  .  Reading random list  .  path: [ '+addon_path+' ]')
 	with open(lastrandomfile,'r') as f: oldFILE = f.read()
-	menuItemsLIST = eval(oldFILE)
-	#LOG_THIS('NOTICE','Read last random file   mode: [ '+mode+' ]   path: [ '+addon_path+' ]')
-	#xbmcgui.Dialog().ok('read random list','')
+	menuItemsLIST[:] = eval(oldFILE)
 else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text)
 
 
@@ -56,21 +70,20 @@ else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text)
 
 if addon_handle>-1:
 
-	UPDATE_RANDOM_MENUS = mode3==16 and 'UPDATE_' in text
-	FILTERING_MENUS = mode2 in [114,204,244,254] and text!=''
-	DELETE_LAST_VIDEOS = mode2 in [266,268]
-	SEARCH_MODES = mode2 in [19,29,39,49,59,69,79,99,119,139,149,209,229,249,259]
+	FILTERING_MENUS = mode0 in [114,204,244,254] and text!=''
+	DELETE_LAST_VIDEOS = mode0 in [266,268]
 
 	# kodi defaults
 	succeeded,updateListing,cacheToDisc = True,False,True
 
 	if menuItemsLIST:
+		#LOG_THIS('NOTICE','start')
 		#xbmcgui.Dialog().ok(addon_path,str(addon_handle))
 		KodiMenuList = []
-		for type99,name99,url99,mode99,image99,page99,text99 in menuItemsLIST:
-			kodiMenuItem = getKodiMenuItem(type99,name99,url99,mode99,image99,page99,text99)
+		for menuItem in menuItemsLIST:
+			kodiMenuItem = getKodiMenuItem(menuItem)
 			KodiMenuList.append(kodiMenuItem)
-		xbmcplugin.addDirectoryItems(addon_handle,KodiMenuList,len(KodiMenuList))
+		addItems_succeeded = xbmcplugin.addDirectoryItems(addon_handle,KodiMenuList)
 
 	if type=='folder' or SEARCH_MODES or UPDATE_RANDOM_MENUS: succeeded = True
 	else: succeeded = False
@@ -80,18 +93,21 @@ if addon_handle>-1:
 	if FILTERING_MENUS or DELETE_LAST_VIDEOS or UPDATE_RANDOM_MENUS: updateListing = True
 	else: updateListing = False
 
+	#if UPDATE_RANDOM_MENUS: xbmc.executebuiltin("Container.Refresh")
+
+
+
+	
+
+	#LOG_THIS('NOTICE',str(succeeded)+'  '+str(updateListing)+'  '+str(cacheToDisc))
 	xbmcplugin.endOfDirectory(addon_handle,succeeded,updateListing,cacheToDisc)
 
 	#PLAY_VIDEO_MODES = mode2 in [12,24,33,43,53,63,74,82,92,105,112,123,134,143,182,202,212,223,243,252]
 	#xbmcgui.Dialog().ok(str(succeeded),str(updateListing),str(cacheToDisc))
 	#xbmcgui.Dialog().ok(addon_path,str(addon_handle))
 
-
-	#DELETE_LAST_VIDEOS = mode2 in [266,268]
-	#if DELETE_LAST_VIDEOS: succeeded = True ; updateListing = True
-
-
-
+	#xbmc.executebuiltin("Container.Update")
+	#xbmc.executebuiltin("Container.Refresh")
 
 
 

@@ -20,15 +20,12 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='':
-		addMenuItem('folder',menu_name+'بحث في الموقع','',209)
-		addMenuItem('folder',menu_name+'فلتر محدد',website0a,205)
-		addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
-		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-		#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,True,showDialogs,'ARABLIONZ-MENU-1st')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',209)
+	addMenuItem('folder',menu_name+'فلتر محدد',website0a,205)
+	addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
+	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-MENU-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
 	block = html_blocks[0]
@@ -36,7 +33,7 @@ def MENU(website=''):
 	for url,title in items:
 		link = website0a+'/getposts?type=one&data='+url
 		addMenuItem('folder',website+'::'+menu_name+title,link,201)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)

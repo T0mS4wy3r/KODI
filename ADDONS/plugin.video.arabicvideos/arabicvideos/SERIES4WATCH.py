@@ -25,14 +25,11 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	if website=='':
-		addMenuItem('folder',menu_name+'بحث في الموقع','',219)
-		#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',219)
+	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	url = website0a+'/getpostsPin?type=one&data=pin&limit=25'
 	addMenuItem('folder',website+'::'+menu_name+'المميزة',url,211)
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'SERIES4WATCH-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SERIES4WATCH-MENU-1st')
 	html_blocks = re.findall('FiltersButtons(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?</i>(.*?)<',block,re.DOTALL)

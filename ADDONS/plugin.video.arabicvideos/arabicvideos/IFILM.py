@@ -61,11 +61,8 @@ def MENU(website0):
 		name2 = 'سريال ها مرتب سازى براساس'
 		name3 = 'سريال ها مرتب حروف الفبا'
 		name4 = 'پخش زنده از اي فيلم كانال'
-	if website=='':
 		addMenuItem('live',menu_name+name4,website0,27)
 		addMenuItem('folder',menu_name+name0,website0,29)
-	if website=='': showDialogs = True
-	else: showDialogs = False
 	html = openURL_cached(LONG_CACHE,website0+'/home','','','','IFILM-MENU-1st')
 	#html = openURL_cached(LONG_CACHE,website0+'/home/index','','','','IFILM-MENU-1st')
 	html_blocks=re.findall('button-menu(.*?)nav',html,re.DOTALL)

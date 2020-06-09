@@ -22,7 +22,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',website+'::'+menu_name+'بحث في الموقع','',99)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',99)
 	addMenuItem('folder',website+'::'+menu_name+'المضاف حديثا','',94)
 	addMenuItem('folder',website+'::'+menu_name+'الأحدث',website0a+'/?type=latest',91)
 	addMenuItem('folder',website+'::'+menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
@@ -30,11 +30,9 @@ def MENU(website=''):
 	addMenuItem('folder',website+'::'+menu_name+'المثبت',website0a+'/?type=pin',91)
 	addMenuItem('folder',website+'::'+menu_name+'جديد الافلام',website0a+'/?type=newMovies',91)
 	addMenuItem('folder',website+'::'+menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',website+'::'+menu_name+'جديد الموقع',website0a,91)
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'HELAL-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
 	#upper menu
 	html_blocks = re.findall('class="mainmenu(.*?)nav',html,re.DOTALL)
 	block = html_blocks[0]

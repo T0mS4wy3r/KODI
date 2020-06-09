@@ -1,4 +1,21 @@
 ﻿
+v6.7.0	2020-06-09
+Added two new IPTV categorize
+Added PANET live channel
+Added using remote control with Kodi
+Added "EMAD" to addon name
+Added FAVOURITES Menu
+Removed "page" from random results
+Removed menu items sequence from some menus
+Removed utf8 encode from PLAY_VIDEO logging
+Enhanced IPTV search
+Fixed saving last random lists
+Moved AKWAM resolver to RESOLVERS
+Modified addon icon
+Updated HELAL host name
+Minor fixes & improvements
+
+
 v6.6.1	2020-05-28
 Fixed sending log file
 Fixed explaining errors

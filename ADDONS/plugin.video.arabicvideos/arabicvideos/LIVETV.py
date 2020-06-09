@@ -11,22 +11,23 @@ def MAIN(mode,url):
 	elif mode==102: results = ITEMS('1',True)
 	elif mode==103: results = ITEMS('2',True)
 	elif mode==104: results = ITEMS('3',True)
-	elif mode==105: BUSY_DIALOG('start') ; results = PLAY(url) ; BUSY_DIALOG('stop')
+	elif mode==105: results = PLAY(url)
 	else: results = False
 	return results
 
 def MENU():
-	addMenuItem('folder','  1.  [COLOR FFC89008]IPT    [/COLOR]'+'للمشتركين بخدمة IPTV','',230)
-	addMenuItem('folder','  2.  [COLOR FFC89008]TV0   [/COLOR]'+'قنوات من مواقعها الأصلية','',101)
-	addMenuItem('folder','  3.  [COLOR FFC89008]YUT   [/COLOR]'+'قنوات عربية من يوتيوب','',147)
-	addMenuItem('folder','  4.  [COLOR FFC89008]YUT   [/COLOR]'+'قنوات أجنبية من يوتيوب','',148)
-	addMenuItem('folder','  5.  [COLOR FFC89008]IFL    [/COLOR]'+'قناة آي فيلم من موقعهم','',28)
-	addMenuItem('live','  6.  [COLOR FFC89008]MRF  [/COLOR]'+'قناة المعارف من موقعهم','',41)
-	addMenuItem('live','  7.  [COLOR FFC89008]KWT  [/COLOR]'+'قناة الكوثر من موقعهم','',135)
+	addMenuItem('folder','[COLOR FFC89008]IPT    [/COLOR]'+'للمشتركين بخدمة IPTV','',230)
+	addMenuItem('folder','[COLOR FFC89008]TV0   [/COLOR]'+'قنوات من مواقعها الأصلية','',101)
+	addMenuItem('folder','[COLOR FFC89008]YUT   [/COLOR]'+'قنوات عربية من يوتيوب','',147)
+	addMenuItem('folder','[COLOR FFC89008]YUT   [/COLOR]'+'قنوات أجنبية من يوتيوب','',148)
+	addMenuItem('folder','[COLOR FFC89008]IFL    [/COLOR]'+'قناة آي فيلم من موقعهم','',28)
+	addMenuItem('live','[COLOR FFC89008]MRF  [/COLOR]'+'قناة المعارف من موقعهم','',41)
+	addMenuItem('live','[COLOR FFC89008]KWT  [/COLOR]'+'قناة الكوثر من موقعهم','',135)
+	addMenuItem('live','[COLOR FFC89008]PNT  [/COLOR]'+'قناة هلا من موقع بانيت','',38)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','  8.  [COLOR FFC89008]TV1  [/COLOR]'+'قنوات تلفزيونية عامة','',102)
-	addMenuItem('folder','  9.  [COLOR FFC89008]TV2  [/COLOR]'+'قنوات تلفزيونية خاصة','',103)
-	addMenuItem('folder','10.  [COLOR FFC89008]TV3  [/COLOR]'+'قنوات تلفزيونية للفحص','',104)
+	addMenuItem('folder','[COLOR FFC89008]TV1  [/COLOR]'+'قنوات تلفزيونية عامة','',102)
+	addMenuItem('folder','[COLOR FFC89008]TV2  [/COLOR]'+'قنوات تلفزيونية خاصة','',103)
+	addMenuItem('folder','[COLOR FFC89008]TV3  [/COLOR]'+'قنوات تلفزيونية للفحص','',104)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
@@ -80,6 +81,7 @@ def ITEMS(menu,show=True):
 	return
 
 def PLAY(id):
+	BUSY_DIALOG('start')
 	#xbmcgui.Dialog().notification('جاري تشغيل القناة','')
 	source,server,id2,menu = id.split(';;')
 	url = ''
@@ -93,6 +95,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			BUSY_DIALOG('stop')
 			return
 		#proxyname,proxyurl = RANDOM_HTTPS_PROXY()
 		url = response.headers['Location']#+'||MyProxyUrl='+proxyurl
@@ -107,6 +110,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-3rd')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location'].replace('__ID2__',id2)
 		headers = { 'Cookie' : 'ASP.NET_SessionId='+session }
@@ -123,7 +127,9 @@ def PLAY(id):
 		linkLIST = [url_HD,url_SD1,url_SD2]
 		selection = 0
 		#selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
-		if selection == -1: return
+		if selection == -1:
+			BUSY_DIALOG('stop')
+			return
 		else: url = linkLIST[selection]
 		#xbmcgui.Dialog().ok(items[0],url)
 		"""
@@ -143,6 +149,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location']
 		url = url.replace('%20',' ')
@@ -156,6 +163,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-6th')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			BUSY_DIALOG('stop')
 			return
 		response = openURL_requests_cached(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-7th')
 		html = response.content
@@ -168,6 +176,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-8th')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location']
 		if source=='FM':
@@ -175,6 +184,7 @@ def PLAY(id):
 			response = openURL_requests_cached(NO_CACHE,'GET', url, '', '', False,'','LIVETV-PLAY-9th')
 			url = response.headers['Location']
 			url = url.replace('https','http')
+	BUSY_DIALOG('stop')
 	result = PLAY_VIDEO(url,script_name,'live')
 	#except:
 	#	xbmcgui.Dialog().ok('هذه القناة فيها مشكلة من الموقع الاصلي',page_error)

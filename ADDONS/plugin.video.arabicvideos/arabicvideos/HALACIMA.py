@@ -25,13 +25,11 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',website+'::'+menu_name+'بحث في الموقع','',89)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',89)
 	addMenuItem('folder',website+'::'+menu_name+'المضاف حديثا','',84,'','0')
 	addMenuItem('folder',website+'::'+menu_name+'افلام ومسلسلات مميزة','',85,'','0')
 	addMenuItem('folder',website+'::'+menu_name+'الاكثر مشاهدة','',86,'','0')
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'HALACIMA-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
 	block = html_blocks[1]

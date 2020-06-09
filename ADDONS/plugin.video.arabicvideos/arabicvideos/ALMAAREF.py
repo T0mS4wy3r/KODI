@@ -22,13 +22,10 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='':
-		addMenuItem('live',menu_name+'البث الحي لقناة المعارف','',41)
-		addMenuItem('folder',menu_name+'بحث في الموقع','',49)
+	addMenuItem('live',menu_name+'البث الحي لقناة المعارف','',41)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',49)
 	addMenuItem('folder',website+'::'+menu_name+'البرامج الحالية','',46)
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'ALMAAREF-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALMAAREF-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)">(.*?)</a></h2>',html,re.DOTALL)
 	for link,name in items:
 		addMenuItem('folder',website+'::'+menu_name+name,link,45,'','','3')

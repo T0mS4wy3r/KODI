@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',69)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',69)
 	addMenuItem('folder',website+'::'+menu_name+'ما يتم مشاهدته الان',website0a,64,'','','recent_viewed_vids')
 	addMenuItem('folder',website+'::'+menu_name+'الاكثر مشاهدة',website0a,64,'','','most_viewed_vids')
 	addMenuItem('folder',website+'::'+menu_name+'اضيفت مؤخرا',website0a,64,'','','recently_added_vids')
@@ -35,7 +35,7 @@ def TITLES(url,category):
 	cat = ''
 	if category not in ['-1','-2','-3']: cat = '?cat='+category
 	url2 = website0a+'/menu_level.php'+cat
-	html = openURL_cached(REGULAR_CACHE,url2,'','',True,'ALFATIMI-TITLES-1st')
+	html = openURL_cached(REGULAR_CACHE,url2,'','','','ALFATIMI-TITLES-1st')
 	items = re.findall('href=\'(.*?)\'.*?>(.*?)<.*?>(.*?)</span>',html,re.DOTALL)
 	startAdd,found = False,False
 	for link,title,count in items:

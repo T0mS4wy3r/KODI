@@ -20,15 +20,12 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': 
-		addMenuItem('folder',menu_name+'بحث في الموقع','',119)
-		addMenuItem('folder',menu_name+'فلتر محدد',website0a,115)
-		addMenuItem('folder',menu_name+'فلتر كامل',website0a,114)
-		#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'SHAHID4U-MENU-1st')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',119)
+	addMenuItem('folder',menu_name+'فلتر محدد',website0a,115)
+	addMenuItem('folder',menu_name+'فلتر كامل',website0a,114)
+	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	html = openURL_cached(NO_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
 	#xbmcgui.Dialog().ok('no exit',html)
 	if '__Error__' not in html:
 		html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
@@ -37,7 +34,7 @@ def MENU(website=''):
 		for link,title in items:
 			url = website0a+'/getposts?type=one&data='+link
 			addMenuItem('folder',website+'::'+menu_name+title,url,111)
-		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)

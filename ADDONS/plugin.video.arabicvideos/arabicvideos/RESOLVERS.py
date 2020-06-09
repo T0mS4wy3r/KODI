@@ -108,7 +108,7 @@ def RESOLVABLE(url):
 	# external	: سيرفر عام خارجي
 	# named		: سيرفر عام محدد
 	private,known,external,named = None,None,None,None
-	result1,result2,result3,result4,result5 = '','','','',''
+	result1,result2,result3,result4,result5,type = '','','','','',''
 	#xbmcgui.Dialog().ok(url,'')
 	url2,server = url,url.lower().split('/')[2]
 	if 'name=' in url:
@@ -130,8 +130,10 @@ def RESOLVABLE(url):
 			result5 = ' '+quality[-9:]
 	url2 = url2.strip('?').strip('/').strip('&')
 	#if any(value in server for value in doNOTresolveMElist): return ''
-	#xbmcgui.Dialog().ok(server,named)
+	#xbmcgui.Dialog().ok(server,type)
+	if    '_' 			in server: source,server = server.split('_',1)
 	if   'akoam'		in server: private = 'akoam'
+	elif 'akwam'		in server: private = 'akwam'
 	elif 'arabseed'		in server: private = 'arabseed'
 	elif 'youtu'	 	in server: private = 'youtube'
 	elif 'y2u.be'	 	in server: private = 'youtube'
@@ -213,9 +215,11 @@ def INTERNAL_RESOLVERS(url):
 		named = named.lower()
 	else: named = ''
 	url2 = url2.strip('?').strip('/').strip('&')
+	#xbmcgui.Dialog().ok(named,server)
 	#if 'gounlimited'	in server: url2 = url2.replace('https:','http:')
 	#if any(value in server for value in doNOTresolveMElist): titleLIST,linkLIST = ['Error: RESOLVE does not resolve this server'],[]
-	if   'akoam'		in server: errormsg,titleLIST,linkLIST = AKOAM(url2,named)
+	if   'akoam'		in named:  errormsg,titleLIST,linkLIST = AKOAM(url2,named)
+	elif 'akwam'		in named:  errormsg,titleLIST,linkLIST = AKWAM(url2,named)
 	elif 'shahid4u'		in server: errormsg,titleLIST,linkLIST = SHAHID4U(url2)
 	elif 'arabseed'		in server: errormsg,titleLIST,linkLIST = ARABSEED(url2)
 	elif 'arblionz'		in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
@@ -650,9 +654,45 @@ def SHAHID4U(link):
 	url2 = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-SHAHID4U-1st')
 	return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
 
+def AKWAM(url,named):
+	#xbmcgui.Dialog().ok(url,named)
+	# https://goo-2o.com/watch/12899		?name=		akwam__watch__1080p
+	# https://goo-2o.com/link/12899			?name=		akwam__download__1080p
+	html2 = openURL_cached(LONG_CACHE,url,'','',True,'RESOLVERS-AKWAM-1st')
+	url2 = re.findall('class="content.*?href="(.*?)"',html2,re.DOTALL)
+	if url2: url2 = unquote(url2[0])
+	else: url2 = url
+	linkLIST,titleLIST,url3 = [],[],''
+	if 'download' in named:
+		html3 = openURL_cached(SHORT_CACHE,url2,'','',True,'RESOLVERS-AKWAM-2nd')
+		url3 = re.findall('btn-loader.*?href="(.*?)"',html3,re.DOTALL)
+		if url3:
+			size = named.split('__')
+			if size:
+				size = size[2]
+				link = unquote(url3[0])
+				titleLIST.append(size)
+				linkLIST.append(link)
+	elif 'watch' in named:
+		html4 = openURL_cached(SHORT_CACHE,url2,'','',True,'AKWAM-PLAY-3rd')
+		links = re.findall('<source.*?src="(.*?)".*?size="(.*?)"',html4,re.DOTALL)
+		for link,size in links:
+			if size in named:
+				titleLIST.append(size)
+				linkLIST.append(link)
+				break
+		if not linkLIST:
+			for link,size in links:
+				titleLIST.append(size)
+				linkLIST.append(link)
+	if not linkLIST: return 'Error: Resolver AKWAM Failed',[],[]
+	return '',titleLIST,linkLIST
+
 def AKOAM(url,named):
 	#xbmcgui.Dialog().ok(url,named)
-	# http://go.akoam.net/5cf68c23e6e79
+	# http://go.akoam.net/5cf68c23e6e79			?name=			akoam
+	# http://w.akwam.org/5e14fd0a2806e			?name=			akoam_ok.ru
+	#named = named.replace('akoam__','').split('__')[1]
 	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','',True,'','RESOLVERS-AKOAM-1st')
 	html = response.content
 	cookies = response.cookies.get_dict()
@@ -688,7 +728,7 @@ def AKOAM(url,named):
 			link = items[0].replace('\/','/')
 			link = link.rstrip('/')
 			if 'http' not in link: link = 'http:' + link
-			if named=='': errormsg,titleLIST,linkLIST = '',[''],[link]
+			if named=='akoam': errormsg,titleLIST,linkLIST = '',[''],[link]
 			else: errormsg,titleLIST,linkLIST = 'NEED_EXTERNAL_RESOLVERS',[''],[link]
 		else: errormsg,titleLIST,linkLIST = 'Error: Resolver AKOAM Failed',[],[]
 		#xbmcgui.Dialog().ok(linkLIST[0],errormsg)

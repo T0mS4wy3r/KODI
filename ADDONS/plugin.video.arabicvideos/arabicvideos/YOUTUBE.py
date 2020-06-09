@@ -199,6 +199,7 @@ def TITLES(url):
 	html_blocks = re.findall('search-pager(.*?)footer-container',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
+		#with open('S:\\0emad.html', 'w') as f: f.write(block)
 		items = re.findall('href="(.*?)".*?button-content">(.*?)<',block,re.DOTALL)
 		for link,title in items:
 			addMenuItem('folder',menu_name+'صفحة '+title,website0a+link,141)

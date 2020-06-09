@@ -71,18 +71,18 @@ xbmcgui.Dialog().ok('yes exists: ',list)
 
 
 WEBSITES = { 'AKOAM'		:['https://akoam.net']
+			,'AKWAM'		:['https://akwam.net']
 			,'ALARAB'		:['https://vod.alarab.com']
 			,'ALFATIMI'		:['http://alfatimi.tv']
 			,'ALKAWTHAR'	:['https://www.alkawthartv.com']
 			,'ALMAAREF'		:['http://www.almaareftv.com/old','http://www.almaareftv.com']
 			,'ARABLIONZ'	:['http://arablionz.com']
 			,'EGYBESTVIP'	:['https://egybest.vip']
-			,'HELAL'		:['https://www.4helal.co']
+			,'HELAL'		:['https://4helal.tv']
 			,'IFILM'		:['http://ar.ifilmtv.com','http://en.ifilmtv.com','http://fa.ifilmtv.com','http://fa2.ifilmtv.com']
 			,'PANET'		:['http://www.panet.co.il']
 			,'SHAHID4U'		:['https://shahid4u.net']
 			,'SHOOFMAX'		:['https://shoofmax.com','https://static.shoofmax.com']
-			,'AKWAM'		:['https://akwam.net']
 			,'ARABSEED'		:['https://arabseed.net']
 			,'YOUTUBE'		:['https://www.youtube.com']
 			,'LIVETV'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport']
@@ -92,6 +92,33 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			#,'HALACIMA'	:['https://www.halacima.co']
 			#,'MOVIZLAND'	:['https://movizland.online','https://m.movizland.online']
 			#,'SERIES4WATCH':['https://series4watch.net']  # 'https://s4w.tv'
+			}
+
+SITES_ARABIC_NAME = { 
+			 'AKOAM'		:'موقع أكوام القديم'
+			,'AKWAM'		:'موقع أكوام الجديد'
+			,'ALARAB'		:'موقع كل العرب'
+			,'ALFATIMI'		:'موقع المنبر الفاطمي'
+			,'ALKAWTHAR'	:'موقع قناة الكوثر'
+			,'ALMAAREF'		:'موقع قناة المعارف'
+			,'ARABLIONZ'	:'موقع عرب ليونز'
+			,'EGYBESTVIP'	:'موقع ايجي بيست vip'
+			,'HELAL'		:'موقع هلال يوتيوب'
+			,'IFILM'		:'موقع قناة اي فيلم'
+			,'IFILM_ARABIC'	:'موقع قناة اي فيلم العربي'
+			,'IFILM_ENGLISH':'موقع قناة اي فيلم انكليزي'
+			,'PANET'		:'موقع بانيت'
+			,'SHAHID4U'		:'موقع شاهد فوريو'
+			,'SHOOFMAX'		:'موقع شوف ماكس'
+			,'ARABSEED'		:'موقع عرب سييد'
+			,'YOUTUBE'		:'موقع يوتيوب'
+			,'LIVETV'		:'LIVETV'
+			,'IPTV'			:'IPTV'
+			#,'EGY4BEST'	:''
+			#,'EGYBEST'		:''
+			#,'HALACIMA'	:''
+			#,'MOVIZLAND'	:''
+			#,'SERIES4WATCH':''
 			}
 
 script_name = 'LIBRARY'
@@ -117,7 +144,7 @@ addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
 dbfile = os.path.join(addoncachefolder,"webcache_"+addon_version+".db")
 lastvideosfile = os.path.join(addoncachefolder,"lastvideos.lst")
 lastrandomfile = os.path.join(addoncachefolder,"lastrandom.lst")
-
+favouritesfile = os.path.join(addoncachefolder,"favourites.lst")
 
 MINUTE = 60
 HOUR = 60*MINUTE
@@ -164,6 +191,7 @@ def MAIN_DISPATCHER(type,name,url,mode,image,page,text):
 	elif mode2==24: import AKWAM 		; results = AKWAM.MAIN(mode,url,text)
 	elif mode2==25: import ARABSEED 	; results = ARABSEED.MAIN(mode,url,text)
 	elif mode2==26: import MENUS 		; results = MENUS.MAIN(mode,url,text)
+	elif mode2==27: import FAVOURITES 	; results = FAVOURITES.MAIN(mode,text)
 	return results
 
 def LOG_MENU_LABEL(script_name,label,mode,path):
@@ -191,7 +219,8 @@ def LOG_THIS(level,message):
 		tabs = tabs+tab
 		loglines += '\r'+shift+tabs+line
 	loglines += '_'
-	xbmc.log(loglines, level=loglevel)
+	if '%' in loglines: loglines = unquote(loglines)
+	xbmc.log(loglines,level=loglevel)
 	return
 
 def LOGGING(script_name):
@@ -252,13 +281,16 @@ class CustomThread():
 			time.sleep(1.000)
 			#sys.stderr.write('9999: 5555:'+str(self.statusDICT.values()))
 
-def EXPLAIN_ERRORS(code,reason,showDialogs):
+def SHOW_ERRORS(source,code,reason,showDialogs):
+	if '-' in source: site = source.split('-',1)[0]
+	else: site = source
 	#if code==104: xbmcgui.Dialog().ok('لديك خطأ اسبابه كثيرة','يرجى منك التواصل مع المبرمج عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
 	dns = (code in [7,10054,11001])
 	blocked1 = (code in [0,104,10061,111])
 	blocked2 = ('Blocked by Cloudflare' in reason)
 	blocked3 = ('Blocked by 5 seconds browser check' in reason)
-	messageARABIC,messageENGLISH = '','Error '+str(code)+': '+reason
+	messageARABIC = 'فشل في سحب الصفحة من الأنترنيت'
+	messageENGLISH = 'Error '+str(code)+': '+reason
 	if dns or blocked1 or blocked2 or blocked3:
 		block_meessage = 'نوع من الحجب ضد كودي مصدره الأنترنيت الخاص بك.'
 		if showDialogs: block_meessage += ' هل تريد تفاصيل اكثر ؟'
@@ -266,24 +298,24 @@ def EXPLAIN_ERRORS(code,reason,showDialogs):
 			messageARABIC = 'لديك خطأ DNS ومعناه تعذر ترجمة اسم الموقع إلى رقمه'
 			messageARABIC += ' والسبب قد يكون '+block_meessage
 		else: messageARABIC = 'هذا الموقع فيه '+block_meessage
-		LOG_THIS('ERROR',LOGGING(script_name)+'   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   messageARABIC: [ '+messageARABIC+' ]]   messageENGLISH: [ '+messageENGLISH+' ]')
+		LOG_THIS('ERROR',LOGGING(script_name)+'   Source: [ '+source+' ]   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   messageARABIC: [ '+messageARABIC+' ]]   messageENGLISH: [ '+messageENGLISH+' ]')
 		if showDialogs:
-			yes = xbmcgui.Dialog().yesno('بعض المواقع لا تعمل عندك',messageARABIC,messageENGLISH,'','كلا','نعم')
+			yes = xbmcgui.Dialog().yesno(site+'   '+SITES_ARABIC_NAME[site],messageARABIC,messageENGLISH,'','كلا','نعم')
 			if yes==1: import SERVICES ; SERVICES.MAIN(195)
-	else:
-		if showDialogs:
-			yes = xbmcgui.Dialog().yesno('فشل في سحب الصفحة من الأنترنيت',messageENGLISH,'هل تريد معرفة الاسباب والحلول؟','','كلا','نعم')
-			if yes==1:
-				messageDETAILS = 'قد يكون هناك نوع من الحجب عندك'
-				messageDETAILS += '\n'+'أو الأنترنيت عندك مفصولة'
-				messageDETAILS += '\n'+'أو الربط المشفر لا يعمل عندك'
-				messageDETAILS += '\n'+'أو الموقع الأصلي غير متوفر الآن'
-				messageDETAILS += '\n'+'أو الموقع الأصلي غير هذه الصفحة والمبرمج لا يعلم'
-				messageDETAILS += '\n\n'+'جرب مسح الكاش (من قائمة خدمات البرنامج)'
-				messageDETAILS += '\n'+'أو أرسل سجل الأخطاء والاستخدام الى المبرمج (من قائمة خدمات البرنامج)'
-				messageDETAILS += '\n'+'أو جرب طرق رفع الحجب (مثلا VPN , Proxy , DNS)'
-				messageDETAILS += '\n'+'أو جرب طلب هذا الموقع لاحقا'
-				xbmcgui.Dialog().textviewer('فشل في سحب الصفحة من الأنترنيت',messageDETAILS)
+	elif showDialogs:
+		messageARABIC2 = messageARABIC+' . هل تريد معرفة الأسباب والحلول ؟'
+		yes = xbmcgui.Dialog().yesno(site+'   '+SITES_ARABIC_NAME[site],messageARABIC2,messageENGLISH,'','كلا','نعم')
+		if yes==1:
+			messageDETAILS = 'قد يكون هناك نوع من الحجب عندك'
+			messageDETAILS += '\n'+'أو الأنترنيت عندك مفصولة'
+			messageDETAILS += '\n'+'أو الربط المشفر لا يعمل عندك'
+			messageDETAILS += '\n'+'أو الموقع الأصلي غير متوفر الآن'
+			messageDETAILS += '\n'+'أو الموقع الأصلي غير هذه الصفحة والمبرمج لا يعلم'
+			messageDETAILS += '\n\n'+'جرب مسح الكاش (من قائمة خدمات البرنامج)'
+			messageDETAILS += '\n'+'أو أرسل سجل الأخطاء والاستخدام إلى المبرمج (من قائمة خدمات البرنامج)'
+			messageDETAILS += '\n'+'أو جرب طرق رفع الحجب (مثلا VPN , Proxy , DNS)'
+			messageDETAILS += '\n'+'أو جرب طلب هذا الموقع لاحقا'
+			xbmcgui.Dialog().textviewer('فشل في سحب الصفحة من الأنترنيت',messageDETAILS)
 	return messageARABIC,messageENGLISH
 
 NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
@@ -324,7 +356,7 @@ def EXIT_IF_SOURCE(source,code,reason,showDialogs):
 	condition1 = (source not in NO_EXIT_LIST and 'RESOLVERS' not in source and '-MENU-1st' not in source)
 	condition2 = ('Blocked by Cloudflare' in reason)
 	condition3 = ('Blocked by 5 seconds browser check' in reason)
-	if showDialogs and (condition1 or condition2 or condition3): EXPLAIN_ERRORS(code,reason,showDialogs)
+	if showDialogs and (condition1 or condition2 or condition3): SHOW_ERRORS(source,code,reason,showDialogs)
 	if condition1: EXIT_PROGRAM(source)
 	return
 
@@ -336,7 +368,7 @@ def EXIT_PROGRAM(source=''):
 	return
 
 def CLEAN_KODI_CACHE_FOLDER():
-	exceptionLIST = [lastvideosfile]
+	exceptionLIST = [lastvideosfile,favouritesfile]
 	for filename in os.listdir(addoncachefolder):
 		filename_full = os.path.join(addoncachefolder,filename)
 		if filename_full not in exceptionLIST:
@@ -348,54 +380,38 @@ contentsDICT = {}
 menuItemsLIST = []
 
 def addMenuItem(type,name,url,mode,image='',page='',text=''):
-	if type=='folder' and '::' in name and 'IPTV' not in name:
-		website,name = name.split('::',1)
-		if website!='' and '_' in name:
-			if 'مصنف' in name or 'فلتر' in name: return
-			nameonly = name.split('_')[2]
-			nameonly = nameonly.replace('ـ','').replace('  ',' ').replace('إ','ا').replace('آ','ا')
-			nameonly = nameonly.replace('ة','ه').replace('و ','و').replace('أ','ا')
-			nameonly = nameonly.replace('لأ','لا').replace('لإ','لا').replace('لآ','لا')
-			nameonly = nameonly.strip(' ')
-			cond1 = ('العاب' not in nameonly and 'خيال' not in nameonly and 'حاليه' not in nameonly)
-			cond2 = ('الان' not in nameonly and 'البوم' not in nameonly)
-			if cond1 and cond2: nameonly = nameonly.replace('ال','')
-			nameonly = nameonly.replace('اخري','اخرى').replace('اجنبى','اجنبي').replace('عائليه','عائلي')
-			nameonly = nameonly.replace('اجنبيه','اجنبي').replace('عربيه','عربي').replace('رومانسيه','رومانسي')
-			nameonly = nameonly.replace(' | افلام اون لاين','').replace('انيميشن','انميشن').replace('غربيه','غربي')
-			nameonly = nameonly.replace('تاريخي','تاريخ').replace('خيال علمي','خيال').replace('موسيقيه','موسيقى')
-			nameonly = nameonly.replace('هندى','هندي').replace('هنديه','هندي').replace('وثائقيه','وثائقي')
-			nameonly = nameonly.replace('تليفزيونيه','تلفزيون').replace('تلفزيونيه','تلفزيون')
-			nameonly = nameonly.replace('الحاليه','حاليه').replace('موسیقی','موسيقى').replace('الانمي','انمي')
-			nameonly = nameonly.replace('المسلسلات','مسلسلات').replace('البرامج','برامج')
-			nameonly = nameonly.replace('حروب','حرب')
-			#if 'AKWAM' in website: xbmcgui.Dialog().ok(nameonly,website)
-			if   website=='AKWAM'		: website = 'موقع أكوام الجديد'
-			elif website=='ALARAB'		: website = 'موقع كل العرب'
-			elif website=='ALFATIMI'	: website = 'موقع المنبر الفاطمي'
-			elif website=='ALKAWTHAR'	: website = 'موقع قناة الكوثر'
-			elif website=='ALMAAREF'	: website = 'موقع قناة المعارف'
-			elif website=='ARABLIONZ'	: website = 'موقع عرب ليونز'
-			elif website=='ARABSEED'	: website = 'موقع عرب سييد'
-			elif website=='EGYBESTVIP'	: website = 'موقع ايجي بيست vip'
-			elif website=='HELAL'		: website = 'موقع هلال يوتيوب'
-			elif website=='IFILM_ARABIC'	: website = 'موقع قناة اي فيلم العربي'
-			elif website=='IFILM_ENGLISH'	: website = 'موقع قناة اي فيلم انكليزي'
-			elif website=='PANET'		: website = 'موقع بانيت'
-			elif website=='SHAHID4U'	: website = 'موقع شاهد فوريو'
-			elif website=='SHOOFMAX'	: website = 'موقع شوف ماكس'
-			elif website=='AKOAM'		: website = 'موقع أكوام القديم'
-			elif website=='IPTV'		: website = 'IPTV'
-			if nameonly not in contentsDICT.keys(): contentsDICT[nameonly] = {}
-			name = name.replace('VOD_','').replace('_MOD_','')
-			if name.count('_')>1: name = name.split('_',2)[2]
-			if name=='': name = '....'
-			contentsDICT[nameonly][website] = [type,name,url,mode,image,page,text]
-			return
+	website = ''
+	if '::' in name: website,name = name.split('::',1)
+	if type=='folder' and website!='' and '_' in name:
+		nameonly = name.split('_')[2]
+		nameonly = nameonly.replace('ـ','').replace('  ',' ').replace('إ','ا').replace('آ','ا')
+		nameonly = nameonly.replace('ة','ه').replace('و ','و').replace('أ','ا')
+		nameonly = nameonly.replace('لأ','لا').replace('لإ','لا').replace('لآ','لا')
+		nameonly = nameonly.strip(' ')
+		cond1 = ('العاب' not in nameonly and 'خيال' not in nameonly and 'حاليه' not in nameonly)
+		cond2 = ('الان' not in nameonly and 'البوم' not in nameonly)
+		if cond1 and cond2: nameonly = nameonly.replace('ال','')
+		nameonly = nameonly.replace('اخري','اخرى').replace('اجنبى','اجنبي').replace('عائليه','عائلي')
+		nameonly = nameonly.replace('اجنبيه','اجنبي').replace('عربيه','عربي').replace('رومانسيه','رومانسي')
+		nameonly = nameonly.replace(' | افلام اون لاين','').replace('انيميشن','انميشن').replace('غربيه','غربي')
+		nameonly = nameonly.replace('تاريخي','تاريخ').replace('خيال علمي','خيال').replace('موسيقيه','موسيقى')
+		nameonly = nameonly.replace('هندى','هندي').replace('هنديه','هندي').replace('وثائقيه','وثائقي')
+		nameonly = nameonly.replace('تليفزيونيه','تلفزيون').replace('تلفزيونيه','تلفزيون')
+		nameonly = nameonly.replace('الحاليه','حاليه').replace('موسیقی','موسيقى').replace('الانمي','انمي')
+		nameonly = nameonly.replace('المسلسلات','مسلسلات').replace('البرامج','برامج')
+		nameonly = nameonly.replace('حروب','حرب')
+		#if 'PANET' in website: xbmcgui.Dialog().ok(nameonly,website)
+		website = SITES_ARABIC_NAME[website]
+		if nameonly not in contentsDICT.keys(): contentsDICT[nameonly] = {}
+		name = name.replace('VOD_','').replace('_MOD_','')
+		if name.count('_')>1: name = name.split('_',2)[2]
+		if name=='': name = '....'
+		contentsDICT[nameonly][website] = [type,name,url,mode,image,page,text]
 	menuItemsLIST.append([type,name,url,mode,image,page,text])
 	return
 
-def getKodiMenuItem(type,name,url,mode,image,text1,text2):
+def getKodiMenuItem(menuItem):
+	type,name,url,mode,image,text1,text2 = menuItem
 	if type=='folder': start1,start2 = ';',','
 	else: start1,start2 = escapeUNICODE('\u02d1'),' '
 	name2 = re.findall('&&_(\D\D\w)__MOD_(.*?)&&','&&'+name+'&&',re.DOTALL)
@@ -404,13 +420,17 @@ def getKodiMenuItem(type,name,url,mode,image,text1,text2):
 	if name2: name = start2+'[COLOR FFC89008]'+name2[0][0]+'  [/COLOR]'+name2[0][1]
 	path = 'plugin://'+addon_id+'/?type='+type
 	path = path+'&mode='+str(mode)
-	if name!='': path = path+'&name='+quote(name)
-	if url!='': path = path+'&url='+quote(url)
 	if type=='folder' and text1!='': path = path+'&page='+quote(text1)
 	if text2!='': path = path+'&text='+quote(text2)
+	if url!='': path = path+'&url='+quote(url)
+	if name!='': path = path+'&name='+quote(name)
 	if image!='': path = path+'&image='+quote(image)
+	else: image = icon
 	listitem = xbmcgui.ListItem(name)
-	listitem.setArt({'icon':image,'thumb':image,'fanart':image,})
+	listitem.setArt({'icon':image,'thumb':image,'fanart':fanart,})
+	import FAVOURITES
+	menuLIST = FAVOURITES.GET_FAVOURITES_CONTEXT_MENU(path)
+	listitem.addContextMenuItems(menuLIST)
 	if type in ['link','live']: isFolder = False
 	elif type=='video':
 		isFolder = False
@@ -428,21 +448,24 @@ def getKodiMenuItem(type,name,url,mode,image,text1,text2):
 	#xbmcplugin.addDirectoryItem(handle=addon_handle,url=path,listitem=listitem,isFolder=isFolder)
 	return (path,listitem,isFolder)
 
-def EXTRACT_KODI_PATH():
-	args1 = { 'type':'' , 'mode':'' , 'url':'' , 'text':'' , 'page':'' , 'name':'' , 'image':'' }
-	url2,args2 = URLDECODE(addon_path)
+def EXTRACT_KODI_PATH(path=''):
+	args1 = {'type':'','mode':'','url':'','text':'','page':'','name':'','image':'','favourite':''}
+	if path=='': path = addon_path
+	if '?' in path: path = path.split('?')[1]
+	url2,args2 = URLDECODE(path)
 	args = dict(args1.items()+args2.items())
-	mode = args['mode']#.strip(' ')
-	url = urllib2.unquote(args['url'])#.strip(' ')
-	text = urllib2.unquote(args['text'])#.strip(' ')
-	page = urllib2.unquote(args['page'])#.strip(' ')
-	type = urllib2.unquote(args['type'])#.strip(' ')
-	name = urllib2.unquote(args['name'])#.strip(' ')
-	image = urllib2.unquote(args['image'])#.strip(' ')
+	mode = args['mode']
+	url = urllib2.unquote(args['url'])
+	text = urllib2.unquote(args['text'])
+	page = urllib2.unquote(args['page'])
+	type = urllib2.unquote(args['type'])
+	name = urllib2.unquote(args['name'])
+	image = urllib2.unquote(args['image'])
+	favourite = args['favourite']
 	#name = xbmc.getInfoLabel('ListItem.Label')
 	#image = xbmc.getInfoLabel('ListItem.Icon')
-	if mode=='': type = 'folder' ; mode = 260
-	return type,name,url,mode,image,page,text
+	if mode=='': type = 'folder' ; mode = '260'
+	return type,name,url,mode,image,page,text,favourite
 
 def openURL_requests_cached(expiry,method,url,data,headers,allow_redirects,showDialogs,source):
 	if expiry==0: return openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
@@ -570,17 +593,17 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 			response.content = html
 		#if 'google-analytics' not in url:
 		if code in [7,11001,10054] and dnsurl==None:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]')
+			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 			url = url+'||MyDNSUrl='
 			response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 			return response
 		elif code==8 and sslurl==None:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   SSL failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url.encode('utf8')+' ]')
+			LOG_THIS('ERROR',LOGGING(script_name)+'   SSL failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 			url = url+'||MySSLUrl='
 			response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 			return response
 		else:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url.encode('utf8')+' ]')
+			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
 		EXIT_IF_SOURCE(source,code,reason,showDialogs)
 	return response
 
@@ -662,7 +685,7 @@ def ADD_TO_LAST_VIDEO_FILES():
 	#if int(mode)in vod_play_modes: filename = lastvodfile
 	#elif int(mode)in live_play_modes: filename = lastlivefile
 	#else: filename = ''
-	type,name,url99,mode99,image99,page99,text99 = EXTRACT_KODI_PATH()
+	type,name,url99,mode99,image99,page99,text99,favourite = EXTRACT_KODI_PATH()
 	newItem = (type,name,url99,mode99,image99,page99,text99)
 	if os.path.exists(lastvideosfile):
 		with open(lastvideosfile,'r') as f: oldFILE = f.read()
@@ -714,7 +737,7 @@ def PLAY_VIDEO(url3,website='',type='video'):
 		else: selection = 0
 		url = linkLIST[selection]
 		if titleLIST[0]!='-1':
-			LOG_THIS('NOTICE',LOGGING(script_name)+'   Video Selected   Selection: [ '+titleLIST[selection]+' ]   URL: [ '+url.encode('utf8')+' ]')
+			LOG_THIS('NOTICE',LOGGING(script_name)+'   Video Selected   Selection: [ '+titleLIST[selection]+' ]   URL: [ '+url+' ]')
 	if 'http' in url.lower() and '/dash/' not in url and 'youtube.mpd' not in url:
 		if 'https://' in url.lower():
 			if '|' not in url: url = url+'|verifypeer=false'
@@ -728,7 +751,7 @@ def PLAY_VIDEO(url3,website='',type='video'):
 	play_item.setProperty('inputstreamaddon', '')
 	play_item.setMimeType('mime/x-type')
 	play_item.setInfo('Video', {'mediatype': 'video'})
-	type99,name,url99,mode99,image99,page99,text99 = EXTRACT_KODI_PATH()
+	type99,name,url99,mode99,image99,page99,text99,favourite = EXTRACT_KODI_PATH()
 	#name = xbmc.getInfoLabel('ListItem.Label')
 	#name = name.strip(' ')
 	play_item.setInfo( "Video", { "Title": name } )
@@ -756,7 +779,6 @@ def PLAY_VIDEO(url3,website='',type='video'):
 	play_item.setContentLookup(False)
 	#logfilename = xbmc.translatePath('special://logpath')+'kodi.log'
 	timeout,step,result = 60,1,'tried'
-	#BUSY_DIALOG('start')
 	for i in range(0,timeout,step):
 		xbmc.sleep(step*1000)
 		result = myplayer.status
@@ -766,15 +788,14 @@ def PLAY_VIDEO(url3,website='',type='video'):
 			break
 		elif result=='failed':
 			xbmcgui.Dialog().notification('الفيديو لم يعمل','')
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed playing video   URL: [ '+url.encode('utf8')+' ]'+subtitlemessage)
+			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed playing video   URL: [ '+url+' ]'+subtitlemessage)
 			break
 		xbmcgui.Dialog().notification(myplayer.status +'جاري تشغيل الفيديو','باقي '+str(timeout-i)+' ثانية')
 	else:
 		result = 'timeout'
 		myplayer.stop()
 		xbmcgui.Dialog().notification('الفيديو لم يعمل','')
-		LOG_THIS('ERROR',LOGGING(script_name)+'   Timeout unknown problem   URL: [ '+url.encode('utf8')+' ]'+subtitlemessage)
-	#BUSY_DIALOG('stop')
+		LOG_THIS('ERROR',LOGGING(script_name)+'   Timeout unknown problem   URL: [ '+url+' ]'+subtitlemessage)
 	if httpd!='':
 		#xbmcgui.Dialog().ok('click ok to shutdown the http server','')
 		#html = openURL_cached(NO_CACHE,'http://localhost:55055/shutdown','','','','LIBRARY-PLAY_VIDEO-2nd')
@@ -964,7 +985,7 @@ def DNS_RESOLVER(url,dnsserver=''):
 			ip = ip[0:-1]
 			answer.append(ip)
 		if x_type in [1,2,5,6,15,28]: offset = offset + rdlength
-	if not answer: LOG_THIS('ERROR',LOGGING(script_name)+'   DNS_RESOLVER failed getting ip   URL: [ '+url.encode('utf8')+' ]')
+	if not answer: LOG_THIS('ERROR',LOGGING(script_name)+'   DNS_RESOLVER failed getting ip   URL: [ '+url+' ]')
 	return answer
 
 def RATING_CHECK(script_name,url,ratingLIST):

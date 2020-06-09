@@ -24,15 +24,13 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',189)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',189)
 	addMenuItem('folder',website+'::'+menu_name+'بوكس اوفيس موفيز لاند',website0a,181,'','','box-office')
 	addMenuItem('folder',website+'::'+menu_name+'أحدث الافلام',website0a,181,'','','latest-movies')
 	addMenuItem('folder',website+'::'+menu_name+'تليفزيون موفيز لاند',website0a,181,'','','tv')
 	addMenuItem('folder',website+'::'+menu_name+'الاكثر مشاهدة',website0a,181,'','','top-views')
 	addMenuItem('folder',website+'::'+menu_name+'أقوى الافلام الحالية',website0a,181,'','','top-movies')
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'MOVIZLAND-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','MOVIZLAND-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)".*?">(.*?)<',html,re.DOTALL)
 	for link,title in items:
 		addMenuItem('folder',website+'::'+menu_name+title,link,181)

@@ -19,16 +19,16 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',79)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',79)
 	addMenuItem('folder',website+'::'+menu_name+'المميزة',website0a,72,'','','featured')
 	addMenuItem('folder',website+'::'+menu_name+'المزيد',website0a,72,'','','more')
+	addMenuItem('folder',menu_name+'بحث عن سلسلة',website0a,79,'','','سلسلة')
+	addMenuItem('folder',menu_name+'بحث عن سلسلة افلام',website0a,79,'','','سلسلة افلام')
 	#addMenuItem('folder',website+'::'+menu_name+'الاخبار',website0a,72,'','','news')
 	#addMenuItem('folder',website+'::'+menu_name+'الاخبار',website0a,72,'','','news')
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	if website=='': showDialogs = True
-	else: showDialogs = False
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات','المصارعة الحرة']
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'AKOAM-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
 	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -36,10 +36,11 @@ def MENU(website=''):
 		for link,title in items:
 			if title not in ignoreLIST:
 				addMenuItem('folder',website+'::'+menu_name+title,link,71)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def CATEGORIES(url):
-	html = openURL_cached(LONG_CACHE,url,'',headers,True,'AKOAM-CATEGORIES-1st')
+	html = openURL_cached(LONG_CACHE,url,'',headers,'','AKOAM-CATEGORIES-1st')
 	html_blocks = re.findall('sect_parts(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -102,6 +103,7 @@ def SECTIONS(url):
 		if akwam_link1: url3 = akwam_link1[0]
 		elif akwam_link2: url3 = RESOLVE_UNDERRUN(akwam_link2[0])
 		url3 = unquote(url3)
+		#xbmcgui.Dialog().ok(url3,'SECTIONS 22')
 		import AKWAM
 		if '/series/' in url3 or '/shows/' in url3: AKWAM.EPISODES(url3)
 		else: AKWAM.PLAY(url3)
@@ -180,14 +182,16 @@ def PLAY(url):
 		'1477488213':'thevid','1558278006':'uqload','1477487990':'vidtodo'}
 	items = re.findall('download_btn\' target=\'_blank\' href=\'(.*?)\'',block,re.DOTALL)
 	for link in items:
-		linkLIST.append(link)
+		linkLIST.append(link+'?name=akoam')
 	items = re.findall('background-image: url\((.*?)\).*?href=\'(.*?)\'',block,re.DOTALL)
 	for serverIMG,link in items:
 		serverIMG = serverIMG.split('/')[-1]
 		serverIMG = serverIMG.split('.')[0]
 		if serverIMG in serversDICT:
-			linkLIST.append(link+'?name='+serversDICT[serverIMG])
-		else: linkLIST.append(link+'?name='+serverIMG)
+			linkLIST.append(link+'?name=akoam_'+serversDICT[serverIMG])
+		else: linkLIST.append(link+'?name=akoam_'+serverIMG)
+	#xbmcgui.Dialog().select('PLAY AKOAM',linkLIST)
+	#return
 	if len(linkLIST)==0:
 		message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
 		if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])

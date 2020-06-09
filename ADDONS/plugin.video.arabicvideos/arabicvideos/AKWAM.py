@@ -23,14 +23,12 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',website+'::'+menu_name+'بحث في الموقع','',249)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',249)
 	addMenuItem('folder',website+'::'+menu_name+'المميزة',website0a+proxy,241,'','','featured')
 	#addMenuItem('folder',website+'::'+menu_name+'المزيد',website0a+proxy,242,'','','more')
 	#addMenuItem('folder',website+'::'+menu_name+'الاخبار',website0a+proxy,242,'','','news')
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	html = openURL_cached(LONG_CACHE,website0a+proxy,'',headers,showDialogs,'AKWAM-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a+proxy,'',headers,'','AKWAM-MENU-1st')
 	html_blocks = re.findall('class="menu(.*?)<nav',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -39,12 +37,13 @@ def MENU(website=''):
 		for link,title in items:
 			if title not in ignoreLIST:
 				title = title+' مصنفة'
-				addMenuItem('folder',website+'::'+menu_name+title,link,245)
-		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+				addMenuItem('folder',menu_name+title,link,245)
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		for link,title in items:
 			if title not in ignoreLIST:
 				title = title+' مفلترة'
-				addMenuItem('folder',website+'::'+menu_name+title,link,244)
+				addMenuItem('folder',menu_name+title,link,244)
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def TITLES(url,type=''):
@@ -133,50 +132,17 @@ def PLAY(url):
 		#xbmcgui.Dialog().ok(str(links),'')
 		for link,icon in links:
 			if 'torrent' in icon: continue
-			elif 'download' in icon: type = 'تحميل'
-			elif 'play' in icon: type = 'مشاهدة'
-			else: type = 'غير معروف'
-			title = qualities[i]+' ملف '+type
-			titleLIST.append(title)
+			elif 'download' in icon: type = 'download'
+			elif 'play' in icon: type = 'watch'
+			else: type = 'unknown'
+			#title = qualities[i]+' ملف '+type
+			#titleLIST.append(title)
+			link = link+'?name=akwam__'+type+'__'+qualities[i]
 			linkLIST.append(link)
-	#selection = xbmcgui.Dialog().select('',titleLIST)
-	#selection = xbmcgui.Dialog().select('',linkLIST)
-	if len(titleLIST)==1: selection = 0
-	else: selection = xbmcgui.Dialog().select('',titleLIST)
-	if selection==-1: return
-	link = linkLIST[selection]
-	title = titleLIST[selection]
-	if 'akwam' in link: url2 = link
-	else:
-		html2 = openURL_cached(LONG_CACHE,link,'',headers,True,'AKWAM-PLAY-2nd')
-		#xbmcgui.Dialog().ok(link,html2)
-		url2 = re.findall('class="content.*?href="(.*?)"',html2,re.DOTALL)
-		url2 = unquote(url2[0])
-	url3 = ''
-	if 'تحميل' in title:
-		html3 = openURL_cached(SHORT_CACHE,url2,'',headers,True,'AKWAM-PLAY-3rd')
-		url3 = re.findall('btn-loader.*?href="(.*?)"',html3,re.DOTALL)
-		url3 = unquote(url3[0])
-	if 'مشاهدة' in title:
-		html4 = openURL_cached(SHORT_CACHE,url2,'',headers,True,'AKWAM-PLAY-4th')
-		#xbmcgui.Dialog().ok(url2,html4)
-		links = re.findall('<source.*?src="(.*?)".*?size="(.*?)"',html4,re.DOTALL)
-		#xbmcgui.Dialog().ok(url2,str(links))
-		for link,size in links:
-			if size in title:
-				url3 = link
-				break
-		if url3=='':
-			linkLIST,titleLIST = [],[]
-			for link,size in links:
-				titleLIST.append(size)
-				linkLIST.append(link)
-			if len(titleLIST)==1: selection = 0
-			else: selection = xbmcgui.Dialog().select('',titleLIST)
-			if selection==-1: return
-			url3 = linkLIST[selection]
-	if url3=='': xbmcgui.Dialog().ok('','لا يوجد ملف تشغيل لهذا الفيديو')
-	else: PLAY_VIDEO(url3,script_name,'video')
+	#selection = xbmcgui.Dialog().select('TEST',titleLIST)
+	#selection = xbmcgui.Dialog().select('TEST',linkLIST)
+	import RESOLVERS
+	RESOLVERS.PLAY(linkLIST,script_name,'video')
 	return
 
 def FILTERS_MENU(url,filter):

@@ -36,14 +36,12 @@ def MENU(website=''):
 	#items=re.findall('href="(.*?)".*?i>(.*?)\n',block,re.DOTALL)
 	#for url,title in items:
 	#	if url!=website0a: addMenuItem('folder',menu_name+title,url,221)
-	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',229)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',229)
 	addMenuItem('folder',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
 	addMenuItem('folder',website+'::'+menu_name+'الافلام',website0a+'/movies',221)
 	addMenuItem('folder',website+'::'+menu_name+'المسلسلات',website0a+'/tv',221)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'EGYBESTVIP-MENU-1st')
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBESTVIP-MENU-1st')
 	html_blocks=re.findall('class="ba mgb(.*?)>EgyBest</a>',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)

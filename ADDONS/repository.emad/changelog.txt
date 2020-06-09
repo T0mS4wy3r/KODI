@@ -1,11 +1,15 @@
 ﻿
+v4.4.0	2020-06-09
+Modified addon icon
+
+
 v4.3.0	2020-03-30
 Added "nkvoronov" repository for "youtube-dl" addon
-Added "hadynz" repository for more arabic addons
+Added "hadynz" repository for more Arabic addons
 
 
 v4.2.0	2020-03-26
-Added "hmemar" repository for more arabic addons
+Added "hmemar" repository for more Arabic addons
 
 
 v4.1.0	2020-03-26

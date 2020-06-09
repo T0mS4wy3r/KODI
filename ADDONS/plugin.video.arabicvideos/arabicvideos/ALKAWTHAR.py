@@ -12,15 +12,14 @@ def MAIN(mode,url,page,text):
 	elif mode==132: results = CATEGORIES(url)
 	elif mode==133: results = EPISODES(url,page)
 	elif mode==134: results = PLAY(url)
-	elif mode==135: BUSY_DIALOG('start') ; results = LIVE() ; BUSY_DIALOG('stop')
+	elif mode==135: results = LIVE()
 	elif mode==139: results = SEARCH(text,url)
 	else: results = False
 	return results
 
 def MENU(website=''):
-	if website=='':
-		addMenuItem('live',menu_name+'البث الحي لقناة الكوثر','',135)
-		addMenuItem('folder',menu_name+'بحث في الموقع','',139)
+	addMenuItem('live',menu_name+'البث الحي لقناة الكوثر','',135)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',139)
 	addMenuItem('folder',website+'::'+menu_name+'المسلسلات',website0a+'/category/543',132,'','1')
 	addMenuItem('folder',website+'::'+menu_name+'الافلام',website0a+'/category/628',132,'','1')
 	addMenuItem('folder',website+'::'+menu_name+'برامج الصغار والشباب',website0a+'/category/517',132,'','1')
@@ -168,6 +167,7 @@ def PLAY(url):
 	return
 
 def LIVE():
+	BUSY_DIALOG('start')
 	#xbmcgui.Dialog().notification('جاري تشغيل القناة','')
 	url = website0a+'/live'
 	html = openURL_cached(LONG_CACHE,url,'','',True,'ALKAWTHAR-LIVE-1st')
@@ -185,6 +185,7 @@ def LIVE():
 	url = re.findall('"(.*?)"',html,re.DOTALL)
 	url = url[0].replace('\/','/')
 	#xbmcgui.Dialog().ok(url,html)
+	BUSY_DIALOG('stop')
 	PLAY_VIDEO(url,script_name,'live')
 	return
 

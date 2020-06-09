@@ -3,6 +3,7 @@
 from LIBRARY import *
 
 script_name='RANDOMS'
+menu_name='_LST_'
 
 random_size = 5
 
@@ -49,8 +50,9 @@ def RANDOM_LIVETV(options):
 	LIVETV.ITEMS('1',False)
 	LIVETV.ITEMS('2',False)
 	#LIVETV.ITEMS('3',False)
-	if 'RANDOM' in options and len(menuItemsLIST)>random_size:
-		menuItemsLIST[:] = random.sample(menuItemsLIST,random_size)
+	if 'RANDOM' in options:
+		menuItemsLIST[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
+		if len(menuItemsLIST)>random_size: menuItemsLIST[:] = random.sample(menuItemsLIST,random_size)
 	menuItemsLIST[:] = previous+menuItemsLIST
 	#LOG_THIS('NOTICE','EMAD   RANDOM_LIVETV'+str(contentsDICT))
 	return
@@ -107,7 +109,7 @@ def SEARCH_RANDOM_VIDEOS(options):
 	if 'SITES' in options:
 		search_modes = [19,29,49,59,69,79,99,119,139,149,209,229,249,259]
 		#search_modes = [39]	panet search does not work at panet website
-	else:
+	elif 'IPTV' in options:
 		search_modes = [239]
 		import IPTV
 		if not IPTV.isIPTVFiles(True): return
@@ -115,97 +117,117 @@ def SEARCH_RANDOM_VIDEOS(options):
 	addMenuItem('folder','البحث عن : [  ]','',164,'','','UPDATE_'+options)
 	addMenuItem('folder','إعادة البحث العشوائي','',164,'','','UPDATE_'+options)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	previuosLIST = menuItemsLIST[:]
+	menuItemsLIST[:] = []
 	for i in range(0,20):
 		text = random.sample(list2,1)[0]
 		text = text+'::'
 		mode = random.sample(search_modes,1)[0]
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Random Video Search   mode:'+str(mode)+'  text:'+text)
 		results = MAIN_DISPATCHER('','','',mode,'','',text)
-		if len(menuItemsLIST)>3: break
-	menuItemsLIST[0][1] = '[ [COLOR FFC89008]'+text[:-2]+'[/COLOR] البحث عن : [ '
-	if len(menuItemsLIST)>(random_size+3): menuItemsLIST[:] = menuItemsLIST[:3]+random.sample(menuItemsLIST[3:],random_size)
+		if len(menuItemsLIST)>0: break
+	previuosLIST[0][1] = '[ [COLOR FFC89008]'+text[:-2]+'[/COLOR] البحث عن : [ '
+	menuItemsLIST[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
+	if len(menuItemsLIST)>random_size: random.sample(menuItemsLIST,random_size)
+	menuItemsLIST[:] = previuosLIST+menuItemsLIST
 	#GLOBAL_SEARCH_MENU(search,False)
 	#xbmcgui.Dialog().ok(str(len(menuItemsLIST)),'MENUS')
 	return
-
-def IMPORT_SITES_HELPER(html,title,failed):
-	if '__Error__' in html:
-		failed += 1
-		dummy,code,reason = html.split(':',2)
-		messageARABIC,messageENGLISH = EXPLAIN_ERRORS(code,reason,False)
-		xbmcgui.Dialog().ok(title,messageARABIC,messageENGLISH)
-	return failed
 
 def IMPORT_SITES():
 	global contentsDICT
 	results = READ_FROM_SQL3('IMPORT_SECTIONS','SITES')
 	if results: contentsDICT = results ; return
+	previousMenu = menuItemsLIST[:]
 	#LOG_THIS('NOTICE','START TIMING')
+	#xbmcgui.Dialog().ok('','start')
 	failed = 0
 	if failed<=5:
-		import AKOAM ; html = AKOAM.MENU('AKOAM')
-		failed = IMPORT_SITES_HELPER(html,'موقع أكوام القديم AKOAM',failed)
+		try: 
+			import AKOAM ; html = AKOAM.MENU('AKOAM')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import AKWAM ; html = AKWAM.MENU('AKWAM')
-		failed = IMPORT_SITES_HELPER(html,'موقع أكوام الجديد AKWAM',failed)
+		try:
+			import AKWAM ; html = AKWAM.MENU('AKWAM')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import ALARAB ; html = ALARAB.MENU('ALARAB')
-		failed = IMPORT_SITES_HELPER(html,'موقع كل العرب ALARAB',failed)
+		try:
+			import HELAL ; html = HELAL.MENU('HELAL')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import ALFATIMI ; html = ALFATIMI.MENU('ALFATIMI')
-		failed = IMPORT_SITES_HELPER(html,'موقع المنبر الفاطمي ALFATIMI',failed)
+		try:
+			import PANET ; html = PANET.MENU('PANET')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import ALKAWTHAR ; html = ALKAWTHAR.MENU('ALKAWTHAR')
-		failed = IMPORT_SITES_HELPER(html,'موقع قناة الكوثر ALKAWTHAR',failed)
+		try:
+			import ALARAB ; html = ALARAB.MENU('ALARAB')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import ALMAAREF ; html = ALMAAREF.MENU('ALMAAREF')
-		failed = IMPORT_SITES_HELPER(html,'موقع قناة المعارف ALMAAREF',failed)
+		try:
+			import IFILM ; html = IFILM.MENU('IFILM_ARABIC')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import ARABLIONZ ; html = ARABLIONZ.MENU('ARABLIONZ')
-		failed = IMPORT_SITES_HELPER(html,'موقع عرب ليونز ARABLIONZ',failed)
+		try:
+			import IFILM ; html = IFILM.MENU('IFILM_ENGLISH')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import ARABSEED ; html = ARABSEED.MENU('ARABSEED')
-		failed = IMPORT_SITES_HELPER(html,'موقع عرب سييد ARABSEED',failed)
+		try:
+			import ALFATIMI ; html = ALFATIMI.MENU('ALFATIMI')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import EGYBESTVIP ; html = EGYBESTVIP.MENU('EGYBESTVIP')
-		failed = IMPORT_SITES_HELPER(html,'vip موقع ايجي بيست EGYBESTVIP',failed)
+		try:
+			import ALMAAREF ; html = ALMAAREF.MENU('ALMAAREF')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import HELAL ; html = HELAL.MENU('HELAL')
-		failed = IMPORT_SITES_HELPER(html,'موقع هلال يوتيوب HELALCIMA',failed)
+		try:
+			import ARABSEED ; html = ARABSEED.MENU('ARABSEED')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import IFILM ; html = IFILM.MENU('IFILM_ARABIC')
-		failed = IMPORT_SITES_HELPER(html,'موقع قناة اي فيلم العربي IFILM_ARABIC',failed)
+		try:
+			import SHOOFMAX ; html = SHOOFMAX.MENU('SHOOFMAX')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import IFILM ; html = IFILM.MENU('IFILM_ENGLISH')
-		failed = IMPORT_SITES_HELPER(html,'موقع قناة اي فيلم انكليزي IFILM_ENGLISH',failed)
+		try:
+			import SHAHID4U ; html = SHAHID4U.MENU('SHAHID4U')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import PANET ; html = PANET.MENU('PANET')
-		failed = IMPORT_SITES_HELPER(html,'موقع بانيت PANET',failed)
+		try:
+			import ALKAWTHAR ; html = ALKAWTHAR.MENU('ALKAWTHAR')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import SHOOFMAX ; html = SHOOFMAX.MENU('SHOOFMAX')
-		failed = IMPORT_SITES_HELPER(html,'موقع شوف ماكس SHOOFMAX',failed)
+		try:
+			import ARABLIONZ ; html = ARABLIONZ.MENU('ARABLIONZ')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	if failed<=5:
-		import SHAHID4U ; html = SHAHID4U.MENU('SHAHID4U')
-		failed = IMPORT_SITES_HELPER(html,'موقع شاهد فوريو SHAHID4U',failed)
+		try:
+			import EGYBESTVIP ; html = EGYBESTVIP.MENU('EGYBESTVIP')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
 	#import EGYBEST			;	EGYBEST.MENU('EGYBEST')
 	#import HALACIMA		;	HALACIMA.MENU('HALACIMA')
 	#import MOVIZLAND		;	MOVIZLAND.MENU('MOVIZLAND')
 	#import SERIES4WATCH	;	SERIES4WATCH.MENU('SERIES4WATCH')
-	if failed>5: xbmcgui.Dialog().ok('عندك مشكلة','لديك مشكلة غريبة وغير طبيعية في اكثر من 5 مواقع من مواقع البرنامج ... ومشكلة مثل هذه تسبب عطل هذه الوظيفة وسببها قد يكون عدم وجود إنترنيت في جهازك')
-	else:
-		"""
-		for key1 in contentsDICT.keys():
-			for key2 in contentsDICT[key1].keys():
-				name = contentsDICT[key1][key2][1]
-				name2 = name.replace('VOD_','').replace('_MOD_','')
-				if name2.count('_')>1: name2 = name2.split('_',2)[2]
-				if name2=='': name2 = '....'
-				contentsDICT[key1][key2][1] = name2
-		"""
-		WRITE_TO_SQL3('IMPORT_SECTIONS','SITES',contentsDICT,LONG_CACHE)
+	menuItemsLIST[:] = previousMenu
+	if failed>5: xbmcgui.Dialog().ok('مشكلة غريبة جدا','لديك مشكلة في اكثر من 5 مواقع من مواقع البرنامج ... وسببها قد يكون عدم وجود إنترنيت في جهازك')
+	else: WRITE_TO_SQL3('IMPORT_SECTIONS','SITES',contentsDICT,LONG_CACHE)
 	return
 
 def IMPORT_IPTV(options):
+	#xbmcgui.Dialog().ok('',options)
 	message = 'للأسف لديك مشكلة في هذا الموقع . ورسالة الخطأ كان فيها تفاصيل المشكلة . أذا المشكلة ليست حجب فجرب إرسال هذه المشكلة إلى المبرمج من قائمة خدمات البرنامج'
 	import IPTV
 	if IPTV.isIPTVFiles(True):
@@ -218,7 +240,7 @@ def IMPORT_IPTV(options):
 			try: IPTV.GROUPS('LIVE_ORIGINAL','',options+'_TV')
 			except: xbmcgui.Dialog().ok('موقع IPTV للقنوات',message)
 		for item in menuItemsLIST:
-			item[1] = item[1].replace('IPTV_','').replace('_MOD_','')
+			item[1] = item[1].replace('IPTV_','').replace('_MOD_','').replace('UPDATE_','')
 			if item[1].count('_')>1: item[1] = item[1].split('_',2)[2]
 			if item[1]=='': item[1] = '....'
 	else: EXIT_PROGRAM('RANDOMS-IMPORT_IPTV-1st')
@@ -226,19 +248,19 @@ def IMPORT_IPTV(options):
 
 def CATEGORIES_MENU(options):
 	#xbmcgui.Dialog().ok('',options)
-	options = options.replace('UPDATE_','').replace('DELETE_','')
-	addMenuItem('folder','تحديث هذه القائمة','',165,'','','DELETE_'+options)
+	clean_options = options.replace('UPDATE_','').replace('DELETE_','')
+	addMenuItem('folder','تحديث هذه القائمة','',165,'','','UPDATE_DELETE_'+clean_options)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	if 'SITES' in options:
 		if 'DELETE' in options: DELETE_FROM_SQL3('IMPORT_SECTIONS','SITES')
 		IMPORT_SITES()
 		for nameonly in sorted(contentsDICT.keys()):
-			addMenuItem('folder',nameonly,nameonly,166,'','',''+options)
+			addMenuItem('folder',menu_name+nameonly,nameonly,166,'','',clean_options)
 	elif 'IPTV' in options:
 		if 'DELETE' in options:
 			import IPTV
 			IPTV.CREATE_STREAMS()
-		IMPORT_IPTV(options)
+		IMPORT_IPTV(clean_options)
 	return
 
 def RANDOM_VOD_ITEMS(nameonly,options):
@@ -254,13 +276,11 @@ def RANDOM_VOD_ITEMS(nameonly,options):
 		type,name,url,mode2,image,page,text = contentsDICT[nameonly][website]
 		if 'RANDOM' in options or len(contentsDICT[nameonly])==1:
 			MAIN_DISPATCHER(type,'',url,mode2,'',page,text)
-			previousLIST,newLIST,newLIST2 = menuItemsLIST[:3],menuItemsLIST[3:],[]
-			for item in newLIST:
-				if 'صفحة' in item[1] or 'صفحه' in item[1] or 'page' in item[1].lower(): continue
-				newLIST2.append(item)
-			for i in range(0,5): random.shuffle(newLIST2)
-			if 'RANDOM' in options: menuItemsLIST[:] = previousLIST+newLIST2[:random_size]
-			else: menuItemsLIST[:] = previousLIST+newLIST2
+			menuItemsLIST[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
+			previousLIST,newLIST = menuItemsLIST[:3],menuItemsLIST[3:]
+			for i in range(0,5): random.shuffle(newLIST)
+			if 'RANDOM' in options: menuItemsLIST[:] = previousLIST+newLIST[:random_size]
+			else: menuItemsLIST[:] = previousLIST+newLIST
 		elif 'SITES' in options: addMenuItem('folder',website,url,mode2,image,page,text)
 	#LOG_THIS('NOTICE',str(contentsDICT[nameonly]))
 	#xbmcgui.Dialog().ok(str(contentsDICT[nameonly].keys()),str(contentsDICT[nameonly]))
@@ -295,10 +315,7 @@ def RANDOM_CATEGORY(options,mode):
 		html = MAIN_DISPATCHER(type,name,url,mode2,image,page,text)
 		#if '___Error___' in html: RANDOM_CATEGORY(options,mode)
 		if 'IPTV' in options and mode2==167: del menuItemsLIST[:3]
-		menuItemsLIST2 = []
-		for type,name2,url,mode2,image,page,text in menuItemsLIST:
-			if 'صفحة' in name2 or 'صفحه' in name2 or 'page' in name2.lower(): continue
-			menuItemsLIST2.append([type,name2,url,mode2,image,page,text])
+		menuItemsLIST2[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
 		if str(menuItemsLIST2).count('video')>0: break
 		if str(menuItemsLIST2).count('live')>0: break
 		if menuItemsLIST2: type,name,url,mode2,image,page,text = random.sample(menuItemsLIST2,1)[0]
@@ -322,10 +339,22 @@ def RANDOM_IPTV_ITEMS(TYPE,GROUP):
 	import IPTV
 	if TYPE=='VOD_SERIES': IPTV.GROUPS(TYPE,GROUP,'')
 	else: IPTV.ITEMS(TYPE,GROUP)
+	menuItemsLIST[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
 	if len(menuItemsLIST)>(random_size+3): menuItemsLIST[:] = menuItemsLIST[:3]+random.sample(menuItemsLIST[3:],random_size)
 	#LOG_THIS('NOTICE',str(contentsDICT[nameonly]))
 	#xbmcgui.Dialog().ok(str(contentsDICT[nameonly].keys()),str(contentsDICT[nameonly]))
 	return
+
+def CLEAN_RANDOM_LIST(menuItemsLIST):
+	menuItemsLIST2 = []
+	for type,name,url,mode,image,page,text in menuItemsLIST:
+		if 'صفحة' in name or 'صفحه' in name or 'page' in name.lower(): continue
+		menuItemsLIST2.append([type,name,url,mode,image,page,text])
+	return menuItemsLIST2
+
+
+
+
 
 
 

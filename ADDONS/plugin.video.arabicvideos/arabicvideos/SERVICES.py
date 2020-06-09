@@ -10,7 +10,7 @@ def MAIN(mode,text=''):
 	if   mode==  2: SEND_MESSAGE(text)
 	elif mode==  3: DMCA()
 	elif mode==  4: HTTPS_TEST()
-	elif mode==  7: BUSY_DIALOG('start') ; VERSIONS() ; BUSY_DIALOG('stop')
+	elif mode==  7: VERSIONS()
 	elif mode==  9: DELETE_CACHE()
 	elif mode==151: NO_ARABIC_FONTS()
 	elif mode==152: HTTPS_FAILED()
@@ -26,7 +26,7 @@ def MAIN(mode,text=''):
 	elif mode==173: ENABLE_MPD()
 	elif mode==174: ENABLE_RTMP()
 	elif mode==175: TEST_ALL_WEBSITES()
-	elif mode==176: BUSY_DIALOG('start') ; ANALYTICS_REPORT() ; BUSY_DIALOG('stop')
+	elif mode==176: ANALYTICS_REPORT()
 	elif mode==177: RESOLVEURL_SETTINGS()
 	elif mode==178: YOUTUBE_DL_SETTINGS()
 	elif mode==179: TESTINGS()
@@ -38,6 +38,15 @@ def MAIN(mode,text=''):
 	elif mode==195: WEBSITES_BLOCKED()
 	elif mode==196: CONTACT_ME()
 	elif mode==197: KODI_SKIN()
+	elif mode==198: KODI_REMOTE_CONTROL()
+	return
+
+def KODI_REMOTE_CONTROL():
+	message1 = 'بعض الأزرار على الريموت كونترول توفر إمكانية تقديم وتأخير الفيديو وهذه الأزرار هي الأسهم والأرقام مع بعض وكالتالي'
+	message2 = 'لتقديم الفيديو استخدم السهم اليمين ولتأخيره استخدم السهم اليسار وتستطيع بعدة اسهم التحرك بمسافة اكبر من السهم الواحد . أما السهم الأعلى والأسفل فهو يحرك الفيديو إلى الأمام أو إلى الوراء ولكن بقفزة كبيرة'
+	message3 = 'أما الأرقام فهي تستخدم للتقديم والتأخير ولكن بمقدار عدد الثواني والدقائق . مثلا رقم 544 تعني 5 دقائق و 44 ثانية إلى الأمام أو إلى الوراء بحسب استخدامك للسهم اليمين أو سهم اليسار'
+	message = message1+'\n'+message2+'\n'+message3
+	xbmcgui.Dialog().textviewer('استخدام ريموت كونترول مع كودي',message)
 	return
 
 def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
@@ -328,6 +337,7 @@ def DMCA():
 	return
 
 def VERSIONS():
+	BUSY_DIALOG('start')
 	#url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
 	#url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
 	#xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
@@ -360,6 +370,7 @@ def VERSIONS():
 	#xbmcgui.Dialog().notification('thread submitted','')
 	#time.sleep(5)
 	LATEST_KODI()
+	BUSY_DIALOG('stop')
 	if need_update:
 		INSTALL_REPOSITORY(False)
 		CHECK_FOR_ADDONS_UPDATES()
@@ -455,6 +466,7 @@ def TEST_ALL_WEBSITES():
 	return
 
 def ANALYTICS_REPORT():
+	BUSY_DIALOG('start')
 	payload,usageDICT,message1,message2,message3,message4 = {'a':'a'},{},'','','',''
 	data = urllib.urlencode(payload)
 	html = openURL_cached(SHORT_CACHE,WEBSITES['LIVETV'][1],data,'','','SERVICES-ANALYTICS_REPORT-1st')
@@ -505,6 +517,7 @@ def ANALYTICS_REPORT():
 	message5 += 'وهذا معناه إذا لديك مشكلة فهي ليست من البرنامج'+'\n'
 	message5 += '[COLOR FFC89008]'+message2+'[/COLOR]'+'\n\n'
 	"""
+	BUSY_DIALOG('stop')
 	xbmcgui.Dialog().textviewer('مواقع اشتغلت مؤخراً في جميع دول العالم',message5)
 	xbmcgui.Dialog().textviewer('أعلى الدول التي استخدمت مؤخراً البرنامج',message4)
 	return

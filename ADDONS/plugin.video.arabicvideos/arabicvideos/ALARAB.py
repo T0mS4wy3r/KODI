@@ -25,12 +25,10 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',19)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',19)
 	addMenuItem('folder',website+'::'+menu_name+'اخر الاضافات','',14)
 	addMenuItem('folder',website+'::'+menu_name+'مسلسلات رمضان','',15)
-	if website=='': showDialogs = True
-	else: showDialogs = False
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,showDialogs,'ALARAB-MENU-1st')
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
 	html_blocks=re.findall('id="nav-slider"(.*?)</div>',html,re.DOTALL)
 	block1 = html_blocks[0]
 	items = re.findall('href="(.*?)".*?>(.*?)<',block1,re.DOTALL)
@@ -38,7 +36,7 @@ def MENU(website=''):
 		link = website0a+link
 		title = title.strip(' ')
 		addMenuItem('folder',website+'::'+menu_name+title,link,11)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('id="navbar"(.*?)</div>',html,re.DOTALL)
 	block2 = html_blocks[0]
 	items = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
@@ -172,6 +170,7 @@ def PLAY(url):
 			url3 = re.findall('source src="(.*?)"',html2,re.DOTALL)
 			if url3:
 				url3 = url3[0]
+				#if url3.count('http')>1: url3 = 'http'+url3.split('http',2)[2]
 				linkLIST.append(url3)
 				titleLIST.append('سيرفر خاص  m3u8')
 	else:
@@ -265,6 +264,7 @@ def PLAY(url):
 		if selection == -1 : return
 		url = new_linkLIST[selection]
 	if 'youtu' in url:
+		#xbmcgui.Dialog().ok(url,'')
 		import RESOLVERS
 		RESOLVERS.PLAY_LINK(url,script_name,'video')
 	else: PLAY_VIDEO(url,script_name,'video')
