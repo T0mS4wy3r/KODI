@@ -1,4 +1,9 @@
 ﻿
+v6.7.2	2020-06-09
+Modified some menus
+Fixed adding favourites TV channels
+
+
 v6.7.1	2020-06-09
 Fixed Kodi addons version check
 

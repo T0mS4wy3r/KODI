@@ -22,7 +22,7 @@ def MENU():
 	addMenuItem('folder','[COLOR FFC89008]  1.  [/COLOR]'+'قائمة المواقع','',261)
 	addMenuItem('folder','[COLOR FFC89008]  2.  [/COLOR]'+'قائمة الاقسام','',165,'','','SITES')
 	addMenuItem('folder','[COLOR FFC89008]  3.  [/COLOR]'+'قائمة العشوائية','',160)
-	addMenuItem('folder','[COLOR FFC89008]  4.  [/COLOR]'+'بحث في جميع المواقع','',262)
+	addMenuItem('folder','[COLOR FFC89008]  4.  [/COLOR]'+'بحث بجميع المواقع','',262)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder','[COLOR FFC89008]  5.  [/COLOR]'+'قائمة القنوات','',100)
 	addMenuItem('folder','[COLOR FFC89008]  6.  [/COLOR]'+'قائمة اشتراك IPTV','',230)

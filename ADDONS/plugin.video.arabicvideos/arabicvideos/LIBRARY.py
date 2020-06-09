@@ -131,8 +131,8 @@ addon_path = sys.argv[2]				# ?mode=12&url=http://test.com
 #addon_path = xbmc.getInfoLabel( "ListItem.FolderPath" )
 addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 
-menu_path = urllib2.unquote(addon_path)
-menu_label = xbmc.getInfoLabel('ListItem.Label').replace('[COLOR FFC89008]','').replace('[/COLOR]','')
+menu_path = urllib2.unquote(addon_path).replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
+menu_label = xbmc.getInfoLabel('ListItem.Label').replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
 if menu_label=='': menu_label = 'Main Menu'
 
 kodi_release = xbmc.getInfoLabel("System.BuildVersion")
@@ -196,7 +196,7 @@ def MAIN_DISPATCHER(type,name,url,mode,image,page,text):
 
 def LOG_MENU_LABEL(script_name,label,mode,path):
 	id = '	[ '+addon_name.upper()+'-'+addon_version+'-'+script_name+' ]'
-	message = id+'	Label: [ '+label+' ]			Mode: [ '+str(mode)+' ]	Path: [ '+path+' ]'
+	message = id+'	Label: [ '+label+' ]	Mode: [ '+str(mode)+' ]	Path: [ '+path+' ]'
 	xbmc.log(message, level=xbmc.LOGNOTICE)
 	return
 
@@ -558,6 +558,12 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 		#    print i+' ===>> '+str(eval('err.'+i))
 		pass
 	if 'google-analytics' not in url2 and succeded==False: traceback.print_exc(file=sys.stderr)
+	else:
+		#errortrace = traceback.format_exc()
+		#sys.stderr.write(errortrace)
+		#code = '-1'
+		#reason = 'System encoding bug'
+		pass
 	code = int(code)
 	response2 = dummy_object()
 	if dummy:

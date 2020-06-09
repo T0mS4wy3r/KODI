@@ -5,33 +5,36 @@ script_name = 'MAIN'
 
 
 type,name99,url99,mode,image99,page99,text,favourite = EXTRACT_KODI_PATH()
-
-
-LOG_THIS('NOTICE','============================================================================================')
-if 'mode' not in addon_path:
-	message = 'Version: [ '+addon_version+' ]   Kodi: [ '+kodi_release+' ]'
-	#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   '+message)
-else: LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-
-
 mode0 = int(mode)
 mode1 = int(mode0%10)
 mode2 = int(mode0/10)
 
 
-SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25]
-IPTV_MODES = mode2==23 and text!=''
-if type=='folder' and menu_label!='..' and (SITES_MODES or IPTV_MODES): ADD_TO_LAST_VIDEO_FILES()
+#xbmcgui.Dialog().ok('['+menu_label+']','['+menu_path+']')
+
+
+LOG_THIS('NOTICE','============================================================================================')
+#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
+if mode0==260: message = '  Version: [ '+addon_version+' ]  Kodi: [ '+kodi_release+' ]'
+else:
+	menu_label2 = menu_label.replace('   ','  ').replace('   ','  ').replace('   ','  ')
+	menu_path2 = menu_path.replace('   ','  ').replace('   ','  ').replace('   ','  ')
+	message = '  Label: [ '+menu_label2+' ]  Mode: [ '+mode+' ]  Path: [ '+menu_path2+' ]'
+LOG_THIS('NOTICE',LOGGING(script_name)+message)
 
 
 if favourite!='':
 	import FAVOURITES
 	FAVOURITES.FAVOURITES_DISPATCHER(favourite)
-	refreshLIST = ['REMOVE','UP','DOWN']
-	if any(value in favourite for value in refreshLIST):
-		# used because there is no addon_handle number to use for ending directory
-		xbmc.executebuiltin("Container.Refresh")
+	# "Container.Refresh" used because there is no addon_handle number to use for ending directory
+	xbmc.executebuiltin("Container.Refresh")
+	LOG_THIS('NOTICE','  Favourite: [ '+favourite+' ]')
+	sys.exit(0)
+
+
+SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25]
+IPTV_MODES = mode2==23 and text!=''
+if type=='folder' and menu_label!='..' and (SITES_MODES or IPTV_MODES): ADD_TO_LAST_VIDEO_FILES()
 
 
 if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
@@ -52,6 +55,7 @@ if not os.path.exists(dbfile):
 
 SEARCH_MODES = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259]
 UPDATE_RANDOM_MENUS = mode2==16 and 'UPDATE' in text
+
 
 if (SEARCH_MODES and menu_label not in ['..','Main Menu']) or (UPDATE_RANDOM_MENUS and menu_label!='Main Menu'):
 	LOG_THIS('NOTICE','  .  Writing random list  .  path: [ '+addon_path+' ]')

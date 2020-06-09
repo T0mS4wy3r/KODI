@@ -53,18 +53,17 @@ def ADD_TO_FAVOURITES(favouriteID):
 	newItem = (type,name,url,mode,image,page,text)
 	oldFILE = GET_ALL_FAVOURITES()
 	newFILE = {}
-	for TYPE in oldFILE.keys():
-		if TYPE!=favouriteID: newFILE[TYPE] = oldFILE[TYPE]
+	for ID in oldFILE.keys():
+		if ID!=favouriteID: newFILE[ID] = oldFILE[ID]
 		else:
 			if name!='..' and name!='':
-				oldLIST = oldFILE[TYPE]
+				oldLIST = oldFILE[ID]
 				if newItem in oldLIST:
 					index = oldLIST.index(newItem)
 					del oldLIST[index]
-				newLIST = [newItem]+oldLIST
-				newLIST = newLIST[:25]
-				newFILE[TYPE] = newLIST
-			else: newFILE[TYPE] = oldFILE[TYPE]
+				newLIST = oldLIST+[newItem]
+				newFILE[ID] = newLIST
+			else: newFILE[ID] = oldFILE[ID]
 	if favouriteID not in newFILE.keys(): newFILE[favouriteID] = [newItem]
 	newFILE = str(newFILE)
 	with open(favouritesfile,'w') as f: f.write(newFILE)

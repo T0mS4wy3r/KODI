@@ -203,11 +203,15 @@ def CREATE_STREAMS():
 		return
 	settings = xbmcaddon.Addon(id=addon_id)
 	iptvURL = settings.getSetting('iptv.url')
+	#xbmcgui.Dialog().ok('',iptvURL)
 	headers = { 'User-Agent' : '' }
-	try: m3u_text = openURL_cached(REGULAR_CACHE,iptvURL,'',headers,'','IPTV-CREATE_STREAMS-1st')
+	try:
+		if iptvURL=='': a = error
+		m3u_text = openURL_cached(REGULAR_CACHE,iptvURL,'',headers,'','IPTV-CREATE_STREAMS-1st')
 	except:
-		xbmcgui.Dialog().ok('فشل في جلب ملفات IPTV','قد يكون السبب هو عدم وجود اشتراك IPTV أو رابط الاشتراك غير صحيح','جرب إضافة الاشتراك مرة اخرى من قائمة ال IPTV')
-		LOG_THIS('ERROR',LOGGING(script_name)+'   No IPTV files could be downloaded')
+		xbmcgui.Dialog().ok('فشل في جلب ملفات IPTV','قد يكون السبب هو انك لم تضيف اشتراك IPTV إلى البرنامج أو أنك أضفت رابط IPTV غير صحيح . أنت بحاجة إلى رابط اشتراك IPTV مدفوع تضيفه إلى البرنامج لكي تستطيع استخدام قائمة وخدمة IPTV')
+		if iptvURL=='': LOG_THIS('ERROR',LOGGING(script_name)+'   No IPTV url found to download IPTV files')
+		else: LOG_THIS('ERROR',LOGGING(script_name)+'   Failed to download IPTV files')
 		BUSY_DIALOG('stop')
 		return
 	#m3u_filename = 'iptv_'+str(int(now))+'_.m3u'
