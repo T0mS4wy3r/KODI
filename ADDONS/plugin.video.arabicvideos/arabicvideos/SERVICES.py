@@ -343,7 +343,7 @@ def VERSIONS():
 	#xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
 	url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS/addons.xml'
 	html = openURL_cached(NO_CACHE,url,'','','','SERVICES-VERSIONS-1st')
-	latest_ADDON_VER = re.findall('plugin.video.arabicvideos" name="Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
+	latest_ADDON_VER = re.findall('plugin.video.arabicvideos" name="EMAD Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
 	current_ADDON_VER = addon_version
 	latest_REPO_VER = re.findall('name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]
 	current_REPO_VER = xbmc.getInfoLabel('System.AddonVersion(repository.emad)')
