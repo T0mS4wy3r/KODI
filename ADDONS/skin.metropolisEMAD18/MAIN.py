@@ -1,50 +1,30 @@
 # -*- coding: utf-8 -*-
 
-"""
-# -*- coding: utf-8 -*-
-from lib.LIBRARY import *
+import sys,urllib2,xbmcgui,unicodedata
 
-url=''
-mode=''
-page=''
-category=''
-text=''
-params=get_params()
-try: mode=int(params["mode"])
-except: pass
-try: url=urllib2.unquote(params["url"])
-except: pass
-try: page=int(params["page"])
-except: pass
-try: category=params["category"]
-except: pass
-try: text=params["text"]
-except: pass
+#import traceback,xbmc,xbmcplugin,json
 
-text=unquote(sys.argv[2])
-if 'text=' in text:
-	text=text.split('text=')[1]
-#if 'url=' in text:
-#	text=text.split('url=')[1]
-
-#xbmcgui.Dialog().ok(text,str(mode))
-
-if mode=='': pass
-elif mode>=0 and mode<=9: from lib.PROGRAM import MAIN ; MAIN(mode,text)
-"""
+#xbmc.log('EMAD111::   '+str(sys.argv), level=xbmc.LOGNOTICE)
 
 
+#mode = int(sys.argv[1])
+#text = sys.argv[2]
+#xbmc.log('EMAD222::   mode: ['+str(mode)+']     text: ['+text+']', level=xbmc.LOGNOTICE)
 
 
+args = {'mode':'','text':''}
+line = sys.argv[2]
+if '?' in line:
+	params = line[1:].split('&')
+	for param in params:
+		key,value = param.split('=',1)
+		args[key] = value
+mode = args['mode']
+if mode.isdigit(): mode = int(mode)
+text = urllib2.unquote(args['text'])
 
 
-
-
-
-import sys,urllib2,xbmcgui,unicodedata,xbmc,json
-
-
-#xbmc.log('EMAD111::EMAD111::'+str(sys.argv), level=xbmc.LOGERROR)
+#xbmcgui.Dialog().ok('args',str(args))
 
 
 def mixARABIC(string):
@@ -67,21 +47,39 @@ def mixARABIC(string):
 	new_string = new_string.encode('utf-8')
 	return new_string
 
-args = {'mode':'','text':''}
-line = sys.argv[2]
-if '?' in line:
-	params = line[1:].split('&')
-	for param in params:
-		key,value = param.split('=',1)
-		args[key] = value
-mode = args['mode']
-if mode.isdigit(): mode = int(mode)
-text = urllib2.unquote(args['text'])
 
-#xbmcgui.Dialog().ok('args',str(args))
+if mode==0 and text!='':
+	text = mixARABIC(text)
+	text = text.decode('utf8').encode('utf8')
+	window_id = 10103
+	#xbmc.log('EMAD222::   window_id: ['+str(window_id)+']', level=xbmc.LOGNOTICE)
+	window = xbmcgui.Window(window_id)
+	window.getControl(311).setLabel(text)
+	#xbmc.log('EMAD333::   text: ['+text+']', level=xbmc.LOGNOTICE)
+
+
+
+	#try:
+	#window = xbmcgui.Window(10103)
+	#	#control = window.getFocus(311)
+	#	#control = window.getControl(311)
+	#	#window.getControl(311).setLabel(keyboard)
+	#xbmc.log('EMAD555::   keyboard: ['+str(keyboard.decode('utf8').encode('utf8'))+']', level=xbmc.LOGNOTICE)
+    #xbmcplugin.addDirectoryItems(handle=handle,items=items,totalItems=len(items))
+    #xbmcplugin.endOfDirectory(handle)
+	#aa = window.getControl(311).getLabel()
+	#xbmc.log('EMAD666::   aa: ['+str(aa.decode('utf8').encode('utf8'))+']', level=xbmc.LOGNOTICE)
+	#except:
+	#	traceback.print_exc(file=sys.stderr)
+
 
 """
-if mode==0 and text!='':
+elif mode==1:
+	window_id = xbmcgui.getCurrentWindowDialogId()
+	window = xbmcgui.Window(window_id)
+	url = text
+	window.getControl(1112).setLabel(url)
+elif mode==2 and text!='':
 	keyboard = text
 	ttype = 'X'
 	check = isinstance(keyboard, unicode)
@@ -97,36 +95,13 @@ if mode==0 and text!='':
 	for i in range(0,len(keyboard),1):
 		new2 += hex(ord(keyboard[i])).replace('0x','')+' '
 	#xbmcgui.Dialog().ok(new1,new2)
-"""
-
-
-if mode==1 and text!='':
-	keyboard = text
-	"""
+elif mode==3:
 	keyboard = 'emad444'
 	json_query = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Input.SendText","params":{"text":"'+keyboard+'","done":false},"id":1}')
 	json.loads(json_query)
 	#method="Input.SendText"
 	#params='{"text":"%s", "done":false}' % keyboard
 	#json_query = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "%s", "params": %s, "id": 1}' % (method, params))
-	"""
-	try:
-		#xbmc.log('EMAD333::EMAD333::'+keyboard, level=xbmc.LOGERROR)
-		#window_id = xbmcgui.getCurrentWindowDialogId()
-		window_id = 10103
-		#xbmc.log('EMAD444::EMAD444::'+str(window_id)+'::'+str(type(window_id)), level=xbmc.LOGERROR)
-		window = xbmcgui.Window(window_id)
-		#xbmc.log('EMAD555::EMAD555::'+str(window), level=xbmc.LOGERROR)
-		window.getControl(311).setLabel(keyboard)
-		#xbmc.log('EMAD666::EMAD666::'+'DONE', level=xbmc.LOGERROR)
-	except: pass
-
-"""
-elif mode==2:
-	window_id = xbmcgui.getCurrentWindowDialogId()
-	window = xbmcgui.Window(window_id)
-	url = text
-	window.getControl(1112).setLabel(url)
 """
 
 

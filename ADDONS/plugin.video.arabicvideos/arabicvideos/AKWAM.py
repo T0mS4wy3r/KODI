@@ -112,7 +112,7 @@ def PLAY(url):
 		filename = '.mp4'
 		for button,quality in buttons:
 			#xbmcgui.Dialog().ok(quality,button)
-			html_blocks = re.findall('tab-content" id="'+button+'".*?</div>.</div>',html,re.DOTALL)
+			html_blocks = re.findall('tab-content" id="'+button+'".*?</div>.\s*</div>',html,re.DOTALL)
 			block = html_blocks[0]
 			blocks.append(block)
 			qualities.append(quality)

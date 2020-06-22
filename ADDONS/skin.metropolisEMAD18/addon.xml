@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="skin.metropolisEMAD18" version="2.2.1" name="Metropolis EMAD 18" provider-name="EMAD MAHDI">
+<addon id="skin.metropolisEMAD18" version="2.3.0" name="Metropolis EMAD 18" provider-name="EMAD MAHDI">
 	<requires>
 		<import addon="xbmc.gui" version="5.14.0"/>
 		<import addon="script.skinshortcuts" version="1.0.6"/>

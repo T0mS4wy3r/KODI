@@ -355,7 +355,7 @@
 			<property name="defaultID">games</property>
 			<property name="background">home\games\</property>
 			<property name="backgroundName">15016</property>
-			<visible>System.GetBool(gamesgeneral.enable)</visible>
+			<visible>[System.GetBool(gamesgeneral.enable)] + [System.GetBool(gamesgeneral.enable)]</visible>
 			<onclick>ActivateWindow(Games,files,return)</onclick>
 			<property name="path">ActivateWindow(Games,files,return)</property>
 			<property name="list">files</property>
@@ -638,7 +638,7 @@
 			<thumb />
 			<property name="labelID">20126</property>
 			<property name="defaultID">20126</property>
-			<visible>[[System.HasLoginScreen | IntegerGreaterThan(System.ProfileCount,1)] + System.Loggedon] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),num-13005)</visible>
+			<visible>[[System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)] + System.Loggedon] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),num-13005)</visible>
 			<onclick>System.LogOff</onclick>
 			<property name="path">System.LogOff</property>
 			<property name="list">System.LogOff</property>
@@ -849,10 +849,11 @@
 			<thumb />
 			<property name="labelID">gamesettings</property>
 			<property name="defaultID">gamesettings</property>
+			<visible>[System.GetBool(gamesgeneral.enable)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),settings)</visible>
 			<onclick>ActivateWindow(GameSettings)</onclick>
 			<property name="path">ActivateWindow(GameSettings)</property>
 			<property name="list">GameSettings</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),settings)</visible>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="group">settings</property>
 			<property name="isSubmenu">True</property>
 		</item>
@@ -2803,7 +2804,7 @@
 			<thumb />
 			<property name="labelID">20126</property>
 			<property name="defaultID">20126</property>
-			<visible>[System.HasLoginScreen | IntegerGreaterThan(System.ProfileCount,1)] + System.Loggedon</visible>
+			<visible>[System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)] + System.Loggedon</visible>
 			<onclick>System.LogOff</onclick>
 			<property name="path">System.LogOff</property>
 			<property name="list">System.LogOff</property>
@@ -2957,7 +2958,7 @@
 			<thumb />
 			<property name="labelID">20126</property>
 			<property name="defaultID">20126</property>
-			<visible>[[System.HasLoginScreen | IntegerGreaterThan(System.ProfileCount,1)] + System.Loggedon] + String.IsEqual(Window(10000).Property(submenuVisibility),num-13005)</visible>
+			<visible>[[System.HasLoginScreen | Integer.IsGreater(System.ProfileCount,1)] + System.Loggedon] + String.IsEqual(Window(10000).Property(submenuVisibility),num-13005)</visible>
 			<onclick>System.LogOff</onclick>
 			<property name="path">System.LogOff</property>
 			<property name="list">System.LogOff</property>
@@ -3170,6 +3171,7 @@
 			<thumb />
 			<property name="labelID">gamesettings</property>
 			<property name="defaultID">gamesettings</property>
+			<visible>System.GetBool(gamesgeneral.enable)</visible>
 			<onclick>ActivateWindow(GameSettings)</onclick>
 			<property name="path">ActivateWindow(GameSettings)</property>
 			<property name="list">GameSettings</property>
@@ -3381,10 +3383,11 @@
 			<thumb />
 			<property name="labelID">gamesettings</property>
 			<property name="defaultID">gamesettings</property>
+			<visible>[System.GetBool(gamesgeneral.enable)] + String.IsEqual(Window(10000).Property(submenuVisibility),settings)</visible>
 			<onclick>ActivateWindow(GameSettings)</onclick>
 			<property name="path">ActivateWindow(GameSettings)</property>
 			<property name="list">GameSettings</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),settings)</visible>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="group">settings</property>
 			<property name="isSubmenu">True</property>
 		</item>

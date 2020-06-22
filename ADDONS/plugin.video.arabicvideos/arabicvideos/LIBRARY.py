@@ -159,7 +159,7 @@ now = time.time()
 #REGULAR_CACHE = 0
 #SHORT_CACHE = 0
 
-def MAIN_DISPATCHER(type,name,url,mode,image,page,text):
+def MAIN_DISPATCHER(type,name,url,mode,image,page,text,favourite):
 	mode = int(mode)
 	mode2 = int(mode/10)
 	#xbmcgui.Dialog().ok(str(mode),str(mode2))
@@ -191,7 +191,7 @@ def MAIN_DISPATCHER(type,name,url,mode,image,page,text):
 	elif mode2==24: import AKWAM 		; results = AKWAM.MAIN(mode,url,text)
 	elif mode2==25: import ARABSEED 	; results = ARABSEED.MAIN(mode,url,text)
 	elif mode2==26: import MENUS 		; results = MENUS.MAIN(mode,url,text)
-	elif mode2==27: import FAVOURITES 	; results = FAVOURITES.MAIN(mode,text)
+	elif mode2==27: import FAVOURITES 	; results = FAVOURITES.MAIN(mode,favourite)
 	return results
 
 def LOG_MENU_LABEL(script_name,label,mode,path):
@@ -360,10 +360,10 @@ def EXIT_IF_SOURCE(source,code,reason,showDialogs):
 	if condition1: EXIT_PROGRAM(source)
 	return
 
-def EXIT_PROGRAM(source=''):
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Exit: Forced exit   Source: [ '+source+' ]')
+def EXIT_PROGRAM(source='',showLog=True):
+	if showLog: LOG_THIS('NOTICE',LOGGING(script_name)+'   Exit: Forced exit   Source: [ '+source+' ]')
 	time.sleep(0.100)
-	sys.exit()
+	sys.exit(0)
 	#raise SystemExit
 	return
 
@@ -379,7 +379,7 @@ def CLEAN_KODI_CACHE_FOLDER():
 contentsDICT = {}
 menuItemsLIST = []
 
-def addMenuItem(type,name,url,mode,image='',page='',text=''):
+def addMenuItem(type,name,url,mode,image='',page='',text='',favourite=''):
 	website = ''
 	if '::' in name: website,name = name.split('::',1)
 	if type=='folder' and website!='' and '_' in name:
@@ -406,12 +406,12 @@ def addMenuItem(type,name,url,mode,image='',page='',text=''):
 		name = name.replace('VOD_','').replace('_MOD_','')
 		if name.count('_')>1: name = name.split('_',2)[2]
 		if name=='': name = '....'
-		contentsDICT[nameonly][website] = [type,name,url,mode,image,page,text]
-	menuItemsLIST.append([type,name,url,mode,image,page,text])
+		contentsDICT[nameonly][website] = [type,name,url,mode,image,page,text,favourite]
+	menuItemsLIST.append([type,name,url,mode,image,page,text,favourite])
 	return
 
 def getKodiMenuItem(menuItem):
-	type,name,url,mode,image,text1,text2 = menuItem
+	type,name,url,mode,image,text1,text2,favourite = menuItem
 	if type=='folder': start1,start2 = ';',','
 	else: start1,start2 = escapeUNICODE('\u02d1'),' '
 	name2 = re.findall('&&_(\D\D\w)__MOD_(.*?)&&','&&'+name+'&&',re.DOTALL)
@@ -426,6 +426,7 @@ def getKodiMenuItem(menuItem):
 	if name!='': path = path+'&name='+quote(name)
 	if image!='': path = path+'&image='+quote(image)
 	else: image = icon
+	if favourite!='': path = path+'&favourite='+favourite
 	listitem = xbmcgui.ListItem(name)
 	listitem.setArt({'icon':image,'thumb':image,'fanart':fanart,})
 	import FAVOURITES
@@ -473,6 +474,7 @@ def openURL_requests_cached(expiry,method,url,data,headers,allow_redirects,showD
 	if response: return response
 	response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 	html = response.content
+	#xbmcgui.Dialog().ok(str(type(response)),html)
 	if '___Error___' not in html:
 		WRITE_TO_SQL3('OPENURL_REQUESTS',[method,url,data,headers,allow_redirects,showDialogs,source],response,expiry)
 	return response
@@ -671,19 +673,20 @@ def mixARABIC(string):
 	new_string = new_string.encode('utf-8')
 	return new_string
 
-def KEYBOARD(heading='لوحة المفاتيج',default=''):
-	search = ''
-	keyboard = xbmc.Keyboard(default,heading)
+def KEYBOARD(header='لوحة المفاتيح',default=''):
+	#text = ''
+	#kb = xbmc.Keyboard(default,header)
 	#keyboard.setDefault(default)
-	#keyboard.setHeading(heading)
-	keyboard.doModal()
-	if keyboard.isConfirmed(): search = keyboard.getText()
-	search = search.strip(' ')
-	if len(search.decode('utf8'))<2:
+	#keyboard.setHeading(header)
+	#kb.doModal()
+	#if kb.isConfirmed(): text = kb.getText()
+	text = xbmcgui.Dialog().input(header,default,type=xbmcgui.INPUT_ALPHANUM)
+	text = text.strip(' ')
+	if len(text.decode('utf8'))<2:
 		#xbmcgui.Dialog().ok('Wrong entry. Try again','خطأ في الادخال. أعد المحاولة')
 		return ''
-	new_search = mixARABIC(search)
-	return new_search
+	text = mixARABIC(text)
+	return text
 
 def ADD_TO_LAST_VIDEO_FILES():
 	#vod_play_modes = [12,24,33,43,53,63,74,82,92,112,123,134,143,182,202,212,223,236,243,252]
@@ -813,6 +816,7 @@ def PLAY_VIDEO(url3,website='',type='video'):
 		url2 = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+website+'&z='+randomNumber
 		html = openURL_requests('GET',url2,'','',True,'no','LIBRARY-PLAY_VIDEO-1st')
 		#except: pass
+	if result in ['tried','failed','timeout','playing']: EXIT_PROGRAM('LIBRARY-PLAY_VIDEO-2nd',False)
 	#EXIT_PROGRAM('LIBRARY-PLAY_VIDEO-3rd')
 	#if 'https://' in url and result in ['failed','timeout']:
 	#	working = HTTPS(False)
@@ -995,8 +999,11 @@ def DNS_RESOLVER(url,dnsserver=''):
 	return answer
 
 def RATING_CHECK(script_name,url,ratingLIST):
+	if not ratingLIST: return True
 	blockedLIST = ['R','MA','16','17','18','كبار']
-	if ratingLIST and any(value in ratingLIST[0] for value in blockedLIST):
+	cond1 = any(value in ratingLIST[0] for value in blockedLIST)
+	cond2 = 'not rated' not in ratingLIST[0].lower()
+	if cond1 and cond2:
 		LOG_THIS('ERROR',LOGGING(script_name)+'   Blocked adults video   URL: [ '+url+' ]')
 		xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
 		return True
@@ -1030,6 +1037,18 @@ def ENABLE_RTMP(showDialogs=True):
 
 def WRITE_TO_SQL3(table,column,data,expiry):
 	if expiry==NO_CACHE: return
+	dataType = str(type(data))
+	#xbmcgui.Dialog().ok(str(data),dataType)
+	size = 1
+	if   'str' in dataType: size = len(data)
+	elif 'list' in dataType: size = len(data)
+	elif 'dict' in dataType: size = len(data.values())
+	else:
+		try:
+			html = data.content
+			if '___Error___' in html: size = 0
+		except: pass
+	if size==0: return
 	expiry = expiry+now
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
@@ -1046,11 +1065,16 @@ def WRITE_TO_SQL3(table,column,data,expiry):
 	return
 
 def READ_FROM_SQL3(table,column):
+	if table in ['IPTV_GROUPS','IPTV_ITEMS']: data = []
+	elif table in ['IPTV_STREAMS','IMPORT_SECTIONS']: data = {}
+	elif table in ['OPENURL']: data = ''
+	#elif table in ['OPENURL_REQUESTS']: data = dummy_object()
+	#elif table in ['SERVERS']: data = (('',''))
+	else: data = None
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
 	conn.text_factory = str
 	t = (str(column),)
-	data = None
 	try:
 		c.execute('DELETE FROM '+table+' WHERE expiry<'+str(now))
 		c.execute('SELECT data FROM '+table+' WHERE column=?',t)

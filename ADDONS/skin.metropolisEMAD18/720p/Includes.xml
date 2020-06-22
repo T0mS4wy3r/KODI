@@ -1783,7 +1783,7 @@
 			</AAAcontrol>
 			<!-- Finish Time -->
 			<control type="label">
-				<posx>1022</posx>
+				<posx>1040</posx>
 				<posy>5</posy>
 				<width>250</width>
 				<height>40</height>
@@ -1791,11 +1791,11 @@
 				<align>right</align>
 				<font>METF_OSDTime</font>
 				<textcolor>OSDFinishTime</textcolor>
-				<label>$LOCALIZE[31409]:  $INFO[Player.FinishTime]</label>
+				<label>$LOCALIZE[31409]: $INFO[Player.FinishTime]</label>
 			</control>
 			<!-- Remaining Time -->
 			<control type="label">
-				<posx>815</posx>
+				<posx>800</posx>
 				<posy>5</posy>
 				<width>250</width>
 				<height>40</height>
@@ -1803,7 +1803,7 @@
 				<align>right</align>
 				<font>METF_OSDTime</font>
 				<textcolor>OSDFinishTime</textcolor>
-				<label>Remain:  $INFO[Player.TimeRemaining(h:mm:ss)]</label>
+				<label>Remain: $INFO[Player.TimeRemaining(h:mm:ss)]</label>
 			</control>
 		</control>
 	</include>

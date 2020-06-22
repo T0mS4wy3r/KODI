@@ -1,4 +1,16 @@
 ﻿
+v6.8.0	2020-06-22
+Modified addon icon
+Fixed moving items of favourite menus
+Fixed Arabic keyboard
+Added forth favourites menu
+Added the new YOUTUBE
+Fixed AKWAM player
+Added more IPTV grouping menus
+Rewrote IPTV groups & items
+Minor fixes & improvements
+
+
 v6.7.2	2020-06-09
 Modified some menus
 Fixed adding favourites TV channels

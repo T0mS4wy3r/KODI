@@ -10,7 +10,7 @@ def MAIN(mode,url,text):
 	if   mode==230: results = MENU()
 	elif mode==231: results = ADD_ACCOUNT()
 	elif mode==232: results = CREATE_STREAMS()
-	elif mode==233: results = GROUPS(url,text,'')
+	elif mode==233: results = GROUPS(url,text)
 	elif mode==234: results = ITEMS(url,text)
 	elif mode==235: results = PLAY(url,'LIVE')
 	elif mode==236: results = PLAY(url,'VOD')
@@ -27,24 +27,30 @@ def MENU():
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'جلب ملفات IPTV','',232)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'مسح ملفات IPTV','',237)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة ومرتبة','LIVE_GROUPED',233)
-	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'أفلام مصنفة ومرتبة','VOD_MOVIES',233)
-	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'مسلسلات مصنفة ومرتبة','VOD_SERIES',233)
-	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مجهولة','VOD_UNKNOWN',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة','LIVE_GROUPED',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'أفلام مصنفة','VOD_MOVIES_GROUPED',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'مسلسلات مصنفة','VOD_SERIES_GROUPED',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مجهولة','VOD_UNKNOWN_GROUPED',233)
 	#addMenuItem('folder',menu_name+'قنوات مجهولة','LIVE_UNKNOWN',233)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة من أسمائها','LIVE_FROM_NAME',233)
-	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مصنفة من أسمائها','VOD_FROM_NAME',233)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة من أقسامها','LIVE_FROM_GROUP',233)
-	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مصنفة من أقسامها','VOD_FROM_GROUP',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة ومرتبة','LIVE_GROUPED_SORTED',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'أفلام مصنفة ومرتبة','VOD_MOVIES_GROUPED_SORTED',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'مسلسلات مصنفة ومرتبة','VOD_SERIES_GROUPED_SORTED',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مجهولة ومرتبة','VOD_UNKNOWN_GROUPED_SORTED',233)
+	#addMenuItem('folder',menu_name+'قنوات مجهولة','LIVE_UNKNOWN_SORTED',233)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'القنوات الاصلية بدون تغيير','LIVE_ORIGINAL',233)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'الفيديوهات الاصلية بدون تغيير','VOD_ORIGINAL',233)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة من أسمائها ومرتبة','LIVE_FROM_NAME_SORTED',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مصنفة من أسمائها ومرتبة','VOD_FROM_NAME_SORTED',233)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة من أقسامها ومرتبة','LIVE_FROM_GROUP_SORTED',233)
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مصنفة من أقسامها ومرتبة','VOD_FROM_GROUP_SORTED',233)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
-def GROUPS(TYPE,GROUP,website):
+def GROUPS(TYPE,GROUP,website=''):
 	results = READ_FROM_SQL3('IPTV_GROUPS',[TYPE,GROUP,website])
 	if results: menuItemsLIST[:] = menuItemsLIST+results ; return
 	else: previous_menuItemsLIST = menuItemsLIST[:] ; menuItemsLIST[:] = []
@@ -64,37 +70,45 @@ def GROUPS(TYPE,GROUP,website):
 	else: menu_name2 = menu_name
 	z = zip(groups,logos)
 	z = sorted(z, reverse=False, key=lambda key: key[0])
+	if '____' in GROUP: MAINGROUP,SUBGROUP = GROUP.split('____')
+	else: MAINGROUP,SUBGROUP = GROUP,''
 	for group,img in z:
-		if '____' in group: title2,group2 = group.split('____')
-		else: title2,group2 = '',group
-		if TYPE=='VOD_SERIES' and GROUP=='':
-			title = title2
-			if title in unique: continue
-			unique.append(title)
-			if 'RANDOM' in website: addMenuItem('folder',menu_name2+title,TYPE,167,'','',group)
-			else: addMenuItem('folder',menu_name2+title,TYPE,233,'','',group)
-		else:
-			title = group2
-			if title in unique: continue
-			unique.append(title)
-			if GROUP=='' and TYPE!='VOD_ORIGINAL': img = ''
-			if title=='!!__UNKNOWN__!!': img = ''
-			if TYPE!='VOD_SERIES' or GROUP=='' or title2 in GROUP:
-				if 'RANDOM' in website: addMenuItem('folder',menu_name2+title,TYPE,167,img,'',group)
-				else: addMenuItem('folder',menu_name2+title,TYPE,234,img,'',group)
+		if '____' in group: maingroup,subgroup = group.split('____')
+		else: maingroup,subgroup = group,''
+		#if GROUP=='' and TYPE!='VOD_ORIGINAL': img = ''
+		#if maingroup=='!!__UNKNOWN__!!': img = ''
+		if GROUP=='':
+			if maingroup in unique: continue
+			unique.append(maingroup)
+			if 'RANDOM' in website: addMenuItem('folder',menu_name2+maingroup,TYPE,167,'','',group)
+			elif 'SERIES' in TYPE: addMenuItem('folder',menu_name2+maingroup,TYPE,233,'','',group)
+			else: addMenuItem('folder',menu_name2+maingroup,TYPE,234,'','',group)
+		elif 'SERIES' in TYPE and maingroup==MAINGROUP:
+			if subgroup in unique: continue
+			unique.append(subgroup)
+			if 'RANDOM' in website: addMenuItem('folder',menu_name2+subgroup,TYPE,167,'','',group)
+			else: addMenuItem('folder',menu_name2+subgroup,TYPE,234,'','',group)
 	WRITE_TO_SQL3('IPTV_GROUPS',[TYPE,GROUP,website],menuItemsLIST,UNLIMITED_CACHE)
 	menuItemsLIST[:] = previous_menuItemsLIST+menuItemsLIST
 	return
 
 def ITEMS(TYPE,GROUP):
+	#xbmcgui.Dialog().ok(TYPE,GROUP)
 	#LOG_THIS('NOTICE','before DATABASE')
 	results = READ_FROM_SQL3('IPTV_ITEMS',[TYPE,GROUP])
 	if results: menuItemsLIST[:] = menuItemsLIST+results ; return
 	else: previous_menuItemsLIST = menuItemsLIST[:] ; menuItemsLIST[:] = []
 	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
+	if '____' in GROUP: MAINGROUP,SUBGROUP = GROUP.split('____')
+	else: MAINGROUP,SUBGROUP = GROUP,''
+	#xbmcgui.Dialog().ok(MAINGROUP,SUBGROUP)
 	for dict in streams:
 		group = dict['group']
-		if group==GROUP:
+		if '____' in group: maingroup,subgroup = group.split('____')
+		else: maingroup,subgroup = group,''
+		cond1 = ('GROUPED' in TYPE or TYPE=='ALL') and group==GROUP
+		cond2 = ('GROUPED' not in TYPE and TYPE!='ALL') and maingroup==MAINGROUP
+		if cond1 or cond2:
 			title = dict['title']
 			url = dict['url']
 			img = dict['img']
@@ -134,17 +148,17 @@ def SEARCH(search=''):
 		if not isIPTVFiles(False): return
 		search = search.split('::')[0]
 		exit = False
-		TYPE = 'VOD_FROM_NAME'
+		TYPE = 'VOD_FROM_NAME_SORTED'
 	else:
 		if not isIPTVFiles(True): return
+		if search=='': search = KEYBOARD()
+		if search == '': return
 		exit = True
 		searchTitle = ['الكل','قنوات','أفلام','مسلسلات','أخرى']
-		typeList = ['ALL','LIVE_GROUPED','VOD_MOVIES','VOD_SERIES','VOD_UNKNOWN']
+		typeList = ['ALL','LIVE_GROUPED_SORTED','VOD_MOVIES_GROUPED_SORTED','VOD_SERIES_GROUPED_SORTED','VOD_UNKNOWN_GROUPED_SORTED']
 		selection = xbmcgui.Dialog().select('أختر البحث المناسب', searchTitle)
 		if selection == -1: return
 		TYPE = typeList[selection]
-	if search=='': search = KEYBOARD()
-	if search == '': return
 	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
 	searchLower = search.lower()
 	uniqueLIST = []
@@ -152,19 +166,21 @@ def SEARCH(search=''):
 		title = dict['title']
 		group = dict['group']
 		img = dict['img']
+		if '____' in group: maingroup,subgroup = group.split('____')
+		else: maingroup,subgroup = group,''
+		if subgroup!='': title2 = maingroup+'  ||  '+subgroup
+		else: title2 = maingroup
 		if searchLower in group.lower():
-			if group not in uniqueLIST:
-				uniqueLIST.append(group)
-				if '____' in group: group2 = group.split('____',1)[1]
-				else: group2 = group
-				addMenuItem('folder',menu_name+group2,TYPE,234,img,'',group)
+			if title2 not in uniqueLIST:
+				uniqueLIST.append(title2)
+				addMenuItem('folder',menu_name+title2,TYPE,234,img,'',group)
 		elif searchLower in title.lower():
 			url = dict['url']
+			title2 = title2+'  ||  '+title
+			if '!!__UNKNOWN__!!' in group: title2 = '!!__UNKNOWN__!!'
 			if '.mp4' in url or '.mkv' in url or '.avi' in url or '.mp3' in url:
-				if '!!__UNKNOWN__!!' in group: group2 = ''
-				else: group2 = group+' '
-				addMenuItem('video',menu_name+group2+title,url,236,img)
-			else: addMenuItem('live',menu_name+group+title,url,235,img)
+				addMenuItem('video',menu_name+title2,url,236,img)
+			else: addMenuItem('live',menu_name+title2,url,235,img)
 	menuItemsLIST[:] = sorted(menuItemsLIST, reverse=False, key=lambda key: key[1])
 	return
 
@@ -281,15 +297,17 @@ def CREATE_STREAMS():
 			group = group.replace('__SERIES__','').replace('__MOVIES__','')
 		else:
 			if group=='': type = 'LIVE_UNKNOWN'
-			else: type = 'LIVE_GROUPED'
+			else: type = 'LIVE'
 		dict['type'] = type
-		if group=='': group = type
-		if dict['type']=='VOD_SERIES':
+		group = group.strip(' ').replace('  ',' ').replace('  ',' ').upper()
+		#if group=='': group = type
+		if type in ['LIVE','LIVE_UNKNOWN','VOD_MOVIES']: group = group+'____'
+		elif type=='VOD_UNKNOWN': group = '!!__UNKNOWN__!!'+'____'
+		elif type=='VOD_SERIES':
 			series_title = re.findall('(.*?) [Ss]\d+ +[Ee]\d+',dict['title'],re.DOTALL)
-			group = group+'____'
-			if series_title: group = group+series_title[0]
-			else: group = group+'!!__UNKNOWN__!!'
-		dict['group'] = group.strip(' ').replace('  ',' ').replace('  ',' ').upper()
+			if series_title: group = group+'____'+series_title[0]
+			else: group = group+'____'+'!!__UNKNOWN__!!'
+		dict['group'] = group
 		if 'id' in dict.keys(): del dict['id']
 		if 'ID' in dict.keys(): del dict['ID']
 		if 'name' in dict.keys(): del dict['name']
@@ -304,10 +322,11 @@ def CREATE_STREAMS():
 		#if 'AL - ' in dict['title']: dict['title'] = dict['title'].replace('AL - ','AL ')
 		#if 'EL - ' in dict['title']: dict['title'] = dict['title'].replace('EL - ','EL ')
 		streams_not_sorted.append(dict)
+	#with open('S:\\0iptvemad.m3u','w') as f: f.write(str(streams_not_sorted).replace("},","}\n,"))
 	#LOG_THIS('NOTICE','EMAD 444')
 	streams_sorted = sorted(streams_not_sorted, reverse=False, key=lambda key: key['title'].lower())
 	grouped_streams = {}
-	types = ['ALL','LIVE_ORIGINAL','VOD_ORIGINAL','LIVE_FROM_NAME','VOD_FROM_NAME','LIVE_GROUPED','LIVE_UNKNOWN','VOD_MOVIES','VOD_SERIES','VOD_UNKNOWN','DUMMY','LIVE_FROM_GROUP','VOD_FROM_GROUP']
+	types = ['VOD_UNKNOWN_GROUPED','LIVE_GROUPED','VOD_SERIES_GROUPED','VOD_MOVIES_GROUPED','ALL','LIVE_ORIGINAL','VOD_ORIGINAL','LIVE_FROM_NAME_SORTED','VOD_FROM_NAME_SORTED','LIVE_GROUPED_SORTED','LIVE_UNKNOWN','VOD_MOVIES_GROUPED_SORTED','VOD_SERIES_GROUPED_SORTED','VOD_UNKNOWN_GROUPED_SORTED','DUMMY','LIVE_FROM_GROUP_SORTED','VOD_FROM_GROUP_SORTED']
 	for type in types: grouped_streams[type] = []
 	#LOG_THIS('NOTICE','EMAD 444 CREATE STREAMS START creating 1st STREAMS dictionary')
 	for dict in streams_sorted:
@@ -316,17 +335,26 @@ def CREATE_STREAMS():
 		dict3 = {'group':dict['country'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
 		dict4 = {'group':dict['language'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
 		grouped_streams['ALL'].append(dict)
-		grouped_streams[type].append(dict2)
-		if  'LIVE' in type: grouped_streams['LIVE_FROM_NAME'].append(dict3)
-		elif 'VOD' in type: grouped_streams['VOD_FROM_NAME'].append(dict3)
-		if  'LIVE' in type: grouped_streams['LIVE_FROM_GROUP'].append(dict4)
-		elif 'VOD' in type: grouped_streams['VOD_FROM_GROUP'].append(dict4)
-	#LOG_THIS('NOTICE','EMAD 555 CREATE STREAMS finished 1st and START creating 2nd STREAMS dictionary')
+		#grouped_streams[type].append(dict2)
+		if   'LIVE' 		in type: grouped_streams['LIVE_GROUPED_SORTED'].append(dict2)
+		elif 'LIVE_UNKNOWN' in type: grouped_streams['LIVE_UNKNOWN_SORTED'].append(dict2)
+		elif 'VOD_MOVIES' 	in type: grouped_streams['VOD_MOVIES_GROUPED_SORTED'].append(dict2)
+		elif 'VOD_SERIES' 	in type: grouped_streams['VOD_SERIES_GROUPED_SORTED'].append(dict2)
+		elif 'VOD_UNKNOWN' 	in type: grouped_streams['VOD_UNKNOWN_GROUPED_SORTED'].append(dict2)
+		if   'LIVE' 		in type: grouped_streams['LIVE_FROM_NAME_SORTED'].append(dict3)
+		elif 'VOD' 			in type: grouped_streams['VOD_FROM_NAME_SORTED'].append(dict3)
+		if   'LIVE' 		in type: grouped_streams['LIVE_FROM_GROUP_SORTED'].append(dict4)
+		elif 'VOD' 			in type: grouped_streams['VOD_FROM_GROUP_SORTED'].append(dict4)
 	for dict in streams_not_sorted:
 		type = dict['type']
 		dict2 = {'group':dict['group'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
-		if 'LIVE' in type: grouped_streams['LIVE_ORIGINAL'].append(dict2)
-		elif 'VOD' in type: grouped_streams['VOD_ORIGINAL'].append(dict2)
+		if   'LIVE' 		in type: grouped_streams['LIVE_GROUPED'].append(dict2)
+		elif 'LIVE_UNKNOWN' in type: grouped_streams['LIVE_UNKNOWN'].append(dict2)
+		elif 'VOD_MOVIES' 	in type: grouped_streams['VOD_MOVIES_GROUPED'].append(dict2)
+		elif 'VOD_SERIES' 	in type: grouped_streams['VOD_SERIES_GROUPED'].append(dict2)
+		elif 'VOD_UNKNOWN' 	in type: grouped_streams['VOD_UNKNOWN_GROUPED'].append(dict2)
+		if   'LIVE' 		in type: grouped_streams['LIVE_ORIGINAL'].append(dict2)
+		elif 'VOD' 			in type: grouped_streams['VOD_ORIGINAL'].append(dict2)
 	grouped_streams['DUMMY'].append('')
 	#LOG_THIS('NOTICE','EMAD 666 CREATE STREAMS FINISHED')
 	DELETE_IPTV_FROM_SQL3(False)

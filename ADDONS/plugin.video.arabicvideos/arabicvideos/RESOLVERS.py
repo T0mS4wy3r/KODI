@@ -1009,8 +1009,8 @@ def YOUTUBE(url):
 			if 'indexRange' in dict.keys(): dict['index'] = dict['indexRange']['start']+'-'+dict['indexRange']['end']
 			if 'averageBitrate' in dict.keys(): dict['bitrate'] = dict['averageBitrate']
 			if 'bitrate' in dict.keys() and dict['bitrate']>111222333: del dict['bitrate']
-			if 'cipher' in dict.keys():
-				cipher = dict['cipher'].split('&')
+			if 'signatureCipher' in dict.keys():
+				cipher = dict['signatureCipher'].split('&')
 				for item in cipher:
 					key,value = item.split('=',1)
 					dict[key] = unquote(value)
@@ -1035,7 +1035,8 @@ def YOUTUBE(url):
 	#xbmc.log(str(streams0),level=xbmc.LOGNOTICE)
 	if 'sp=sig' in html:
 		#xbmcgui.Dialog().ok('cipher','')
-		html_blocks = re.findall('src="(/yts/jsbin/player_.*?)"',html,re.DOTALL)
+		#html_blocks = re.findall('src="(/yts/jsbin/player_.*?)"',html,re.DOTALL)
+		html_blocks = re.findall('src="(/s/player/\w*?/player_ias.vflset/en_US/base.js)"',html,re.DOTALL)
 		if html_blocks:
 			jsfile = WEBSITES['YOUTUBE'][0]+html_blocks[0]
 			jshtml = openURL_cached(REGULAR_CACHE,jsfile,'','','','RESOLVERS-YOUTUBE-3rd')
@@ -1046,8 +1047,9 @@ def YOUTUBE(url):
 			#xbmcgui.Dialog().ok('',jshtml)
 			json_script = cipher._load_javascript(jshtml)
 			json_script_cached = str(json_script)
-	#xbmc.log(jsfile,level=xbmc.LOGNOTICE)
+			#xbmcgui.Dialog().ok('',jshtml)
 	for dict in streams0:
+		#xbmc.log(str(dict),level=xbmc.LOGNOTICE)
 		url = dict['url']
 		if 'signature=' in url or url.count('sig=')>1:
 			streams1.append(dict)
@@ -1055,6 +1057,8 @@ def YOUTUBE(url):
 			json_script = eval(json_script_cached)
 			json_script_engine = youtube_signature.json_script_engine.JsonScriptEngine(json_script)
 			signature = json_script_engine.execute(dict['s'])
+			#xbmc.log('EMAD9999'+signature,level=xbmc.LOGNOTICE)
+			#xbmc.log('EMAD9999'+dict['s'],level=xbmc.LOGNOTICE)
 			if signature!=dict['s']:
 				dict['url'] = url+'&'+dict['sp']+'='+signature
 				streams1.append(dict)

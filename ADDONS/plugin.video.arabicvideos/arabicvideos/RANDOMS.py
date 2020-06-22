@@ -30,7 +30,7 @@ def MENU():
 	addMenuItem('folder','[COLOR FFC89008]  7.  [/COLOR]'+'قسم فيديو IPTV عشوائي','',162,'','','IPTV_VOD')
 	addMenuItem('folder','[COLOR FFC89008]  8.  [/COLOR]'+'قنوات IPTV عشوائية','',163,'','','IPTV_LIVE_RANDOM')
 	addMenuItem('folder','[COLOR FFC89008]  9.  [/COLOR]'+'فيديوهات IPTV عشوائية','',163,'','','IPTV_VOD_RANDOM')
-	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'فيديوهات IPTV بحث عشوائي','',164,'','','IPTV')
+	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'فيديوهات IPTV بحث عشوائي','',164,'','','IPTV_RANDOM')
 	addMenuItem('folder','[COLOR FFC89008]11.  [/COLOR]'+'فيديوهات IPTV عشوائية من قسم','',165,'','','IPTV_RANDOM')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
@@ -124,11 +124,11 @@ def SEARCH_RANDOM_VIDEOS(options):
 		text = text+'::'
 		mode = random.sample(search_modes,1)[0]
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Random Video Search   mode:'+str(mode)+'  text:'+text)
-		results = MAIN_DISPATCHER('','','',mode,'','',text)
+		results = MAIN_DISPATCHER('','','',mode,'','',text,'')
 		if len(menuItemsLIST)>0: break
 	previuosLIST[0][1] = '[ [COLOR FFC89008]'+text[:-2]+'[/COLOR] البحث عن : [ '
 	menuItemsLIST[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
-	if len(menuItemsLIST)>random_size: random.sample(menuItemsLIST,random_size)
+	if len(menuItemsLIST)>random_size: menuItemsLIST[:] = random.sample(menuItemsLIST,random_size)
 	menuItemsLIST[:] = previuosLIST+menuItemsLIST
 	#GLOBAL_SEARCH_MENU(search,False)
 	#xbmcgui.Dialog().ok(str(len(menuItemsLIST)),'MENUS')
@@ -232,12 +232,12 @@ def IMPORT_IPTV(options):
 	import IPTV
 	if IPTV.isIPTVFiles(True):
 		if 'IPTV' in options and 'LIVE' not in options:
-			try: IPTV.GROUPS('VOD_MOVIES','',options+'_MOVIES')
+			try: IPTV.GROUPS('VOD_MOVIES_GROUPED','',options+'_MOVIES')
 			except: xbmcgui.Dialog().ok('موقع IPTV للافلام',message)
-			try: IPTV.GROUPS('VOD_SERIES','',options+'_SERIES')
+			try: IPTV.GROUPS('VOD_SERIES_GROUPED','',options+'_SERIES')
 			except: xbmcgui.Dialog().ok('موقع IPTV للمسلسلات',message)
 		if 'IPTV' in options and 'VOD' not in options:
-			try: IPTV.GROUPS('LIVE_ORIGINAL','',options+'_TV')
+			try: IPTV.GROUPS('LIVE_GROUPED','',options+'_TV')
 			except: xbmcgui.Dialog().ok('موقع IPTV للقنوات',message)
 		for item in menuItemsLIST:
 			item[1] = item[1].replace('IPTV_','').replace('_MOD_','').replace('UPDATE_','')
@@ -273,15 +273,15 @@ def RANDOM_VOD_ITEMS(nameonly,options):
 		addMenuItem('folder','إعادة الطلب العشوائي من نفس القسم',nameonly,166,'','','UPDATE_'+options)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	for website in sorted(contentsDICT[nameonly].keys()):
-		type,name,url,mode2,image,page,text = contentsDICT[nameonly][website]
+		type,name,url,mode2,image,page,text,favourite = contentsDICT[nameonly][website]
 		if 'RANDOM' in options or len(contentsDICT[nameonly])==1:
-			MAIN_DISPATCHER(type,'',url,mode2,'',page,text)
+			MAIN_DISPATCHER(type,'',url,mode2,'',page,text,'')
 			menuItemsLIST[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
 			previousLIST,newLIST = menuItemsLIST[:3],menuItemsLIST[3:]
 			for i in range(0,5): random.shuffle(newLIST)
 			if 'RANDOM' in options: menuItemsLIST[:] = previousLIST+newLIST[:random_size]
 			else: menuItemsLIST[:] = previousLIST+newLIST
-		elif 'SITES' in options: addMenuItem('folder',website,url,mode2,image,page,text)
+		elif 'SITES' in options: addMenuItem('folder',website,url,mode2,image,page,text,favourite)
 	#LOG_THIS('NOTICE',str(contentsDICT[nameonly]))
 	#xbmcgui.Dialog().ok(str(contentsDICT[nameonly].keys()),str(contentsDICT[nameonly]))
 	return
@@ -302,23 +302,23 @@ def RANDOM_CATEGORY(options,mode):
 		nameonly = random.sample(list1,1)[0]
 		list2 = contentsDICT[nameonly].keys()
 		website = random.sample(list2,1)[0]
-		type,name,url,mode2,image,page,text = contentsDICT[nameonly][website]
+		type,name,url,mode2,image,page,text,favourite = contentsDICT[nameonly][website]
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Random Category   website: '+website+'   name: '+name+'   url: '+url+'   mode: '+str(mode2))
 	elif 'IPTV' in options:
 		IMPORT_IPTV(options)
-		type,name,url,mode2,image,page,text = random.sample(menuItemsLIST,1)[0]
+		type,name,url,mode2,image,page,text,favourite = random.sample(menuItemsLIST,1)[0]
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Random Category   name: '+name+'   url: '+url+'   mode: '+str(mode2))
 	for i in range(0,10):
 		#xbmcgui.Dialog().ok(str(mode2),name)
 		if i>0: LOG_THIS('NOTICE',LOGGING(script_name)+'   Random Category   name: '+name+'   url: '+url+'   mode: '+str(mode2))
 		menuItemsLIST[:] = []
-		html = MAIN_DISPATCHER(type,name,url,mode2,image,page,text)
+		html = MAIN_DISPATCHER(type,name,url,mode2,image,page,text,favourite)
 		#if '___Error___' in html: RANDOM_CATEGORY(options,mode)
 		if 'IPTV' in options and mode2==167: del menuItemsLIST[:3]
 		menuItemsLIST2[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
 		if str(menuItemsLIST2).count('video')>0: break
 		if str(menuItemsLIST2).count('live')>0: break
-		if menuItemsLIST2: type,name,url,mode2,image,page,text = random.sample(menuItemsLIST2,1)[0]
+		if menuItemsLIST2: type,name,url,mode2,image,page,text,favourite = random.sample(menuItemsLIST2,1)[0]
 	#name = name.replace('[COLOR FFC89008]','').replace('[/COLOR]','')
 	name = name.replace('IPTV_','').replace('VOD_','').replace('_MOD_','')
 	if name.count('_')>1: name = name.split('_',2)[2]
@@ -332,12 +332,13 @@ def RANDOM_CATEGORY(options,mode):
 def RANDOM_IPTV_ITEMS(TYPE,GROUP):
 	GROUP = GROUP.replace('UPDATE_','')
 	#xbmcgui.Dialog().ok(TYPE,GROUP)
-	if TYPE=='VOD_SERIES': GROUP = GROUP.split('__')[0]
-	addMenuItem('folder','[ [COLOR FFC89008]'+GROUP+'[/COLOR] القسم : [ ',TYPE,167,'','','UPDATE_'+GROUP)
+	if '____' in GROUP: GROUP2 = GROUP.split('____')[0]
+	else: GROUP2 = GROUP
+	addMenuItem('folder','[ [COLOR FFC89008]'+GROUP2+'[/COLOR] القسم : [ ',TYPE,167,'','','UPDATE_'+GROUP)
 	addMenuItem('folder','إعادة الطلب العشوائي من نفس القسم',TYPE,167,'','','UPDATE_'+GROUP)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	import IPTV
-	if TYPE=='VOD_SERIES': IPTV.GROUPS(TYPE,GROUP,'')
+	if 'VOD_SERIES' in TYPE: IPTV.GROUPS(TYPE,GROUP,'')
 	else: IPTV.ITEMS(TYPE,GROUP)
 	menuItemsLIST[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
 	if len(menuItemsLIST)>(random_size+3): menuItemsLIST[:] = menuItemsLIST[:3]+random.sample(menuItemsLIST[3:],random_size)
@@ -347,9 +348,9 @@ def RANDOM_IPTV_ITEMS(TYPE,GROUP):
 
 def CLEAN_RANDOM_LIST(menuItemsLIST):
 	menuItemsLIST2 = []
-	for type,name,url,mode,image,page,text in menuItemsLIST:
+	for type,name,url,mode,image,page,text,favourite in menuItemsLIST:
 		if 'صفحة' in name or 'صفحه' in name or 'page' in name.lower(): continue
-		menuItemsLIST2.append([type,name,url,mode,image,page,text])
+		menuItemsLIST2.append([type,name,url,mode,image,page,text,favourite])
 	return menuItemsLIST2
 
 

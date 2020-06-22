@@ -28,21 +28,22 @@ def MENU():
 	addMenuItem('folder','[COLOR FFC89008]  6.  [/COLOR]'+'قائمة اشتراك IPTV','',230)
 	addMenuItem('folder','[COLOR FFC89008]  7.  [/COLOR]'+'IPTV قائمة أقسام الـ','',165,'','','IPTV')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','[COLOR FFC89008]  8.  [/COLOR]'+'قائمة المفضلة 1','',270,'','','1')
-	addMenuItem('folder','[COLOR FFC89008]  9.  [/COLOR]'+'قائمة المفضلة 2','',270,'','','2')
-	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'قائمة المفضلة 3','',270,'','','3')
-	addMenuItem('folder','[COLOR FFC89008]11.  [/COLOR]'+'اخر 25 مجلد تم فتحها','',265,'','','folder')
-	addMenuItem('folder','[COLOR FFC89008]12.  [/COLOR]'+'اخر 25 قناة تم تشغيلها','',265,'','','live')
-	addMenuItem('folder','[COLOR FFC89008]13.  [/COLOR]'+'اخر 25 فيديو تم تشغيلها','',265,'','','video')
+	addMenuItem('folder','[COLOR FFC89008]  8.  [/COLOR]'+'قائمة المفضلة 1','',270,'','','','1')
+	addMenuItem('folder','[COLOR FFC89008]  9.  [/COLOR]'+'قائمة المفضلة 2','',270,'','','','2')
+	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'قائمة المفضلة 3','',270,'','','','3')
+	addMenuItem('folder','[COLOR FFC89008]11.  [/COLOR]'+'قائمة المفضلة 4','',270,'','','','4')
+	addMenuItem('folder','[COLOR FFC89008]12.  [/COLOR]'+'اخر 25 مجلد تم فتحها','',265,'','','folder')
+	addMenuItem('folder','[COLOR FFC89008]13.  [/COLOR]'+'اخر 25 قناة تم تشغيلها','',265,'','','live')
+	addMenuItem('folder','[COLOR FFC89008]14.  [/COLOR]'+'اخر 25 فيديو تم تشغيلها','',265,'','','video')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('link','[COLOR FFC89008]14.  [/COLOR]'+'تقرير عن استخدام البرنامج','',176)
-	addMenuItem('link','[COLOR FFC89008]15.  [/COLOR]البرنامج إصدار رقم ( '+addon_version+' )','',7)
+	addMenuItem('link','[COLOR FFC89008]15.  [/COLOR]'+'تقرير عن استخدام البرنامج','',176)
+	addMenuItem('link','[COLOR FFC89008]16.  [/COLOR]البرنامج إصدار رقم ( '+addon_version+' )','',7)
 	#addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'ـ Services Menu  قائمة الخدمات','',172)
 	#addMenuItem('folder','  4.  [COLOR FFC89008]ـ Services Menu  قائمة الخدمات[/COLOR]','',264)
 	#addMenuItem('link','  5.  [COLOR FFC89008]البرنامج إصدار رقم ('+addon_version+')[/COLOR]','',7)
-	addMenuItem('folder','[COLOR FFC89008]16.  [/COLOR]ـ Answers Menu  قائمة الاجوبة','',263)
-	addMenuItem('folder','[COLOR FFC89008]17.  [/COLOR]ـ Services Menu  قائمة الخدمات','',264)
-	addMenuItem('link','[COLOR FFC89008]18.  [/COLOR]ـ Contact Me  كيف تتصل بالمبرمج','',196)
+	addMenuItem('folder','[COLOR FFC89008]17.  [/COLOR]ـ Answers Menu  قائمة الاجوبة','',263)
+	addMenuItem('folder','[COLOR FFC89008]18.  [/COLOR]ـ Services Menu  قائمة الخدمات','',264)
+	addMenuItem('link','[COLOR FFC89008]19.  [/COLOR]ـ Contact Me  كيف تتصل بالمبرمج','',196)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
@@ -125,7 +126,7 @@ def ANSWERS_MENU():
 def GLOBAL_SEARCH_MENU(search='',show=True):
 	if search=='': search = KEYBOARD()
 	if search == '': return
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Global Search For: [ '+search+' ]')
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   .  Global Search For: [ '+search+' ]')
 	search = search.lower()
 	if show: search2 = search
 	else: search2 = 'كلمة عشوائية'

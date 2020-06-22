@@ -6,7 +6,6 @@ script_name='SERVICES'
 
 def MAIN(mode,text=''):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	#if mode in [0,1]: FIX_SKIN_KEYBOARD(mode,text)
 	if   mode==  2: SEND_MESSAGE(text)
 	elif mode==  3: DMCA()
 	elif mode==  4: HTTPS_TEST()
@@ -233,40 +232,6 @@ def DELETE_CACHE():
 def HTTPS_TEST():
 	working = HTTPS(True)
 	if not working: HTTPS_FAILED()
-	return
-
-def FIX_SKIN_KEYBOARD(mode,text):
-	import xbmc,unicodedata,email.charset
-	import xbmcgui
-	#import simplejson as json
-	#from LIBRARY import *
-	#xbmcgui.Dialog().ok(str(mode),text)
-	keyboard = text
-	if keyboard=='': return
-	if mode==1:
-		try:
-			window_id = xbmcgui.getCurrentWindowDialogId()
-			window = xbmcgui.Window(window_id)
-			keyboard = mixARABIC(keyboard)
-			window.getControl(311).setLabel(keyboard)
-		except:
-			traceback.print_exc(file=sys.stderr)
-			pass
-	elif mode==0:
-		ttype = 'X'
-		check = isinstance(keyboard, unicode)
-		if check==True: ttype = 'U'
-		new1 = str(type(keyboard))+' '+keyboard+' '+ttype+' '
-		for i in range(0,len(keyboard),1):
-			new1 += hex(ord(keyboard[i])).replace('0x','')+' '
-		keyboard = mixARABIC(keyboard)
-		ttype = 'X'
-		check = isinstance(keyboard, unicode)
-		if check==True: ttype='U'
-		new2 = str(type(keyboard))+' '+keyboard+' '+ttype+' '
-		for i in range(0,len(keyboard),1):
-			new2 += hex(ord(keyboard[i])).replace('0x','')+' '
-		#xbmcgui.Dialog().ok(new1,new2)
 	return
 
 def SEND_MESSAGE(text=''):
