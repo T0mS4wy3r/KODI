@@ -1,0 +1,27 @@
+
+v18.3.0.0	2020-06-27
+Renamed for separtion to multiple kodi versions
+
+
+v2.3.0	2020-06-22
+Fixed Arabic Keyboard
+
+
+v2.2.1
+Fixed repository
+
+
+v2.2.0
+Minor updates and fixes
+
+
+v2.1.0
+updated to the latest metropolis skin v3.4.25
+
+
+v2.0.0
+Renamed
+
+
+v1.0.0
+Initial Release

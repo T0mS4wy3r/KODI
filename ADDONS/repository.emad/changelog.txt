@@ -1,4 +1,9 @@
 ﻿
+
+v5.0.0	2020-06-27
+Added repositories for multiple kodi versions v18 & v19
+
+
 v4.4.1	2020-06-22
 Modified addon icon
 
