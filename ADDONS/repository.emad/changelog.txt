@@ -1,4 +1,8 @@
 ﻿
+v5.0.2	2020-06-27
+Used v18.9 instead of "v19 alpha"
+
+
 v5.0.1	2020-06-27
 Fixed versions directories sequence
 
