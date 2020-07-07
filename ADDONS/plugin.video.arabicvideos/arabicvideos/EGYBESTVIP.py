@@ -194,7 +194,7 @@ def PLAY(url):
 		if 'faselhd' in link: continue
 		if 'egybest.vip?name' in link: continue
 		newLIST.append(link)
-	if len(newLIST)==0: xbmcgui.Dialog().ok('الفيديو لا يعمل في هذا البرنامج','هذا الفيديو يستخدم روابط غير معروفة في هذا البرنامج والمبرمج لم يستطيع إيحاد حل لهذه المشكلة')
+	if len(newLIST)==0: xbmcgui.Dialog().ok('رسالة من المبرمج','هذا الفيديو يستخدم روابط غير معروفة في هذا البرنامج والمبرمج لم يستطيع إيحاد حل لهذه المشكلة')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(newLIST,script_name,'video')

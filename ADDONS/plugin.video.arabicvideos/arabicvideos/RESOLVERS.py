@@ -41,9 +41,9 @@ def PLAY(linkLIST,script_name,type=''):
 			#xbmcgui.Dialog().ok(result,errormsg)
 			if result in ['playing','canceled_1st_menu'] or len(linkLIST)==1: break
 			elif result in ['failed','timeout','tried']: break
-			elif result not in ['canceled_2nd_menu','https']: xbmcgui.Dialog().ok('السيرفر لم يعمل','جرب سيرفر غيره',error1,error2)
-	if result=='unresolved' and len(titleLIST)>0: xbmcgui.Dialog().ok('سيرفر هذا الفيديو لم يعمل','جرب فيديو غيره',errormsg)
-	elif result in ['failed','timeout']: xbmcgui.Dialog().ok('الفيديو لم يعمل',errormsg)
+			elif result not in ['canceled_2nd_menu','https']: xbmcgui.Dialog().ok('رسالة من المبرمج','السيرفر لم يعمل جرب سيرفر غيره',error1,error2)
+	if result=='unresolved' and len(titleLIST)>0: xbmcgui.Dialog().ok('رسالة من المبرمج','سيرفر هذا الفيديو لم يعمل جرب فيديو غيره',errormsg)
+	elif result in ['failed','timeout']: xbmcgui.Dialog().ok('رسالة من المبرمج',errormsg)
 	"""
 	elif result in ['canceled_1st_menu','canceled_2nd_menu']:
 		#LOG_THIS('NOTICE',LOGGING(script_name)+'   Test:   '+sys.argv[0]+sys.argv[2])
@@ -84,7 +84,7 @@ def PLAY_LINK(url,script_name,type=''):
 				else: result = PLAY_VIDEO(videoURL,script_name,type)
 			if result in ['playing','canceled_2nd_menu'] or len(linkLIST)==1: break
 			elif result in ['failed','timeout','tried']: break
-			else: xbmcgui.Dialog().ok('الملف لم يعمل','جرب ملف غيره')
+			else: xbmcgui.Dialog().ok('رسالة من المبرمج','الملف لم يعمل جرب ملف غيره')
 		"""
 		if 'youtube.mpd' in linkLIST[0]:
 			xbmcgui.Dialog().ok('click ok to shutdown the http server','')

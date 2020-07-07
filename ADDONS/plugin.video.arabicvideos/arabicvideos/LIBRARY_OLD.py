@@ -198,7 +198,7 @@ def openURL_WEBPROXYTO(url,data='',headers='',showDialogs=True,source=''):
 	# Proxy + DNS
 	# http://webproxy.to		http://69.64.52.22
 	# cookie will expire after 30 miuntes (only if not used within these 30 minutes)
-	response = openURL_requests_cached(30*MINUTE,'GET', 'http://webproxy.to','','',False,False,'LIBRARY-openURL_WEBPROXYTO-1st')
+	response = openURL_requests_cached(VERY_SHORT_CACHE,'GET', 'http://webproxy.to','','',False,False,'LIBRARY-openURL_WEBPROXYTO-1st')
 	html2 = response.content
 	cookies = response.cookies.get_dict()
 	s = cookies['s']
@@ -232,7 +232,7 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs=True,source=''):
 	headers2 = { 'Cookie' : cookies2 }
 	#payload2 = { 'page' : quote(url) }
 	#data2 = urllib.urlencode(payload2)
-	html2 = openURL_cached(20*MINUTE,'http://kproxy.com/doproxy.jsp?page='+quote(url),'',headers2,False,'LIBRARY-openURL_KPROXYCOM-2nd')
+	html2 = openURL_cached(VERY_SHORT_CACHE,'http://kproxy.com/doproxy.jsp?page='+quote(url),'',headers2,False,'LIBRARY-openURL_KPROXYCOM-2nd')
 	proxyURL = re.findall('url=(.*?)"',html2,re.DOTALL)
 	if proxyURL:
 		proxyURL = proxyURL[0]

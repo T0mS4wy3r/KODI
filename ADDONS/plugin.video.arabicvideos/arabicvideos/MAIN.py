@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from LIBRARY import *
 
 script_name = 'MAIN'
@@ -34,6 +35,9 @@ IPTV_MODES = mode2==23 and text!=''
 YOUTUBE_UPDATE = mode2==14 and 'UPDATE' in text
 
 
+#xbmcgui.Dialog().ok(addon_path,str(addon_handle))
+
+
 if favourite not in ['','1','2','3','4','NOREFRESH']:
 	import FAVOURITES
 	FAVOURITES.FAVOURITES_DISPATCHER(favourite)
@@ -41,7 +45,14 @@ if favourite not in ['','1','2','3','4','NOREFRESH']:
 	#"Container.Update" used to open a menu list using specific addon_path
 	#xbmc.executebuiltin("Container.Update("+sys.argv[0]+addon_path.split('&favourite=')[0]+")")
 	if 'NOREFRESH' not in favourite: xbmc.executebuiltin("Container.Refresh")
-	EXIT_PROGRAM('MAIN-FAVOURITES-1st',False)
+	EXIT_PROGRAM('MAIN-MAIN-1st',False)
+
+
+if mode0==266:
+	import MENUS
+	MENUS.DELETE_LAST_VIDEOS_MENU(text)
+	xbmc.executebuiltin("Container.Refresh")
+	EXIT_PROGRAM('MAIN-MAIN-2nd',False)
 
 
 if (SEARCH_MODES and menu_label not in ['..','Main Menu']) or (UPDATE_RANDOM_MENUS and menu_label!='Main Menu'):
@@ -62,22 +73,24 @@ else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,favou
 
 if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 if not os.path.exists(dbfile):
+	import IPTV
+	#iptv = IPTV.isIPTVFiles(False)
 	CLEAN_KODI_CACHE_FOLDER()
 	conn = sqlite3.connect(dbfile)
 	conn.close()
+	xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح الكاش الموجود في البرنامج . أو تم تحديث البرنامج إلى الإصدار الجديد . إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
 	import SERVICES
 	SERVICES.KODI_SKIN()
 	SERVICES.INSTALL_REPOSITORY(False)
-	xbmcgui.Dialog().ok('IPTV','تم مسح الكاش أو تحديث البرنامج . فإذا كنت تستخدم IPTV فقم بجلب ملفات IPTV جديدة أو للتخلص من هذه الرسالة ادخل إلى قائمة IPTV وامسح الملفات القديمة')
-	import IPTV
-	IPTV.CREATE_STREAMS()
+	#xbmcgui.Dialog().ok('',str(iptv))
+	#if iptv: 
+	IPTV.CREATE_STREAMS(False)
 
 
 #xbmcgui.Dialog().ok(addon_path,str(mode0))
 
 
 if addon_handle>-1:
-
 
 	if type=='folder' and menu_label!='..' and (SITES_MODES or IPTV_MODES): ADD_TO_LAST_VIDEO_FILES()
 
@@ -101,7 +114,7 @@ if addon_handle>-1:
 	# updateListing = False => means this list is permanent and the new list will generate new menu
 	if FILTERING_MENUS or DELETE_LAST_VIDEOS or UPDATE_RANDOM_SUBMENUS or YOUTUBE_UPDATE: updateListing = True
 	else: updateListing = False
-	
+
 
 	#LOG_THIS('NOTICE',str(succeeded)+'  '+str(updateListing)+'  '+str(cacheToDisc))
 	xbmcplugin.endOfDirectory(addon_handle,succeeded,updateListing,cacheToDisc)

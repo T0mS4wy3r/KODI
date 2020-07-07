@@ -94,13 +94,13 @@ def PLAY(id):
 		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA1' , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			BUSY_DIALOG('stop')
 			return
 		#proxyname,proxyurl = RANDOM_HTTPS_PROXY()
 		url = response.headers['Location']#+'||MyProxyUrl='+proxyurl
 		#xbmcgui.Dialog().ok(url,'')
-		response = openURL_requests_cached(30*MINUTE,'GET',url,'','',False,'','LIVETV-PLAY-2nd')
+		response = openURL_requests_cached(VERY_SHORT_CACHE,'GET',url,'','',False,'','LIVETV-PLAY-2nd')
 		cookies = response.cookies.get_dict()
 		session = cookies['ASP.NET_SessionId']
 		#html = response.content
@@ -109,7 +109,7 @@ def PLAY(id):
 		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA2' , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-3rd')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location'].replace('__ID2__',id2)
@@ -148,7 +148,7 @@ def PLAY(id):
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playNT' , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location']
@@ -162,7 +162,7 @@ def PLAY(id):
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playPL' , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-6th')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			BUSY_DIALOG('stop')
 			return
 		response = openURL_requests_cached(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-7th')
@@ -175,7 +175,7 @@ def PLAY(id):
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'play'+source , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-8th')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location']

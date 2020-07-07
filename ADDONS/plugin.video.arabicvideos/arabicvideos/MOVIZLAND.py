@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
-	xbmcgui.Dialog().ok('الموقع تغير بالكامل',message)
+	xbmcgui.Dialog().ok('رسالة من المبرمج',message)
 	return
 
 def MENU(website=''):
@@ -207,7 +207,7 @@ def PLAY(url):
 
 
 	if len(linkLIST)==0:
-		xbmcgui.Dialog().ok('مشكلة','غير قادر على ايجاد ملف الفيديو المناسب')
+		xbmcgui.Dialog().ok('رسالة من المبرمج','غير قادر على ايجاد ملف الفيديو المناسب')
 	else:
 		#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', linkLIST)
 		#if selection == -1 : return

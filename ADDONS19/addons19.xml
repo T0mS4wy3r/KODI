@@ -10,7 +10,7 @@
 		<import addon="script.module.resolveurl" version="5.0.0" optional="false"/>
 		<import addon="script.module.youtube.dl" version="20.0.0" optional="false"/>
 	</requires>
-	<extension point="xbmc.python.pluginsource" library="arabicvideos/__init__.py">
+	<extension point="xbmc.python.pluginsource" library="arabicvideos/MAIN.py">
 		<provides>video</provides>
 	</extension>
 	<extension point="xbmc.addon.metadata">

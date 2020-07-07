@@ -1,4 +1,16 @@
 ﻿
+v6.9.0	2020-07-07
+Added deleting of whole favourite menus
+Added install of both inputstreams addons
+Added archived IPTV live channels
+Added full & short EPG for IPTV live channels
+Fixed REQUESTS error reporting
+Fixed YOUTUBE search filters
+Added random user-agent
+Automated getting new IPTV files if was used before
+Minor fixes & improvements
+
+
 v6.8.0	2020-06-22
 Modified addon icon
 Fixed moving items of favourite menus

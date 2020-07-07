@@ -313,7 +313,7 @@ def SEARCH(url,search=''):
 				link = url + '/' + type + '/Content/' + id
 				img = url + quote(img)
 				addMenuItem('folder',menu_name+title,link,23,img,'101')
-	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
+	#else: xbmcgui.Dialog().ok('رسالة من المبرمج',,لا توجد نتائج للبحث')
 	return
 
 

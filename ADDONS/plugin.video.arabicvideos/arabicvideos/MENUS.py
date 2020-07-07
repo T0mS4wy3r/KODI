@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #from __future__ import unicode_literals
+
 from LIBRARY import *
 
 script_name='MENUS'
@@ -102,24 +103,26 @@ def SERVICES_MENU():
 def ANSWERS_MENU():
 	addMenuItem('link','[COLOR FFC89008]  1.  [/COLOR]'+'بعض الروابط بطيئة','',155)
 	addMenuItem('link','[COLOR FFC89008]  2.  [/COLOR]'+'بعض الروابط لا تعمل','',153)
-	addMenuItem('link','[COLOR FFC89008]  3.  [/COLOR]'+'المواقع المشفرة لا تعمل','',152)
-	addMenuItem('link','[COLOR FFC89008]  4.  [/COLOR]'+'لماذا بعض المواقع لا تعمل','',195)
-	addMenuItem('link','[COLOR FFC89008]  5.  [/COLOR]'+'تحذير يخص شهادة التشفير','',171)
-	addMenuItem('link','[COLOR FFC89008]  6.  [/COLOR]'+'ما هي افضل واجهة للبرنامج','',197)
-	addMenuItem('link','[COLOR FFC89008]  7.  [/COLOR]'+'لماذا يوجد سيرفرات مجهولة','',156)
-	addMenuItem('link','[COLOR FFC89008]  8.  [/COLOR]'+'الفيديوهات نوع mpd لا تعمل','',194)
-	addMenuItem('link','[COLOR FFC89008]  9.  [/COLOR]'+'لماذا لا نفحص شهادة التشفير','',193)
-	addMenuItem('link','[COLOR FFC89008]10.  [/COLOR]'+'بعض الفيديوهات بطيئة وتقطع','',158)
-	addMenuItem('link','[COLOR FFC89008]11.  [/COLOR]'+'كيف تحل بنفسك مشكلة مؤقته','',192)
-	addMenuItem('link','[COLOR FFC89008]12.  [/COLOR]'+'كيف تستخدم الريموت مع كودي','',198)
-	addMenuItem('link','[COLOR FFC89008]13.  [/COLOR]'+'كيف تتصل وتتواصل مع المبرمج','',196)
-	addMenuItem('link','[COLOR FFC89008]14.  [/COLOR]'+'ما هو آخر إصدار لكودي وللبرنامج','',7)
-	addMenuItem('link','[COLOR FFC89008]15.  [/COLOR]'+'ما هي السيرفرات العامة والخاصة','',157)
-	addMenuItem('link','[COLOR FFC89008]16.  [/COLOR]'+'ما معنى هذه العلامات بالبرنامج ,'+escapeUNICODE('\u02d1')+';','',191)
-	addMenuItem('link','[COLOR FFC89008]17.  [/COLOR]'+'ما هو الكاش وكم مقداره بالبرنامج','',190)
-	addMenuItem('link','[COLOR FFC89008]18.  [/COLOR]'+'كيف تحل مشكلة حجب بعض المواقع','',195)
-	addMenuItem('link','[COLOR FFC89008]19.  [/COLOR]'+'DMCA  قانون الألفية للملكية الرقمية','',3)
-	addMenuItem('link','[COLOR FFC89008]20.  [/COLOR]'+'أين مواقع الأفلام والمسلسلات الأجنبية','',154)
+	addMenuItem('link','[COLOR FFC89008]  3.  [/COLOR]'+'كيفية استخدام المفضلة','',150)
+	addMenuItem('link','[COLOR FFC89008]  4.  [/COLOR]'+'المواقع المشفرة لا تعمل','',152)
+	addMenuItem('link','[COLOR FFC89008]  5.  [/COLOR]'+'كيفية مسح محتويات قائمة','',170)
+	addMenuItem('link','[COLOR FFC89008]  6.  [/COLOR]'+'لماذا بعض المواقع لا تعمل','',195)
+	addMenuItem('link','[COLOR FFC89008]  7.  [/COLOR]'+'تحذير يخص شهادة التشفير','',171)
+	addMenuItem('link','[COLOR FFC89008]  8.  [/COLOR]'+'ما هي افضل واجهة للبرنامج','',197)
+	addMenuItem('link','[COLOR FFC89008]  9.  [/COLOR]'+'لماذا يوجد سيرفرات مجهولة','',156)
+	addMenuItem('link','[COLOR FFC89008]10.  [/COLOR]'+'الفيديوهات نوع mpd لا تعمل','',194)
+	addMenuItem('link','[COLOR FFC89008]11.  [/COLOR]'+'لماذا لا نفحص شهادة التشفير','',193)
+	addMenuItem('link','[COLOR FFC89008]12.  [/COLOR]'+'بعض الفيديوهات بطيئة وتقطع','',158)
+	addMenuItem('link','[COLOR FFC89008]13.  [/COLOR]'+'كيف تحل بنفسك مشكلة مؤقته','',192)
+	addMenuItem('link','[COLOR FFC89008]14.  [/COLOR]'+'كيف تستخدم الريموت مع كودي','',198)
+	addMenuItem('link','[COLOR FFC89008]15.  [/COLOR]'+'كيف تتصل وتتواصل مع المبرمج','',196)
+	addMenuItem('link','[COLOR FFC89008]16.  [/COLOR]'+'ما هو آخر إصدار لكودي وللبرنامج','',7)
+	addMenuItem('link','[COLOR FFC89008]17.  [/COLOR]'+'ما هي السيرفرات العامة والخاصة','',157)
+	addMenuItem('link','[COLOR FFC89008]18.  [/COLOR]'+'ما معنى هذه العلامات بالبرنامج ,'+escapeUNICODE('\u02d1')+';','',191)
+	addMenuItem('link','[COLOR FFC89008]19.  [/COLOR]'+'ما هو الكاش وكم مقداره بالبرنامج','',190)
+	addMenuItem('link','[COLOR FFC89008]20.  [/COLOR]'+'كيف تحل مشكلة حجب بعض المواقع','',195)
+	addMenuItem('link','[COLOR FFC89008]21.  [/COLOR]'+'DMCA  قانون الألفية للملكية الرقمية','',3)
+	addMenuItem('link','[COLOR FFC89008]22.  [/COLOR]'+'أين مواقع الأفلام والمسلسلات الأجنبية','',154)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
@@ -158,23 +161,25 @@ def GLOBAL_SEARCH_MENU(search='',show=True):
 	#addMenuItem('folder','19. [COLOR FFC89008]EGB  [/COLOR]'+search+' - موقع ايجي بيست','',128,'','',search)# 129
 	return
 
-def LAST_VIDEOS_MENU(type):
-	addMenuItem('folder','مسح هذه القائمة','',266,'','',type)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+def LAST_VIDEOS_MENU(type,lengthonly=False):
+	#addMenuItem('folder','مسح هذه القائمة','',266,'','',type)
+	#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	videoLIST = []
 	if os.path.exists(lastvideosfile):
 		with open(lastvideosfile,'r') as f: listFILE = f.read()
 		listFILE = eval(listFILE)
 		if type in listFILE.keys():
 			videoLIST = listFILE[type]
-			try:
-				for type2,name,url,mode2,image,page,text in videoLIST:
-					addMenuItem(type2,name,url,mode2,image,page,text)
-			except:
-				xbmcgui.Dialog().ok('اخر الفيديوهات','هناك مشكلة في ملف اخر الفيديوهات','لكي تتخلص من المشكلة اضغط على','"مسح هذه القائمة"')
-	return
+			if not lengthonly:
+				try:
+					for type2,name,url,mode2,image,page,text in videoLIST:
+						addMenuItem(type2,name,url,mode2,image,page,text)
+				except:
+					xbmcgui.Dialog().ok('رسالة من المبرمج','هناك مشكلة في ملف آخر الفيديوهات','لكي تتخلص من المشكلة اضغط على','"مسح هذه القائمة"')
+	return len(videoLIST)
 
 def DELETE_LAST_VIDEOS_MENU(type):
-	answer = xbmcgui.Dialog().yesno('القائمة','هل تريد مسح هذه القائمة الآن ؟','','','كلا','نعم')
+	answer = xbmcgui.Dialog().yesno('رسالة من المبرمج','هل تريد فعلا مسح جميع محتويات قائمة آخر 25 '+TRANSLATE(type)+' ؟!','','','كلا','نعم')
 	if answer:
 		if os.path.exists(lastvideosfile):
 			with open(lastvideosfile,'r') as f: listFILE = f.read()
@@ -183,6 +188,7 @@ def DELETE_LAST_VIDEOS_MENU(type):
 				del listFILE[type]
 				listFILE = str(listFILE)
 				with open(lastvideosfile,'w') as f: f.write(listFILE)
+				xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح جميع محتويات قائمة آخر 25 '+TRANSLATE(type))
 	LAST_VIDEOS_MENU(type)
 	return
 

@@ -64,7 +64,7 @@ def SEARCH_RANDOM_VIDEOS(options):
 	payload = { 'quantity' : '50' }
 	data = urllib.urlencode(payload)
 	#xbmcgui.Dialog().ok('',str(data))
-	html = openURL_cached(30*MINUTE,url,data,headers,'','RANDOMS-SEARCH_RANDOM_VIDEOS-1st')
+	html = openURL_cached(VERY_SHORT_CACHE,url,data,headers,'','RANDOMS-SEARCH_RANDOM_VIDEOS-1st')
 	html_blocks = re.findall('list-unstyled(.*?)clearfix',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('<span>(.*?)</span>.*?<span>(.*?)</span>',block,re.DOTALL)
@@ -222,7 +222,7 @@ def IMPORT_SITES():
 	#import MOVIZLAND		;	MOVIZLAND.MENU('MOVIZLAND')
 	#import SERIES4WATCH	;	SERIES4WATCH.MENU('SERIES4WATCH')
 	menuItemsLIST[:] = previousMenu
-	if failed>5: xbmcgui.Dialog().ok('مشكلة غريبة جدا','لديك مشكلة في اكثر من 5 مواقع من مواقع البرنامج ... وسببها قد يكون عدم وجود إنترنيت في جهازك')
+	if failed>5: xbmcgui.Dialog().ok('رسالة من المبرمج','لديك مشكلة في اكثر من 5 مواقع من مواقع البرنامج ... وسببها قد يكون عدم وجود إنترنيت في جهازك')
 	else: WRITE_TO_SQL3('IMPORT_SECTIONS','SITES',contentsDICT,LONG_CACHE)
 	return
 

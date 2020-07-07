@@ -249,7 +249,7 @@ def PLAY(url):
 		"""
 	if len(linkLIST)==0:
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   No video file found   URL: [ '+url+' ]')
-		xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
+		xbmcgui.Dialog().ok('رسالة من المبرمج','لا يوجد ملف فيديو')
 		return
 	elif len(linkLIST)==1:
 		selection = 0

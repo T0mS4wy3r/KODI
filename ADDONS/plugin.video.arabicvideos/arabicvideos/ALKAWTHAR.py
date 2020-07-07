@@ -92,7 +92,7 @@ def EPISODES(url,page):
 	html = openURL_cached(REGULAR_CACHE,url,'','',True,'ALKAWTHAR-EPISODES-1st')
 	items = re.findall('totalpagecount=[\'"](.*?)[\'"]',html,re.DOTALL)
 	if items[0]=='':
-		xbmcgui.Dialog().ok('فرع فارغ','لا يوجد حاليا ملفات فيديو في هذا الفرع')
+		xbmcgui.Dialog().ok('رسالة من المبرمج','لا يوجد حاليا ملفات فيديو في هذا الفرع')
 		return
 	totalpages = int(items[0])
 	name = re.findall('main-title.*?</a> >(.*?)<',html,re.DOTALL)
@@ -161,7 +161,7 @@ def PLAY(url):
 		items = re.findall("mobilevideopath.*?value='(.*?)'",html,re.DOTALL)
 		if items: url = items[0]
 		else:
-			xbmcgui.Dialog().ok('','لا يوجد ملف فيديو')
+			xbmcgui.Dialog().ok('رسالة من المبرمج','لا يوجد ملف فيديو')
 			return
 	PLAY_VIDEO(url,script_name,'video')
 	return

@@ -23,7 +23,6 @@ import sqlite3		# 50ms (with threading 71ms)
 #import SimpleHTTPServer	# 1922ms
 #import BaseHTTPServer		# 44ms
 
-
 # calculate the average time needed to import a main-module and how many sub-modules will be imported with it
 """
 import sys,time
@@ -51,7 +50,6 @@ xbmcgui.Dialog().ok('number of modules imported: '+str(import_count),'average ti
 EXIT_using_ERROR
 """
 
-
 # to check if main-module will import what sub-modules
 # example: importing "requests" will also import "urllib","urllib2" and "urllib3"
 """
@@ -69,6 +67,47 @@ import xbmcgui
 xbmcgui.Dialog().ok('yes exists: ',list)
 """
 
+script_name = 'LIBRARY'
+
+addon_handle = int(sys.argv[1])
+addon_id = sys.argv[0].split('/')[2]	# plugin.video.arabicvideos
+addon_name = addon_id.split('.')[2]		# arabicvideos
+addon_path = sys.argv[2]				# ?mode=12&url=http://test.com
+#addon_url = sys.argv[0]+addon_path		# plugin://plugin.video.arabicvideos/?mode=12&url=http://test.com
+#addon_path = xbmc.getInfoLabel( "ListItem.FolderPath" )
+addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
+
+menu_path = urllib2.unquote(addon_path).replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
+menu_label = xbmc.getInfoLabel('ListItem.Label').replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
+if menu_label=='': menu_label = 'Main Menu'
+
+kodi_release = xbmc.getInfoLabel("System.BuildVersion")
+kodi_version = re.findall('&&(.*?)[ -]','&&'+kodi_release,re.DOTALL)
+kodi_version = float(kodi_version[0])
+#xbmcgui.Dialog().ok(kodi_release,str(kodi_version))
+icon = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id, 'icon.png'))
+fanart = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id , 'fanart.jpg'))
+
+addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
+dbfile = os.path.join(addoncachefolder,"webcache_"+addon_version+".db")
+lastvideosfile = os.path.join(addoncachefolder,"lastvideos.lst")
+lastrandomfile = os.path.join(addoncachefolder,"lastrandom.lst")
+favouritesfile = os.path.join(addoncachefolder,"favourites.lst")
+dummyiptvfile = os.path.join(addoncachefolder,"dummy.iptv")
+
+MINUTE = 60
+HOUR = 60*MINUTE
+LONG_CACHE = 24*HOUR*3
+REGULAR_CACHE = 16*HOUR
+SHORT_CACHE = 2*HOUR
+VERY_SHORT_CACHE = 30*MINUTE
+VERY_LONG_CACHE = 24*HOUR*90
+NO_CACHE = 0
+now = int(time.time())
+
+#LONG_CACHE = 0
+#REGULAR_CACHE = 0
+#SHORT_CACHE = 0
 
 WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'AKWAM'		:['https://akwam.net']
@@ -93,71 +132,6 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			#,'MOVIZLAND'	:['https://movizland.online','https://m.movizland.online']
 			#,'SERIES4WATCH':['https://series4watch.net']  # 'https://s4w.tv'
 			}
-
-SITES_ARABIC_NAME = { 
-			 'AKOAM'		:'موقع أكوام القديم'
-			,'AKWAM'		:'موقع أكوام الجديد'
-			,'ALARAB'		:'موقع كل العرب'
-			,'ALFATIMI'		:'موقع المنبر الفاطمي'
-			,'ALKAWTHAR'	:'موقع قناة الكوثر'
-			,'ALMAAREF'		:'موقع قناة المعارف'
-			,'ARABLIONZ'	:'موقع عرب ليونز'
-			,'EGYBESTVIP'	:'موقع ايجي بيست vip'
-			,'HELAL'		:'موقع هلال يوتيوب'
-			,'IFILM'		:'موقع قناة اي فيلم'
-			,'IFILM_ARABIC'	:'موقع قناة اي فيلم العربي'
-			,'IFILM_ENGLISH':'موقع قناة اي فيلم انكليزي'
-			,'PANET'		:'موقع بانيت'
-			,'SHAHID4U'		:'موقع شاهد فوريو'
-			,'SHOOFMAX'		:'موقع شوف ماكس'
-			,'ARABSEED'		:'موقع عرب سييد'
-			,'YOUTUBE'		:'موقع يوتيوب'
-			,'LIVETV'		:'LIVETV'
-			,'IPTV'			:'IPTV'
-			#,'EGY4BEST'	:''
-			#,'EGYBEST'		:''
-			#,'HALACIMA'	:''
-			#,'MOVIZLAND'	:''
-			#,'SERIES4WATCH':''
-			}
-
-script_name = 'LIBRARY'
-
-addon_handle = int(sys.argv[1])
-addon_id = sys.argv[0].split('/')[2]	# plugin.video.arabicvideos
-addon_name = addon_id.split('.')[2]		# arabicvideos
-addon_path = sys.argv[2]				# ?mode=12&url=http://test.com
-#addon_url = sys.argv[0]+addon_path		# plugin://plugin.video.arabicvideos/?mode=12&url=http://test.com
-#addon_path = xbmc.getInfoLabel( "ListItem.FolderPath" )
-addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
-
-menu_path = urllib2.unquote(addon_path).replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
-menu_label = xbmc.getInfoLabel('ListItem.Label').replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
-if menu_label=='': menu_label = 'Main Menu'
-
-kodi_release = xbmc.getInfoLabel("System.BuildVersion")
-kodi_version = float(kodi_release.split(' ')[0])
-icon = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id, 'icon.png'))
-fanart = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id , 'fanart.jpg'))
-
-addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
-dbfile = os.path.join(addoncachefolder,"webcache_"+addon_version+".db")
-lastvideosfile = os.path.join(addoncachefolder,"lastvideos.lst")
-lastrandomfile = os.path.join(addoncachefolder,"lastrandom.lst")
-favouritesfile = os.path.join(addoncachefolder,"favourites.lst")
-
-MINUTE = 60
-HOUR = 60*MINUTE
-LONG_CACHE = 24*HOUR*3
-REGULAR_CACHE = 16*HOUR
-SHORT_CACHE = 2*HOUR
-NO_CACHE = 0
-UNLIMITED_CACHE = 24*HOUR*365
-now = time.time()
-
-#LONG_CACHE = 0
-#REGULAR_CACHE = 0
-#SHORT_CACHE = 0
 
 def MAIN_DISPATCHER(type,name,url,mode,image,page,text,favourite):
 	mode = int(mode)
@@ -300,11 +274,11 @@ def SHOW_ERRORS(source,code,reason,showDialogs):
 		else: messageARABIC = 'هذا الموقع فيه '+block_meessage
 		LOG_THIS('ERROR',LOGGING(script_name)+'   Source: [ '+source+' ]   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   messageARABIC: [ '+messageARABIC+' ]]   messageENGLISH: [ '+messageENGLISH+' ]')
 		if showDialogs:
-			yes = xbmcgui.Dialog().yesno(site+'   '+SITES_ARABIC_NAME[site],messageARABIC,messageENGLISH,'','كلا','نعم')
+			yes = xbmcgui.Dialog().yesno(site+'   '+TRANSLATE(site),messageARABIC,messageENGLISH,'','كلا','نعم')
 			if yes==1: import SERVICES ; SERVICES.MAIN(195)
 	elif showDialogs:
 		messageARABIC2 = messageARABIC+' . هل تريد معرفة الأسباب والحلول ؟'
-		yes = xbmcgui.Dialog().yesno(site+'   '+SITES_ARABIC_NAME[site],messageARABIC2,messageENGLISH,'','كلا','نعم')
+		yes = xbmcgui.Dialog().yesno(site+'   '+TRANSLATE(site),messageARABIC2,messageENGLISH,'','كلا','نعم')
 		if yes==1:
 			messageDETAILS = 'قد يكون هناك نوع من الحجب عندك'
 			messageDETAILS += '\n'+'أو الأنترنيت عندك مفصولة'
@@ -353,11 +327,11 @@ NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
 """
 
 def EXIT_IF_SOURCE(source,code,reason,showDialogs):
-	condition1 = (source not in NO_EXIT_LIST and 'RESOLVERS' not in source and '-MENU-1st' not in source)
-	condition2 = ('Blocked by Cloudflare' in reason)
-	condition3 = ('Blocked by 5 seconds browser check' in reason)
-	if showDialogs and (condition1 or condition2 or condition3): SHOW_ERRORS(source,code,reason,showDialogs)
+	if showDialogs: SHOW_ERRORS(source,code,reason,showDialogs)
+	condition1 = source not in NO_EXIT_LIST and 'RESOLVERS' not in source and '-MENU-1st' not in source
 	if condition1: EXIT_PROGRAM(source)
+	#condition2 = 'Blocked by Cloudflare' in reason
+	#condition3 = 'Blocked by 5 seconds browser check' in reason
 	return
 
 def EXIT_PROGRAM(source='',showLog=True):
@@ -401,7 +375,7 @@ def addMenuItem(type,name,url,mode,image='',page='',text='',favourite=''):
 		nameonly = nameonly.replace('المسلسلات','مسلسلات').replace('البرامج','برامج')
 		nameonly = nameonly.replace('حروب','حرب')
 		#if 'PANET' in website: xbmcgui.Dialog().ok(nameonly,website)
-		website = SITES_ARABIC_NAME[website]
+		website = TRANSLATE(website)
 		if nameonly not in contentsDICT.keys(): contentsDICT[nameonly] = {}
 		name = name.replace('VOD_','').replace('_MOD_','')
 		if name.count('_')>1: name = name.split('_',2)[2]
@@ -429,9 +403,23 @@ def getKodiMenuItem(menuItem):
 	if favourite!='': path = path+'&favourite='+favourite
 	listitem = xbmcgui.ListItem(name)
 	listitem.setArt({'icon':image,'thumb':image,'fanart':fanart,})
+	context_menu = []
+	if mode in [235,238]:
+		run_path = 'plugin://'+addon_id+'?mode=238&text=short_epg&url='+url
+		run_text = '[COLOR FFFFFF00]البرامج القادمة[/COLOR]'
+		run_item = (run_text,'XBMC.RunPlugin('+run_path+')')
+		context_menu.append(run_item)
+	elif mode in [265]:
+		import MENUS
+		length = MENUS.LAST_VIDEOS_MENU(text2,True)
+		if length>0:
+			run_path = 'plugin://'+addon_id+'?mode=266&text='+text2
+			run_text = '[COLOR FFFFFF00]مسح قائمة آخر 25 '+TRANSLATE(text2)+'[/COLOR]'
+			run_item = (run_text,'XBMC.RunPlugin('+run_path+')')
+			context_menu.append(run_item)
 	import FAVOURITES
-	menuLIST = FAVOURITES.GET_FAVOURITES_CONTEXT_MENU(path)
-	listitem.addContextMenuItems(menuLIST)
+	context_menu += FAVOURITES.GET_FAVOURITES_CONTEXT_MENU(path)
+	listitem.addContextMenuItems(context_menu)
 	if type in ['link','live']: isFolder = False
 	elif type=='video':
 		isFolder = False
@@ -503,12 +491,15 @@ def openURL(url,data,headers,showDialogs,source):
 			key,value = item.split('=')
 			data[key] = value
 	response = openURL_requests(method,url,data,headers,True,showDialogs,source)
-	html = response.content
+	html = str(response.content)
 	return html
 
 class dummy_object(): pass
 
 def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source):
+	if data=='': data = {}
+	if headers=='': headers = {}
+	if allow_redirects=='': allow_redirects = True
 	if showDialogs=='': showDialogs = True
 	#xbmcgui.Dialog().ok(url,'requests 11')
 	#url = url + '||MyProxyUrl=http://188.166.59.17:8118'
@@ -538,27 +529,28 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 	try:
 		response = requests.request(method,url2,data=data,headers=headers,verify=verify,allow_redirects=allow_redirects,timeout=timeout,proxies=proxies)
 		code,reason = response.status_code,response.reason
-		dummy,succeded = False,True
+		succeded = True
 		response.raise_for_status()
 	except requests.exceptions.HTTPError as err:
 		# it works only if response.raise_for_status() is executed
 		# code,reason = re.findall('(\d+).*?: (.*?):',err.message)[0]
-		dummy,succeded = False,False
+		succeded = False
 	except requests.exceptions.Timeout as err:
 		reason,code = str(err.message).split(': ')[1],-1
-		dummy,succeded = True,False
+		succeded = False
 	except requests.exceptions.ConnectionError as err:
 		reason,code = re.findall('>: (.*?):.*?(\d+)',err.message[0])[0]
-		dummy,succeded = True,False
+		succeded = False
 	except requests.exceptions.RequestException as err:
 		reason,code = err.message,-1
-		dummy,succeded = True,False
+		succeded = False
 	except err:
 		# to find the code & reason from any class
 		#print dir(err)
 		#for i in dir(err):
 		#    print i+' ===>> '+str(eval('err.'+i))
-		pass
+		reason,code = 'Unknown Error',-1
+		succeded = False
 	if 'google-analytics' not in url2 and succeded==False: traceback.print_exc(file=sys.stderr)
 	else:
 		#errortrace = traceback.format_exc()
@@ -568,36 +560,36 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 		pass
 	code = int(code)
 	response2 = dummy_object()
-	if dummy:
-		response2.headers = {}
-		response2.cookies = {}
-		response2.url     = ''
-		response2.content = '___Error___:'+str(code)+':'+str(reason)
-	else:
+	if succeded:
 		response2.headers = response.headers
 		response2.cookies = response.cookies
 		response2.url     = response.url
 		response2.content = response.content
+	else:
+		response2.headers = {}
+		response2.cookies = {}
+		response2.url     = ''
+		response2.content = '___Error___:'+str(code)+':'+reason
 	response = response2
-	html = response.content
+	html = str(response.content)
 	htmlLower = html.lower()
-	condition1 = (code!=200 and int(code/100)*100!=300)
-	condition2 = ('cloudflare' in htmlLower and 'ray id: ' in htmlLower)
-	condition3 = ('___Error___' in htmlLower)
-	condition4 = ('5 sec' in htmlLower and 'browser' in htmlLower and code!=200)
+	condition1 = code!=200 and int(code/100)*100!=300
+	condition2 = 'cloudflare' in htmlLower and 'ray id: ' in htmlLower
+	condition3 = '___Error___' in htmlLower
+	condition4 = '5 sec' in htmlLower and 'browser' in htmlLower and code!=200
 	if condition1 or condition2 or condition3 or condition4:
 		if condition2:
 			#xbmcgui.Dialog().ok('','Cloudflare')
 			reason2 = 'Blocked by Cloudflare'
 			if 'recaptcha' in htmlLower: reason2 += ' using Google reCAPTCHA'
 			reason = reason2+' ( '+reason+' )'
-			html = '___Error___:'+str(code)+':'+str(reason)
+			html = '___Error___:'+str(code)+':'+reason
 			response.content = html
 		elif condition4:
 			#xbmcgui.Dialog().ok('','5 seconds')
 			reason4 = 'Blocked by 5 seconds browser check'
 			reason = reason4+' ( '+reason+' )'
-			html = '___Error___:'+str(code)+':'+str(reason)
+			html = '___Error___:'+str(code)+':'+reason
 			response.content = html
 		#if 'google-analytics' not in url:
 		if code in [7,11001,10054] and dnsurl==None:
@@ -647,7 +639,7 @@ def unescapeHTML(string):
 	return string
 
 def escapeUNICODE(string):
-	if '\u' in string:
+	if '\\u' in string:
 		string = string.decode('unicode_escape')
 		string = string.encode('utf8')
 	return string
@@ -664,9 +656,9 @@ def mixARABIC(string):
 	new_string = ''
 	for letter in string:
 		#xbmcgui.Dialog().ok(unicodedata.decomposition(letter),hex(ord(letter)))
-		if ord(letter) < 256: unicode_letter = '\u00'+hex(ord(letter)).replace('0x','')
-		elif ord(letter) < 4096: unicode_letter = '\u0'+hex(ord(letter)).replace('0x','')
-		else: unicode_letter = '\u'+unicodedata.decomposition(letter).split(' ')[1]
+		if ord(letter) < 256: unicode_letter = '\\u00'+hex(ord(letter)).replace('0x','')
+		elif ord(letter) < 4096: unicode_letter = '\\u0'+hex(ord(letter)).replace('0x','')
+		else: unicode_letter = '\\u'+unicodedata.decomposition(letter).split(' ')[1]
 		new_string += unicode_letter
 	new_string = new_string.replace('\u06CC','\u0649')
 	new_string = new_string.decode('unicode_escape')
@@ -682,7 +674,7 @@ def KEYBOARD(header='لوحة المفاتيح',default=''):
 	#if kb.isConfirmed(): text = kb.getText()
 	text = xbmcgui.Dialog().input(header,default,type=xbmcgui.INPUT_ALPHANUM)
 	text = text.strip(' ')
-	if len(text.decode('utf8'))<2:
+	if len(text.decode('utf8'))<1:
 		#xbmcgui.Dialog().ok('Wrong entry. Try again','خطأ في الادخال. أعد المحاولة')
 		return ''
 	text = mixARABIC(text)
@@ -720,7 +712,11 @@ def ADD_TO_LAST_VIDEO_FILES():
 	return
 
 def PLAY_VIDEO(url3,website='',type='video'):
+	#LOG_THIS('NOTICE',LOGGING(script_name)+'   EEEEE starting PLAY_VIDEO')
+	#t1 = time.time()
 	ADD_TO_LAST_VIDEO_FILES()
+	#t2 = time.time()
+	#xbmcgui.Dialog().ok(str((t2-t1)*1000),'')
 	#url3 = 's:\emad.m3u8999'
 	result,subtitlemessage = 'canceled0',''
 	if len(url3)==3:
@@ -769,11 +765,12 @@ def PLAY_VIDEO(url3,website='',type='video'):
 	if videofiletype in ['.ts','.mkv','.mp4','.mp3','.flv']:
 		#when set to "False" it makes glarabTV fails and make WS2TV opens fast
 		play_item.setContentLookup(False)
-	if 'rtmp' in url: ENABLE_RTMP(False)
+	#if videofiletype in ['.m3u8']: play_item.setContentLookup(False)
+	if 'rtmp' in url: enabled = ENABLE_RTMP(True)
 	if videofiletype=='.mpd' or '/dash/' in url:
-		ENABLE_MPD(False)
-		play_item.setProperty('inputstreamaddon', 'inputstream.adaptive')
-		play_item.setProperty('inputstream.adaptive.manifest_type', 'mpd')
+		enabled = ENABLE_MPD(True)
+		play_item.setProperty('inputstreamaddon','inputstream.adaptive')
+		play_item.setProperty('inputstream.adaptive.manifest_type','mpd')
 	if subtitle!='':
 		play_item.setSubtitles([subtitle])
 		#xbmc.log(LOGGING(script_name)+'      Added subtitle to video   Subtitle:['+subtitle+']', level=xbmc.LOGNOTICE)
@@ -781,7 +778,7 @@ def PLAY_VIDEO(url3,website='',type='video'):
 		#title = xbmc.getInfoLabel('ListItem.Title')
 		#play_item.setInfo('Video', {'duration': 3600})
 		play_item.setPath(url)
-		xbmcplugin.setResolvedUrl(addon_handle, True, play_item)
+		xbmcplugin.setResolvedUrl(addon_handle,True,play_item)
 	elif type=='live':
 		myplayer.play(url,play_item)
 		#xbmc.Player().play(url,play_item)
@@ -814,8 +811,9 @@ def PLAY_VIDEO(url3,website='',type='video'):
 		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 		randomNumber = str(random.randrange(111111111111,999999999999))
 		url2 = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+website+'&z='+randomNumber
-		html = openURL_requests('GET',url2,'','',True,'no','LIBRARY-PLAY_VIDEO-1st')
+		html = openURL_requests('GET',url2,'','',True,False,'LIBRARY-PLAY_VIDEO-1st')
 		#except: pass
+	#LOG_THIS('NOTICE',LOGGING(script_name)+'   EEEEE finished PLAY_VIDEO')
 	if result in ['tried','failed','timeout','playing']: EXIT_PROGRAM('LIBRARY-PLAY_VIDEO-2nd',False)
 	#EXIT_PROGRAM('LIBRARY-PLAY_VIDEO-3rd')
 	#if 'https://' in url and result in ['failed','timeout']:
@@ -933,10 +931,10 @@ def HTTPS(showDialogs=True):
 		worked = False
 		https_problem = 'مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة'
 		LOG_THIS('ERROR',LOGGING(script_name)+'   HTTPS Failed   Label:['+menu_label+']   Path:['+menu_path+']')
-		if showDialogs: xbmcgui.Dialog().ok('فشل في الاتصال المشفر',https_problem)
+		if showDialogs: xbmcgui.Dialog().ok('رسالة من المبرمج',https_problem)
 	else:
 		worked = True
-		if showDialogs: xbmcgui.Dialog().ok('الاتصال المشفر','جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل عندك على كودي ... وعندك كودي قادر على استخدام المواقع المشفرة')
+		if showDialogs: xbmcgui.Dialog().ok('رسالة من المبرمج','جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل عندك على كودي ... وعندك كودي قادر على استخدام المواقع المشفرة')
 	return worked
 
 def DNS_RESOLVER(url,dnsserver=''):
@@ -1009,30 +1007,43 @@ def RATING_CHECK(script_name,url,ratingLIST):
 		return True
 	else: return False
 
-def ENABLE_MPD(showDialogs=True):
-	#result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.adaptive", "enabled":false }}')
-	#xbmcgui.Dialog().ok('',str(result))
+"""
+#inputstream.adaptive:	mpd, hls, ism
+#inputstream.rtmp:		rtmp
+#xbmc.executebuiltin('InstallAddon(inputstream.rtmp)',wait=True)import inputstreamhelper
+import inputstreamhelper
+helper = inputstreamhelper.Helper('hls')
+installed = helper.check_inputstream()
+xbmcgui.Dialog().ok('is installed',str(installed))
+if not installed:
+	yes = xbmcgui.Dialog().yesno('Addon not installed','install now ?','','','كلا','نعم')
+	if yes: helper._install_inputstream()
+"""
+
+def ENABLE_MPD(checkvideo=False):
 	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)')
-	if enabled==0:
-		yes = xbmcgui.Dialog().yesno('هذه ألإضافة عندك غير مفعلة','يجب تفعيل إضافة inputstream.adaptive لكي تعمل عندك فيديوهات نوع mpd فهل تريد تفعيل هذه الاضافة الان ؟','','','كلا','نعم')
-		if yes==1:
-			result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.adaptive", "enabled":true }}')
-			if 'OK' in result: xbmcgui.Dialog().ok('تم التفعيل','')
-			else: xbmcgui.Dialog().ok('التفعيل فشل','إضافة inputstream.adaptive غير موجودة عندك ويجب أن تقوم بتصيبها قبل محاولة تفعيلها')
-	elif showDialogs==True: xbmcgui.Dialog().ok('هذه ألإضافة عندك مفعلة','')
+	if not enabled:
+		if checkvideo: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذا الفيديو لا يعمل عندك . انت بحاجة إلى إضافة اسمها inputstream.adaptive لكي تستطيع تشغيل فيديوهات نوع hls ism mpd . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		else: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيب وتفعيل إضافة اسمها inputstream.adaptive لكي تعمل عندك فيديوهات نوع mpd hls ism  . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		if yes:
+			xbmc.executebuiltin('InstallAddon(inputstream.adaptive)',wait=True)
+			result = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"inputstream.adaptive","enabled":true}}')
+			if 'OK' in result: xbmcgui.Dialog().ok('رسالة من المبرمج','تم التنصيب والتفعيل والإضافة inputstream.adaptive جاهزة للاستخدام')
+			else: xbmcgui.Dialog().ok('رسالة من المبرمج','فشل في التنصيب أو التفعيل . البرنامج غير قادر على تنصيب أو تفعيل هذه الإضافة . والحل هو تنصيبها وتفعيلها من خارج البرنامج')
+	elif not checkvideo: xbmcgui.Dialog().ok('رسالة من المبرمج','هذه ألإضافة inputstream.adaptive عندك موجودة ومفعلة وجاهزة للاستخدام')
 	return
 
-def ENABLE_RTMP(showDialogs=True):
-	#result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.rtmp", "enabled":false }}')
-	#xbmcgui.Dialog().ok('',str(result))
+def ENABLE_RTMP(checkvideo=False):
 	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.rtmp)')
-	if enabled==0:
-		yes = xbmcgui.Dialog().yesno('هذه الإضافة عندك غير مفعلة','يجب تفعيل إضافة inputstream.rtmp لكي تعمل عندك فيديوهات نوع rtmp فهل تريد تفعيل هذه الاضافة الان ؟','','','كلا','نعم')
-		if yes==1:
-			result = xbmc.executeJSONRPC('{ "jsonrpc":"2.0", "method":"Addons.SetAddonEnabled", "id":1, "params": { "addonid":"inputstream.rtmp", "enabled":true }}')
-			if 'OK' in result: xbmcgui.Dialog().ok('تم التفعيل','')
-			else: xbmcgui.Dialog().ok('التفعيل فشل','إضافة inputstream.rtmp غير موجودة عندك ويجب أن تقوم بتصيبها قبل محاولة تفعيلها')
-	elif showDialogs==True: xbmcgui.Dialog().ok('هذه الإضافة عندك مفعلة','')
+	if not enabled:
+		if checkvideo: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذا الفيديو لا يعمل عندك . انت بحاجة إلى إضافة اسمها inputstream.rtmp لكي تستطيع تشغيل فيديوهات نوع rtmp . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		else: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيب وتفعيل إضافة اسمها inputstream.rtmp لكي تعمل عندك فيديوهات نوع rtmp . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		if yes:
+			xbmc.executebuiltin('InstallAddon(inputstream.rtmp)',wait=True)
+			result = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"inputstream.rtmp","enabled":true}}')
+			if 'OK' in result: xbmcgui.Dialog().ok('رسالة من المبرمج','تم التنصيب والتفعيل والإضافة inputstream.rtmp جاهزة للاستخدام')
+			else: xbmcgui.Dialog().ok('رسالة من المبرمج','فشل في التنصيب أو التفعيل . البرنامج غير قادر على تنصيب أو تفعيل هذه الإضافة . والحل هو تنصيبها وتفعيلها من خارج البرنامج')
+	elif not checkvideo: xbmcgui.Dialog().ok('رسالة من المبرمج','هذه ألإضافة inputstream.rtmp عندك موجودة ومفعلة وجاهزة للاستخدام')
 	return
 
 def WRITE_TO_SQL3(table,column,data,expiry):
@@ -1122,6 +1133,57 @@ def URLDECODE(url):
 			data2[key] = value
 	else: url2,data2 = url,{}
 	return url2,data2
+
+def EVAL(html):
+	html = html.replace('null','None').replace('u\'','\'')
+	html = html.replace('true','True').replace('false','False')
+	return eval(html)
+
+def TRANSLATE(text):
+	dict = {
+	'folder'		:'مجلد'
+	,'video'		:'فيديو'
+	,'live'			:'قناة'
+	,'AKOAM'		:'موقع أكوام القديم'
+	,'AKWAM'		:'موقع أكوام الجديد'
+	,'ALARAB'		:'موقع كل العرب'
+	,'ALFATIMI'		:'موقع المنبر الفاطمي'
+	,'ALKAWTHAR'	:'موقع قناة الكوثر'
+	,'ALMAAREF'		:'موقع قناة المعارف'
+	,'ARABLIONZ'	:'موقع عرب ليونز'
+	,'EGYBESTVIP'	:'موقع ايجي بيست vip'
+	,'HELAL'		:'موقع هلال يوتيوب'
+	,'IFILM'		:'موقع قناة اي فيلم'
+	,'IFILM_ARABIC'	:'موقع قناة اي فيلم العربي'
+	,'IFILM_ENGLISH':'موقع قناة اي فيلم انكليزي'
+	,'PANET'		:'موقع بانيت'
+	,'SHAHID4U'		:'موقع شاهد فوريو'
+	,'SHOOFMAX'		:'موقع شوف ماكس'
+	,'ARABSEED'		:'موقع عرب سييد'
+	,'YOUTUBE'		:'موقع يوتيوب'
+	,'LIVETV'		:'ملف'
+	,'IPTV'			:'ملف'
+	,'LIBRARY'		:'ملف'
+	#,'EGY4BEST'	:''
+	#,'EGYBEST'		:''
+	#,'HALACIMA'	:''
+	#,'MOVIZLAND'	:''
+	#,'SERIES4WATCH':''
+	}
+	if text in dict.keys(): return dict[text]
+	return ''
+
+def RANDOM_USERAGENT():
+	# https://github.com/lobstrio/shadow-useragent/blob/master/shadow_useragent/core.py
+	url = 'http://51.158.74.109/useragents/?format=json'
+	response = openURL_requests_cached(VERY_LONG_CACHE,'GET',url,'','','','','LIBRARY-RANDOM_USERAGENT-1st')
+	html = response.content
+	a = EVAL(html)
+	b = random.sample(a,1)
+	useragent = b[0]['useragent']
+	#xbmcgui.Dialog().ok('',useragent)
+	return useragent
+
 
 
 

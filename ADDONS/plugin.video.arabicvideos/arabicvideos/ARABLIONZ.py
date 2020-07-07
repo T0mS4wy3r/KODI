@@ -225,7 +225,7 @@ def PLAY(url):
 	#LOG_THIS('NOTICE','EMAD 222')
 	#xbmcgui.Dialog().ok('both: watch & download',	str(len(linkLIST))	)
 	#selection = xbmcgui.Dialog().select('أختر البحث المناسب', linkLIST)
-	if len(linkLIST)==0: xbmcgui.Dialog().ok('','الرابط ليس فيه فيديو')
+	if len(linkLIST)==0: xbmcgui.Dialog().ok('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')

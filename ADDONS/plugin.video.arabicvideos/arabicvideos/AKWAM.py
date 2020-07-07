@@ -55,7 +55,7 @@ def TITLES(url,type=''):
 		html_blocks = re.findall('class="widget"(.*?)main-footer',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
-		items = re.findall('src="(.*?)".*?href="(.*?)".*?text-white">(.*?)<',block,re.DOTALL)
+		items = re.findall('xlink:href="(.*?)".*?href="(.*?)".*?text-white">(.*?)<',block,re.DOTALL)
 		for img,link,title in items:
 			if '/series/' in link or '/shows/' in link:
 				addMenuItem('folder',menu_name+title,link,242,img)
@@ -122,7 +122,7 @@ def PLAY(url):
 		notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
 		file_extension = filename.rsplit('.',1)[1].strip(' ')
 		if file_extension in notvideosLIST:
-			xbmcgui.Dialog().ok('الملف ليس فيديو ولا صوت','')
+			xbmcgui.Dialog().ok('رسالة من المبرمج','الملف ليس فيديو ولا صوت')
 			return
 		blocks.append(block)
 		qualities.append('')

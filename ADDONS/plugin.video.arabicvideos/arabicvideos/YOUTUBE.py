@@ -6,8 +6,8 @@ menu_name='_YUT_'
 website0a = WEBSITES[script_name][0]
 
 #headers = '' 
-#headers = {'User-Agent':''}
-headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36'}
+headers = {'User-Agent':''}
+#headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36'}
 
 def MAIN(mode,url,text,type):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
@@ -79,13 +79,13 @@ def PLAY(url,type):
 	RESOLVERS.PLAY(linkLIST,script_name,type)
 	return
 
-def PLAYLIST_ITEMS_NEW(url):
+def PLAYLIST_ITEMS_NEW(url,html,c):
 	# https://www.youtube.com/watch?v=nMaNCKJCLfE&list=PLbg43835F8ge08Sb_gl6dbdGZzD3hCnQL
 	# https://www.youtube.com/playlist?list=PLbg43835F8ge08Sb_gl6dbdGZzD3hCnQL
 	if '/watch?v=' in url:
 		listID = re.findall('list=(.*?)&',url+'&',re.DOTALL)
 		url = website0a+'/playlist?list='+listID[0]
-	html,c = GET_PAGE_DATA(url)
+		html,c = GET_PAGE_DATA(url)
 	token = ''
 	if 'ctoken' in url:
 		f = c[1]['response']['continuationContents']['playlistVideoListContinuation']
@@ -114,9 +114,9 @@ def PLAYLIST_ITEMS_NEW(url):
 def PLAYLIST_ITEMS(url):
 	# https://www.youtube.com/playlist?list=PLRXjtfMCvJBUzMQksXgR2IB2_AndVBmfm
 	# https://www.youtube.com/watch?v=l5TBLKr3WYY&list=PLRXjtfMCvJBUzMQksXgR2IB2_AndVBmfm&index=18
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','YOUTUBE-PLAYLIST_ITEMS-1st')
-	if 'footer-container' not in html:
-		PLAYLIST_ITEMS_NEW(url)
+	html,c = GET_PAGE_DATA(url)
+	if c!='':
+		PLAYLIST_ITEMS_NEW(url,html,c)
 		return
 	if '/watch?v=' in url:
 		PLAYLIST_ITEMS_PLAYER(url)
@@ -153,8 +153,7 @@ def PLAYLIST_ITEMS(url):
 
 def PLAYLIST_ITEMS_PLAYER(url):
 	# https://www.youtube.com/watch?v=l5TBLKr3WYY&list=PLRXjtfMCvJBUzMQksXgR2IB2_AndVBmfm&index=18
-	#xbmcgui.Dialog().ok(url,'')
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','YOUTUBE-PLAYLIST_ITEMS_PLAYER-1st')
+	html,c = GET_PAGE_DATA(url)
 	html_blocks = re.findall('playlist-videos-container(.*?)watch7-container',html,re.DOTALL)
 	block = html_blocks[0]
 	items1 = re.findall('data-video-title="(.*?)".*?href="(.*?)"',block,re.DOTALL)
@@ -179,12 +178,7 @@ def SHELF_MENU(f):
 		addMenuItem('folder',menu_name+title,link,146)
 	return
 
-def CHANNEL_ITEMS_NEW(url):
-	#xbmcgui.Dialog().ok(url,'starting CHANNEL_ITEMS_NEW')
-	html,c = GET_PAGE_DATA(url)
-	#LOG_THIS('NOTICE','==================================================')
-	#LOG_THIS('NOTICE',str(c))
-	#LOG_THIS('NOTICE',str(c.keys()))
+def CHANNEL_ITEMS_NEW(url,html,c):
 	token = ''
 	if 'ctoken' in url:
 		g = c[1]['response']['continuationContents']['gridContinuation']
@@ -220,9 +214,9 @@ def CHANNEL_ITEMS_NEW(url):
 	return
 
 def CHANNEL_ITEMS(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','YOUTUBE-CHANNEL_ITEMS-1st')
-	if 'footer-container' not in html:
-		CHANNEL_ITEMS_NEW(url)
+	html,c = GET_PAGE_DATA(url)
+	if c!='':
+		CHANNEL_ITEMS_NEW(url,html,c)
 		return
 	if 'browse_ajax' in url:
 		html = CLEAN_AJAX(html)
@@ -320,27 +314,36 @@ def ITEMS_RENDER(item):
 	return True,title,link,img,count,duration,live
 
 def GET_PAGE_DATA(url):
-	headers2 = headers.copy()
-	if 'ctoken' in url: headers2.update({'X-YouTube-Client-Name':'1','X-YouTube-Client-Version':'2.20200618.01.01'})
-	html = openURL_cached(SHORT_CACHE,url,'',headers2,'','YOUTUBE-GET_PAGE_DATA-1st')
-	a,c = '',''
-	if 'ytInitialData' in html:
-		a = re.findall('window\["ytInitialData"\] = ({.*?});',html,re.DOTALL)
-		a = a[0]
-	elif '</script>' not in html: a = html
-	if a!='':
-		b = a.replace('true','True').replace('false','False')
-		c = eval(b)
-	return html,c
+	useragent = RANDOM_USERAGENT()
+	headers2 = {'User-Agent':useragent}
+	#headers2 = headers.copy()
+	settings = xbmcaddon.Addon(id=addon_id)
+	if 'ctoken' in url:
+		cver = settings.getSetting('youtube.clientversion')
+		headers2.update({'X-YouTube-Client-Name':'1','X-YouTube-Client-Version':cver})
+	html = openURL_cached(VERY_SHORT_CACHE,url,'',headers2,'','YOUTUBE-GET_PAGE_DATA-1st')
+	a,b = '',''
+	if 'footer-container' not in html:
+		if 'ytInitialData' in html:
+			a = re.findall('window\["ytInitialData"\] = ({.*?});',html,re.DOTALL)
+			a = a[0]
+		elif '</script>' not in html: a = html
+		if a!='':
+			b = EVAL(a)
+			try:
+				cver = b['responseContext']['serviceTrackingParams'][2]['params'][2]['value']
+				cver = cver.split('-')[0]
+				settings.setSetting('youtube.clientversion',cver)
+			except: pass
+	return html,b
 
-def TITLES_NEW(url):
-	#xbmcgui.Dialog().ok(url,'starting TITLES_NEW')
-	html,c = GET_PAGE_DATA(url)
-	#with open('S:\\00emad00.html', 'w') as f: f.write(html)
+def TITLES_NEW(url,html,c):
+	#xbmcgui.Dialog().ok(url,html)
+	#LOG_THIS('NOTICE',url)
+	#LOG_THIS('NOTICE',html)
 	if 'ctoken' in url: d = c[1]['response']['continuationContents']['itemSectionContinuation']
 	else: d = c['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][-1]['itemSectionRenderer']
 	e = d['contents']
-	#xbmcgui.Dialog().ok(str(len(e)),str(e[0].keys()))
 	for i in range(len(e)):
 		item = e[i]
 		if item.keys()[0]=='shelfRenderer': continue
@@ -359,9 +362,9 @@ def TITLES_NEW(url):
 	return
 
 def TITLES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','YOUTUBE-TITLES-1st')
-	if 'footer-container' not in html:
-		TITLES_NEW(url)
+	html,c = GET_PAGE_DATA(url)
+	if c!='':
+		TITLES_NEW(url,html,c)
 		return
 	html_blocks = re.findall('(yt-lockup-tile.*?)footer-container',html,re.DOTALL)
 	block = html_blocks[0]
@@ -423,14 +426,11 @@ def SEARCH(search):
 	#xbmc.executebuiltin('Dialog.Close(busydialog)')
 	#xbmc.executebuiltin('ActivateWindow(videos,'+url2+',return)')
 	html,c = GET_PAGE_DATA(url2)
-	if 'footer-container' not in html:
+	if c!='':
 		d = c['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['subMenu']['searchSubMenuRenderer']['groups']
 		for groupID in range(len(d)):
 			group = d[groupID]['searchFilterGroupRenderer']['filters']
 			for filterID in range(len(group)):
-				#LOG_THIS('NOTICE','=========================================')
-				#LOG_THIS('NOTICE',str(groupID))
-				#LOG_THIS('NOTICE',str(filterID))
 				render = group[filterID]['searchFilterRenderer']
 				if 'navigationEndpoint' in render.keys():
 					link = render['navigationEndpoint']['commandMetadata']['webCommandMetadata']['url']
@@ -440,6 +440,7 @@ def SEARCH(search):
 					title = title.replace('Sort by','Sort by:  ')
 					if 'Playlist' in title: title = 'جيد للمسلسلات '+title
 					fileterLIST.append(escapeUNICODE(title))
+					link = link.replace('\u0026','&')
 					linkLIST.append(website0a+link)
 	else:
 		html_blocks = re.findall('filter-dropdown(.*?)class="item-section',html,re.DOTALL)

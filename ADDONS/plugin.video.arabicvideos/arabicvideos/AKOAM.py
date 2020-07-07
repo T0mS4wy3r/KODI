@@ -195,7 +195,7 @@ def PLAY(url):
 	if len(linkLIST)==0:
 		message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
 		if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
-		else: xbmcgui.Dialog().ok('No video file found','لا يوجد ملف فيديو')
+		else: xbmcgui.Dialog().ok('رسالة من المبرمج','لا يوجد ملف فيديو')
 	else:
 		#xbmcgui.Dialog().select('',linkLIST)
 		import RESOLVERS

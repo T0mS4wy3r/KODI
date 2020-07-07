@@ -21,7 +21,7 @@ def MAIN(mode,url,text):
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
-	xbmcgui.Dialog().ok('الموقع تغير بالكامل',message)
+	xbmcgui.Dialog().ok('رسالة من المبرمج','الموقع تغير بالكامل',message)
 	return
 
 def MENU(website=''):
@@ -176,7 +176,7 @@ def PLAY(url):
 						link = link + '?name=' + name + server + '__download'
 						linkLIST.append(link)
 	if len(linkLIST)==0:
-		xbmcgui.Dialog().ok('','الرابط ليس فيه فيديو')
+		xbmcgui.Dialog().ok('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')

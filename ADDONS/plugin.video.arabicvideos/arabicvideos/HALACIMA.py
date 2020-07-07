@@ -21,7 +21,7 @@ def MAIN(mode,url,page,text):
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
-	xbmcgui.Dialog().ok('الموقع تغير بالكامل',message)
+	xbmcgui.Dialog().ok('رسالة من المبرمج',message)
 	return
 
 def MENU(website=''):
