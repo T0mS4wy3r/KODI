@@ -3,9 +3,12 @@ from LIBRARY import *
 
 script_name='IPTV'
 menu_name='_IPT_'
-headers = {'User-Agent':''}
 
-def MAIN(mode,url,text):
+settings = xbmcaddon.Addon(id=addon_id)
+useragent = settings.getSetting('iptv.useragent')
+headers = {'User-Agent':useragent}
+
+def MAIN(mode,url,text,type):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	#LOG_THIS('NOTICE','start')
 	if   mode==230: results = MENU()
@@ -13,11 +16,12 @@ def MAIN(mode,url,text):
 	elif mode==232: results = CREATE_STREAMS()
 	elif mode==233: results = GROUPS(url,text)
 	elif mode==234: results = ITEMS(url,text)
-	elif mode==235: results = PLAY(url,'live')
-	elif mode==236: results = PLAY(url,'video')
+	elif mode==235: results = PLAY(url,type)
+	elif mode==236: results = PLAY(url,type)
 	elif mode==237: results = DELETE_IPTV_FILES(True)
 	elif mode==238: results = EPG_ITEMS(url,text)
 	elif mode==239: results = SEARCH(text)
+	elif mode==280: results = ADD_USERAGENT()
 	else: results = False
 	#LOG_THIS('NOTICE','end')
 	return results
@@ -52,6 +56,7 @@ def MENU():
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'إضافة اشتراك IPTV','',231)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'جلب ملفات IPTV','',232)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'مسح ملفات IPTV','',237)
+	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'تغيير IPTV User-Agent','',280)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
@@ -126,7 +131,7 @@ def ITEMS(TYPE,GROUP):
 			elif 'EPG' in TYPE: addMenuItem('folder',menu_name+' '+title,url,238,img,'','full_epg')
 			elif 'TIMESHIFT' in TYPE: addMenuItem('folder',menu_name+' '+title,url,238,img,'','timeshift')
 			elif 'LIVE' in TYPE: addMenuItem('live',menu_name+' '+title,url,235,img)
-			else: addMenuItem('video',menu_name+' '+title,url,236,img)
+			else: addMenuItem('video',menu_name+' '+title,url,235,img)
 	#xbmcgui.Dialog().ok('OUT',str(menuItemsLIST))
 	WRITE_TO_SQL3('IPTV_ITEMS',[TYPE,GROUP],menuItemsLIST,VERY_LONG_CACHE)
 	menuItemsLIST[:] = previous_menuItemsLIST+menuItemsLIST
@@ -167,6 +172,7 @@ def EPG_ITEMS(url,function):
 	all_epg = archive_files['epg_listings']
 	epg_items = []
 	if function in ['archive','timeshift']:
+		addMenuItem('link',menu_name+'الملفات الأولي بالقائمة قد لا تعمل','',9999)
 		for dict in all_epg:
 			if dict['has_archive']==1:
 				epg_items.append(dict)
@@ -195,8 +201,8 @@ def EPG_ITEMS(url,function):
 	elif function in ['short_epg','full_epg']: epg_items = all_epg
 	#english = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed' , 'Thu', 'Fri']
 	#arabic = ['سبت', 'أحد', 'أثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة']
-	img = xbmc.getInfoLabel('ListItem.Icon')
 	epg_list = []
+	img = xbmc.getInfoLabel('ListItem.Icon')
 	for dict in epg_items:
 		title = base64.b64decode(dict['title'])
 		start_timestamp = int(dict['start_timestamp'])
@@ -217,28 +223,49 @@ def EPG_ITEMS(url,function):
 		if function in ['archive','full_epg','timeshift']:
 			timeshift_url = server+'/timeshift/'+username+'/'+password+'/'+duration_minutes+'/'+start_string+'/'+stream_id+'.m3u8'
 			if function=='full_epg': addMenuItem('link',menu_name+title,timeshift_url,9999,img)
-			else: addMenuItem('video',menu_name+title,timeshift_url,236,img)
+			else: addMenuItem('video',menu_name+title,timeshift_url,235,img)
 		epg_list.append(title)
 	if function=='short_epg': selection = xbmcgui.Dialog().contextmenu(epg_list)
 	return epg_list
 
 def PLAY(url,type):
+	if headers['User-Agent']!='': url = url+'|User-Agent='+headers['User-Agent']
 	PLAY_VIDEO(url,script_name,type)
+	return
+
+def ADD_USERAGENT():
+	settings = xbmcaddon.Addon(id=addon_id)
+	xbmcgui.Dialog().ok('رسالة من المبرمج','تحذير مهم وهام جدا . يرجى عدم تغييره إذا كنت لا تعرف ما هو .  وعدم تغييره إلا عند الضرورة القصوى . الحاجة لهذا التغيير هي فقط إذا طلبت منك شركة IPTV أن تعمل هذا التغيير . وفقط عندما تستخدم خدمة IPTV تحتاج User-Agent خاص')
+	useragent = settings.getSetting('iptv.useragent')
+	answer = xbmcgui.Dialog().yesno(useragent,'هذا هو IPTV User-Agent المسجل في البرنامج . هل تريد تعديله أم تريد مسحه . للعلم عند المسح سوف يعود إلى الأصلي الذي يناسب جميع شركات IPTV ؟!','','','مسح القديم','تعديل القديم')
+	if answer:
+		useragent = KEYBOARD('أكتب IPTV User-Agent جديد',useragent)
+		if useragent=='': return
+	else: useragent = ''
+	answer = xbmcgui.Dialog().yesno(useragent,'هل تريد استخدام هذا IPTV User-Agent بدلا من  القديم ؟','','','كلا','نعم')
+	if not answer:
+		xbmcgui.Dialog().ok('رسالة من المبرمج','تم الإلغاء')
+		return
+	settings.setSetting('iptv.useragent',useragent)
+	xbmcgui.Dialog().ok(useragent,'تم تغيير IPTV User-Agent إلى هذا الجديد')
+	CREATE_STREAMS()
 	return
 
 def ADD_ACCOUNT():
 	settings = xbmcaddon.Addon(id=addon_id)
-	xbmcgui.Dialog().ok('رسالة من المبرمج','البرنامج يحتاج اشتراك IPTV من نوع رابط التحميل m3u من أي شركة IPTV والأفضل أن يحتوي الرابط في نهايته على هذه الكلمات','&type=m3u_plus')
+	answer = xbmcgui.Dialog().yesno('رسالة من المبرمج','البرنامج يحتاج اشتراك IPTV من نوع رابط التحميل m3u من أي شركة IPTV والأفضل أن يحتوي الرابط في نهايته على هذه الكلمات\n\r&type=m3u_plus\n\rهل تريد تغيير الرابط الآن ؟','','','كلا','نعم')
+	if not answer: return
 	iptvURL = settings.getSetting('iptv.url')
 	if iptvURL!='':
 		answer = xbmcgui.Dialog().yesno(iptvURL,'هذا هو رابط IPTV المسجل في البرنامج ... هل تريد تعديله أم تريد كتابة رابط جديد ؟!','','','كتابة جديد','تعديل القديم')
 		if not answer: iptvURL = ''
 	iptvURL = KEYBOARD('اكتب رابط IPTV كاملا',iptvURL)
-	iptvURL = iptvURL.strip(' ')
 	if iptvURL=='': return
 	else:
 		answer = xbmcgui.Dialog().yesno(iptvURL,'هل تريد استخدام هذا الرابط بدلا من الرابط القديم ؟','','','كلا','نعم')
-		if not answer: return
+		if not answer:
+			xbmcgui.Dialog().ok('رسالة من المبرمج','تم الإلغاء')
+			return
 	settings.setSetting('iptv.url',iptvURL)
 	xbmcgui.Dialog().ok(iptvURL,'تم تغير رابط اشتراك IPTV إلى هذا الرابط الجديد')
 	CREATE_STREAMS()
@@ -269,7 +296,7 @@ def SEARCH(search=''):
 		img = dict['img']
 		if '____' in group: maingroup,subgroup = group.split('____')
 		else: maingroup,subgroup = group,''
-		if subgroup!='': title2 = maingroup+'  ||  '+subgroup
+		if subgroup!='': title2 = maingroup+' || '+subgroup
 		else: title2 = maingroup
 		if searchLower in group.lower():
 			if title2 not in uniqueLIST:
@@ -277,10 +304,10 @@ def SEARCH(search=''):
 				addMenuItem('folder',menu_name+title2,TYPE,234,img,'',group)
 		elif searchLower in title.lower():
 			url = dict['url']
-			title2 = title2+'  ||  '+title
+			title2 = title2+' || '+title
 			if '!!__UNKNOWN__!!' in group: title2 = '!!__UNKNOWN__!!'
 			if '.mp4' in url or '.mkv' in url or '.avi' in url or '.mp3' in url:
-				addMenuItem('video',menu_name+title2,url,236,img)
+				addMenuItem('video',menu_name+title2,url,235,img)
 			else: addMenuItem('live',menu_name+title2,url,235,img)
 	menuItemsLIST[:] = sorted(menuItemsLIST, reverse=False, key=lambda key: key[1])
 	return
@@ -313,7 +340,7 @@ def SPLIT_NAME(title):
 
 def CREATE_STREAMS(ask_dialog=True):
 	xbmcgui.Dialog().notification('IPTV','جلب ملفات جديدة')
-	BUSY_DIALOG('start') ; 
+	BUSY_DIALOG('start')
 	#LOG_THIS('NOTICE','EMAD 111')
 	if ask_dialog:
 		answer = xbmcgui.Dialog().yesno('رسالة من المبرمج','هل تريد أن تجلب الآن ملفات IPTV جديدة ؟','','','كلا','نعم')
@@ -363,10 +390,12 @@ def CREATE_STREAMS(ask_dialog=True):
 			m3u_text = m3u_text.replace('group="'+group+'"','group="__MOVIES__'+group+'"')
 		url = server+'/player_api.php?username='+username+'&password='+password+'&action=get_live_streams'
 		html = openURL_cached(SHORT_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-4th')
-		live_epg = re.findall('"name":"(.*?)".*?"tv_archive":(.*?),',html,re.DOTALL)
-		for name,archived in live_epg:
-			live_epg_channels.append(name)
+		live_archived = re.findall('"name":"(.*?)".*?"tv_archive":(.*?),',html,re.DOTALL)
+		for name,archived in live_archived:
 			if archived=='1': live_archived_channels.append(name)
+		live_epg = re.findall('"name":"(.*?)".*?"epg_channel_id":(.*?),',html,re.DOTALL)
+		for name,epg in live_epg:
+			if epg!='null': live_epg_channels.append(name)
 	#LOG_THIS('NOTICE','EMAD 222')
 	lines = re.findall('#EXTINF(.*?)[\n\r]+(.*?)[\n\r]+',m3u_text+'\n',re.DOTALL)
 	#LOG_THIS('NOTICE','EMAD 333')

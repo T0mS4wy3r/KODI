@@ -9,6 +9,8 @@ def MAIN(mode,text=''):
 	if   mode==  2: SEND_MESSAGE(text)
 	elif mode==  3: DMCA()
 	elif mode==  4: HTTPS_TEST()
+	elif mode==  5: INPUTSTREAM_ADAPTIVE_SETTINGS()
+	elif mode==  6: KODI_INTERFACE_SETTINGS()
 	elif mode==  7: VERSIONS()
 	elif mode==  9: DELETE_CACHE()
 	elif mode==150: USING_FAVOURITES()
@@ -122,15 +124,6 @@ def NO_ARABIC_FONTS():
 	if yes==1: xbmc.executebuiltin("ActivateWindow(InterfaceSettings)")
 	return
 
-def HTTPS_FAILED():
-	message1 = 'بعض المواقع تحتاج ربط مشفر وقد يكون جهازك غير قادر على الربط المشفر أو هناك مشكلة في شهادة التشفير الخاصة بكودي عندك علما انه تم فحص البرنامج على كودي الإصدارات'
-	message2 = '17.6  &  18.[0-3]'
-	xbmcgui.Dialog().ok('رسالة من المبرمج',message1,message2)
-	#message2 = 'شهادة التشفير هي ملف يحتوي على شفرة خاصة أو تواقيع خاصة لشركات معروفة وله تاريخ صلاحية ونفاذ والغرض منه هو تبادل المعلومات بطريقة مشفرة يصعب اختراقها وفهمها'
-	#xbmcgui.Dialog().ok('شهادة التشفير - SSL Certificate',message2)
-	LATEST_KODI()
-	return
-
 def LINKS_NOT_WORKING():
 	xbmcgui.Dialog().ok('رسالة من المبرمج','غالبا السبب هو من الموقع الأصلي المغذي للبرنامج وللتأكد قم بتشغيل الرابط الذي لا يعمل ثم قم بإرسال مشكلة إلى المبرمج من القائمة الرئيسية للبرنامج')
 	return
@@ -230,9 +223,23 @@ def DELETE_CACHE():
 		xbmcgui.Dialog().ok('تم مسح كاش البرنامج بالكامل','إذا كانت عندك مشكلة في احد المواقع فجرب الموقع الآن ... وأدا المشكلة مستمرة فإذن ارسل المشكلة إلى المبرمج')
 	return yes
 
-def HTTPS_TEST():
-	working = HTTPS(True)
-	if not working: HTTPS_FAILED()
+def HTTPS_TEST(showDialogs=True):
+	html = openURL_cached(NO_CACHE,'https://www.google.com','','',False,'LIBRARY-HTTPS-1st')
+	if '___Error___' in html:
+		worked = False
+		LOG_THIS('ERROR',LOGGING(script_name)+'   HTTPS Failed   Label:['+menu_label+']   Path:['+menu_path+']')
+		if showDialogs: xbmcgui.Dialog().ok('رسالة من المبرمج','فحص الاتصال المشفر ... مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة')
+	else:
+		worked = True
+		if showDialogs: xbmcgui.Dialog().ok('رسالة من المبرمج','فحص الاتصال المشفر ... جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل عندك والبرنامج قادر على استخدام المواقع المشفرة')
+	if not worked and showDialogs: HTTPS_FAILED()
+	return
+
+def HTTPS_FAILED():
+	xbmcgui.Dialog().ok('رسالة من المبرمج','بعض المواقع تحتاج ربط مشفر وقد يكون جهازك غير قادر على الربط المشفر أو هناك مشكلة في شهادة التشفير الخاصة بكودي عندك علما انه تم فحص البرنامج على كودي الإصدارات \r\n 17.6  &  18.[0-7]')
+	#message2 = 'شهادة التشفير هي ملف يحتوي على شفرة خاصة أو تواقيع خاصة لشركات معروفة وله تاريخ صلاحية ونفاذ والغرض منه هو تبادل المعلومات بطريقة مشفرة يصعب اختراقها وفهمها'
+	#xbmcgui.Dialog().ok('شهادة التشفير - SSL Certificate',message2)
+	LATEST_KODI()
 	return
 
 def SEND_MESSAGE(text=''):
@@ -263,9 +270,7 @@ def SEND_MESSAGE(text=''):
 		"""
 	xbmcgui.Dialog().ok('رسالة من المبرمج','اكتب الآن رسالة للمبرمج واكتب المشكلة والايميل والأفضل مراسلة المبرمج على الفيسبوك "الحاج عماد مهدي" أو فتح نقاش بهذا الرابط وللعلم المبرمج لا يعلم الغيب','https://github.com/emadmahdi/KODI/issues')
 	search = KEYBOARD('Write a message   اكتب رسالة')
-	if search == '':
-		xbmcgui.Dialog().ok('تم إلغاء الإرسال','تم إلغاء الإرسال لأنك لم تكتب أي شيء')
-		return ''
+	if search=='': return ''
 	message = search
 	subject = 'Message: From Arabic Videos'
 	if problem: text = 'PROBLEM'
@@ -492,15 +497,24 @@ def ANALYTICS_REPORT():
 	return
 
 def KODI_SKIN():
-	xbmcgui.Dialog().textviewer('رسالة من المبرمج','هذا البرنامج يعمل افضل باستخدام واجهة كودي (Kodi Skin) التي اسمها\n"[COLOR FFC89008]metropolisEMAD[/COLOR]"\n\nوهي موجودة في نفس موقع البرنامج\n[COLOR FFC89008]https://github.com/emadmahdi/KODI [/COLOR]\n\nهذه الرسالة وغيرها كثير موجودة في قائمة خدمات البرنامج والمزيد أيضا موجود في قائمة أجوبة البرنامج')
+	xbmcgui.Dialog().textviewer('رسالة من المبرمج','هذا البرنامج يعمل افضل باستخدام واجهة كودي (Kodi Skin) التي اسمها\n"[COLOR FFC89008]metropolisEMAD[/COLOR]"\n\n وممكن تنصيبها إما باستخدام مخزن عماد EMAD Repository أو ممكن جلبها من موقع البرنامج\n[COLOR FFC89008]https://github.com/emadmahdi/KODI [/COLOR]\n\n هذه الرسالة وغيرها كثير موجودة في قائمة خدمات البرنامج والمزيد أيضا موجود في قائمة أجوبة البرنامج')
 	return
 
 def RESOLVEURL_SETTINGS():
 	xbmc.executebuiltin('Addon.OpenSettings(script.module.resolveurl)', True)
 	return
 
+def KODI_INTERFACE_SETTINGS():
+	xbmc.executebuiltin("ActivateWindow(InterfaceSettings)")
+	return
+
+
 def YOUTUBE_DL_SETTINGS():
 	xbmc.executebuiltin('Addon.OpenSettings(script.module.youtube.dl)', True)
+	return
+
+def INPUTSTREAM_ADAPTIVE_SETTINGS():
+	xbmc.executebuiltin('Addon.OpenSettings(inputstream.adaptive)', True)
 	return
 
 def CHECK_FOR_ADDONS_UPDATES():
@@ -522,14 +536,14 @@ def INSTALL_REPOSITORY(show_ok_msg=True):
 	is_enabled = (xbmc.getCondVisibility('System.HasAddon('+repo_addon+')')==1)
 	#xbmcgui.Dialog().ok(str(is_enabled),str(is_old_version))
 	if is_installed and is_enabled and not is_old_version:
-		if show_ok_msg: xbmcgui.Dialog().ok('EMAD Repository مخزن عماد','المخزن موجود عندك ومفعل وجاهز للاستخدام v'+installed_repo_version)
+		if show_ok_msg: xbmcgui.Dialog().ok('رسالة من المبرمج','فحص مخزن عماد EMAD Repository\n\r هذا المخزن موجود عندك ومفعل وجاهز للاستخدام \n\r v'+installed_repo_version)
 	elif is_installed and not is_enabled and not is_old_version:
-		yes = xbmcgui.Dialog().yesno('EMAD Repository مخزن عماد','مخزن عماد موجود عندك ولكن غير مفعل . هل تريد تصليح المشكلة الآن ؟','','','كلا','نعم')
+		yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','مخزن عماد EMAD Repository\n\r موجود عندك ولكن غير مفعل . هل تريد إصلاح المشكلة الآن ؟','','','كلا','نعم')
 		if yes: 
 			xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"'+repo_addon+'","enabled":true}}')
-			xbmcgui.Dialog().ok('EMAD Repository مخزن عماد','تم تفعيل المخزن')
+			xbmcgui.Dialog().ok('رسالة من المبرمج','تم تفعيل\n\r مخزن عماد EMAD Repository')
 	else:
-		yes = xbmcgui.Dialog().yesno('EMAD Repository مخزن عماد','مخزن عماد عندك فيه مشكلة ... أما قديم أو غير مفعل أو غير موجود عندك ... هل تريد تصحيح المشكلة الآن ؟','','','كلا','نعم')
+		yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','مخزن عماد EMAD Repository\n\r فيه مشكلة عندك ... أما قديم أو غير مفعل أو غير موجود عندك ... هل تريد إصلاح المشكلة الآن ؟','','','كلا','نعم')
 		if yes: 
 			xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"'+repo_addon+'","enabled":true}}')
 			repo_zipfile = repo_addon+'-'+repo_version+'.zip'
@@ -544,7 +558,7 @@ def INSTALL_REPOSITORY(show_ok_msg=True):
 			xbmc.executebuiltin('UpdateLocalAddons')
 			xbmc.sleep(1000)
 			xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"'+repo_addon+'","enabled":true}}')
-			xbmcgui.Dialog().ok('EMAD Repository مخزن عماد','تم تنصيب وتفعيل المخزن في كودي','الإصدار رقم v'+repo_version)
+			xbmcgui.Dialog().ok('رسالة من المبرمج','تم تنصيب وتفعيل\n\r مخزن عماد EMAD Repository\r\n الإصدار رقم v'+repo_version)
 	return
 
 def DELETE_FAVOURITES_AND_LAST_MENUS():

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from LIBRARY import *
-
+LOG_THIS('NOTICE','============================================================================================')
 script_name = 'MAIN'
 
 
@@ -15,7 +15,6 @@ mode2 = int(mode0/10)
 #xbmcgui.Dialog().ok('['+menu_label+']','['+menu_path+']')
 
 
-LOG_THIS('NOTICE','============================================================================================')
 #message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
 if mode0==260: message = '  Version: [ '+addon_version+' ]  Kodi: [ '+kodi_release+' ]'
 else:
@@ -73,17 +72,23 @@ else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,favou
 
 if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 if not os.path.exists(dbfile):
-	import IPTV
-	#iptv = IPTV.isIPTVFiles(False)
+	xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح الكاش الموجود في البرنامج . أو تم تحديث البرنامج إلى الإصدار الجديد . سيقوم البرنامج الآن ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
 	CLEAN_KODI_CACHE_FOLDER()
 	conn = sqlite3.connect(dbfile)
 	conn.close()
-	xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح الكاش الموجود في البرنامج . أو تم تحديث البرنامج إلى الإصدار الجديد . إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
 	import SERVICES
 	SERVICES.KODI_SKIN()
-	SERVICES.INSTALL_REPOSITORY(False)
+	#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص اضافات adaptive + rtmp')
+	#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص مخزن عماد')
 	#xbmcgui.Dialog().ok('',str(iptv))
+	ENABLE_MPD(False)
+	ENABLE_RTMP(False)
+	SERVICES.INSTALL_REPOSITORY(True)
+	SERVICES.HTTPS_TEST()
+	#iptv = IPTV.isIPTVFiles(False)
 	#if iptv: 
+	xbmcgui.Dialog().ok('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
+	import IPTV
 	IPTV.CREATE_STREAMS(False)
 
 

@@ -46,8 +46,9 @@ def MENU(website=''):
 	return html
 
 def RAMADAN_MENU():
-	addMenuItem('folder',menu_name+'المسلسلات العربية',website0a+'/view-8/مسلسلات-عربية',11)
-	addMenuItem('folder',menu_name+'مسلسلات رمضان 2020','',16)
+	#addMenuItem('folder',menu_name+'المسلسلات العربية',website0a+'/view-8/مسلسلات-عربية',11)
+	addMenuItem('folder',menu_name+'مسلسلات رمضان 2020 ؟!','',16)
+	addMenuItem('folder',menu_name+'مسلسلات رمضان 2020',website0a+'/view-8/مسلسلات-رمضان-2020',11)
 	addMenuItem('folder',menu_name+'مسلسلات رمضان 2019',website0a+'/ramadan2019/مصرية',11)
 	addMenuItem('folder',menu_name+'مسلسلات رمضان 2018',website0a+'/ramadan2018/مصرية',11)
 	addMenuItem('folder',menu_name+'مسلسلات رمضان 2017',website0a+'/ramadan2017/مصرية',11)
@@ -59,7 +60,7 @@ def LATEST():
 	#xbmcgui.Dialog().ok('',html)
 	html_blocks=re.findall('heading-top(.*?)div class=',html,re.DOTALL)
 	block = html_blocks[0]+html_blocks[1]
-	items=re.findall('href="(.*?)".*?src="(.*?)" alt="(.*?)"',block,re.DOTALL)
+	items=re.findall('href="(.*?)".*?data-src="(.*?)" alt="(.*?)"',block,re.DOTALL)
 	for link,img,title in items:
 		url = website0a + link
 		if 'series' in url: addMenuItem('folder',menu_name+title,url,11,img)

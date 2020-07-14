@@ -85,8 +85,8 @@ kodi_release = xbmc.getInfoLabel("System.BuildVersion")
 kodi_version = re.findall('&&(.*?)[ -]','&&'+kodi_release,re.DOTALL)
 kodi_version = float(kodi_version[0])
 #xbmcgui.Dialog().ok(kodi_release,str(kodi_version))
-icon = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id, 'icon.png'))
-fanart = xbmc.translatePath(os.path.join('special://home/addons/' + addon_id , 'fanart.jpg'))
+icon = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'icon.png'))
+fanart = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'fanart.jpg'))
 
 addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
 dbfile = os.path.join(addoncachefolder,"webcache_"+addon_version+".db")
@@ -161,11 +161,12 @@ def MAIN_DISPATCHER(type,name,url,mode,image,page,text,favourite):
 	elif mode2==20: import ARABLIONZ	; results = ARABLIONZ.MAIN(mode,url,text)
 	elif mode2==21: import SERIES4WATCH ; results = SERIES4WATCH.MAIN(mode,url,text)
 	elif mode2==22: import EGYBESTVIP 	; results = EGYBESTVIP.MAIN(mode,url,page,text)
-	elif mode2==23: import IPTV 		; results = IPTV.MAIN(mode,url,text)
+	elif mode2==23: import IPTV 		; results = IPTV.MAIN(mode,url,text,type)
 	elif mode2==24: import AKWAM 		; results = AKWAM.MAIN(mode,url,text)
 	elif mode2==25: import ARABSEED 	; results = ARABSEED.MAIN(mode,url,text)
 	elif mode2==26: import MENUS 		; results = MENUS.MAIN(mode,url,text)
 	elif mode2==27: import FAVOURITES 	; results = FAVOURITES.MAIN(mode,favourite)
+	elif mode2==28: import IPTV 		; results = IPTV.MAIN(mode,url,text,type)
 	return results
 
 def LOG_MENU_LABEL(script_name,label,mode,path):
@@ -309,6 +310,8 @@ NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
 				,'EGYBESTVIP-PLAY-2nd'
 				,'EGYBESTVIP-PLAY-3rd'
 				,'HELAL-ITEMS-1st'
+				,'YOUTUBE-RANDOM_USERAGENT-1st'
+				,'LIBRARY-HTTPS-1st'
 				]
 """				,'AKOAM-MENU-1st'
 				,'AKWAM-MENU-1st'
@@ -402,9 +405,9 @@ def getKodiMenuItem(menuItem):
 	else: image = icon
 	if favourite!='': path = path+'&favourite='+favourite
 	listitem = xbmcgui.ListItem(name)
-	listitem.setArt({'icon':image,'thumb':image,'fanart':fanart,})
+	listitem.setArt({'icon':image,'thumb':image,'fanart':image,})
 	context_menu = []
-	if mode in [235,238]:
+	if mode in [235,238] and type=='live':
 		run_path = 'plugin://'+addon_id+'?mode=238&text=short_epg&url='+url
 		run_text = '[COLOR FFFFFF00]البرامج القادمة[/COLOR]'
 		run_item = (run_text,'XBMC.RunPlugin('+run_path+')')
@@ -544,7 +547,10 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 	except requests.exceptions.RequestException as err:
 		reason,code = err.message,-1
 		succeded = False
-	except err:
+	except:
+		#err_class = sys.exc_info()[0]
+		#err_function = sys.exc_info()[1]
+		#err_traceback = sys.exc_info()[2]
 		# to find the code & reason from any class
 		#print dir(err)
 		#for i in dir(err):
@@ -675,7 +681,7 @@ def KEYBOARD(header='لوحة المفاتيح',default=''):
 	text = xbmcgui.Dialog().input(header,default,type=xbmcgui.INPUT_ALPHANUM)
 	text = text.strip(' ')
 	if len(text.decode('utf8'))<1:
-		#xbmcgui.Dialog().ok('Wrong entry. Try again','خطأ في الادخال. أعد المحاولة')
+		xbmcgui.Dialog().ok('رسالة من المبرمج','تم إلغاء الإدخال')
 		return ''
 	text = mixARABIC(text)
 	return text
@@ -756,11 +762,12 @@ def PLAY_VIDEO(url3,website='',type='video'):
 	play_item.setProperty('inputstreamaddon', '')
 	play_item.setMimeType('mime/x-type')
 	play_item.setInfo('Video', {'mediatype': 'video'})
-	type99,name,url99,mode99,image99,page99,text99,favourite = EXTRACT_KODI_PATH()
+	type99,name,url99,mode99,image,page99,text99,favourite = EXTRACT_KODI_PATH()
+	#img = xbmc.getInfoLabel('ListItem.icon')
+	play_item.setArt({'icon':image,'thumb':image,'fanart':fanart})
+	play_item.setInfo( "Video",{'Title':name,'Label':name})
 	#name = xbmc.getInfoLabel('ListItem.Label')
 	#name = name.strip(' ')
-	play_item.setInfo( "Video", { "Title": name } )
-	play_item.setInfo( "Video", { "Label": name } )
 	myplayer = CustomePlayer()
 	if videofiletype in ['.ts','.mkv','.mp4','.mp3','.flv']:
 		#when set to "False" it makes glarabTV fails and make WS2TV opens fast
@@ -924,19 +931,6 @@ def dummyClientID(length):
 	#return ''
 	"""
 
-def HTTPS(showDialogs=True):
-	if showDialogs: html = openURL('https://www.google.com','','','','SERVICES-HTTPS-1st')
-	else: html = openURL_cached(LONG_CACHE,'https://www.google.com','','','','SERVICES-HTTPS-2nd')
-	if '___Error___' in html:
-		worked = False
-		https_problem = 'مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة'
-		LOG_THIS('ERROR',LOGGING(script_name)+'   HTTPS Failed   Label:['+menu_label+']   Path:['+menu_path+']')
-		if showDialogs: xbmcgui.Dialog().ok('رسالة من المبرمج',https_problem)
-	else:
-		worked = True
-		if showDialogs: xbmcgui.Dialog().ok('رسالة من المبرمج','جيد جدا ... الاتصال المشفر (الربط المشفر) يعمل عندك على كودي ... وعندك كودي قادر على استخدام المواقع المشفرة')
-	return worked
-
 def DNS_RESOLVER(url,dnsserver=''):
 	if url.replace('.','').isdigit(): return [url]
 	if dnsserver=='': dnsserver = '8.8.8.8'
@@ -1020,30 +1014,30 @@ if not installed:
 	if yes: helper._install_inputstream()
 """
 
-def ENABLE_MPD(checkvideo=False):
+def ENABLE_MPD(checkvideo_msg=False):
 	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)')
 	if not enabled:
-		if checkvideo: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذا الفيديو لا يعمل عندك . انت بحاجة إلى إضافة اسمها inputstream.adaptive لكي تستطيع تشغيل فيديوهات نوع hls ism mpd . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
-		else: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيب وتفعيل إضافة اسمها inputstream.adaptive لكي تعمل عندك فيديوهات نوع mpd hls ism  . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		if checkvideo_msg: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذا الفيديو لا يعمل عندك . انت بحاجة إلى إضافة اسمها inputstream.adaptive لكي تستطيع تشغيل فيديوهات نوع mpd hls ism . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		else: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','inputstream.adaptive \n\r هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيبها وتفعيلها لكي تعمل عندك فيديوهات نوع mpd hls ism  . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
 		if yes:
 			xbmc.executebuiltin('InstallAddon(inputstream.adaptive)',wait=True)
 			result = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"inputstream.adaptive","enabled":true}}')
-			if 'OK' in result: xbmcgui.Dialog().ok('رسالة من المبرمج','تم التنصيب والتفعيل والإضافة inputstream.adaptive جاهزة للاستخدام')
+			if 'OK' in result: xbmcgui.Dialog().ok('رسالة من المبرمج','تم التنصيب والتفعيل وهذه الإضافة inputstream.adaptive جاهزة للاستخدام')
 			else: xbmcgui.Dialog().ok('رسالة من المبرمج','فشل في التنصيب أو التفعيل . البرنامج غير قادر على تنصيب أو تفعيل هذه الإضافة . والحل هو تنصيبها وتفعيلها من خارج البرنامج')
-	elif not checkvideo: xbmcgui.Dialog().ok('رسالة من المبرمج','هذه ألإضافة inputstream.adaptive عندك موجودة ومفعلة وجاهزة للاستخدام')
+	elif not checkvideo_msg: xbmcgui.Dialog().ok('رسالة من المبرمج','فحص اضافة inputstream.adaptive \n\r هذه ألإضافة عندك موجودة ومفعلة وجاهزة للاستخدام')
 	return
 
-def ENABLE_RTMP(checkvideo=False):
+def ENABLE_RTMP(checkvideo_msg=False):
 	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.rtmp)')
 	if not enabled:
-		if checkvideo: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذا الفيديو لا يعمل عندك . انت بحاجة إلى إضافة اسمها inputstream.rtmp لكي تستطيع تشغيل فيديوهات نوع rtmp . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
-		else: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيب وتفعيل إضافة اسمها inputstream.rtmp لكي تعمل عندك فيديوهات نوع rtmp . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		if checkvideo_msg: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذا الفيديو لا يعمل عندك . انت بحاجة إلى إضافة اسمها inputstream.rtmp لكي تستطيع تشغيل فيديوهات نوع rtmp . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		else: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','inputstream.rtmp \n\r هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيبها وتفعيلها لكي تعمل عندك فيديوهات نوع rtmp  . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
 		if yes:
 			xbmc.executebuiltin('InstallAddon(inputstream.rtmp)',wait=True)
 			result = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"inputstream.rtmp","enabled":true}}')
-			if 'OK' in result: xbmcgui.Dialog().ok('رسالة من المبرمج','تم التنصيب والتفعيل والإضافة inputstream.rtmp جاهزة للاستخدام')
+			if 'OK' in result: xbmcgui.Dialog().ok('رسالة من المبرمج','تم التنصيب والتفعيل وهذه الإضافة inputstream.rtmp جاهزة للاستخدام')
 			else: xbmcgui.Dialog().ok('رسالة من المبرمج','فشل في التنصيب أو التفعيل . البرنامج غير قادر على تنصيب أو تفعيل هذه الإضافة . والحل هو تنصيبها وتفعيلها من خارج البرنامج')
-	elif not checkvideo: xbmcgui.Dialog().ok('رسالة من المبرمج','هذه ألإضافة inputstream.rtmp عندك موجودة ومفعلة وجاهزة للاستخدام')
+	elif not checkvideo_msg: xbmcgui.Dialog().ok('رسالة من المبرمج','فحص اضافة inputstream.rtmp \n\r هذه ألإضافة عندك موجودة ومفعلة وجاهزة للاستخدام')
 	return
 
 def WRITE_TO_SQL3(table,column,data,expiry):
@@ -1173,16 +1167,6 @@ def TRANSLATE(text):
 	if text in dict.keys(): return dict[text]
 	return ''
 
-def RANDOM_USERAGENT():
-	# https://github.com/lobstrio/shadow-useragent/blob/master/shadow_useragent/core.py
-	url = 'http://51.158.74.109/useragents/?format=json'
-	response = openURL_requests_cached(VERY_LONG_CACHE,'GET',url,'','','','','LIBRARY-RANDOM_USERAGENT-1st')
-	html = response.content
-	a = EVAL(html)
-	b = random.sample(a,1)
-	useragent = b[0]['useragent']
-	#xbmcgui.Dialog().ok('',useragent)
-	return useragent
 
 
 

@@ -9,6 +9,11 @@ Latest user-agents:
 http://51.158.74.109/useragents/?format=json
 
 
+Source:
+=======
+https://github.com/lobstrio/shadow-useragent/blob/master/shadow_useragent/core.py
+
+
 Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
 Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:67.0) Gecko/20100101 Firefox/67.0
 Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0

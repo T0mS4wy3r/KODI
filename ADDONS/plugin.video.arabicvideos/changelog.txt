@@ -1,4 +1,17 @@
 ﻿
+v6.9.1	2020-07-14
+Filtered EPG channels
+Added User-Agent to IPTV
+Added random useragents from file
+Added checking inputstream addons for new installs
+Added checking EMAD Repository for new installs
+Added creating IPTV streams for new installs
+Added checking HTTPS for new installs
+Added settings of inputstream.adaptive
+Added settings of kodi interface
+Minor fixes & improvements
+
+
 v6.9.0	2020-07-07
 Added deleting of whole favourite menus
 Added install of both inputstreams addons

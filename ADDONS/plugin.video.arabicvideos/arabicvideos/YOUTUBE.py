@@ -311,6 +311,7 @@ def ITEMS_RENDER(item):
 	count = count.strip(' videos').replace(',','')
 	if 'http' not in link: link = website0a+link
 	#xbmcgui.Dialog().ok(link,website0a)
+	title = escapeUNICODE(title)
 	return True,title,link,img,count,duration,live
 
 def GET_PAGE_DATA(url):
@@ -477,6 +478,25 @@ def CLEAN_AJAX(text):
 	#file.write(text)
 	#file.close()
 	return text
+
+def RANDOM_USERAGENT():
+	# https://github.com/lobstrio/shadow-useragent/blob/master/shadow_useragent/core.py
+	url = 'http://51.158.74.109/useragents/?format=json'
+	response = openURL_requests_cached(VERY_LONG_CACHE,'GET',url,'','','',False,'YOUTUBE-RANDOM_USERAGENT-1st')
+	html = response.content
+	if '___Error___' in html:
+		useragentfile = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'arabicvideos','useragents.txt'))
+		with open(useragentfile,'r') as f: text = f.read()
+		a = re.findall('(Mozilla.*?)\n',text,re.DOTALL)
+		b = random.sample(a,1)
+		#xbmcgui.Dialog().ok(str(b),str(a))
+		useragent = b[0]
+	else:
+		a = EVAL(html)
+		b = random.sample(a,1)
+		#xbmcgui.Dialog().ok(str(b),str(a))
+		useragent = b[0]['useragent']
+	return useragent
 
 """
 def TEST_YOUTUBE():
