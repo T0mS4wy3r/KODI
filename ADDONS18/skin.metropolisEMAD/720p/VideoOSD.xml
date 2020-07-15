@@ -2,13 +2,9 @@
 <window>
 	<defaultcontrol always="true">410</defaultcontrol>
 	<controls>
-		<AAAcontrol type="panel">
-			<content>plugin://skin.metropolisEMAD18?mode=2&text=$INFO[Player.FileNameAndPath]</content>
-		</AAAcontrol>
 		<control type="button" id="410">
 			<onfocus>Dialog.Close(FullscreenInfo)</onfocus>
 			<onfocus condition="!Skin.HasSetting(OneButtonSubtitles) + String.Contains(Skin.String(DefaultOSD),714)">SetFocus(14)</onfocus>
-			<onfocus condition="!Skin.HasSetting(OneButtonSubtitles) + !String.IsEmpty(Skin.String(SubtitlesPath)) + String.Contains(Skin.String(DefaultOSD),714)">SetFocus(17)</onfocus>
 			<onfocus condition="Skin.HasSetting(OneButtonSubtitles) + !VideoPlayer.HasSubtitles + String.Contains(Skin.String(DefaultOSD),714)">SetFocus(15)</onfocus>
 			<onfocus condition="Skin.HasSetting(OneButtonSubtitles) + VideoPlayer.HasSubtitles + String.Contains(Skin.String(DefaultOSD),714)">SetFocus(16)</onfocus>
 			<onfocus condition="String.Contains(Skin.String(DefaultOSD),711)">SetFocus(11)</onfocus>
@@ -24,17 +20,18 @@
 			<onfocus condition="String.Contains(Skin.String(DefaultOSD),801)">SetFocus(801)</onfocus>
 			<onfocus condition="!String.Contains(Skin.String(DefaultOSD),714) + !String.Contains(Skin.String(DefaultOSD),713) + !String.Contains(Skin.String(DefaultOSD),710) + !String.Contains(Skin.String(DefaultOSD),76) + !String.Contains(Skin.String(DefaultOSD),74) + !String.Contains(Skin.String(DefaultOSD),75) + !String.Contains(Skin.String(DefaultOSD),73) + !String.Contains(Skin.String(DefaultOSD),79) + !String.Contains(Skin.String(DefaultOSD),712) + !String.Contains(Skin.String(DefaultOSD),711) + !String.Contains(Skin.String(DefaultOSD),800) + !String.Contains(Skin.String(DefaultOSD),801)">SetFocus(4)</onfocus>
 		</control>
+
 		<control type="group">
 			<visible>!VideoPlayer.Content(LiveTV) + ![Window.IsVisible(SliderDialog) | Window.IsVisible(VideoBookmarks)]</visible>
 			<include>Animation_OpenCloseFade</include>
 			<include>Animation_FadedByOSDSettings</include>
 			<include>OSD_Player_Banner</include>
-			<include>OSD_Progress_Bar3</include>
 			<include>OSD_Progress_Bar2</include>
-			<include>OSD_Player_Details</include>
-			<AAAinclude>OSD_Player_Time</AAAinclude>
+			<include>OSD_Progress_Bar3</include>
 			<include>MediaInfo2</include>
 			<include>Global_Time</include>
+			<include>OSD_Player_Details</include>
+			<include>OSD_Player_Time</include>
 			<control type="grouplist" id="2001">
 				<posx>295</posx>
 				<posy>665</posy>

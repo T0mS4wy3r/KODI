@@ -14,9 +14,8 @@
 			<include condition="!String.IsEqual(Skin.String(OSDFade),Disabled) + String.IsEqual(Skin.String(OSDFadeTime),20)">Animation_FadeOSD20</include>
 			<include condition="!String.IsEqual(Skin.String(OSDFade),Disabled) + String.IsEqual(Skin.String(OSDFadeTime),25)">Animation_FadeOSD25</include>
 			<include condition="!String.IsEqual(Skin.String(OSDFade),Disabled) + String.IsEqual(Skin.String(OSDFadeTime),30)">Animation_FadeOSD30</include>
-			<AAAinclude condition="!Skin.HasSetting(Slim_Seekbar)">OSD_Progress_Bar2</AAAinclude> 
-			<AAAinclude condition="Skin.HasSetting(Slim_Seekbar)">OSD_Progress_Bar3</AAAinclude>
-			<include>OSD_Progress_Bar3</include>
+			<AAAinclude condition="!Skin.HasSetting(Slim_Seekbar)">OSD_Progress_Bar2</AAAinclude>
+			<include condition="Skin.HasSetting(Slim_Seekbar)">OSD_Progress_Bar3</include>
 			<AAAinclude condition="!Skin.HasSetting(Slim_Seekbar)">MediaInfo2</AAAinclude>
 			<visible>!Player.ShowInfo + !Window.IsActive(Visualisation)</visible>
 		</control>

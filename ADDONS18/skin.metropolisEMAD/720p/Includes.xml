@@ -38,6 +38,7 @@
 	<include file="Viewtype_Poster_Large_Fixed.xml" />	<!-- 552 -->
 	<include file="Viewtype_Poster_Large_Wrap.xml" />	<!-- 551 -->
 	<include file="Viewtype_TallGenre.xml" />		<!-- 501 -->
+	<include file="Viewtype_Collide.xml" />		<!-- 553 -->
 
 	<!-- Global dimensions -->
 	<include name="Dimensions_Fullscreen">
@@ -225,13 +226,16 @@
 		<aspectratio align="center">keep</aspectratio>
 	</include>
 	<include name="Global_Weather">
-		<control type="group">
-			<posx>12</posx>
-			<posy>40</posy>
+		<control type="grouplist">
+			<left>1110</left>
+			<top>557</top>
+			<height>30</height>
+			<width>140</width>
+			<align>right</align>
+			<orientation>horizontal</orientation>
+			<usecontrolcoords>false</usecontrolcoords>
 			<visible>Weather.IsFetched + [[!Window.IsActive(visualisation) + !Skin.HasSetting(HideClockTemp)] | [Window.IsActive(visualisation) + Player.ShowInfo + !Skin.HasSetting(HideVisClock) + !Window.IsVisible(120)]]</visible>
 			<control type="multiimage">
-				<posx>1145</posx>
-				<posy>517</posy>
 				<width>30</width>
 				<height>30</height>
 				<include>Weather_Icon_Common</include>
@@ -239,12 +243,10 @@
 			</control>
 			<control type="label">
 				<description>Temperature</description>
-				<posx>1241</posx>
-				<posy>517</posy>
-				<width>200</width>
+				<width min="50" max="110">auto</width>
 				<height>30</height>
 				<font>METF_Temp</font>
-				<align>right</align>
+				<align>left</align>
 				<aligny>center</aligny>
 				<textcolor>Temp</textcolor>
 				<label>[B]$INFO[Window(Weather).Property(Current.Temperature)]$INFO[System.TemperatureUnits][/B]</label>
@@ -268,17 +270,6 @@
 			<width>230</width>
 			<height>30</height>
 			<visible>[!Window.IsActive(visualisation) + !Skin.HasSetting(HideClock)] | [Window.IsActive(visualisation) + Player.ShowInfo + !Skin.HasSetting(HideVisClock) + !Window.IsVisible(120)]</visible>
-			<AAAcontrol type="label">
-				<description>Hours</description>
-				<posx>1180</posx>
-				<posy>615</posy>
-				<width>150</width>
-				<font>METF_Hours</font>
-				<align>right</align>
-				<aligny>center</aligny>
-				<textcolor>Time</textcolor>
-				<label>$INFO[System.Time(hh)]</label>
-			</AAAcontrol>
 			<control type="label">
 				<description>Minutes</description>
 				<posx>1000</posx>
@@ -290,17 +281,6 @@
 				<textcolor>Time</textcolor>
 				<label>$INFO[System.Time(hh:mm:ss)]</label>
 			</control>
-			<AAAcontrol type="label">
-				<description>AM/PM</description>
-				<posx>1186</posx>
-				<posy>640</posy>
-				<width>80</width>
-				<font>METF_FontAMPM</font>
-				<textcolor>TimeAMPM</textcolor>
-				<label>[B]$INFO[System.Time(xx)][/B]</label>
-				<align>left</align>
-				<aligny>center</aligny>
-			</AAAcontrol>
 			<control type="label">
 				<description>Date</description>
 				<textcolor>Time</textcolor>
@@ -310,7 +290,7 @@
 				<width>260</width>
 				<include>Global_TimeWeekdayDetails</include>
 				<label>[B][UPPERCASE]$INFO[System.Date(yyyy - mmm - dd)][/UPPERCASE][/B]</label>
-				<AAAvisible>Skin.HasSetting(ShowDate)</AAAvisible>
+				<visible>Skin.HasSetting(ShowDate)</visible>
 			</control>
 			<control type="label">
 				<description>Day of Week</description>
@@ -320,7 +300,7 @@
 				<align>center</align>
 				<include>Global_TimeWeekdayDetails</include>
 				<label>[UPPERCASE][B]$INFO[System.Date(DDD)][/B][/UPPERCASE]</label>
-				<visible>!Skin.HasSetting(ShowDate)</visible>
+				<visible>Skin.HasSetting(ShowDate)</visible>
 			</control>
 		</control>
 	</include>
@@ -651,17 +631,8 @@
 			<aligny>center</aligny>
 			<font>METF_MediaDetailsSmall</font>
 			<textcolor>MediaDetailsDuration</textcolor>
-			<label>$INFO[ListItem.Duration,, [LOWERCASE]$LOCALIZE[31299][/LOWERCASE]]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + !String.Contains(ListItem.Duration,min) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
-		</control>
-		<control type="label">
-			<width min="25" max="1200">auto</width>
-			<height>30</height>
-			<aligny>center</aligny>
-			<font>METF_MediaDetailsSmall</font>
-			<textcolor>MediaDetailsDuration</textcolor>
 			<label>$INFO[ListItem.Duration]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + String.Contains(ListItem.Duration,min) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
+			<visible>!String.IsEmpty(ListItem.Duration) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
 		</control>
 		<!-- Bullet -->
 		<control type="image">
@@ -717,17 +688,8 @@
 			<aligny>center</aligny>
 			<font>METF_MediaDetailsSmall</font>
 			<textcolor>MediaDetailsDuration</textcolor>
-			<label>$INFO[ListItem.Duration,, [LOWERCASE]$LOCALIZE[31299][/LOWERCASE]]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + !String.Contains(ListItem.Duration,min) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
-		</control>
-		<control type="label">
-			<width min="25" max="1200">auto</width>
-			<height>30</height>
-			<aligny>center</aligny>
-			<font>METF_MediaDetailsSmall</font>
-			<textcolor>MediaDetailsDuration</textcolor>
 			<label>$INFO[ListItem.Duration]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + String.Contains(ListItem.Duration,min) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
+			<visible>!String.IsEmpty(ListItem.Duration) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
 		</control>
 		<!-- Bullet -->
 		<control type="image">
@@ -781,16 +743,8 @@
 			<height>27</height>
 			<font>METF_MediaDetails</font>
 			<textcolor>MediaDetailsDuration</textcolor>
-			<label>$INFO[ListItem.Duration,, [LOWERCASE]$LOCALIZE[31299][/LOWERCASE]]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + !String.Contains(ListItem.Duration,min) + [ Container.Content(videos) | Container.Content(movies) | Container.Content(episodes) | Container.Content(musicvideos) | Container.Content(albums) | Container.Content(songs)]</visible>
-		</control>
-		<control type="label">
-			<width min="25" max="300">auto</width>
-			<height>27</height>
-			<font>METF_MediaDetails</font>
-			<textcolor>MediaDetailsDuration</textcolor>
 			<label>$INFO[ListItem.Duration]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + String.Contains(ListItem.Duration,min) + [ Container.Content(videos) | Container.Content(movies) | Container.Content(episodes) | Container.Content(musicvideos) | Container.Content(albums) | Container.Content(songs)]</visible>
+			<visible>!String.IsEmpty(ListItem.Duration) + [Container.Content(movies) | Container.Content(episodes) | Container.Content(musicvideos) | Container.Content(albums) | Container.Content(songs)]</visible>
 		</control>
 		<!-- Bullet -->
 		<control type="image">
@@ -830,17 +784,8 @@
 			<aligny>center</aligny>
 			<font>METF_MediaDetailsSmall</font>
 			<textcolor>MediaDetailsDuration</textcolor>
-			<label>$INFO[ListItem.Duration,, [LOWERCASE]$LOCALIZE[31299][/LOWERCASE]]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + !String.Contains(ListItem.Duration,min) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
-		</control>
-		<control type="label">
-			<width min="25" max="260">auto</width>
-			<height>30</height>
-			<aligny>center</aligny>
-			<font>METF_MediaDetailsSmall</font>
-			<textcolor>MediaDetailsDuration</textcolor>
 			<label>$INFO[ListItem.Duration]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + String.Contains(ListItem.Duration,min) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
+			<visible>!String.IsEmpty(ListItem.Duration) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
 		</control>
 		<!-- Bullet -->
 		<control type="image">
@@ -881,17 +826,8 @@
 			<aligny>center</aligny>
 			<font>METF_MediaDetailsSmall</font>
 			<textcolor>MediaDetailsDuration</textcolor>
-			<label>$INFO[ListItem.Duration,, [LOWERCASE]$LOCALIZE[31299][/LOWERCASE]]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + !String.Contains(ListItem.Duration,min) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
-		</control>
-		<control type="label">
-			<width min="25" max="1200">auto</width>
-			<height>30</height>
-			<aligny>center</aligny>
-			<font>METF_MediaDetailsSmall</font>
-			<textcolor>MediaDetailsDuration</textcolor>
 			<label>$INFO[ListItem.Duration]</label>
-			<visible>!String.IsEmpty(ListItem.Duration) + String.Contains(ListItem.Duration,min) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
+			<visible>!String.IsEmpty(ListItem.Duration) + ![Container.Content(tvshows) | Container.Content(seasons)]</visible>
 		</control>
 		<!-- Bullet -->
 		<control type="image">
@@ -1519,72 +1455,10 @@
 				<font>font13</font>
 				<textcolor>OSDPlayingDuration</textcolor>
 			</control>
-			<AAAcontrol type="progress" id="23">
-				<description>ProgressbarCache</description>
-				<posx>300</posx>
-				<posy>632</posy>
-				<width>960</width>
-				<height>15</height>
-				<info>Player.ProgressCache</info>
-				<reveal>true</reveal>
-				<texturebg>osd/osd_progress_back.png</texturebg>
-				<lefttexture>osd/osd_progress_left.png</lefttexture>
-				<midtexture>osd/osd_progress_mid.png</midtexture>
-				<righttexture>osd/osd_progress_right.png</righttexture>
-				<colordiffuse>OSDFinishTime</colordiffuse>
-			</AAAcontrol>
-			<AAAcontrol type="progress" id="23">
-				<description>Progressbar</description>
-				<posx>300</posx>
-				<posy>632</posy>
-				<width>960</width>
-				<height>15</height>
-				<info>Player.Progress</info>
-				<reveal>true</reveal>
-				<texturebg>osd/osd_progress_back.png</texturebg>
-				<lefttexture>osd/osd_progress_left.png</lefttexture>
-				<midtexture>osd/osd_progress_mid.png</midtexture>
-				<righttexture>osd/osd_progress_right.png</righttexture>
-				<colordiffuse>OSDProgressBar</colordiffuse>
-				<overlaytexture></overlaytexture>
-			</AAAcontrol>
-			<AAAcontrol type="slider" id="87">
-				<description>Seek Slider</description>
-				<posx>300</posx>
-				<posy>632</posy>
-				<width>960</width>
-				<height>15</height>
-				<action>seek</action>
-				<visible>![Window.IsVisible(SliderDialog)]</visible>
-			</AAAcontrol>
-			<!-- Current position / Total Time -->
-			<AAAcontrol type="label">
-				<posx>1270</posx>
-				<posy>645</posy>
-				<width>300</width>
-				<height>40</height>
-				<aligny>center</aligny>
-				<align>right</align>
-				<font>METF_OSDTime</font>
-				<textcolor>OSDPlayingDuration</textcolor>
-				<label>$INFO[VideoPlayer.Time] [COLOR TextNF]/[/COLOR] $INFO[VideoPlayer.Duration]</label>
-			</AAAcontrol>
-			<!-- Finish Time -->
-			<AAAcontrol type="label">
-				<posx>1270</posx>
-				<posy>675</posy>
-				<width>250</width>
-				<height>40</height>
-				<aligny>center</aligny>
-				<align>right</align>
-				<font>METF_OSDTime</font>
-				<textcolor>OSDFinishTime</textcolor>
-				<label>$LOCALIZE[31409]:  $INFO[Player.FinishTime]</label>
-			</AAAcontrol>
 			<!-- Title -->
 			<control type="fadelabel">
 				<posx>300</posx>
-				<posy>610</posy>
+				<posy>586</posy>
 				<width>700</width>
 				<height>40</height>
 				<font>METF_TitleTextMedium</font>
@@ -1596,24 +1470,8 @@
 				<scrollspeed>40</scrollspeed>
 				<scroll>true</scroll>
 				<label>$VAR[VideoPlayerTitle]</label>
-				<AAAanimation effect="slide" end="0,25" condition="[!VideoPlayer.Content(MusicVideos) + String.IsEmpty(VideoPlayer.Tagline) + !Integer.IsGreater(Player.ChapterCount,1)] | [VideoPlayer.Content(MusicVideos) + String.IsEmpty(VideoPlayer.Artist) + String.IsEmpty(VideoPlayer.Album)]">Conditional</AAAanimation>
+				<animation effect="slide" end="0,25" condition="[!VideoPlayer.Content(MusicVideos) + String.IsEmpty(VideoPlayer.Tagline) + !Integer.IsGreater(Player.ChapterCount,1)] | [VideoPlayer.Content(MusicVideos) + String.IsEmpty(VideoPlayer.Artist) + String.IsEmpty(VideoPlayer.Album)]">Conditional</animation>
 			</control>
-			<!-- Chapter Info, Movie Tagline, or Music Video Artist/Album -->
-			<AAAcontrol type="fadelabel">
-				<posx>300</posx>
-				<posy>588</posy>
-				<width>700</width>
-				<height>30</height>
-				<font>METF_PlotText</font>
-				<textcolor>TextFO</textcolor>
-				<align>left</align>
-				<aligny>center</aligny>
-				<scroll>true</scroll>
-				<scrollout>false</scrollout>
-				<pauseatend>3800</pauseatend>
-				<scrollspeed>40</scrollspeed>
-				<label>AAA$VAR[VideoPlayerTitle2]</label>
-			</AAAcontrol>
 			<control type="group">
 				<visible>!String.StartsWith(Player.FolderPath,http)</visible>
 				<!-- TV Show Poster / Logo / Clearart -->
@@ -1656,8 +1514,7 @@
 					<height>318</height>
 					<texture background="true">$INFO[VideoPlayer.Cover]</texture>
 					<aspectratio scalediffuse="false">scale</aspectratio>
-					<AAAvisible>VideoPlayer.Content(Movies) + !String.StartsWith(VideoPlayer.Cover,default)</AAAvisible>
-					<visible>!String.StartsWith(VideoPlayer.Cover,default)</visible>
+					<visible>VideoPlayer.Content(Movies) + !String.StartsWith(VideoPlayer.Cover,default)</visible>
 				</control>
 				<control type="image">
 					<description>Movie Poster Frame</description>
@@ -1667,8 +1524,7 @@
 					<height>358</height>
 					<texture>frames/ClassicFrame_PosterMedium.png</texture>
 					<aspectratio>stretch</aspectratio>
-					<AAAvisible>VideoPlayer.Content(Movies) + !String.StartsWith(VideoPlayer.Cover,default)</AAAvisible>
-					<visible>!String.StartsWith(VideoPlayer.Cover,default)</visible>
+					<visible>VideoPlayer.Content(Movies) + !String.StartsWith(VideoPlayer.Cover,default)</visible>
 				</control>
 				<!-- Music Video Thumbnail -->
 				<control type="image">
@@ -1694,6 +1550,38 @@
 					<info>VideoPlayer.Cover</info>
 					<visible>VideoPlayer.Content(LiveTV)</visible>
 				</control>
+				<!-- Game Boxart Poster -->
+				<control type="image">
+					<description>Game Boxart Poster</description>
+					<posx>42</posx>
+					<posy>370</posy>
+					<width>216</width>
+					<height>318</height>
+					<texture fallback="DefaultAddonGame.png">$INFO[Player.Filenameandpath].jpg</texture>
+					<aspectratio scalediffuse="false">stretch</aspectratio>
+					<visible>Window.IsActive(GameOSD)</visible>
+				</control>
+				<!-- Game Boxart Poster -->
+				<control type="image">
+					<description>Game Boxart Poster</description>
+					<posx>42</posx>
+					<posy>370</posy>
+					<width>216</width>
+					<height>318</height>
+					<texture diffuse="frames/EpisodeMatte.png">$INFO[Player.Filenameandpath].png</texture>
+					<aspectratio scalediffuse="false">stretch</aspectratio>
+					<visible>Window.IsActive(GameOSD)</visible>
+				</control>
+				<control type="image">
+					<description>Game Boxart Poster Frame</description>
+					<posx>28</posx>
+					<posy>350</posy>
+					<width>244</width>
+					<height>358</height>
+					<texture>frames/ClassicFrame_PosterMedium.png</texture>
+					<aspectratio>stretch</aspectratio>
+					<visible>Window.IsActive(GameOSD)</visible>
+				</control>
 			</control>
 			<control type="group">
 				<visible>String.StartsWith(Player.FolderPath,http)</visible>
@@ -1717,6 +1605,13 @@
 		<control type="group">
 			<include>Animation_CommonFade</include>
 			<include>Animation_FadedByOSDSettings</include>
+			<!-- Background Image -->
+			<control type="image">
+				<width>1280</width>
+				<height>70</height>
+				<texture>osd/osd_dialog_bg_top.png</texture>
+				<colordiffuse>OSDBackgroundColor</colordiffuse>
+			</control>
 			<control type="progress" id="23">
 				<description>ProgressbarCache</description>
 				<posx>185</posx>
@@ -1765,33 +1660,20 @@
 				<align>left</align>
 				<font>METF_OSDTime</font>
 				<label>$INFO[VideoPlayer.Time] [COLOR OSDPlayingDuration]/[/COLOR] $INFO[VideoPlayer.Duration]</label>
-				<AAAtextcolor>OSDPlayingDuration</AAAtextcolor>
 				<textcolor>TextNF</textcolor>
 			</control>
-			<!-- Chapter -->
-			<AAAcontrol type="label">
-				<posx>130</posx>
-				<posy>5</posy>
-				<width>700</width>
-				<height>40</height>
-				<font>METF_OSDTime</font>
-				<textcolor>TextFO</textcolor>
-				<align>center</align>
-				<aligny>center</aligny>
-				<label>$INFO[Player.Chapter,$LOCALIZE[21396]: ]$INFO[Player.ChapterCount, / ]</label>
-				<visible>Integer.IsGreater(Player.ChapterCount,1) + !VideoPlayer.Content(LiveTV)</visible>
-			</AAAcontrol>
 			<!-- Finish Time -->
 			<control type="label">
 				<posx>1040</posx>
 				<posy>5</posy>
 				<width>250</width>
 				<height>40</height>
-				<aligny>center</aligny>
-				<align>right</align>
 				<font>METF_OSDTime</font>
 				<textcolor>OSDFinishTime</textcolor>
+				<align>right</align>
+				<aligny>center</aligny>
 				<label>$LOCALIZE[31409]: $INFO[Player.FinishTime]</label>
+				<visible>!VideoPlayer.Content(LiveTV)</visible>
 			</control>
 			<!-- Remaining Time -->
 			<control type="label">
@@ -1804,6 +1686,7 @@
 				<font>METF_OSDTime</font>
 				<textcolor>OSDFinishTime</textcolor>
 				<label>Remain: $INFO[Player.TimeRemaining(h:mm:ss)]</label>
+				<visible>!VideoPlayer.Content(LiveTV)</visible>
 			</control>
 		</control>
 	</include>
@@ -1952,18 +1835,10 @@
 			<include condition="!String.IsEqual(Skin.String(OSDFade),Disabled) + String.IsEqual(Skin.String(OSDFadeTime),20)">Animation_FadeOSD20</include>
 			<include condition="!String.IsEqual(Skin.String(OSDFade),Disabled) + String.IsEqual(Skin.String(OSDFadeTime),25)">Animation_FadeOSD25</include>
 			<include condition="!String.IsEqual(Skin.String(OSDFade),Disabled) + String.IsEqual(Skin.String(OSDFadeTime),30)">Animation_FadeOSD30</include>
-			<!-- Background Image -->
-			<control type="image">
-				<width>1280</width>
-				<height>70</height>
-				<texture>osd/osd_dialog_bg_top.png</texture>
-				<colordiffuse>OSDBackgroundColor</colordiffuse>
-			</control>
 			<control type="group">
 				<posx>225</posx>
 				<posy>6</posy>
-				<AAAvisible>Window.IsActive(FullscreenInfo) | [Player.SeekBar + !Skin.HasSetting(Slim_Seekbar)]</AAAvisible>
-				<visible>Window.IsActive(FullscreenInfo)</visible>
+				<visible>Window.IsActive(FullscreenInfo) | [Player.SeekBar + !Skin.HasSetting(Slim_Seekbar)]</visible>
 				<!-- Plot -->
 				<control type="textbox">
 					<width>830</width>
@@ -2024,6 +1899,25 @@
 					</control>
 				</control>
 			</control>
+			
+	<!-- GameOSD controls -->
+			<control type="group">
+				<posx>225</posx>
+				<posy>6</posy>
+				<visible>Window.IsActive(GameOSD)</visible>
+				<!-- Plot -->
+				<control type="textbox">
+					<width>830</width>
+					<height>66</height>
+					<align>justify</align>
+					<font>METF_PlotTextSmall</font>
+					<textcolor>TextNF</textcolor>
+                        <label>$LOCALIZE[35236] [CR]$LOCALIZE[35224] = Select + X      |      $LOCALIZE[13007] = Select + B [CR]$LOCALIZE[35222] = Select + Start      |      $LOCALIZE[13376] = Select + Right Stick</label>
+					<include condition="!Skin.HasSetting(AutoScrollFast)">AutoScrollShort</include>
+					<include condition="Skin.HasSetting(AutoScrollFast)">AutoScrollShortFast</include>
+				</control>	
+			</control>		
+			
 		</control>
 	</include>
 

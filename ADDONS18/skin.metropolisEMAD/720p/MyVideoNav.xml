@@ -7,7 +7,7 @@
 	<onunload>ClearProperty(SkinHelper.ExtraFanArtPath, Home)</onunload>
 	<controls>
 		<include>Global_Background</include>
-		<AAAinclude>Global_Background_Fanart</AAAinclude>
+		<include>Global_Background_Fanart</include>
 		<include>Viewtype_List</include>			<!-- 55 -->
 		<include>Viewtype_LowList</include>			<!-- 905 -->
 		<include>Viewtype_ListFanart</include>			<!-- 509 -->
@@ -26,6 +26,7 @@
 		<include>Viewtype_Gallery_Fanart</include>		<!-- 59 -->
 		<include>Viewtype_Gallery_Square</include>		<!-- 58 -->
 		<include>Viewtype_Panel_Square</include>		<!-- 559 -->
+		<include>Viewtype_Collide</include>			<!-- 553 -->
 		<include>Viewtype_Logo</include>			<!-- 56 -->
 		<include>Viewtype_TallGenre</include>			<!-- 501 -->
 		<include>Global_ContextFilter</include>

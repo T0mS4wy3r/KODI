@@ -1,6 +1,10 @@
 
+v18.3.1.0	2020-07-15
+Imported changes from Metropolis v3.4.30 root folder downloaded at 10th July 2020
+
+
 v18.3.0.0	2020-06-27
-Renamed for separtion to multiple kodi versions
+Renamed for separation to multiple kodi versions
 
 
 v2.3.0	2020-06-22

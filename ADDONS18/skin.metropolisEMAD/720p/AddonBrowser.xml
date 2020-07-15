@@ -4,7 +4,7 @@
 	<defaultcontrol always="true">55</defaultcontrol>
 	<controls>
 		<include>Global_Background</include>
-		<AAAinclude>Global_Background_Fanart</AAAinclude>
+		<include>Global_Background_Fanart</include>
 		<include>Viewtype_List</include>
 		<include>Viewtype_LowList</include>
 		<include>Viewtype_Gallery_Square</include>

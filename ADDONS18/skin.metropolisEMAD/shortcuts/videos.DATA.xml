@@ -1,17 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <shortcuts>
 	<shortcut>
-		<label>1037</label>
+		<label>24001</label>
 		<label2>32014</label2>
 		<icon>DefaultAddonVideo.png</icon>
 		<action>ActivateWindow(Videos,Addons,return)</action>
 	</shortcut>
 	<shortcut>
-		<action>ActivateWindow(MusicLibrary,MusicVideos,return)</action>
 		<label>20389</label>
 		<label2>32034</label2>
 		<icon />
-		<thumb />
+		<action>ActivateWindow(MusicLibrary,MusicVideos,return)</action>
 	</shortcut>
 	<shortcut>
 		<label>20342</label>
@@ -61,7 +60,7 @@
         <shortcut>
                 <label>31334</label>
                 <label2>32034</label2>
-                <action>ActivateWindow(Videos,plugin://plugin.video.itunes_trailers,return)</action>
                 <icon />
+                <action>ActivateWindow(Videos,plugin://plugin.video.itunes_trailers,return)</action>
         </shortcut>
 </shortcuts>

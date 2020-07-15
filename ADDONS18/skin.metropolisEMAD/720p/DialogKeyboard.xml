@@ -36,7 +36,6 @@
 				<height>36</height>
 				<font>METF_StarRating</font>
 				<textcolor>White</textcolor>
-				<AAAtextcolor>DialogTextFO</AAAtextcolor>
 				<align>center</align>
 				<aligny>center</aligny>
 				<shadowcolor>black</shadowcolor>

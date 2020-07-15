@@ -72,6 +72,11 @@ msgctxt "#31286"
 msgid "Banner"
 msgstr "Coverflow"
 
+msgctxt "#31287"
+msgid "Banner"
+msgstr "Collide"
+
+
 msgctxt "#31289"
 msgid "Files"
 msgstr "Datoteke"

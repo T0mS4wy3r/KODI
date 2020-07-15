@@ -2,7 +2,7 @@
 <window>
 	<defaultcontrol>5</defaultcontrol>
 	<controls>
-		<AAAinclude>Global_Background</AAAinclude>
+		<include>Global_Background</include>
 		<control type="group">
 			<visible>!Window.IsActive(sliderdialog) + !Window.IsActive(addonsettings)</visible>
 			<posx>300</posx>

@@ -5,6 +5,5 @@
 		<label2>32020</label2>
 		<icon>DefaultAddonPicture.png</icon>
 		<action>ActivateWindow(Pictures,Addons,return)</action>
-		<thumb />
 	</shortcut>
 </shortcuts>

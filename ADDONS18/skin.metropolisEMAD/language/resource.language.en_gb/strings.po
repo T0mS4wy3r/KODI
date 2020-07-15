@@ -400,6 +400,10 @@ msgctxt "#31286"
 msgid "Banner"
 msgstr ""
 
+msgctxt "#31287"
+msgid "Collide"
+msgstr "Collide"
+
 #empty strings from id 31287 to 31288
 
 msgctxt "#31289"
@@ -1243,4 +1247,8 @@ msgstr ""
 
 msgctxt "#31732"
 msgid "Are you sure you really want to remove the Settings shortcut?"
+msgstr ""
+
+msgctxt "#31733"
+msgid "Enable or Disable the shortcut.  This will leave the menu item in this settings menu but hide it on the real main menu if disabled."
 msgstr ""

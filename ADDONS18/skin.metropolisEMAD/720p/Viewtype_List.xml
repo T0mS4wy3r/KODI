@@ -16,7 +16,7 @@
 				<onup>55</onup>
 				<ondown>55</ondown>
 				<include condition="!Skin.HasSetting(ViewLockdown)">OnLeft7000</include>
-				<onright>998</onright>
+				<onright>997</onright>
 				<scrolltime>160</scrolltime>
 				<viewtype label="31285">list</viewtype>
 				<orientation>vertical</orientation>
@@ -85,8 +85,7 @@
 						<height>24</height>
 						<texture>$INFO[ListItem.Overlay]</texture>
 						<colordiffuse>WatchedOverlay</colordiffuse>
-						<visible>!ListItem.IsResumable + String.IsEqual(ListItem.Overlay,OverlayWatched.png) + Window.IsActive(videos) + [[[Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideMovieWatchedOverlays)] | [![Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideTVWatchedOverlays)]]</visible>
-						<AAAvisible>String.IsEqual(ListItem.Overlay,OverlayWatched.png) + Window.IsActive(videos) + [[[Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideMovieWatchedOverlays)] | [![Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideTVWatchedOverlays)]]</AAAvisible>
+						<visible>!ListItem.IsResumable + Window.IsActive(videos) + [[[Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideMovieWatchedOverlays)] | [![Container.Content(movies) | Container.Content(sets)] + !Skin.HasSetting(HideTVWatchedOverlays)]]</visible>
 					</control>
 					<!-- Watched Overlay for In-Progress Items in Video Library -->
 					<control type="image">
@@ -240,7 +239,7 @@
 						<visible>[Container.Content(seasons) + !String.IsEmpty(ListItem.Property(NumEpisodes))] + !String.IsEmpty(ListItem.Property(UnWatchedEpisodes))</visible>
 					</control>
 					<!-- Star Rating -->
-					<AAAcontrol type="group">
+					<control type="group">
 						<!-- XXX: temporarily commented out for videos until I figure out exactly how I'd like to implement this
 						<visible>!Window.IsActive(videos) | [Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows) | Container.Content(episodes)]]</visible>
 						<include>VisibleIfNotMovieSet</include>
@@ -267,7 +266,7 @@
 							<colordiffuse>FFFFFFFF</colordiffuse>
 							<visible>!String.IsEmpty(ListItem.Rating)</visible>
 						</control>
-					</AAAcontrol>
+					</control>
 				</itemlayout>
 				<focusedlayout width="0" height="35">
 					<!-- List Line Item Divider -->
@@ -515,7 +514,7 @@
 						<visible>[Container.Content(seasons) + !String.IsEmpty(ListItem.Property(NumEpisodes))] + !String.IsEmpty(ListItem.Property(UnWatchedEpisodes))</visible>
 					</control>
 					<!-- Star Rating -->
-					<AAAcontrol type="group">
+					<control type="group">
 						<!-- XXX: temporarily commented out for videos until I figure out exactly how I'd like to implement this
 						<visible>!Window.IsActive(videos) | [Window.IsActive(videos) + [Container.Content(movies) | Container.Content(tvshows) | Container.Content(episodes)]]</visible>
 						<include>VisibleIfNotMovieSet</include>
@@ -542,7 +541,7 @@
 							<colordiffuse>$VAR[RatingColor]</colordiffuse>
 							<visible>!String.IsEmpty(ListItem.Rating)</visible>
 						</control>
-					</AAAcontrol>
+					</control>
 				</focusedlayout>
 			</control>
 			<!-- Thumbnails -->
@@ -708,8 +707,7 @@
 						<height>440</height>
 						<fadetime>100</fadetime>
 						<aspectratio align="right" aligny="center">keep</aspectratio>
-					<texture fallback="DefaultMovieGenre.jpg">moviegenres/$INFO[ListItem.Label].jpg</texture>
-					<AAAtexture fallback="DefaultMovieGenre.jpg">resource://resource.images.moviegenreicons.metropolisEMAD/$INFO[ListItem.Label].jpg</AAAtexture>
+						<texture fallback="DefaultMovieGenre.jpg">moviegenres/$INFO[ListItem.Label].jpg</texture>
 						<visible>Window.IsActive(videos) + !String.Contains(Container.FolderPath,videodb://musicvideos/) + Container.Content(genres)</visible>
 					</control>
 					<control type="image">
@@ -719,8 +717,7 @@
 						<height>440</height>
 						<fadetime>100</fadetime>
 						<aspectratio align="right" aligny="center">keep</aspectratio>
-					<texture fallback="DefaultMusicGenre.jpg">musicgenres/$INFO[ListItem.Label].jpg</texture>
-					<AAAtexture fallback="DefaultMusicGenre.jpg">resource://resource.images.musicgenreicons.metropolisEMAD/$INFO[ListItem.Label].jpg</AAAtexture>
+						<texture fallback="DefaultMusicGenre.jpg">musicgenres/$INFO[ListItem.Label].jpg</texture>
 						<visible>[Window.IsActive(music) | [Window.IsActive(videos) + String.Contains(Container.FolderPath,videodb://musicvideos/)]] + Container.Content(genres)</visible>
 					</control>
 				<!-- Retroplayer Posters (note that this is really ugly (and temporary), it will always display the default icon, then overlay a png over that, then overlay a jpg over that, but there exists no other way to do it yet without library support for games) -->
@@ -805,8 +802,8 @@
 				<include>Animation_FadedByMenu</include>
 				<include>Animation_HiddenByInfo</include>
 				<posy>95</posy>
-				<AAAvisible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(seasons) | Container.Content(episodes) | Container.Content(musicvideos) | Container.Content(artists) | Container.Content(albums) | Container.Content(songs) | [!String.IsEmpty(ListItem.AddonCreator) + Container.Content(addons)]</AAAvisible>
-				<AAAinclude>VisibleIfNotMovieSet</AAAinclude>
+				<visible>Container.Content(movies) | Container.Content(tvshows) | Container.Content(seasons) | Container.Content(episodes) | Container.Content(musicvideos) | Container.Content(artists) | Container.Content(albums) | Container.Content(songs) | [!String.IsEmpty(ListItem.AddonCreator) + Container.Content(addons)]</visible>
+				<include>VisibleIfNotMovieSet</include>
 				<control type="image">
 					<posx>360</posx>
 					<posy>33</posy>
@@ -882,7 +879,6 @@
 				<posy>5</posy>
 				<width>32</width>
 				<height>24</height>
-				<label>-</label>
 				<onclick>ActivateWindow(10025,"videodb://movies/sets/$INFO[ListItem.SetId]/?setid=$INFO[ListItem.SetId]",return)</onclick>
 				<visible>Window.IsActive(videos) + !String.StartsWith(Container.FolderPath, videodb://movies/sets/) + !IsEmpty(ListItem.Set)</visible>
 			</control>	

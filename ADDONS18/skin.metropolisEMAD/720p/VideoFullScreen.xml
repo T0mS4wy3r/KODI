@@ -12,6 +12,7 @@
 				<texture>osd/osd_dialog_bg_top.png</texture>
 				<colordiffuse>OSDBackgroundColor</colordiffuse>
 			</control>
+
 			<control type="label" id="10">
 				<description>row 1 label</description>
 				<posx>20</posx>

@@ -16,9 +16,9 @@
 				<posy>0</posy>
 				<width>850</width>
 				<height>444</height>
-				<texture background="true">BlackBG.png</texture>
+				<texture background="true">buttonfo.png</texture>
 				<aspectratio>scale</aspectratio>
-				<colordiffuse>f0000000</colordiffuse>
+				<colordiffuse>DialogBackgroundColor</colordiffuse>
 				<bordertexture border="8,8,0,8">frames/thumb_border_round2.png</bordertexture>
 				<bordersize>4,4,0,4</bordersize>
 			</control>

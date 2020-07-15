@@ -2,10 +2,9 @@
 <window>
 	<defaultcontrol always="true">10</defaultcontrol>
 	<controls>
-		<AAAinclude>Global_Background</AAAinclude>
+		<include>Global_Background</include>
 		<control type="group">
 			<include>Animation_OpenCloseFade</include>
-			<visible>String.IsEmpty(Window.Property(additionalDialog))</visible>
 
 			<!-- Heading -->
 			<control type="group">
@@ -49,6 +48,17 @@
 					<width>1</width>
 					<height>1</height>
 					<onleft>304</onleft>
+					<onright>313</onright>
+					<onup>noop</onup>
+					<ondown>noop</ondown>
+				</control>
+				<!-- Disable -->
+				<control type="button" id="313">
+					<left>-10</left>
+					<top>-10</top>
+					<width>1</width>
+					<height>1</height>
+					<onleft>303</onleft>
 					<onright>302</onright>
 					<onup>noop</onup>
 					<ondown>noop</ondown>
@@ -59,7 +69,7 @@
 					<top>-10</top>
 					<width>1</width>
 					<height>1</height>
-					<onleft>303</onleft>
+					<onleft>313</onleft>
 					<onright>9001</onright>
 					<onup>noop</onup>
 					<ondown>noop</ondown>
@@ -69,32 +79,46 @@
 				<control type="list" id="211">
 					<left>0</left>
 					<top>65</top>
-					<width>370</width>
+					<width>398</width>
 					<height>462</height>
 					<onleft>9001</onleft>
 					<onright>304</onright>
 					<onup>211</onup>
 					<ondown>211</ondown>
 					<scrolltime tween="sine" easing="out">240</scrolltime>
-					<itemlayout width="375" height="38">
+					<itemlayout width="403" height="38">
 						<control type="label">
 							<left>-75</left>
 							<top>5</top>
 							<width>350</width>
 							<height>38</height>
 							<font>METF_TitleTextMedium</font>
-							<textcolor>SettingsDetail</textcolor>
+							<textcolor>white</textcolor>
 							<align>right</align>
 							<aligny>center</aligny>
 							<label>$INFO[ListItem.Label]</label>
-							<animation effect="fade" start="100" end="50" time="0" condition="!Control.HasFocus(211)">Conditional</animation>
+							<animation effect="fade" start="100" end="75" time="0" condition="!Control.HasFocus(211)">Conditional</animation>
+							<visible>String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),False)</visible>
+						</control>
+						<control type="label">
+							<left>-75</left>
+							<top>5</top>
+							<width>350</width>
+							<height>38</height>
+							<font>METF_TitleTextMedium</font>
+							<textcolor>red</textcolor>
+							<align>right</align>
+							<aligny>center</aligny>
+							<label>(Disabled) $INFO[ListItem.Label]</label>
+							<animation effect="fade" start="100" end="75" time="0" condition="!Control.HasFocus(211)">Conditional</animation>
+							<visible>String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),True)</visible>
 						</control>
 					</itemlayout>
-					<focusedlayout width="375" height="38">
+					<focusedlayout width="403" height="38">
 						<control type="image">
 							<left>00</left>
 							<top>5</top>
-							<width>375</width>
+							<width>403</width>
 							<height>38</height>
 							<align>left</align>
 							<aligny>center</aligny>
@@ -121,7 +145,28 @@
 							<top>8</top>
 							<width>29</width>
 							<height>29</height>
+							<texture>osd/osd_button_stop_fo.png</texture>
+							<include>Animation_ButtonFocus</include>
+							<visible>!Control.HasFocus(313)</visible>
+							<visible>String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),False)</visible>
+						</control>
+						<control type="image">
+							<left>339</left>
+							<top>8</top>
+							<width>29</width>
+							<height>29</height>
+							<texture>osd/osd_button_play_fo.png</texture>
+							<include>Animation_ButtonFocus</include>
+							<visible>!Control.HasFocus(313)</visible>
+							<visible>String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),True)</visible>
+						</control>
+						<control type="image">
+							<left>367</left>
+							<top>8</top>
+							<width>29</width>
+							<height>29</height>
 							<texture>osd/osd_button_ban_fo.png</texture>
+							<include>Animation_ButtonFocus</include>
 							<visible>!Control.HasFocus(302)</visible>
 						</control>
 						<control type="image">
@@ -147,6 +192,26 @@
 							<top>8</top>
 							<width>29</width>
 							<height>29</height>
+							<texture>osd/osd_button_stop_nf.png</texture>
+							<include>Animation_ButtonFocus</include>
+							<visible>Control.HasFocus(313)</visible>
+							<visible>String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),False)</visible>
+						</control>
+						<control type="image">
+							<left>339</left>
+							<top>8</top>
+							<width>29</width>
+							<height>29</height>
+							<texture>osd/osd_button_play_nf.png</texture>
+							<include>Animation_ButtonFocus</include>
+							<visible>Control.HasFocus(313)</visible>
+							<visible>String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),True)</visible>
+						</control>
+						<control type="image">
+							<left>367</left>
+							<top>8</top>
+							<width>29</width>
+							<height>29</height>
 							<texture>osd/osd_button_ban_nf.png</texture>
 							<include>Animation_ButtonFocus</include>
 							<visible>Control.HasFocus(302)</visible>
@@ -157,10 +222,23 @@
 							<width>350</width>
 							<height>38</height>
 							<font>METF_TitleTextMedium</font>
-							<textcolor>SettingsTitle</textcolor>
+							<textcolor>white</textcolor>
 							<align>right</align>
 							<aligny>center</aligny>
 							<label>$INFO[ListItem.Label]</label>
+							<visible>String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),False)</visible>
+						</control>
+						<control type="label">
+							<left>-75</left>
+							<top>5</top>
+							<width>350</width>
+							<height>38</height>
+							<font>METF_TitleTextMedium</font>
+							<textcolor>red</textcolor>
+							<align>right</align>
+							<aligny>center</aligny>
+							<label>(Disabled) $INFO[ListItem.Label]</label>
+							<visible>String.IsEqual(Container(211).ListItem.Property(skinshortcuts-disabled),True)</visible>
 						</control>
 					</focusedlayout>
 				</control>
@@ -188,9 +266,9 @@
 
 				<!-- Right grouplist -->
 				<control type="grouplist" id="9000">
-					<left>385</left>
+					<left>413</left>
 					<top>70</top>
-					<width>800</width>
+					<width>772</width>
 					<height>660</height>
 					<itemgap>0</itemgap>
 					<onleft>211</onleft>
@@ -199,7 +277,6 @@
 					<ondown>9001</ondown>
 					<orientation>vertical</orientation>
 					<usecontrolcoords>true</usecontrolcoords>
-					<animation effect="fade" start="100" end="50" time="0" condition="!Control.HasFocus(401) + !Control.HasFocus(311) + !Control.HasFocus(310) + !Control.HasFocus(305) + !Control.HasFocus(312) + !Control.HasFocus(307) + !Control.HasFocus(405)">Conditional</animation>
 					<scrolltime tween="sine" easing="out">240</scrolltime>
 					<!-- Choose shortcut -->
 					<control type="button" id="401">
@@ -208,13 +285,11 @@
 						<width>700</width>
 						<height>36</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>left</align>
 						<aligny>center</aligny>
 						<label>$ADDON[script.skinshortcuts 32048]</label>
 						<label2>$INFO[Container(211).ListItem.Property(path)]</label2>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<texturefocus border="5">ButtonFO.png</texturefocus>
 					</control>
 					<!-- Choose thumbnail (Home2 icon, submenu icon) -->
 					<control type="button" id="311">
@@ -224,13 +299,11 @@
 						<width>700</width>
 						<height>36</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>left</align>
 						<aligny>top</aligny>
 						<label>$ADDON[script.skinshortcuts 32026]</label>
 						<label2>$INFO[Container(211).ListItem.Icon]</label2>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<texturefocus border="5">ButtonFO.png</texturefocus>
 					</control>
 					<!-- Choose background -->
 					<control type="button" id="310">
@@ -240,14 +313,12 @@
 						<width>700</width>
 						<height>36</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>left</align>
 						<aligny>top</aligny>
 						<label>$ADDON[script.skinshortcuts 32045]</label>
 						<label2>$VAR[HomeBackgroundSkinShortcuts]</label2>
 						<visible>String.IsEqual(Window.Property(groupname),mainmenu)</visible>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<texturefocus border="5">ButtonFO.png</texturefocus>
 					</control>
 					<!-- Thumbnail (Home2 icon) -->
 					<control type="image" id="901">
@@ -257,7 +328,6 @@
 						<height>120</height>
 						<texture background="true" fallback="DefaultShortcut.png">$INFO[Container(211).ListItem.Icon]</texture>
 						<visible>String.IsEqual(Window.Property(groupname),mainmenu)</visible>
-						<focusedcolor>SettingsTitle</focusedcolor>
 					</control>
 					<!-- Thumbnail (Submenu icon) -->
 					<control type="image" id="902">
@@ -267,7 +337,6 @@
 						<height>120</height>
 						<texture background="true" fallback="DefaultShortcut.png">$INFO[Container(211).ListItem.Icon]</texture>
 						<visible>!String.IsEqual(Window.Property(groupname),mainmenu)</visible>
-						<focusedcolor>SettingsTitle</focusedcolor>
 					</control>
 					<!-- Background -->
 					<control type="multiimage" id="903">
@@ -281,7 +350,6 @@
 						<imagepath background="true">$VAR[HomeBackgroundSkinShortcuts]</imagepath>
 						<aspectratio>stretch</aspectratio>
 						<visible>String.IsEqual(Window.Property(groupname),mainmenu)</visible>
-						<focusedcolor>SettingsTitle</focusedcolor>
 					</control>
 					<!-- Thumbnail Label (Home2) -->
 					<control type="label" id="904">
@@ -290,12 +358,11 @@
 						<width>200</width>
 						<height>30</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>center</align>
 						<aligny>center</aligny>
 						<label>$LOCALIZE[21371]</label>
 						<visible>String.IsEqual(Window.Property(groupname),mainmenu)</visible>
-						<focusedcolor>SettingsTitle</focusedcolor>
 					</control>
 					<!-- Thumbnail Label (Submenu) -->
 					<control type="label" id="905">
@@ -304,12 +371,11 @@
 						<width>200</width>
 						<height>30</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>center</align>
 						<aligny>center</aligny>
 						<label>$LOCALIZE[21371]</label>
 						<visible>!String.IsEqual(Window.Property(groupname),mainmenu)</visible>
-						<focusedcolor>SettingsTitle</focusedcolor>
 					</control>
 					<!-- Background Label -->
 					<control type="label" id="906">
@@ -318,12 +384,11 @@
 						<width>200</width>
 						<height>30</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>center</align>
 						<aligny>center</aligny>
 						<label>$LOCALIZE[19190]</label>
 						<visible>String.IsEqual(Window.Property(groupname),mainmenu)</visible>
-						<focusedcolor>SettingsTitle</focusedcolor>
 					</control>
 					<!-- Set label -->
 					<control type="button" id="305">
@@ -332,13 +397,11 @@
 						<width>700</width>
 						<height>36</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>left</align>
 						<aligny>center</aligny>
 						<label>$ADDON[script.skinshortcuts 32025]</label>
 						<label2>$INFO[Container(211).ListItem.Label]</label2>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<texturefocus border="5">ButtonFO.png</texturefocus>
 					</control>
 					<!-- Select widget -->
 					<control type="button" id="312">
@@ -347,14 +410,12 @@
 						<width>700</width>
 						<height>36</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>left</align>
 						<aligny>center</aligny>
 						<label>$ADDON[script.skinshortcuts 32044]</label>
 						<label2>$INFO[Container(211).ListItem.Property(widgetName)]</label2>
 						<visible>String.IsEqual(Window.Property(groupname),mainmenu)</visible>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<texturefocus border="5">ButtonFO.png</texturefocus>
 					</control>
 					<!-- Custom action -->
 					<control type="button" id="307">
@@ -363,12 +424,10 @@
 						<width>700</width>
 						<height>36</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>left</align>
 						<aligny>center</aligny>
 						<label>$ADDON[script.skinshortcuts 32027]</label>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<texturefocus border="5">ButtonFO.png</texturefocus>
 		<!--				<label2>$INFO[Container(211).ListItem.Property(displaypath)]</label2>  -->
 					</control>
 					<!-- Customize Submenu -->
@@ -378,38 +437,24 @@
 						<width>700</width>
 						<height>36</height>
 						<font>METF_SettingsDetail</font>
-						<textcolor>SettingsDetail</textcolor>
+						<textcolor>white</textcolor>
 						<align>left</align>
 						<aligny>center</aligny>
 						<label>$ADDON[script.skinshortcuts 32072]</label>
 						<visible>String.IsEqual(Window.Property(groupname),mainmenu)</visible>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<texturefocus border="5">ButtonFO.png</texturefocus>
 					</control>
-				</control>
-
-				<!-- Vertical & Horizontal separator lines -->
-				<control type="image">
-					<posx>370</posx>
-					<posy>480</posy>
-					<height>4</height>
-					<width>730</width>
-					<texture border="2">VideoInfoLine.png</texture>
-					<colordiffuse>SettingsDetail</colordiffuse>
-				</control>
-				<control type="image">
-					<posx>372</posx>
-					<posy>60</posy>
-					<height>480</height>
-					<width>4</width>
-					<texture border="2">VideoInfoLineV.png</texture>
-					<colordiffuse>SettingsDetail</colordiffuse>
+					<control type="image" id="910">
+						<height>8</height>
+						<width>700</width>
+						<texture border="2">SettingsLine.png</texture>
+						<colordiffuse>SettingsLine</colordiffuse>
+					</control>
 				</control>
 
 				<!-- Button grouplist -->
 				<control type="grouplist" id="9001">
 					<left>385</left>
-					<top>495</top>
+					<top>488</top>
 					<width>800</width>
 					<height>38</height>
 					<itemgap>0</itemgap>
@@ -418,40 +463,42 @@
 					<onup>405</onup>
 					<ondown>401</ondown>
 					<orientation>horizontal</orientation>
-					<animation effect="fade" start="100" end="50" time="0" condition="!Control.HasFocus(301) + !Control.HasFocus(10) + !Control.HasFocus(308)">Conditional</animation>
 					<!-- Add item -->
 					<control type="button" id="301">
-						<width>180</width>
+						<width>220</width>
 						<height>38</height>
 						<align>center</align>
 						<font>METF_TitleTextMedium</font>
-						<textcolor>SettingsDetail</textcolor>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<label>$ADDON[script.skinshortcuts 32000]</label>
+						<textcolor>white</textcolor>
+						<focusedcolor>white</focusedcolor>
 						<texturefocus border="5">ButtonFO.png</texturefocus>
+						<texturenofocus border="5">ButtonNf.png</texturenofocus>
+						<label>$ADDON[script.skinshortcuts 32000]</label>
 					</control>
 					<!-- OK Button -->
 					<control type="button" id="10">
-						<width>180</width>
+						<width>220</width>
 						<height>38</height>
 						<label>$LOCALIZE[186]</label>
 						<align>center</align>
 						<font>METF_TitleTextMedium</font>
-						<textcolor>SettingsDetail</textcolor>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<onclick>Close</onclick>
+						<textcolor>white</textcolor>
+						<focusedcolor>white</focusedcolor>
 						<texturefocus border="5">ButtonFO.png</texturefocus>
+						<texturenofocus border="5">ButtonNf.png</texturenofocus>
+						<onclick>Close</onclick>
 					</control>
 					<!-- Reset -->
 					<control type="button" id="308">
-						<width>320</width>
+						<width>260</width>
 						<height>38</height>
 						<align>center</align>
 						<font>METF_TitleTextMedium</font>
-						<textcolor>SettingsDetail</textcolor>
-						<focusedcolor>SettingsTitle</focusedcolor>
-						<label>$ADDON[script.skinshortcuts 32028]</label>
+						<textcolor>white</textcolor>
+						<focusedcolor>white</focusedcolor>
 						<texturefocus border="5">ButtonFO.png</texturefocus>
+						<texturenofocus border="5">ButtonNf.png</texturenofocus>
+						<label>$ADDON[script.skinshortcuts 32028]</label>
 					</control>
 				</control>
 

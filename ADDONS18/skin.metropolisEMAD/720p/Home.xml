@@ -2,10 +2,6 @@
 <window>
 	<defaultcontrol always="true">9000</defaultcontrol>
 	<onload>RunScript(script.skinshortcuts,type=buildxml&amp;mainmenuID=9000&amp;levels=0)</onload>
-
-	<onload condition="String.IsEmpty(Skin.String(Show_IMDbMediaFlag))">Skin.SetBool(Show_IMDbMediaFlag)</onload>
-	<onload condition="String.IsEmpty(Skin.String(Show_IMDbMediaFlag))">Skin.SetString(Show_IMDbMediaFlag,new)</onload>
-
 	<controls>
 		<include>Global_Background</include>
 		<include condition="![Skin.HasSetting(Home2) | Skin.HasSetting(Home3)]">Home1_Default</include>
