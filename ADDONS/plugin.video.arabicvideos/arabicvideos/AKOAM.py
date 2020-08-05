@@ -182,14 +182,14 @@ def PLAY(url):
 		'1477488213':'thevid','1558278006':'uqload','1477487990':'vidtodo'}
 	items = re.findall('download_btn\' target=\'_blank\' href=\'(.*?)\'',block,re.DOTALL)
 	for link in items:
-		linkLIST.append(link+'?name=akoam')
+		linkLIST.append(link+'?named=________akoam')
 	items = re.findall('background-image: url\((.*?)\).*?href=\'(.*?)\'',block,re.DOTALL)
 	for serverIMG,link in items:
 		serverIMG = serverIMG.split('/')[-1]
 		serverIMG = serverIMG.split('.')[0]
 		if serverIMG in serversDICT:
-			linkLIST.append(link+'?name=akoam_'+serversDICT[serverIMG])
-		else: linkLIST.append(link+'?name=akoam_'+serverIMG)
+			linkLIST.append(link+'?named='+serversDICT[serverIMG]+'________akoam')
+		else: linkLIST.append(link+'?named='+serverIMG+'________akoam')
 	#xbmcgui.Dialog().select('PLAY AKOAM',linkLIST)
 	#return
 	if len(linkLIST)==0:

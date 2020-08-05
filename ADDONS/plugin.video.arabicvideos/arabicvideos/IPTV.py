@@ -299,16 +299,19 @@ def SEARCH(search=''):
 		if subgroup!='': title2 = maingroup+' || '+subgroup
 		else: title2 = maingroup
 		if searchLower in group.lower():
-			if title2 not in uniqueLIST:
-				uniqueLIST.append(title2)
-				addMenuItem('folder',menu_name+title2,TYPE,234,img,'',group)
+			if searchLower in maingroup.lower() and maingroup not in uniqueLIST:
+				uniqueLIST.append(maingroup)
+				if searchLower in maingroup.lower(): addMenuItem('folder',menu_name+maingroup,TYPE,234,img,'',group)
+			if searchLower in subgroup.lower() and subgroup not in uniqueLIST:
+				uniqueLIST.append(subgroup)
+				if searchLower in subgroup.lower(): addMenuItem('folder',menu_name+subgroup,TYPE,234,img,'',group)
 		elif searchLower in title.lower():
 			url = dict['url']
 			title2 = title2+' || '+title
 			if '!!__UNKNOWN__!!' in group: title2 = '!!__UNKNOWN__!!'
 			if '.mp4' in url or '.mkv' in url or '.avi' in url or '.mp3' in url:
-				addMenuItem('video',menu_name+title2,url,235,img)
-			else: addMenuItem('live',menu_name+title2,url,235,img)
+				addMenuItem('video',menu_name+title,url,235,img)
+			else: addMenuItem('live',menu_name+title,url,235,img)
 	menuItemsLIST[:] = sorted(menuItemsLIST, reverse=False, key=lambda key: key[1])
 	return
 

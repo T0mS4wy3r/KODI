@@ -47,7 +47,7 @@ def MENU(website=''):
 def ITEMS(url):
 	#xbmcgui.Dialog().ok(str(url),str(''))
 	if '/search.php' in url:
-		url,search = url.split('?')
+		url,search = url.split('?t=')
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 't' : search }
 		data = urllib.urlencode(payload)
@@ -154,7 +154,7 @@ def SEARCH(search=''):
 	if search == '': return
 	search = search.replace(' ','+')
 	#xbmcgui.Dialog().ok(str(search),str(''))
-	url = website0a + '/search.php?'+search
+	url = website0a + '/search.php?t='+search
 	ITEMS(url)
 	return
 

@@ -183,16 +183,16 @@ def PLAY(url):
 				if 'Res: ' in title: quality = title.split('Res: ')[1]
 				elif 'BW: ' in title: quality = title.split('BW: ')[1].split('kbps')[0]
 				else: quality = ''
-				linkLIST.append(link+'?name=vidstream__watch__m3u8__'+quality)
-		#else: linkLIST.append(url2+'?name=vidstream__watch__m3u8')
+				linkLIST.append(link+'?named=vidstream__watch__m3u8__'+quality)
+		#else: linkLIST.append(url2+'?named=vidstream__watch__m3u8')
 	items = re.findall('</td> <td>(.*?)<.*?data-url="(.*?)"',html,re.DOTALL)
 	for quality,link in items:
 		#xbmc.log(quality, level=xbmc.LOGNOTICE)
 		quality = quality.strip(' ').split(' ')[-1]
 		url = website0a + link # + '&v=1'
 		url = url+'?PHPSID='+PHPSID
-		linkLIST.append(url+'?name=vidstream__download__mp4__'+quality)
-		linkLIST.append(url+'?name=vidstream__watch__mp4__'+quality)
+		linkLIST.append(url+'?named=vidstream__download__mp4__'+quality)
+		linkLIST.append(url+'?named=vidstream__watch__mp4__'+quality)
 	#if not linkLIST:
 	#	WARNING()
 	#	return

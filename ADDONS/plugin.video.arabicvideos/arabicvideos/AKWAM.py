@@ -99,17 +99,18 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
-	#xbmcgui.Dialog().ok(url,'PLAY')
+	#xbmcgui.Dialog().ok(url,'PLAY1')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#with open('S:\\emad.html', 'w') as f: f.write(html)
 	html = openURL_cached(LONG_CACHE,url,'',headers,True,'AKWAM-PLAY-1st')
 	ratingLIST = re.findall('class="badge.*?>.*?(\w*).*?<',html,re.DOTALL)
 	if RATING_CHECK(script_name,url,ratingLIST): return
+	#xbmcgui.Dialog().ok('','PLAY3')
 	buttons = re.findall('li><a href="#(.*?)".*?>(.*?)<',html,re.DOTALL)
 	#buttons = (['',''],['',''])
 	linkLIST,titleLIST,blocks,qualities = [],[],[],[]
 	if buttons:
-		filename = '.mp4'
+		filetype = 'mp4'
 		for button,quality in buttons:
 			#xbmcgui.Dialog().ok(quality,button)
 			html_blocks = re.findall('tab-content" id="'+button+'".*?</div>.\s*</div>',html,re.DOTALL)
@@ -120,8 +121,8 @@ def PLAY(url):
 		html_blocks = re.findall('class="qualities(.*?)<h3.*?>(.*?)<',html,re.DOTALL)
 		block,filename = html_blocks[0]
 		notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
-		file_extension = filename.rsplit('.',1)[1].strip(' ')
-		if file_extension in notvideosLIST:
+		filetype = filename.rsplit('.',1)[1].strip(' ')
+		if filetype in notvideosLIST:
 			xbmcgui.Dialog().ok('رسالة من المبرمج','الملف ليس فيديو ولا صوت')
 			return
 		blocks.append(block)
@@ -137,7 +138,7 @@ def PLAY(url):
 			else: type = 'unknown'
 			#title = qualities[i]+' ملف '+type
 			#titleLIST.append(title)
-			link = link+'?name=akwam__'+type+'__'+qualities[i]
+			link = link+'?named=__'+type+'____'+qualities[i]+'__akwam'
 			linkLIST.append(link)
 	#selection = xbmcgui.Dialog().select('TEST',titleLIST)
 	#selection = xbmcgui.Dialog().select('TEST',linkLIST)

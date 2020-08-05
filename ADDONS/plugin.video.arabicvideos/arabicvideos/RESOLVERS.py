@@ -102,76 +102,86 @@ def PLAY_LINK(url,script_name,type=''):
 	#	SERVICES.MAIN(156)
 	#	return ''
 
+def EXTRACT_NAMED_URL(url):
+	# url = url+'?named='+name+'__'+type+'__'+filetype+'__'+quality
+	# url = 'http://akwam.net?named=akwam__watch__mp4__720'
+	url2,named2,server,menuname,name,type,filetype,quality,source = url,'','','','','','','',''
+	if '?named=' in url:
+		url2,named2 = url.split('?named=',1)
+		named2 = named2+'__'+'__'+'__'+'__'
+		named2 = named2.lower()
+		name,type,filetype,quality,source = named2.split('__')[:5]
+	if quality=='': quality = '0'
+	else: quality = quality.replace('p','').replace(' ','')
+	server = HOSTNAME(url2,False)
+	url2 = url2.strip('?').strip('/').strip('&')
+	if name!='': menuname = name
+	elif source!='': menuname = source
+	else: menuname = server
+	return url2,named2,server,menuname,name,type,filetype,quality,source
+
 def RESOLVABLE(url):
 	# private	: سيرفر خاص
 	# known		: سيرفر عام معروف
 	# external	: سيرفر عام خارجي
-	# named		: سيرفر عام محدد
-	private,known,external,named = None,None,None,None
-	result1,result2,result3,result4,result5,type = '','','','','',''
-	#xbmcgui.Dialog().ok(url,'')
-	url2,server = url,url.lower().split('/')[2]
-	if 'name=' in url:
-		url2,named = url.split('name=',1)
-		named = named+'__'+'__'+'__'
-		server2,type,filetype,quality = named.lower().split('__')[:4]
-		#xbmcgui.Dialog().ok(server,server2)
-		if server2!='': server = server2
-		if type=='watch': result3 = ' '+'مشاهدة'
-		elif type=='download': result3 = ' '+'%%تحميل'
-		else: result3 = ' '+'%مشاهدة وتحميل'
+	# resolver	: سيرفر عام خارجي
+	# named		: سيرفر محدد
+	result1,result2,private,known,external,named,resolver = '','',None,None,None,None,None
+	url2,named2,server,menuname,name,type,filetype,quality,source = EXTRACT_NAMED_URL(url)
+	if '?named=' in url:
+		if type=='watch': type = ' '+'مشاهدة'
+		elif type=='download': type = ' '+'%%تحميل'
+		elif type=='both' or type=='': type = ' '+'%مشاهدة وتحميل'
 		if filetype!='':
-			#if '360p'==quality: filetype = 'm3u8'
 			if 'mp4' not in filetype: filetype = '%'+filetype
-			result4 = ' '+filetype
+			filetype = ' '+filetype
 		if quality!='':
-			#if '360p'==quality: quality = '1080p'
 			quality = '%%%%%%%%%'+quality
-			result5 = ' '+quality[-9:]
-	url2 = url2.strip('?').strip('/').strip('&')
+			quality = ' '+quality[-9:]
 	#if any(value in server for value in doNOTresolveMElist): return ''
 	#xbmcgui.Dialog().ok(server,type)
-	if    '_' 			in server: source,server = server.split('_',1)
-	if   'akoam'		in server: private = 'akoam'
-	elif 'akwam'		in server: private = 'akwam'
-	elif 'arabseed'		in server: private = 'arabseed'
-	elif 'youtu'	 	in server: private = 'youtube'
-	elif 'y2u.be'	 	in server: private = 'youtube'
-	elif 'd.egybest.d'	in server: private = 'egybestvip'
-	elif 'moshahda'		in server: private = 'movizland'
-	elif 'facultybooks'	in server: private = 'facultybooks'
-	elif 'inflam.cc'	in server: private = 'inflam'
-	elif 'buzzvrl'		in server: private = 'buzzvrl'
-	elif 'arabloads'	in server: known = 'arabloads'
-	elif 'archive'		in server: known = 'archive'
-	elif 'catch.is'	 	in server: known = 'catch'
-	elif 'filerio'		in server: known = 'filerio'
-	elif 'vidbm'		in server: known = 'vidbm'
-	elif 'vidhd'		in server: known = 'vidhd'
-	elif 'videobin'		in server: known = 'videobin'
-	elif 'govid'		in server: known = 'govid'
-	elif 'liivideo' 	in server: known = 'liivideo'
-	elif 'mp4upload'	in server: known = 'mp4upload'
-	elif 'publicvideo'	in server: known = 'publicvideo'
-	elif 'rapidvideo' 	in server: known = 'rapidvideo'
-	elif 'top4top'		in server: known = 'top4top'
-	elif 'upbom' 		in server: known = 'upbom'
-	elif 'uppom' 		in server: known = 'uppom'
-	elif 'uptobox' 		in server: known = 'uptobox'
-	elif 'uptostream'	in server: known = 'uptostream'
-	elif 'uqload' 		in server: known = 'uqload'
-	elif 'vcstream' 	in server: known = 'vcstream'
-	elif 'vidbob'		in server: known = 'vidbob'
-	elif 'vidoza' 		in server: known = 'vidoza'
-	elif 'watchvideo' 	in server: known = 'watchvideo'
-	elif 'wintv.live'	in server: known = 'wintv.live'
-	elif 'zippyshare'	in server: known = 'zippyshare'
+	if   'arabseed'		in server: named	= menuname
+	elif 'akoam'		in source: named	= menuname
+	elif 'akwam'		in source: private	= 'akwam'
+	elif 'shahid4u'		in server: named	= menuname
+	elif 'youtu'	 	in server: private	= 'youtube'
+	elif 'y2u.be'	 	in server: private	= 'youtube'
+	elif 'd.egybest.d'	in server: private	= 'egybestvip'
+	elif 'moshahda'		in server: private	= 'movizland'
+	elif 'facultybooks'	in server: private	= 'facultybooks'
+	elif 'inflam.cc'	in server: private	= 'inflam'
+	elif 'buzzvrl'		in server: private	= 'buzzvrl'
+	elif 'arabloads'	in server: known	= 'arabloads'
+	elif 'archive'		in server: known	= 'archive'
+	elif 'catch.is'	 	in server: known	= 'catch'
+	elif 'filerio'		in server: known	= 'filerio'
+	elif 'vidbm'		in server: known	= 'vidbm'
+	elif 'vidhd'		in server: known	= 'vidhd'
+	elif 'videobin'		in server: known	= 'videobin'
+	elif 'govid'		in server: known	= 'govid'
+	elif 'liivideo' 	in server: known	= 'liivideo'
+	elif 'mp4upload'	in server: known	= 'mp4upload'
+	elif 'publicvideo'	in server: known	= 'publicvideo'
+	elif 'rapidvideo' 	in server: known	= 'rapidvideo'
+	elif 'top4top'		in server: known	= 'top4top'
+	elif 'upbom' 		in server: known	= 'upbom'
+	elif 'uppom' 		in server: known	= 'uppom'
+	elif 'uptobox' 		in server: known	= 'uptobox'
+	elif 'uptostream'	in server: known	= 'uptostream'
+	elif 'uqload' 		in server: known	= 'uqload'
+	elif 'vcstream' 	in server: known	= 'vcstream'
+	elif 'vidbob'		in server: known	= 'vidbob'
+	elif 'vidoza' 		in server: known	= 'vidoza'
+	elif 'watchvideo' 	in server: known	= 'watchvideo'
+	elif 'wintv.live'	in server: known	= 'wintv.live'
+	elif 'zippyshare'	in server: known	= 'zippyshare'
 	else:
+		#LOG_THIS('NOTICE',url+'==='+url2)
 		import resolveurl
-		external = resolveurl.HostedMediaFile(url2).valid_url()
-		if not external:
+		resolver = resolveurl.HostedMediaFile(url2).valid_url()
+		if not resolver:
 			#LOG_THIS('NOTICE','1111 ==========================')
-			external = False
+			resolver = False
 			list_url = 'https://ytdl-org.github.io/youtube-dl/supportedsites.html'
 			html = openURL_cached(LONG_CACHE,list_url,'','','','RESOLVERS-RESOLVABLE-1st')
 			html = re.findall('<ul>(.*?)</ul>',html,re.DOTALL)
@@ -183,19 +193,16 @@ def RESOLVABLE(url):
 			for part in parts:
 				if len(part)<4: continue
 				elif part in html:
-					external = True
+					resolver = True
 					break
 	#xbmcgui.Dialog().ok(url,url2)
-	if   private:  result1,result2 = 'خاص',private
-	elif known:    result1,result2 = '%عام معروف',known
-	elif named:    result1,result2 = '%%عام محدد',server
-	elif external: result1,result2 = '%%%عام خارجي',server
-	else:          result1,result2 = '%%%%عام مجهول',server
-	result1 = ' '+result1
-	result2 = ' '+result2	
-	result = 'سيرفر'+result3+result1+result2+result4+result5
-	#xbmc.log(result)
-	return result
+	if   private:	result1,result2 = 'خاص',private
+	elif named:		result1,result2 = '%محدد',named
+	elif known:		result1,result2 = '%%عام معروف',known
+	elif external:	result1,result2 = '%%%عام خارجي',external
+	elif resolver:	result1,result2 = '%%%%عام خارجي',menuname
+	else:			result1,result2 = '%%%%%عام مجهول',menuname
+	return result1,result2,type,filetype,quality
 	"""
 	elif 'playr.4helal'	in server2:	private = 'helal'
 	elif 'estream'	 	in server2:	known = 'estream'
@@ -209,17 +216,12 @@ def RESOLVABLE(url):
 	"""
 
 def INTERNAL_RESOLVERS(url):
-	url2,server = url,url.lower().split('/')[2]
-	if 'name=' in url:
-		url2,named = url.split('name=',1)
-		named = named.lower()
-	else: named = ''
-	url2 = url2.strip('?').strip('/').strip('&')
+	url2,named2,server,menuname,name,type,filetype,quality,source = EXTRACT_NAMED_URL(url)
 	#xbmcgui.Dialog().ok(named,server)
 	#if 'gounlimited'	in server: url2 = url2.replace('https:','http:')
 	#if any(value in server for value in doNOTresolveMElist): titleLIST,linkLIST = ['Error: RESOLVE does not resolve this server'],[]
-	if   'akoam'		in named:  errormsg,titleLIST,linkLIST = AKOAM(url2,named)
-	elif 'akwam'		in named:  errormsg,titleLIST,linkLIST = AKWAM(url2,named)
+	if   'akoam'		in source: errormsg,titleLIST,linkLIST = AKOAM(url2,name)
+	elif 'akwam'		in source: errormsg,titleLIST,linkLIST = AKWAM(url2,type,quality)
 	elif 'shahid4u'		in server: errormsg,titleLIST,linkLIST = SHAHID4U(url2)
 	elif 'arabseed'		in server: errormsg,titleLIST,linkLIST = ARABSEED(url2)
 	elif 'arblionz'		in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
@@ -236,7 +238,7 @@ def INTERNAL_RESOLVERS(url):
 	return errormsg,titleLIST,linkLIST
 
 def EXTERNAL_RESOLVER_1(url):
-	server = url.lower().split('/')[2]
+	server = HOSTNAME(url,False)
 	#if 'gounlimited'	in server: url2 = url2.replace('https:','http:')
 	#if any(value in server for value in doNOTresolveMElist): titleLIST,linkLIST = ['Error: RESOLVE does not resolve this server'],[]
 	if   'arabloads'	in server: errormsg,titleLIST,linkLIST = ARABLOADS(url)
@@ -253,7 +255,7 @@ def EXTERNAL_RESOLVER_1(url):
 	elif 'govid'		in server: errormsg,titleLIST,linkLIST = GOVID(url)
 	elif 'liivideo' 	in server: errormsg,titleLIST,linkLIST = LIIVIDEO(url)
 	elif 'mp4upload'	in server: errormsg,titleLIST,linkLIST = MP4UPLOAD(url)
-	elif 'publicvideohos'	in server: errormsg,titleLIST,linkLIST = PUBLICVIDEOHOST(url)
+	elif 'publicvideoho'in server: errormsg,titleLIST,linkLIST = PUBLICVIDEOHOST(url)
 	elif 'rapidvideo' 	in server: errormsg,titleLIST,linkLIST = RAPIDVIDEO(url)
 	elif 'top4top'		in server: errormsg,titleLIST,linkLIST = TOP4TOP(url)
 	elif 'upbom' 		in server: errormsg,titleLIST,linkLIST = UPBOM(url)
@@ -356,12 +358,16 @@ def SERVERS_cached(linkLIST2,script_name2=''):
 	titleLIST,linkLIST,serversDICT = [],[],[]
 	for link in linkLIST2:
 		if link=='': continue
-		serverNAME = RESOLVABLE(link)
-		serversDICT.append( [serverNAME,link] )
-	sortedDICT = sorted(serversDICT, reverse=True, key=lambda key: key[0])
-	for server,link in sortedDICT:
-		server = server.replace('%','')
-		titleLIST.append(server)
+		server1,server2,type,filetype,quality = RESOLVABLE(link)
+		if quality=='': quality = 0
+		else: quality = int(quality.replace('p','').replace('%','').replace(' ',''))
+		serversDICT.append([server1,server2,type,filetype,quality,link])
+	sortedDICT = sorted(serversDICT, reverse=True, key=lambda key: (key[4],key[2],key[0],key[3],key[1]))
+	for server1,server2,type,filetype,quality,link in sortedDICT:
+		if quality==0: quality = ''
+		title = 'سيرفر'+' '+type+' '+server1+' '+str(quality)+' '+filetype+' '+server2
+		title = title.replace('%','').strip(' ').replace('  ',' ').replace('  ',' ').replace('  ',' ')
+		titleLIST.append(title)
 		linkLIST.append(link)
 	data = zip(titleLIST,linkLIST)
 	WRITE_TO_SQL3('SERVERS',[linkLIST2,script_name2],data,expiry)
@@ -430,7 +436,7 @@ def	EXTERNAL_RESOLVER_3(url):
 		return '',titleLIST,linkLIST
 
 def MOVIZLAND(link):
-	# http://moshahda.online/hj4ihfwvu3rl.html?name=Main
+	# http://moshahda.online/hj4ihfwvu3rl.html?named=Main
 	# http://moshahda.online/dl?op=download_orig&id=hj4ihfwvu3rl&mode=o&hash=62516-107-159-1560654817-4fa63debbd8f3714289ad753ebf598ae
 	headers = { 'User-Agent' : '' }
 	if 'op=download_orig' in link:
@@ -446,9 +452,8 @@ def MOVIZLAND(link):
 				return message[0],[],[]
 	else:
 		#xbmcgui.Dialog().ok(link,'')
-		parts = link.split('?')
-		url = parts[0]
-		name2 = parts[1].replace('name=','').lower()
+		url,name2 = link.split('?named=')
+		name2 = name2.lower()
 		# watch links
 		html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-MOSHAHDA_ONLINE-2nd')
 		html_blocks = re.findall('Form method="POST" action=\'(.*?)\'(.*?)div',html,re.DOTALL)
@@ -548,9 +553,9 @@ def FACULTYBOOKS(url):
 	else: return 'Error: Resolver FACULTYBOOKS Failed',[],[]
 
 def EGYBEST(url):
-	# https://egy.best/api?call=nAAAUceAUAlAUNbbbbbbbaUlUAUbFQAUAlAUGkmPMsfPyNBUlUAUSReUAlAUuReRSRBpElzAUlUAUguGdPRbgBUAlNhANdNANdNdNbbdNUlUAUPRSAUAlAUNhhlNhNNdAUlUAUPRyAUAlAUNhbUAzhAlfzhlAvfUAd&auth=874ded32a2e3b91d6ae55186274469e2?name=vidstream__watch
-	# https://egy.best/api?call=nAAAUceAUAlAUNbbbbbbbaUlUAUbFQAUAlAUGkmPMsfPyNBUlUAUSReUAlAUuReRSRBpElzAUlUAUguGdPRbgBUAlNhANdNANdNdNbbdNUlUAUPRSAUAlAUNhhlNhNNdAUlUAUPRyAUAlAUNhbUAzhAlfzhlAvfUAd&auth=874ded32a2e3b91d6ae55186274469e2?name=vidstream__download
-	url2 = url.split('name=',1)[0].strip('?').strip('/').strip('&')
+	# https://egy.best/api?call=nAAAUceAUAlAUNbbbbbbbaUlUAUbFQAUAlAUGkmPMsfPyNBUlUAUSReUAlAUuReRSRBpElzAUlUAUguGdPRbgBUAlNhANdNANdNdNbbdNUlUAUPRSAUAlAUNhhlNhNNdAUlUAUPRyAUAlAUNhbUAzhAlfzhlAvfUAd&auth=874ded32a2e3b91d6ae55186274469e2?named=vidstream__watch
+	# https://egy.best/api?call=nAAAUceAUAlAUNbbbbbbbaUlUAUbFQAUAlAUGkmPMsfPyNBUlUAUSReUAlAUuReRSRBpElzAUlUAUguGdPRbgBUAlNhANdNANdNdNbbdNUlUAUPRSAUAlAUNhhlNhNNdAUlUAUPRyAUAlAUNhbUAzhAlfzhlAvfUAd&auth=874ded32a2e3b91d6ae55186274469e2?named=vidstream__download
+	url2 = url.split('?named=',1)[0].strip('?').strip('/').strip('&')
 	titleLIST,linkLIST,items,url3 = [],[],[],''
 	headers = { 'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
 	response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'',headers,False,'','RESOLVERS-EGYBEST-1st')
@@ -654,30 +659,27 @@ def SHAHID4U(link):
 	url2 = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-SHAHID4U-1st')
 	return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
 
-def AKWAM(url,named):
+def AKWAM(url2,type,quality):
 	#xbmcgui.Dialog().ok(url,named)
-	# https://goo-2o.com/watch/12899		?name=		akwam__watch__1080p
-	# https://goo-2o.com/link/12899			?name=		akwam__download__1080p
-	html2 = openURL_cached(LONG_CACHE,url,'','',True,'RESOLVERS-AKWAM-1st')
-	url2 = re.findall('class="content.*?href="(.*?)"',html2,re.DOTALL)
-	if url2: url2 = unquote(url2[0])
-	else: url2 = url
-	linkLIST,titleLIST,url3 = [],[],''
-	if 'download' in named:
-		html3 = openURL_cached(SHORT_CACHE,url2,'','',True,'RESOLVERS-AKWAM-2nd')
-		url3 = re.findall('btn-loader.*?href="(.*?)"',html3,re.DOTALL)
-		if url3:
-			size = named.split('__')
-			if size:
-				size = size[2]
-				link = unquote(url3[0])
-				titleLIST.append(size)
-				linkLIST.append(link)
-	elif 'watch' in named:
-		html4 = openURL_cached(SHORT_CACHE,url2,'','',True,'AKWAM-PLAY-3rd')
-		links = re.findall('<source.*?src="(.*?)".*?size="(.*?)"',html4,re.DOTALL)
+	# https://goo-2o.com/watch/12899		?named=		__watch__m3u8__1080p_akwam
+	# https://goo-2o.com/link/12899			?named=		__download__mp4__1080p_akwam
+	html2 = openURL_cached(LONG_CACHE,url2,'','',True,'RESOLVERS-AKWAM-1st')
+	url3 = re.findall('class="content.*?href="(.*?)"',html2,re.DOTALL)
+	if url3: url3 = unquote(url3[0])
+	else: url3 = url2
+	linkLIST,titleLIST = [],[]
+	if type=='download':
+		html3 = openURL_cached(SHORT_CACHE,url3,'','',True,'RESOLVERS-AKWAM-2nd')
+		url4 = re.findall('btn-loader.*?href="(.*?)"',html3,re.DOTALL)
+		if url4:
+			link = unquote(url4[0])
+			linkLIST.append(link)
+			titleLIST.append(quality)
+	elif type=='watch':
+		html3 = openURL_cached(SHORT_CACHE,url3,'','',True,'AKWAM-PLAY-3rd')
+		links = re.findall('<source.*?src="(.*?)".*?size="(.*?)"',html3,re.DOTALL)
 		for link,size in links:
-			if size in named:
+			if quality in size:
 				titleLIST.append(size)
 				linkLIST.append(link)
 				break
@@ -688,10 +690,10 @@ def AKWAM(url,named):
 	if not linkLIST: return 'Error: Resolver AKWAM Failed',[],[]
 	return '',titleLIST,linkLIST
 
-def AKOAM(url,named):
+def AKOAM(url,name):
 	#xbmcgui.Dialog().ok(url,named)
-	# http://go.akoam.net/5cf68c23e6e79			?name=			akoam
-	# http://w.akwam.org/5e14fd0a2806e			?name=			akoam_ok.ru
+	# http://go.akoam.net/5cf68c23e6e79			?named=			________akoam
+	# http://w.akwam.org/5e14fd0a2806e			?named=			ok.ru________akoam
 	#named = named.replace('akoam__','').split('__')[1]
 	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','',True,'','RESOLVERS-AKOAM-1st')
 	html = response.content
@@ -728,7 +730,7 @@ def AKOAM(url,named):
 			link = items[0].replace('\/','/')
 			link = link.rstrip('/')
 			if 'http' not in link: link = 'http:' + link
-			if named=='akoam': errormsg,titleLIST,linkLIST = '',[''],[link]
+			if name=='': errormsg,titleLIST,linkLIST = '',[''],[link]
 			else: errormsg,titleLIST,linkLIST = 'NEED_EXTERNAL_RESOLVERS',[''],[link]
 		else: errormsg,titleLIST,linkLIST = 'Error: Resolver AKOAM Failed',[],[]
 		#xbmcgui.Dialog().ok(linkLIST[0],errormsg)

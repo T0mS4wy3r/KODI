@@ -7,18 +7,18 @@ website0a = WEBSITES[script_name][0]
 
 #headers = '' 
 headers = {'User-Agent':''}
-#headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36'}
 
-def MAIN(mode,url,text,type):
+def MAIN(mode,url,text,type,page):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if	 mode==140: results = MENU()
-	elif mode==141: results = TITLES(url)
+	elif mode==141: results = TITLES(url,page,text)
 	elif mode==142: results = PLAYLIST_ITEMS(url)
 	elif mode==143: results = PLAY(url,type)
+	elif mode==144: results = TRENDING_MENU(url)
 	#elif mode==144: results = SETTINGS()
 	#elif mode==144: results = TEST_YOUTUBE()
-	elif mode==145: results = CHANNEL_MENU(url)
-	elif mode==146: results = CHANNEL_ITEMS(url)
+	#elif mode==145: results = CHANNEL_MENU(url)
+	elif mode==146: results = CHANNEL_ITEMS(url,page,text)
 	elif mode==147: results = LIVE_ARABIC()
 	elif mode==148: results = LIVE_ENGLISH()
 	elif mode==149: results = SEARCH(text)
@@ -26,24 +26,30 @@ def MAIN(mode,url,text,type):
 	return results
 
 def MENU():
-	addMenuItem('folder',menu_name+'بحث في الموقع','',149)
+	addMenuItem('folder',menu_name+'بحث: موقع يوتيوب','',149)
+	addMenuItem('folder',menu_name+'الشائع والمتداول',website0a+'/feed/trending',144)
+	addMenuItem('folder',menu_name+'توصيات يوتيوب',website0a,141)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',menu_name+'TEST_YOUTUBE','',144)
-	addMenuItem('folder',menu_name+'قنوات عربية','',147)
-	addMenuItem('folder',menu_name+'قنوات أجنبية','',148)
-	addMenuItem('folder',menu_name+'افلام عربية',website0a+'/results?search_query=فيلم',141)
-	addMenuItem('folder',menu_name+'افلام اجنبية',website0a+'/results?search_query=movie',141)
-	addMenuItem('folder',menu_name+'مسلسلات عربية',website0a+'/results?search_query=مسلسل&sp=EgIQAw==',141)
-	addMenuItem('folder',menu_name+'مسلسلات اجنبية',website0a+'/results?search_query=series&sp=EgIQAw==',141)
-	addMenuItem('folder',menu_name+'مسرحيات عربية',website0a+'/results?search_query=مسرحية',141)
-	addMenuItem('folder',menu_name+'مسلسلات كارتون',website0a+'/results?search_query=كارتون&sp=EgIQAw==',141)
-	addMenuItem('folder',menu_name+'خطبة المرجعية',website0a+'/results?search_query=قناة+كربلاء+الفضائية+خطبة+الجمعة&sp=CAISAhAB',141)
-	addMenuItem('folder',menu_name+'قناة كربلاء الفضائية',website0a+'/user/karbalatvchannel',145)
+	addMenuItem('folder',menu_name+'بحث: قنوات عربية','',147)
+	addMenuItem('folder',menu_name+'بحث: قنوات أجنبية','',148)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder',menu_name+'بحث: افلام عربية',website0a+'/results?search_query=فيلم',141)
+	addMenuItem('folder',menu_name+'بحث: افلام اجنبية',website0a+'/results?search_query=movie',141)
+	addMenuItem('folder',menu_name+'بحث: مسلسلات عربية',website0a+'/results?search_query=مسلسل&sp=EgIQAw==',141)
+	addMenuItem('folder',menu_name+'بحث: مسلسلات اجنبية',website0a+'/results?search_query=series&sp=EgIQAw==',141)
+	addMenuItem('folder',menu_name+'بحث: مسرحيات عربية',website0a+'/results?search_query=مسرحية',141)
+	addMenuItem('folder',menu_name+'بحث: مسلسلات كارتون',website0a+'/results?search_query=كارتون&sp=EgIQAw==',141)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder',menu_name+'بحث: خطبة المرجعية',website0a+'/results?search_query=قناة+كربلاء+الفضائية+خطبة+الجمعة&sp=CAISAhAB',141)
+	addMenuItem('folder',menu_name+'قناة كربلاء الفضائية',website0a+'/user/karbalatvchannel',146)
 	addMenuItem('folder',menu_name+'العراق خطبة المرجعية',website0a+'/playlist?list=PL4jUq6pnG36QjuXDhNnIlriuzroTFtmfr',142)
-	addMenuItem('folder',menu_name+'العتبة الحسينية المقدسة',website0a+'/user/ImamHussaindotorg',145)
-	addMenuItem('folder',menu_name+'شوف دراما الاولى',website0a+'/channel/UCgd_tWU4X7s10DKdgt-XDNQ',145)
-	addMenuItem('folder',menu_name+'شوف دراما الثانية',website0a+'/channel/UC25ZB5ZMqLQwxFDV9FHvF8g',145)
-	addMenuItem('folder',menu_name+'شوف دراما الثالثة',website0a+'/channel/UCQOz2_AhxeHUbNMYan-6ZQQ',145)
-	addMenuItem('folder',menu_name+'شبكة وطن',website0a+'/user/WatanNetwork',145)
+	addMenuItem('folder',menu_name+'العتبة الحسينية المقدسة',website0a+'/user/ImamHussaindotorg',146)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder',menu_name+'شوف دراما الاولى',website0a+'/channel/UCgd_tWU4X7s10DKdgt-XDNQ',146)
+	addMenuItem('folder',menu_name+'شوف دراما الثانية',website0a+'/channel/UC25ZB5ZMqLQwxFDV9FHvF8g',146)
+	addMenuItem('folder',menu_name+'شوف دراما الثالثة',website0a+'/channel/UCQOz2_AhxeHUbNMYan-6ZQQ',146)
+	addMenuItem('folder',menu_name+'شبكة وطن',website0a+'/user/WatanNetwork',146)
 	#addMenuItem('folder',menu_name+'اعدادات اضافة يوتيوب','',144)
 	#yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
 	#if yes:
@@ -61,12 +67,6 @@ def LIVE_ENGLISH():
 	TITLES(website0a+'/results?search_query=tv&sp=EgJAAQ==')
 	return
 
-def CHANNEL_MENU(url):
-	addMenuItem('folder',menu_name+'فيديوهات',url+'/videos',146)
-	addMenuItem('folder',menu_name+'قوائم',url+'/playlists',146)
-	addMenuItem('folder',menu_name+'قنوات',url+'/channels',146)#,'','','UPDATE')
-	return
-
 def PLAY(url,type):
 	#url = url+'&'
 	#items = re.findall('v=(.*?)&',url,re.DOTALL)
@@ -79,14 +79,16 @@ def PLAY(url,type):
 	RESOLVERS.PLAY(linkLIST,script_name,type)
 	return
 
-def PLAYLIST_ITEMS_NEW(url,html,c):
+def PLAYLIST_ITEMS(url):
 	# https://www.youtube.com/watch?v=nMaNCKJCLfE&list=PLbg43835F8ge08Sb_gl6dbdGZzD3hCnQL
 	# https://www.youtube.com/playlist?list=PLbg43835F8ge08Sb_gl6dbdGZzD3hCnQL
+	html,c = GET_PAGE_DATA(url)
+	if c=='': PLAYLIST_ITEMS_OLD(url,html) ; return
+	token = ''
 	if '/watch?v=' in url:
 		listID = re.findall('list=(.*?)&',url+'&',re.DOTALL)
 		url = website0a+'/playlist?list='+listID[0]
 		html,c = GET_PAGE_DATA(url)
-	token = ''
 	if 'ctoken' in url:
 		f = c[1]['response']['continuationContents']['playlistVideoListContinuation']
 		if 'continuations' in f.keys(): token = f['continuations'][0]['nextContinuationData']['continuation']
@@ -101,193 +103,207 @@ def PLAYLIST_ITEMS_NEW(url,html,c):
 	for i in range(len(g)):
 		item = g[i]
 		#if item.keys()[0]=='shelfRenderer': continue
-		succeeded,title,link,img,count,duration,live = ITEMS_RENDER(item)
+		succeeded,title,link,img,count,duration,live,paid = ITEMS_RENDER(item)
 		if not succeeded: continue
 		addMenuItem('video',menu_name+title,link,143,img,duration)
 	if token!='':
-		#param = f['continuations'][0]['nextContinuationData']['clickTrackingParams']#.replace('=','%253D')
-		#https://www.youtube.com/browse_ajax?ctoken=4qmFsgI0EhhVQ040NWFkeDVlUUN4MXZNNnBfTGZyNEEaGEVnWjJhV1JsYjNNZ0FEZ0JlZ0V5dUFFQQ%253D%253D&continuation=4qmFsgI0EhhVQ040NWFkeDVlUUN4MXZNNnBfTGZyNEEaGEVnWjJhV1JsYjNNZ0FEZ0JlZ0V5dUFFQQ%253D%253D&itct=CCgQybcCIhMI-_nWhMmR6gIVI9BgCh3bTQ9z
 		url2 = website0a+'/browse_ajax?ctoken='+token#+'&continuation='+token+'&itct='+param
 		addMenuItem('folder',menu_name+'صفحة اخرى',url2,142)
 	return
 
-def PLAYLIST_ITEMS(url):
-	# https://www.youtube.com/playlist?list=PLRXjtfMCvJBUzMQksXgR2IB2_AndVBmfm
-	# https://www.youtube.com/watch?v=l5TBLKr3WYY&list=PLRXjtfMCvJBUzMQksXgR2IB2_AndVBmfm&index=18
+def TRENDING_MENU(url):
 	html,c = GET_PAGE_DATA(url)
-	if c!='':
-		PLAYLIST_ITEMS_NEW(url,html,c)
-		return
-	if '/watch?v=' in url:
-		PLAYLIST_ITEMS_PLAYER(url)
-		return
-	html_blocks = []
-	if 'browse_ajax' in url:
-		#html = openURL_cached(REGULAR_CACHE,url,'',headers,'','YOUTUBE-PLAYLIST_ITEMS-1st')
-		html = CLEAN_AJAX(html)
-		html_blocks = [html]
-	elif 'list=' in url and 'index=' not in url:
-		id = url.split('list=')[1].split('&')[0]
-		url2 = website0a+'/playlist?list='+id
-		html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','YOUTUBE-PLAYLIST_ITEMS-2nd')
-		html_blocks = re.findall('class="pl-video-table(.*?)footer-container',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(url2,id)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall('data-title="(.*?)".*?href="(.*?)".*?data-thumb="(.*?)".*?video-time(.*?)</div></td></tr>',block,re.DOTALL)
-		for title,link,img,duration in items:
-			if 'timestamp' in duration: duration = re.findall('timestamp.*?><.*?>(.*?)<',duration,re.DOTALL)[0]
-			else: duration=''
-			if '.' in duration: duration = duration.replace('.',':')
-			title = title.replace('\n','')
-			title = unescapeHTML(title)
-			link = website0a+link
-			addMenuItem('video',menu_name+title,link,143,img,duration)
-		html_blocks = re.findall('items-load-more-button(.*?)load-more-loading',html,re.DOTALL)
-		if html_blocks:
-			block = html_blocks[0]
-			items = re.findall('href="(.*?)"',block,re.DOTALL)
-			for link in items:
-				addMenuItem('folder',menu_name+'صفحة اخرى',website0a+link,142)
+	d = c['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
+	e = d['contents']
+	s = 0
+	for i in range(len(e)):
+		item = e[i]['itemSectionRenderer']['contents'][0]
+		if item['shelfRenderer']['content'].keys()[0]=='horizontalListRenderer': continue
+		succeeded,title,link,img,count,duration,live,paid = ITEMS_RENDER(item)
+		if title=='':
+			s += 1
+			title = 'منوعات الجزء '+str(s)
+		#if not succeeded: continue
+		addMenuItem('folder',menu_name+title,url,141,'',str(i))
+	e = d['subMenu']['channelListSubMenuRenderer']['contents']
+	for i in range(len(e)):
+		item = e[i]
+		ISERT_ITEM_TO_MENU(item)
+	html,c = GET_PAGE_DATA(website0a,request='guide_data')
+	d = c['items'][3]['guideSectionRenderer']['items']
+	for i in range(len(d)):
+		item = d[i]
+		ISERT_ITEM_TO_MENU(item)
 	return
 
-def PLAYLIST_ITEMS_PLAYER(url):
-	# https://www.youtube.com/watch?v=l5TBLKr3WYY&list=PLRXjtfMCvJBUzMQksXgR2IB2_AndVBmfm&index=18
-	html,c = GET_PAGE_DATA(url)
-	html_blocks = re.findall('playlist-videos-container(.*?)watch7-container',html,re.DOTALL)
-	block = html_blocks[0]
-	items1 = re.findall('data-video-title="(.*?)".*?href="(.*?)"',block,re.DOTALL)
-	items2 = re.findall('data-thumbnail-url="(.*?)"',block,re.DOTALL)
-	i = 0
-	for title,link in items1:
-		title = title.replace('\n','')
-		title = unescapeHTML(title)
-		img = items2[i]
-		link = website0a+link
-		addMenuItem('video',menu_name+title,link,143,img)
-		i = i+1
-	addMenuItem('folder',menu_name+'صفحة اخرى',link,142)
+def CHANNEL_ITEMS(url,page_type,vistordetails):
+	html,c = GET_PAGE_DATA(url,vistordetails)
+	if c=='': CHANNEL_ITEMS_OLD(url,html) ; return
+	not_entry_urls = ['/videos','/playlists','/channels','/featured','ss=','ctoken=','key=','shelf_id=']
+	entry_page = any(value in url for value in not_entry_urls)
+	if not entry_page:
+		if '"title":"Videos"' in html: addMenuItem('folder',menu_name+'فيديوهات',url+'/videos',146)
+		if '"title":"Playlists"' in html: addMenuItem('folder',menu_name+'قوائم',url+'/playlists',146)
+		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+'قنوات',url+'/channels',146)#,'','','UPDATE')
+	f,g = {},{}
+	if 'key=' in url:
+		try:
+			f = c['onResponseReceivedActions'][0]['appendContinuationItemsAction']['continuationItems']
+			ff = f[0]
+		except: return
+	elif 'ctoken=' in url:
+		ff = c[1]['response']['continuationContents']['sectionListContinuation']
+		f = ff['contents']
+	elif 'contents' in str(c):
+		d = c['contents']['twoColumnBrowseResultsRenderer']['tabs']
+		e = d[0]
+		cond1 = '"title":"Videos"' in html or '"title":"Playlists"' in html or '"title":"Channels"' in html
+		cond2 = '/videos' in url or '/playlists' in url or '/channels' in url
+		if cond1 and cond2:
+			for i in range(len(d)):
+				if 'tabRenderer' not in d[i].keys(): continue
+				ee = d[i]['tabRenderer']
+				try: gg = ee['content']['sectionListRenderer']['subMenu']['channelSubMenuRenderer']['contentTypeSubMenuItems'][0]
+				except: gg = ee
+				try: link = gg['endpoint']['commandMetadata']['webCommandMetadata']['url']
+				except: continue
+				if   '/videos'		in link	and '/videos'		in url: e = d[i] ; break
+				elif '/playlists'	in link	and '/playlists'	in url: e = d[i] ; break
+				elif '/channels'	in link	and '/channels'		in url: e = d[i] ; break
+		ff = e['tabRenderer']['content']['sectionListRenderer']
+		f = ff['contents']
+		g = f[0]['itemSectionRenderer']['contents'][0]
+	found = False
+	# videos shelf list
+	if page_type=='1' or (not found and '/videos' in url and 'view=' not in url):
+		try:
+			f = e['tabRenderer']['content']['sectionListRenderer']['subMenu']
+			g = f['channelSubMenuRenderer']['contentTypeSubMenuItems']
+			for i in range(len(g)):
+				item = g[i]
+				title = item['title']
+				if title=='All videos': continue
+				link = item['endpoint']['commandMetadata']['webCommandMetadata']['url']
+				link = website0a+link.replace('\u0026','&')
+				addMenuItem('folder',menu_name+title,link,146)
+				found = True
+		except: pass
+		page_type = '1'
+	# playlists contents
+	if page_type=='2' or (not found and ('/videos' in url or '/playlists' in url or '/channels' in url)):
+		try:
+			h = g['gridRenderer']['items']
+			for i in range(len(h)):
+				item = h[i]
+				ISERT_ITEM_TO_MENU(item)
+				found = True
+		except: pass
+		page_type = '2'
+	# shelf list
+	# if not found and 'shelf_id=' not in url and '/videos' not in url and 'ss=' not in url:
+	if page_type=='3' or (not found and ('/playlists' in url or '/channels' in url) and 'shelf_id=' not in url):
+		try:
+			for i in range(len(f)):
+				item = f[i]['itemSectionRenderer']['contents'][0]
+				ISERT_ITEM_TO_MENU(item)
+				found = True
+		except: pass
+		page_type = '3'
+	# newer shelf items
+	if page_type=='4' or (not found and ('?ss=' in url or '?bp=' in url)):
+		try:
+			h = g['shelfRenderer']['content']['gridRenderer']['items']
+			for i in range(len(h)):
+				item = h[i]
+				ISERT_ITEM_TO_MENU(item)
+				found = True
+		except: pass
+		page_type = '4'
+	# items with section but without link
+	if page_type=='5' or (not found and '?bp=' in url):
+		for i in range(len(f)):
+			if 'itemSectionRenderer' not in f[i].keys(): continue
+			g = f[i]['itemSectionRenderer']['contents'][0]['shelfRenderer']
+			if 'endpoint' in g.keys(): continue
+			if 'horizontalMovieListRenderer' not in g['content'].keys(): continue
+			h = g['content']['horizontalMovieListRenderer']['items']
+			#h = g['content']['horizontalListRenderer']['items']
+			try: title = g['title']['simpleText']
+			except: title = g['title']['runs'][0]['text']
+			title = escapeUNICODE(title)
+			title = '==  '+title+'  =='
+			addMenuItem('link',menu_name+title,'',9999)
+			for j in range(len(h)):
+				item = h[j]
+				ISERT_ITEM_TO_MENU(item)
+				found = True
+		page_type = '5'
+		if not found: CHANNEL_ITEMS(url,'','')
+	# home page main categories
+	if page_type=='6' or (not found and 'shelf_id' not in url):
+		try:
+			for i in range(len(f)):
+				item = f[i]['itemSectionRenderer']['contents'][0]
+				ISERT_ITEM_TO_MENU(item)
+				found = True
+		except: pass
+		page_type = '6'
+	# trending shelf items
+	if page_type=='7' or (not found):
+		try:
+			h = g['shelfRenderer']['content']['horizontalListRenderer']['items']
+			for i in range(len(h)):
+				item = h[i]
+				ISERT_ITEM_TO_MENU(item)
+				found = True
+		except: pass
+		page_type = '7'
+	try: g = g['gridRenderer']
+	except: pass
+	settings = xbmcaddon.Addon(id=addon_id)
+	if 'continuations' in ff.keys() and 'shelf_id' not in url:
+		continuation = settings.getSetting('youtube.continuation')
+		VISITOR_INFO1_LIVE = settings.getSetting('youtube.VISITOR_INFO1_LIVE')
+		url2 = website0a+'/browse_ajax?ctoken='+continuation
+		addMenuItem('folder',menu_name+'صفحة اخرى',url2,146,'',page_type,VISITOR_INFO1_LIVE)
+	elif '"token"' in html:
+		key = settings.getSetting('youtube.key')
+		visitorData = settings.getSetting('youtube.visitorData')
+		url2 = website0a+'/youtubei/v1/browse?key='+key
+		addMenuItem('folder',menu_name+'صفحة اخرى',url2,146,'',page_type,visitorData)
 	return
 
-def SHELF_MENU(f):
-	for i in range(len(f)):
-		item = f[i]['itemSectionRenderer']['contents'][0]
-		succeeded,title,link,img,count,duration,live = ITEMS_RENDER(item)
-		#xbmcgui.Dialog().ok(link,title)
-		if not succeeded: continue
-		addMenuItem('folder',menu_name+title,link,146)
-	return
-
-def CHANNEL_ITEMS_NEW(url,html,c):
-	token = ''
-	if 'ctoken' in url:
-		g = c[1]['response']['continuationContents']['gridContinuation']
-		if 'continuations' in g.keys(): token = g['continuations'][0]['nextContinuationData']['continuation']
-	else:
-		d = c['contents']
-		if   '/videos?' 	in url+'?': e = d['twoColumnBrowseResultsRenderer']['tabs'][1]
-		elif '/playlists?' 	in url+'?': e = d['twoColumnBrowseResultsRenderer']['tabs'][2]
-		elif '/channels?' 	in url+'?': e = d['twoColumnBrowseResultsRenderer']['tabs'][4]
-		f = e['tabRenderer']['content']['sectionListRenderer']['contents']
-		try: g = f[0]['itemSectionRenderer']['contents'][0]['gridRenderer']
-		except:
-			SHELF_MENU(f)
-			return
-		if 'continuations' in g.keys(): token = g['continuations'][0]['nextContinuationData']['continuation']
-	h = g['items']
-	for i in range(len(h)):
-		item = h[i]
-		succeeded,title,link,img,count,duration,live = ITEMS_RENDER(item)
-		if not succeeded: continue
-		#title = title.replace('\n','')
-		#link = website0a+link
-		#title = unescapeHTML(title)
-		if 'list=' in link: addMenuItem('folder',menu_name+'LIST'+count+':  '+title,link,142,img)
-		elif '/channel/' in link: addMenuItem('folder',menu_name+'CHNL:  '+title,link,145,img,'','UPDATE')
-		elif live!='': addMenuItem('live',menu_name+live+title,link,143,img)
-		else: addMenuItem('video',menu_name+title,link,143,img,duration)
-	if token!='':
-		#param = f['continuations'][0]['nextContinuationData']['clickTrackingParams']#.replace('=','%253D')
-		#https://www.youtube.com/browse_ajax?ctoken=4qmFsgI0EhhVQ040NWFkeDVlUUN4MXZNNnBfTGZyNEEaGEVnWjJhV1JsYjNNZ0FEZ0JlZ0V5dUFFQQ%253D%253D&continuation=4qmFsgI0EhhVQ040NWFkeDVlUUN4MXZNNnBfTGZyNEEaGEVnWjJhV1JsYjNNZ0FEZ0JlZ0V5dUFFQQ%253D%253D&itct=CCgQybcCIhMI-_nWhMmR6gIVI9BgCh3bTQ9z
-		url2 = website0a+'/browse_ajax?ctoken='+token#+'&continuation='+token+'&itct='+param
-		addMenuItem('folder',menu_name+'صفحة اخرى',url2,146)
-	return
-
-def CHANNEL_ITEMS(url):
-	html,c = GET_PAGE_DATA(url)
-	if c!='':
-		CHANNEL_ITEMS_NEW(url,html,c)
-		return
-	if 'browse_ajax' in url:
-		html = CLEAN_AJAX(html)
-		html_blocks = [html]
-	else: html_blocks = re.findall('branded-page-v2-subnav-container(.*?)footer-container',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall('yt-lockup-thumbnail.*?href="(.*?)".*?src="(.*?)"(.*?)sessionlink.*?title="(.*?)"(.*?)container',block,re.DOTALL)
-		for link,img,count,title,live in items:
-			if '>Live now<' in live: live = 'LIVE:  '
-			else: live = ''
-			if 'video-time' in count: duration = re.findall('video-time.*?><.*?>(.*?)<',count,re.DOTALL)[0]
-			else: duration=''
-			if '.' in duration: duration = duration.replace('.',':')
-			if 'video-count-label' in count: count = ' '+re.findall('video-count-label.*?(\d+).*?</',count,re.DOTALL)[0]
-			else: count=''
-			title = title.replace('\n','')
-			link = website0a+link
-			title = unescapeHTML(title)
-			if 'list=' in link: addMenuItem('folder',menu_name+'LIST'+count+':  '+title,link,142,img)
-			elif '/channel/' in link: addMenuItem('folder',menu_name+'CHNL:  '+title,link,145,img)
-			elif live!='': addMenuItem('live',menu_name+live+title,link,143,img)
-			else: addMenuItem('video',menu_name+title,link,143,img,duration)
-		html_blocks = re.findall('items-load-more-button(.*?)load-more-loading',html,re.DOTALL)
-		if html_blocks:
-			block = html_blocks[0]
-			items = re.findall('href="(.*?)"',block,re.DOTALL)
-			for link in items:
-				addMenuItem('folder',menu_name+'صفحة اخرى',website0a+link,146)
-	return
-
-def MULTIPLE_TRY(render,in1,in2,in3=''):
-	succeeded = True
-	try: out = eval(in1)
-	except:
-		try: out = eval(in2)
-		except:
-			if in3=='':
-				succeeded = False
-				out = ''
-			else:
-				try: out = eval(in3)
-				except:
-					succeeded = False
-					out = ''
+def MULTIPLE_TRY(render,in1,in2,in3='',in4=''):
+	in_s = [in1,in2,in3,in4]
+	succeeded,out = False,''
+	for i in range(4):
+		if in_s[i]!='' and succeeded==False:
+			try:
+				out = eval(in_s[i])
+				succeeded = True
+				break
+			except: pass
 	return succeeded,out
 
 def ITEMS_RENDER(item):
-	render,badges = '',''
-	succeeded,title,link,img,count,duration,live = False,'','','','','',''
+	succeeded,title,link,img,count,duration,live,paid = False,'','','','','','',''
+	renderName = item.keys()[0]
+	render = item[renderName]
 	#LOG_THIS('NOTICE','=====================================')
 	#LOG_THIS('NOTICE',str(item))
 	#xbmcgui.Dialog().ok(render,'')
-	#validRenders = ['showRenderer','shelfRenderer','videoRenderer','playlistRenderer','channelRenderer',
-	#				'gridVideoRenderer','gridPlaylistRenderer','gridChannelRenderer',
-	#				'playlistVideoRenderer','playlistPanelVideoRenderer']
-	renderName = item.keys()[0]
-	#if 'Renderer' in renderName: render = item[renderName]
-	#if renderName in validRenders: render = item[renderName]
-	#else: return succeeded,title,link,img,count,duration,live
-	render = item[renderName]
 	in1 = "render['title']['simpleText']"
 	in2 = "render['title']['runs'][0]['text']"
 	in3 = "render['unplayableText']['simpleText']"
-	succeeded99,out99 = MULTIPLE_TRY(render,in1,in2,in3)
+	in4 = "render['title']"
+	#in5 = "render['formattedTitle']['simpleText']"
+	succeeded99,out99 = MULTIPLE_TRY(render,in1,in2,in3,in4)
 	if succeeded99: title = out99
-	else: return succeeded,title,link,img,count,duration,live
 	in1 = "render['viewPlaylistText']['navigationEndpoint']['commandMetadata']['webCommandMetadata']['url']"
 	in2 = "render['title']['runs'][0]['navigationEndpoint']['commandMetadata']['webCommandMetadata']['url']"
 	in3 = "render['navigationEndpoint']['commandMetadata']['webCommandMetadata']['url']"
-	succeeded99,out99 = MULTIPLE_TRY(render,in1,in2,in3)
+	in4 = "render['endpoint']['commandMetadata']['webCommandMetadata']['url']"
+	succeeded99,out99 = MULTIPLE_TRY(render,in1,in2,in3,in4)
 	if succeeded99: link = out99
 	in1 = "render['thumbnail']['thumbnails'][0]['url']"
 	in2 = "render['thumbnails'][0]['thumbnails'][0]['url']"
@@ -306,162 +322,90 @@ def ITEMS_RENDER(item):
 	if 'badges' in render.keys():
 		badges = str(render['badges'])
 		if 'LIVE NOW' in badges: live = 'LIVE:  '
+		if 'Buy' in badges or 'Rent' in badges: paid = '$$'
 	if 'http' not in img: img = 'https:'+img
 	link = escapeUNICODE(link)
 	count = count.strip(' videos').replace(',','')
-	if 'http' not in link: link = website0a+link
+	if link!='' and 'http' not in link: link = website0a+link
 	#xbmcgui.Dialog().ok(link,website0a)
 	title = escapeUNICODE(title)
-	return True,title,link,img,count,duration,live
+	if paid!='': title = '$$:  '+title
+	#title = title.replace('\n','')
+	#title = unescapeHTML(title)
+	count = count.replace(' track','')
+	return True,title,link,img,count,duration,live,paid
 
-def GET_PAGE_DATA(url):
-	useragent = RANDOM_USERAGENT()
-	headers2 = {'User-Agent':useragent}
-	#headers2 = headers.copy()
-	settings = xbmcaddon.Addon(id=addon_id)
-	if 'ctoken' in url:
-		cver = settings.getSetting('youtube.clientversion')
-		headers2.update({'X-YouTube-Client-Name':'1','X-YouTube-Client-Version':cver})
-	html = openURL_cached(VERY_SHORT_CACHE,url,'',headers2,'','YOUTUBE-GET_PAGE_DATA-1st')
-	a,b = '',''
-	if 'footer-container' not in html:
-		if 'ytInitialData' in html:
-			a = re.findall('window\["ytInitialData"\] = ({.*?});',html,re.DOTALL)
-			a = a[0]
-		elif '</script>' not in html: a = html
-		if a!='':
-			b = EVAL(a)
-			try:
-				cver = b['responseContext']['serviceTrackingParams'][2]['params'][2]['value']
-				cver = cver.split('-')[0]
-				settings.setSetting('youtube.clientversion',cver)
-			except: pass
-	return html,b
-
-def TITLES_NEW(url,html,c):
-	#xbmcgui.Dialog().ok(url,html)
+def TITLES(url,index='0',vistordetails=''):
+	html,c = GET_PAGE_DATA(url,vistordetails)
+	if c=='': TITLES_OLD(url,html) ; return
+	if index=='': index = '0'
+	#xbmcgui.Dialog().ok(url,index)
 	#LOG_THIS('NOTICE',url)
 	#LOG_THIS('NOTICE',html)
-	if 'ctoken' in url: d = c[1]['response']['continuationContents']['itemSectionContinuation']
-	else: d = c['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][-1]['itemSectionRenderer']
-	e = d['contents']
+	#token = ''
+	if 'search_query' in url:
+		d = c['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents']
+		for i in range(len(d)):
+			#if 'videoRenderer' in str(d[i]): break
+			#if 'childVideoRenderer' in str(d[i]): break
+			#if 'channelRenderer' in str(d[i]): break
+			try: e = d[i]['itemSectionRenderer']['contents'] ; break
+			except: pass
+	elif '/search?key=' in url: 
+		e = c['onResponseReceivedCommands'][0]['appendContinuationItemsAction']['continuationItems'][0]['itemSectionRenderer']['contents']
+	elif '/browse?key=' in url:
+		e = c['onResponseReceivedActions'][0]['appendContinuationItemsAction']['continuationItems']
+	elif '/trending' in url:
+		d = c['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'][int(index)]['itemSectionRenderer']
+		e = d['contents'][0]['shelfRenderer']['content']['expandedShelfContentsRenderer']['items']
+	elif '"text":"Recommended"' in html:
+		e = c['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['richGridRenderer']['contents']
+	else: e = []
+	"""
+	elif 'ctoken' in url:
+		d = c[1]['response']['continuationContents']['itemSectionContinuation']
+		e = d['contents']
+		try: token = d['continuations'][0]['nextContinuationData']['continuation']#.replace('=','%253D')
+		except: pass
+	"""
 	for i in range(len(e)):
-		item = e[i]
-		if item.keys()[0]=='shelfRenderer': continue
-		succeeded,title,link,img,count,duration,live = ITEMS_RENDER(item)
-		if not succeeded: continue
-		if 'list=' in link: addMenuItem('folder',menu_name+'LIST'+count+':  '+title,link,142,img)
-		elif '/channel/' in link: addMenuItem('folder',menu_name+'CHNL'+count+':  '+title,link,145,img)
-		elif '/user/' in link: addMenuItem('folder',menu_name+'USER'+count+':  '+title,link,145,img)
-		elif live!='': addMenuItem('live',menu_name+live+title,link,143,img)
-		else: addMenuItem('video',menu_name+title,link,143,img,duration)
-	if 'continuations' in d.keys():
-		token = d['continuations'][0]['nextContinuationData']['continuation']#.replace('=','%253D')
+		try: item = e[i]['richItemRenderer']['content']
+		except: item = e[i]
+		#if item.keys()[0]=='shelfRenderer': continue
+		ISERT_ITEM_TO_MENU(item)
+	settings = xbmcaddon.Addon(id=addon_id)
+	key = settings.getSetting('youtube.key')
+	visitorData = settings.getSetting('youtube.visitorData')
+	url2 = ''
+	if 'search_query' in url or '/search?key=' in url: url2 = website0a+'/youtubei/v1/search?key='+key
+	elif url==website0a or '/browse?key=' in url: url2 = website0a+'/youtubei/v1/browse?key='+key
+	if url2!='': addMenuItem('folder',menu_name+'صفحة اخرى',url2,141,'',index,visitorData)
+	"""
+	if token!='':
 		#param = d['continuations'][0]['nextContinuationData']['clickTrackingParams']#.replace('=','%253D')
-		url2 = url+'&pbj=1&ctoken='+token#+'&continuation='+token+'&itct='+param
+		if '?' in url: url2 = url+'&pbj=1&ctoken='+token#+'&continuation='+token+'&itct='+param
+		else: url2 = url+'?pbj=1&ctoken='+token#+'&continuation='+token+'&itct='+param
 		addMenuItem('folder',menu_name+'صفحة اخرى',url2,141)
+	"""
 	return
 
-def TITLES(url):
-	html,c = GET_PAGE_DATA(url)
-	if c!='':
-		TITLES_NEW(url,html,c)
-		return
-	html_blocks = re.findall('(yt-lockup-tile.*?)footer-container',html,re.DOTALL)
-	block = html_blocks[0]
-	items = re.findall('yt-lockup-tile.*?(src|thumb)="(.*?)"(.*?)href="(.*?)".*?title="(.*?)"(.*?)</div></div></div>(.*?)</li>',block,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(block.count('yt-lockup-tile')),str(len(items)))
-	#with open('S:\emad3.html', 'w') as f: f.write(block)
-	for dummy,img,count,link,title,count2,paid in items:
-		if 'Watch later' in title: continue
-		if 'adurl=' in link:
-			#title = 'AD:  '+title
-			#link = re.findall('adurl=(.*?)&amp;',link+'&amp;',re.DOTALL)
-			#link = unquote(link[0])
-			continue
-		img2 = re.findall('thumb="(.*?)"',count,re.DOTALL)
-		if img2: img = img2[0]
-		count = ''
-		if '\n' in paid: title = '$$:  '+title
-		if 'video-time' in count: duration = re.findall('video-time.*?>(.*?)<',count,re.DOTALL)[0]
-		else: duration = ''
-		if '.' in duration: duration = duration.replace('.',':')
-		if '>Live now<' in count2: live = 'LIVE:  '
-		else: live = ''
-		if 'video-count-label' in count:
-			count = re.findall('video-count-label.*?(\d+).*?</',count,re.DOTALL)
-			if count: count = ' ' + count[0]
+def ISERT_ITEM_TO_MENU(item):
+	succeeded,title,link,img,count,duration,live,paid = ITEMS_RENDER(item)
+	#if link==website0a or title=='' or '/gaming' in link: return
+	if link=='': return
+	if   '/trending'	in link: addMenuItem('folder',menu_name+title,link,141,img)
+	elif 'list='		in link: addMenuItem('folder',menu_name+'LIST'+count+':  '+title,link,142,img)
+	elif '/channel/'	in link or '/c/' in link or '/user/' in link:
+		if any(value in link for value in ['/videos','/playlists','/channels','/featured','ss=']):
+			addMenuItem('folder',menu_name+title,link,146,img)
 		else:
-			count2 = re.findall('<li>(\d+) video',count2,re.DOTALL)
-			if count2: count = ' ' + count2[0]
-		if 'http' not in img: img = 'https:'+img
-		if 'http' not in link: link = website0a+link
-		title = title.replace('\n','')
-		title = unescapeHTML(title)
-		if 'list=' in link: addMenuItem('folder',menu_name+'LIST'+count+':  '+title,link,142,img)
-		elif '/channel/' in link: addMenuItem('folder',menu_name+'CHNL'+count+':  '+title,link,145,img)
-		elif '/user/' in link: addMenuItem('folder',menu_name+'USER'+count+':  '+title,link,145,img)
-		elif live!='': addMenuItem('live',menu_name+live+title,link,143,img)
-		else: addMenuItem('video',menu_name+title,link,143,img,duration)
-	html_blocks = re.findall('search-pager(.*?)footer-container',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		#with open('S:\\0emad.html', 'w') as f: f.write(block)
-		items = re.findall('href="(.*?)".*?button-content">(.*?)<',block,re.DOTALL)
-		for link,title in items:
-			addMenuItem('folder',menu_name+'صفحة '+title,website0a+link,141)
-	return
-
-def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
-		category = False
-	else: category = True
-	if search=='': search = KEYBOARD()
-	if search == '': return
-	search = search.replace(' ','%20')
-	url2 = website0a + '/results?search_query='+search
-	fileterLIST = ['بدون فلتر وبدون ترتيب']
-	linkLIST = [url2]
-	#url2 = 'plugin://plugin.video.youtube/kodion/search/query/?q='+search
-	#xbmc.executebuiltin('Dialog.Close(busydialog)')
-	#xbmc.executebuiltin('ActivateWindow(videos,'+url2+',return)')
-	html,c = GET_PAGE_DATA(url2)
-	if c!='':
-		d = c['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['subMenu']['searchSubMenuRenderer']['groups']
-		for groupID in range(len(d)):
-			group = d[groupID]['searchFilterGroupRenderer']['filters']
-			for filterID in range(len(group)):
-				render = group[filterID]['searchFilterRenderer']
-				if 'navigationEndpoint' in render.keys():
-					link = render['navigationEndpoint']['commandMetadata']['webCommandMetadata']['url']
-					title = render['tooltip']
-					if 'Remove' in title: continue
-					title = title.replace('Search for','Search for:  ')
-					title = title.replace('Sort by','Sort by:  ')
-					if 'Playlist' in title: title = 'جيد للمسلسلات '+title
-					fileterLIST.append(escapeUNICODE(title))
-					link = link.replace('\u0026','&')
-					linkLIST.append(website0a+link)
-	else:
-		html_blocks = re.findall('filter-dropdown(.*?)class="item-section',html,re.DOTALL)
-		block = html_blocks[0]
-		items = re.findall('href="(.*?)".*?title="(.*?)"',block,re.DOTALL)
-		for link,title in items:
-			if 'Remove' in title: continue
-			title = title.replace('Search for','Search for:  ')
-			title = title.replace('Sort by','Sort by:  ')
-			if 'Playlist' in title: title = 'جيد للمسلسلات '+title
-			fileterLIST.append(unescapeHTML(title))
-			linkLIST.append(website0a+link)
-	fileterLIST.append(unescapeHTML('Sort by:  relevance'))
-	linkLIST.append(url2)
-	if category:
-		selection = xbmcgui.Dialog().select('اختر الفلتر او الترتيب المناسب:', fileterLIST)
-		if selection == -1: return
-		url3 = linkLIST[selection]
-	else: url3 = linkLIST[0]
-	TITLES(url3)
+			type = ''
+			if '/channel/' in link or '/c/' in link: type = 'CHNL'+count+':  '
+			elif '/user/' in link: type = 'USER'+count+':  '
+			addMenuItem('folder',menu_name+type+title,link,146,img)
+	elif live!='': addMenuItem('live',menu_name+live+title,link,143,img)
+	elif 'watch?v=' in link: addMenuItem('video',menu_name+title,link,143,img,duration)
+	else: addMenuItem('folder',menu_name+title,link,146)
 	return
 
 def CLEAN_AJAX(text):
@@ -498,36 +442,126 @@ def RANDOM_USERAGENT():
 		useragent = b[0]['useragent']
 	return useragent
 
-"""
-def TEST_YOUTUBE():
-	headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4086.0 Safari/537.36'}
-	url = 'https://www.youtube.com/results?search_query=قناة+بث&sp=EgJAAQ=='
-	import requests
-	response = requests.request('GET',url=url,headers=headers)
-	html = response.content
-	a = re.findall('window\["ytInitialData"\] = ({.*?});',html,re.DOTALL)
-	b = a[0].replace('true','True').replace('false','False')
-	c = eval(b)
-	d = c['contents']
-	e = d['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents'][0]['itemSectionRenderer']
-	token = e['continuations'][0]['nextContinuationData']['continuation'].replace('=','%253D')
-	url2 = url+'&pbj=1&ctoken='+token
-	headers2 = headers.copy()
-	headers2.update({'X-YouTube-Client-Name':'1','X-YouTube-Client-Version':'2.20200618.01.01'})
-	response = requests.request('GET',url=url2,headers=headers2)
-	html2 = response.content
-	with open('S:\\youtube_new_PAGE_RESULTS.txt', 'w') as f: f.write(html2)
-	TITLES_NEW(url2)
-	return
-"""
+def GET_PAGE_DATA(url,vistordetails='',request='initial_data'):
+	useragent = RANDOM_USERAGENT()
+	headers2 = {'User-Agent':useragent}
+	#headers2 = headers.copy()
+	settings = xbmcaddon.Addon(id=addon_id)
+	if 'key=' in url:
+		clientversion = settings.getSetting('youtube.clientversion')
+		token = settings.getSetting('youtube.token')
+		data = {'continuation':token}
+		data['context'] = {"client":{"visitorData":vistordetails,"clientName":"WEB","clientVersion":clientversion}}
+		data = str(data)
+		response = openURL_requests_cached(VERY_SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
+		#xbmcgui.Dialog().ok(url,str(data))
+		html = response.content
+	elif 'ctoken=' in url:
+		clientversion = settings.getSetting('youtube.clientversion')
+		headers2.update({'X-YouTube-Client-Name':'1','X-YouTube-Client-Version':clientversion})
+		headers2.update({'Cookie':'VISITOR_INFO1_LIVE='+vistordetails})
+		response = openURL_requests_cached(VERY_SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-2nd')
+		html = response.content
+	else:
+		response = openURL_requests_cached(VERY_SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-3rd')
+		html = response.content
+	continuation = re.findall('"continuation".*?"(.*?)"',html,re.DOTALL|re.I)
+	if continuation: settings.setSetting('youtube.continuation',continuation[0])
+	clientversion = re.findall('"cver".*?"value".*?"(.*?)"',html,re.DOTALL|re.I)
+	if clientversion: settings.setSetting('youtube.clientversion',clientversion[0])
+	key = re.findall('"innertubeApiKey".*?"(.*?)"',html,re.DOTALL|re.I)
+	if key: settings.setSetting('youtube.key',key[0])
+	token = re.findall('"token".*?"(.*?)"',html,re.DOTALL|re.I)
+	if token: settings.setSetting('youtube.token',token[0])
+	visitorData = re.findall('"visitorData".*?"(.*?)"',html,re.DOTALL|re.I)
+	if visitorData: settings.setSetting('youtube.visitorData',visitorData[0])
+	cookies = response.cookies.get_dict()
+	if 'VISITOR_INFO1_LIVE' in cookies.keys(): settings.setSetting('youtube.VISITOR_INFO1_LIVE',cookies['VISITOR_INFO1_LIVE'])
+	if request=='initial_data' and 'ytInitialData' in html:
+		#xbmcgui.Dialog().ok(url,html)
+		a = re.findall('window\["ytInitialData"\] = ({.*?});',html,re.DOTALL)
+		b = EVAL(a[0])
+	elif request=='guide_data' and 'ytInitialGuideData' in html:
+		a = re.findall('var ytInitialGuideData = ({.*?});',html,re.DOTALL)
+		b = EVAL(a[0])
+	elif '</script>' not in html: b = EVAL(html)
+	else: b = ''
+	#with open('S:\\00emad.html','w') as f: f.write(html)
+	#with open('S:\\00emad.json','w') as f: f.write(str(b))
+	#with open('S:\\00emad.json','r') as f: a = f.read() ; b = eval(a)
+	return html,b
 
-"""
-def SETTINGS():
-	text1 = 'هذا الموقع يستخدم اضافة يوتيوب ولا يعمل بدونه'
-	text2 = 'لعرض فيدوهات يوتيوب تحتاج ان تتأكد ان تضبيطات واعدادت يوتويب صحيحة'
-	xbmcgui.Dialog().ok(text1,text2)
-	xbmc.executebuiltin('Addon.OpenSettings(plugin.video.youtube)', True)
+def SEARCH(search):
+	if '::' in search:
+		search = search.split('::')[0]
+		category = False
+	else: category = True
+	if search=='': search = KEYBOARD()
+	if search=='': return
+	search = search.replace(' ','%20')
+	fileterLIST_search = ['بدون فلتر']
+	fileterLIST_sort = []
+	linkLIST_search = ['']
+	linkLIST_sort = ['']
+	#fileterLIST_sort.append('Sort by:  relevance')
+	#linkLIST_sort.append('')
+	#url2 = 'plugin://plugin.video.youtube/kodion/search/query/?q='+search
+	#xbmc.executebuiltin('Dialog.Close(busydialog)')
+	#xbmc.executebuiltin('ActivateWindow(videos,'+url2+',return)')
+	fileterLIST_sort = ['بدون ترتيب','Relevance','Upload date','View count','Rating']
+	linkLIST_sort = ['','&sp=CAA%253D','&sp=CAI%253D','&sp=CAM%253D','&sp=CAE%253D']
+	selection_sort = xbmcgui.Dialog().select('اختر الترتيب المناسب:', fileterLIST_sort)
+	if selection_sort == -1: return
+	link_sort = linkLIST_sort[selection_sort]
+	url2 = website0a+'/results?search_query='+search
+	html,c = GET_PAGE_DATA(url2+link_sort)
+	if c!='':
+		d = c['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['subMenu']['searchSubMenuRenderer']['groups']
+		for groupID in range(len(d)):
+			group = d[groupID]['searchFilterGroupRenderer']['filters']
+			for filterID in range(len(group)):
+				render = group[filterID]['searchFilterRenderer']
+				if 'navigationEndpoint' in render.keys():
+					link = render['navigationEndpoint']['commandMetadata']['webCommandMetadata']['url']
+					title = render['tooltip']
+					if 'Remove' in title: continue
+					title = title.replace('Search for','Search for:  ')
+					title = title.replace('Sort by','Sort by:  ')
+					if 'Playlist' in title: title = 'جيد للمسلسلات '+title
+					link = link.replace('\u0026','&')
+					if 'Search for:  ' in title:
+						fileterLIST_search.append(escapeUNICODE(title))
+						linkLIST_search.append(link)
+	"""
+	else:
+		html_blocks = re.findall('filter-dropdown(.*?)class="item-section',html,re.DOTALL)
+		block = html_blocks[0]
+		items = re.findall('href="(.*?)".*?title="(.*?)"',block,re.DOTALL)
+		for link,title in items:
+			if 'Remove' in title: continue
+			title = title.replace('Search for','Search for:  ')
+			title = title.replace('Sort by','Sort by:  ')
+			if 'Playlist' in title: title = 'جيد للمسلسلات '+title
+			link = link.replace('\u0026','&')
+			if 'Search for:  ' in title:
+				fileterLIST_search.append(escapeUNICODE(title))
+				linkLIST_search.append(link)
+			if 'Sort by:  ' in title:
+				fileterLIST_sort.append(escapeUNICODE(title))
+				linkLIST_sort.append(link)
+	"""
+	if category:
+		selection_search = xbmcgui.Dialog().select('اختر الفلتر المناسب:', fileterLIST_search)
+		if selection_search == -1: return
+		link_search = linkLIST_search[selection_search]
+		if link_search!='': url3 = website0a+link_search
+		elif link_sort!='': url3 = url2+link_sort
+		else: url3 = url2
+		#xbmcgui.Dialog().ok(url3,'')
+	else: url3 = url2
+	TITLES(url3)
 	return
-"""
+
+
 
 

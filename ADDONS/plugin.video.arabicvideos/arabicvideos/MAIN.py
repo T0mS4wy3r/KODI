@@ -131,5 +131,3 @@ if addon_handle>-1:
 
 #xbmcgui.Dialog().ok(str(addon_handle),addon_path)
 
-
-

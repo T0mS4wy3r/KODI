@@ -33,9 +33,9 @@ def MENU():
 	addMenuItem('folder','[COLOR FFC89008]  9.  [/COLOR]'+'قائمة المفضلة 2','',270,'','','','2')
 	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'قائمة المفضلة 3','',270,'','','','3')
 	addMenuItem('folder','[COLOR FFC89008]11.  [/COLOR]'+'قائمة المفضلة 4','',270,'','','','4')
-	addMenuItem('folder','[COLOR FFC89008]12.  [/COLOR]'+'اخر 25 مجلد تم فتحها','',265,'','','folder')
-	addMenuItem('folder','[COLOR FFC89008]13.  [/COLOR]'+'اخر 25 قناة تم تشغيلها','',265,'','','live')
-	addMenuItem('folder','[COLOR FFC89008]14.  [/COLOR]'+'اخر 25 فيديو تم تشغيلها','',265,'','','video')
+	addMenuItem('folder','[COLOR FFC89008]14.  [/COLOR]'+'آخر 30 فيديو تم تشغيلها','',265,'','','video')
+	addMenuItem('folder','[COLOR FFC89008]13.  [/COLOR]'+'آخر 30 قناة تم تشغيلها','',265,'','','live')
+	addMenuItem('folder','[COLOR FFC89008]12.  [/COLOR]'+'آخر 30 مجلد تم فتحها','',265,'','','folder')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('link','[COLOR FFC89008]15.  [/COLOR]'+'تقرير عن استخدام البرنامج','',176)
 	addMenuItem('link','[COLOR FFC89008]16.  [/COLOR]البرنامج إصدار رقم ( '+addon_version+' )','',7)
@@ -137,7 +137,7 @@ def GLOBAL_SEARCH_MENU(search='',show=True):
 	else: search2 = 'كلمة عشوائية'
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات خاصة - قليلة المشاكل[/COLOR]','',157)
 	addMenuItem('folder','[COLOR FFC89008]IPT    [/COLOR]'+search2+' - خدمة IPTV','',239,'','',search)
-	#addMenuItem('folder','[COLOR FFC89008]PNT   [/COLOR]'+search2+' - 39 بانيت','',9999,'','',search)
+	addMenuItem('folder','[COLOR FFC89008]PNT   [/COLOR]'+search2+' - موقع بانيت','',39,'','',search)
 	addMenuItem('folder','[COLOR FFC89008]YUT   [/COLOR]'+search2+' - موقع يوتيوب','',149,'','',search)
 	addMenuItem('folder','[COLOR FFC89008]KLA   [/COLOR]'+search2+' - موقع كل العرب','',19,'','',search)
 	addMenuItem('folder','[COLOR FFC89008]KWT  [/COLOR]'+search2+' - موقع قناة الكوثر','',139,'','',search)
@@ -181,7 +181,7 @@ def LAST_VIDEOS_MENU(type,lengthonly=False):
 	return len(videoLIST)
 
 def DELETE_LAST_VIDEOS_MENU(type):
-	answer = xbmcgui.Dialog().yesno('رسالة من المبرمج','هل تريد فعلا مسح جميع محتويات قائمة آخر 25 '+TRANSLATE(type)+' ؟!','','','كلا','نعم')
+	answer = xbmcgui.Dialog().yesno('رسالة من المبرمج','هل تريد فعلا مسح جميع محتويات قائمة آخر 30 '+TRANSLATE(type)+' ؟!','','','كلا','نعم')
 	if answer:
 		if os.path.exists(lastvideosfile):
 			with open(lastvideosfile,'r') as f: listFILE = f.read()
@@ -190,7 +190,7 @@ def DELETE_LAST_VIDEOS_MENU(type):
 				del listFILE[type]
 				listFILE = str(listFILE)
 				with open(lastvideosfile,'w') as f: f.write(listFILE)
-				xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح جميع محتويات قائمة آخر 25 '+TRANSLATE(type))
+				xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح جميع محتويات قائمة آخر 30 '+TRANSLATE(type))
 	LAST_VIDEOS_MENU(type)
 	return
 

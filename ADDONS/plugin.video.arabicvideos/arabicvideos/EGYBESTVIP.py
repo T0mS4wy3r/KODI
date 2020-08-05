@@ -170,13 +170,13 @@ def PLAY(url):
 			watchlist = re.findall('source src="(.*?)" title="(.*?)"',html2,re.DOTALL)
 			if watchlist:
 				for link,quality in watchlist:
-					linkLIST.append(link+'?name=ed.egybest.do__watch__mp4__'+quality)
+					linkLIST.append(link+'?named=ed.egybest.do__watch__mp4__'+quality)
 			else:
 				server = url2.split('/')[2]
-				linkLIST.append(url2+'?name='+server+'__watch')
+				linkLIST.append(url2+'?named='+server+'__watch')
 		else:
 			server = url2.split('/')[2]
-			linkLIST.append(url2+'?name='+server+'__watch')
+			linkLIST.append(url2+'?named='+server+'__watch')
 	# https://inflam.cc/VLO1NNdGuy
 	# https://facultybooks.org/VLO1NNdGuy
 	downloadtable = re.findall('<table class="dls_table(.*?)</table>',htmlDownload,re.DOTALL)
@@ -186,7 +186,7 @@ def PLAY(url):
 		if downloadlist:
 			for quality,link in downloadlist:
 				server = link.split('/')[2]
-				linkLIST.append(link+'?name='+server+'__download__mp4__'+quality)
+				linkLIST.append(link+'?named='+server+'__download__mp4__'+quality)
 	#selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', linkLIST)
 	#if selection == -1 : return
 	newLIST = []

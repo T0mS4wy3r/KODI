@@ -128,7 +128,7 @@ def PLAY(url):
 	for link in urls:
 		if '://moshahda.' in link:
 			main_watch_link = link
-			linkLIST.append(main_watch_link+'?name=Main')
+			linkLIST.append(main_watch_link+'?named=Main')
 	# all_vb_links
 	for link in urls:
 		if '://vb.movizland.' in link:
@@ -167,7 +167,7 @@ def PLAY(url):
 					block = html_blocks[selection]
 				link = re.findall('href="(http://moshahda\..*?/\w+.html)"',block,re.DOTALL)
 				forum_watch_link = link[0]
-				linkLIST.append(forum_watch_link+'?name=Forum')
+				linkLIST.append(forum_watch_link+'?named=Forum')
 				block = block.replace('ـ','')
 				block = block.replace('src="http://up.movizland.online/uploads/1517412175296.png"','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="both"  \n  ')
 				block = block.replace('src="http://up.movizland.com/uploads/1517412175296.png"','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="both"  \n  ')
@@ -186,7 +186,7 @@ def PLAY(url):
 					for title_block,link in items:
 						title = re.findall('(\w+[ \w]*)<',title_block)
 						title = title[-1]
-						link = link + '?name=' + title + type
+						link = link + '?named=' + title + type
 						linkLIST.append(link)
 	# mobile_watch_link
 	url3 = url2.replace(website0a,website0b)
@@ -197,15 +197,12 @@ def PLAY(url):
 	if items:
 		#mobile_watch_link = 'http://moshahda.online/' + id2[-1] + '.html'
 		mobile_watch_link = items[-1]
-		linkLIST.append(mobile_watch_link+'?name=Mobile')
+		linkLIST.append(mobile_watch_link+'?named=Mobile')
 	link2LIST,name2LIST = [],[]
 	for link in linkLIST:
-		link2,name2 = link.split('?name=')
+		link2,name2 = link.split('?named=')
 		link2LIST.append(link2)
 		name2LIST.append(name2)
-	#z = 
-
-
 	if len(linkLIST)==0:
 		xbmcgui.Dialog().ok('رسالة من المبرمج','غير قادر على ايجاد ملف الفيديو المناسب')
 	else:

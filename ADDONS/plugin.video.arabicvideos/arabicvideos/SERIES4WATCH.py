@@ -130,7 +130,7 @@ def PLAY(url):
 				if id:
 					id2 = id[0]
 					for link,title in items:
-						link = website0a+'/?postid='+id2+'&serverid='+link+'&name='+title+'__watch'
+						link = website0a+'/?postid='+id2+'&serverid='+link+'?named='+title+'__watch'
 						linkLIST.append(link)
 			else:
 				# https://shahd4u.tv/watch/مشاهدة-برنامج-نفسنة-تقديم-انتصار-وهيدى-وشيماء-حلقة-1
@@ -152,7 +152,7 @@ def PLAY(url):
 				for resolution,block in html_blocks:
 					items = re.findall('<td>(.*?)<.*?href="(.*?)"',block,re.DOTALL)
 					for name,link in items:
-						linkLIST.append(link+'?name='+name+' '+resolution+'__download')
+						linkLIST.append(link+'?named='+name+'__download'+'____'+resolution)
 			else:
 				html_blocks = re.findall('<h6(.*?)</table>',html2,re.DOTALL)
 				if not html_blocks: html_blocks = [html2]
@@ -173,7 +173,7 @@ def PLAY(url):
 						server = server.replace('.live&&','').replace('.online&&','')
 						server = server.replace('&&hd.','').replace('&&www.','')
 						server = server.replace('&&','')
-						link = link + '?name=' + name + server + '__download'
+						link = link + '?named=' + name + server + '__download'
 						linkLIST.append(link)
 	if len(linkLIST)==0:
 		xbmcgui.Dialog().ok('رسالة من المبرمج','الرابط ليس فيه فيديو')

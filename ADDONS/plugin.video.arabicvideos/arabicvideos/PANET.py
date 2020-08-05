@@ -22,7 +22,7 @@ def MAIN(mode,url,page,text):
 	return results
 
 def MENU(website=''):
-	#if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39)
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39)
 	addMenuItem('live',website+menu_name+'قناة هلا من موقع بانيت','',38)
 	addMenuItem('folder',website+'::'+menu_name+'مسلسلات وبرامج',website0a+'/series',31)
 	addMenuItem('folder',website+'::'+menu_name+'المسلسلات الاكثر مشاهدة',website0a+'/series',37)

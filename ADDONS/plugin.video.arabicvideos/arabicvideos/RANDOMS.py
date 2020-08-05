@@ -107,8 +107,7 @@ def SEARCH_RANDOM_VIDEOS(options):
 	search = list2[selection]
 	"""
 	if 'SITES' in options:
-		search_modes = [19,29,49,59,69,79,99,119,139,149,209,229,249,259]
-		#search_modes = [39]	panet search does not work at panet website
+		search_modes = [19,29,39,49,59,69,79,99,119,139,149,209,229,249,259]
 	elif 'IPTV' in options:
 		search_modes = [239]
 		import IPTV

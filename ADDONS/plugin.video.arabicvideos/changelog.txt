@@ -1,4 +1,23 @@
 ﻿
+v7.0.0	2020-08-05
+Enhanced searching IPTV 
+Added sort for servers in RESOLVERS
+Fixed LIBRARY rating check
+Fixed SHAHID4U download links
+Matched the player of SHAHID4U,ARABSEED & ARABLIONZ
+Fixed YOUTUBE "client.version"
+Added YOUTUBE trending
+Added YOUTUBE new channel style
+Added YOUTUBE "recommended"
+Added YOUTUBE new paging
+Enhanced YOUTUBE channel pages
+Moved MAIN function to LIBRARY file
+Forced compilation of MAIN function
+Recovered old PANET search
+Fixed HELAL search
+Added a fix for servers returning wrong POST redirects
+
+
 v6.9.1	2020-07-14
 Filtered EPG channels
 Added User-Agent to IPTV
