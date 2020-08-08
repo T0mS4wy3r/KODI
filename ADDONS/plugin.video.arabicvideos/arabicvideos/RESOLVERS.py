@@ -1137,16 +1137,17 @@ def YOUTUBE(url):
 			streams2.append(dict)
 	streams2 = sorted(streams2, reverse=True, key=lambda key: int(key['bitrate']))
 	if not streams2:
-		message = re.findall('class="message">(.*?)<',html,re.DOTALL)
-		if 'Content Warning' in html:
-			xbmcgui.Dialog().ok('رسالة من الموقع','تحذير بشأن المحتوى','ربما يكون هذا الفيديو غير ملائم لبعض المستخدمين')
-			return 'Error: Resolver YOUTUBE Failed: '+'تحذير بشأن المحتوى',[],[]
-		elif message:
-			# 'The uploader has not made this video available in your country.'
-			# 'This video is unavailable.'
-			message = message[0].replace('\n','').strip(' ')
-			xbmcgui.Dialog().ok('رسالة من الموقع',message)
-			return 'Error: Resolver YOUTUBE Failed: '+message,[],[]
+		message1 = re.findall('class="message">(.*?)<',html,re.DOTALL)
+		message2 = re.findall('"playerErrorMessageRenderer":\{"subreason":\{"runs":\[\{"text":"(.*?)"',html,re.DOTALL)
+		message3 = re.findall('"playerErrorMessageRenderer":\{"reason":{"simpleText":"(.*?)"',html,re.DOTALL)
+		if message1 or message2 or message3:
+			if message1: message = message1[0]
+			elif message2: message = message2[0]
+			elif message3: message = message3[0]
+			message_a = message.replace('\n','').strip(' ')
+			message_b = 'هذا الفيديو فيه مشكلة وقد يكون غير ملائم لبعض المستخدمين أو غير متوفر الآن'
+			xbmcgui.Dialog().ok('رسالة من الموقع والمبرمج',message_a,message_b)
+			return 'Error: Resolver YOUTUBE Failed: '+message_a,[],[]
 		else: return 'Error: Resolver YOUTUBE Failed',[],[]
 	allStreams,highestStreams,firstLIST = [],[],[]
 	for dict in streams2:

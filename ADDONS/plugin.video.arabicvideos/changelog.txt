@@ -1,4 +1,11 @@
 ﻿
+v7.0.1	2020-08-08
+Changed YOUTUBE to browse using Arabic language
+Fixed some YOUTUBE channel details
+Fixed IPTV missing channels from LIVE_GROUPED
+Added progress dialog for IPTV files download
+
+
 v7.0.0	2020-08-05
 Enhanced searching IPTV 
 Added sort for servers in RESOLVERS
@@ -10,7 +17,7 @@ Added YOUTUBE trending
 Added YOUTUBE new channel style
 Added YOUTUBE "recommended"
 Added YOUTUBE new paging
-Enhanced YOUTUBE channel pages
+Enhanced YOUTUBE channel details
 Moved MAIN function to LIBRARY file
 Forced compilation of MAIN function
 Recovered old PANET search

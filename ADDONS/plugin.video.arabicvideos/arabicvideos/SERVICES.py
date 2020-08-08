@@ -317,7 +317,7 @@ def VERSIONS():
 	current_ADDON_VER = addon_version
 	latest_REPO_VER = re.findall('name="EMAD Repository" version="(.*?)"',html,re.DOTALL)[0]
 	current_REPO_VER = xbmc.getInfoLabel('System.AddonVersion(repository.emad)')
-	if kodi_version>18.89:
+	if kodi_version>18.999:
 		url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS19/addons19.xml'
 		html = openURL_cached(NO_CACHE,url,'','','','SERVICES-VERSIONS-1st')
 	latest_ADDON_VER = re.findall('"plugin.video.arabicvideos" name="EMAD Arabic Videos" version="(.*?)"',html,re.DOTALL)[0]
