@@ -139,6 +139,27 @@ def MAIN():
 	LOG_THIS('NOTICE','============================================================================================')
 	script_name = 'MAIN'
 
+	if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
+	if not os.path.exists(dbfile):
+		xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح الكاش الموجود في البرنامج . أو تم تحديث البرنامج إلى الإصدار الجديد . سيقوم البرنامج الآن ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
+		CLEAN_KODI_CACHE_FOLDER()
+		conn = sqlite3.connect(dbfile)
+		conn.close()
+		import SERVICES
+		SERVICES.KODI_SKIN()
+		#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص اضافات adaptive + rtmp')
+		#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص مخزن عماد')
+		#xbmcgui.Dialog().ok('',str(iptv))
+		ENABLE_MPD(False)
+		ENABLE_RTMP(False)
+		SERVICES.INSTALL_REPOSITORY(True)
+		SERVICES.HTTPS_TEST()
+		#iptv = IPTV.isIPTVFiles(False)
+		#if iptv: 
+		xbmcgui.Dialog().ok('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
+		import IPTV
+		IPTV.CREATE_STREAMS(False)
+
 	type,name99,url99,mode,image99,page99,text,favourite = EXTRACT_KODI_PATH()
 	mode0 = int(mode)
 	mode1 = int(mode0%10)
@@ -195,27 +216,6 @@ def MAIN():
 		with open(lastrandomfile,'r') as f: oldFILE = f.read()
 		menuItemsLIST[:] = eval(oldFILE)
 	else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,favourite)
-
-	if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
-	if not os.path.exists(dbfile):
-		xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح الكاش الموجود في البرنامج . أو تم تحديث البرنامج إلى الإصدار الجديد . سيقوم البرنامج الآن ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
-		CLEAN_KODI_CACHE_FOLDER()
-		conn = sqlite3.connect(dbfile)
-		conn.close()
-		import SERVICES
-		SERVICES.KODI_SKIN()
-		#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص اضافات adaptive + rtmp')
-		#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص مخزن عماد')
-		#xbmcgui.Dialog().ok('',str(iptv))
-		ENABLE_MPD(False)
-		ENABLE_RTMP(False)
-		SERVICES.INSTALL_REPOSITORY(True)
-		SERVICES.HTTPS_TEST()
-		#iptv = IPTV.isIPTVFiles(False)
-		#if iptv: 
-		xbmcgui.Dialog().ok('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
-		import IPTV
-		IPTV.CREATE_STREAMS(False)
 
 	#xbmcgui.Dialog().ok(addon_path,str(mode0))
 

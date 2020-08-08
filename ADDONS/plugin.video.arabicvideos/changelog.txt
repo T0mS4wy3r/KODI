@@ -1,4 +1,8 @@
 ﻿
+v7.0.2	2020-08-08
+Fixed IPTV download bug
+
+
 v7.0.1	2020-08-08
 Changed YOUTUBE to browse using Arabic language
 Fixed some YOUTUBE channel details
