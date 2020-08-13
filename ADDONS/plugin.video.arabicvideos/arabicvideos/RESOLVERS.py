@@ -698,11 +698,13 @@ def AKOAM(url,name):
 	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','',True,'','RESOLVERS-AKOAM-1st')
 	html = response.content
 	cookies = response.cookies.get_dict()
-	cookie = cookies['golink']
-	cookie = unquote(escapeUNICODE(cookie))
-	items = re.findall('route":"(.*?)"',cookie,re.DOTALL)
-	url2 = items[0].replace('\/','/')
-	url2 = escapeUNICODE(url2)
+	if 'golink' in cookies.keys():
+		cookie = cookies['golink']
+		cookie = unquote(escapeUNICODE(cookie))
+		items = re.findall('route":"(.*?)"',cookie,re.DOTALL)
+		url2 = items[0].replace('\/','/')
+		url2 = escapeUNICODE(url2)
+	else: url2 = url
 	if 'catch.is' in url2:
 		id = url2.split('%2F')[-1]
 		url2 = 'http://catch.is/'+id

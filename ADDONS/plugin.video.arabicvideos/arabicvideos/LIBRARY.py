@@ -141,6 +141,7 @@ def MAIN():
 
 	if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 	if not os.path.exists(dbfile):
+		LOG_THIS('NOTICE','  .  New Arabic Videos version installed  .  path: [ '+addon_path+' ]')
 		xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح الكاش الموجود في البرنامج . أو تم تحديث البرنامج إلى الإصدار الجديد . سيقوم البرنامج الآن ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
 		CLEAN_KODI_CACHE_FOLDER()
 		conn = sqlite3.connect(dbfile)
@@ -165,9 +166,6 @@ def MAIN():
 	mode1 = int(mode0%10)
 	mode2 = int(mode0/10)
 
-	#xbmcgui.Dialog().ok('['+menu_path+']','['+mode+']')
-	#xbmcgui.Dialog().ok('['+menu_label+']','['+menu_path+']')
-
 	#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
 	if mode0==260: message = '  Version: [ '+addon_version+' ]  Kodi: [ '+kodi_release+' ]'
 	else:
@@ -177,6 +175,9 @@ def MAIN():
 	if favourite not in ['','1','2','3','4','NOREFRESH']:
 		message = message+'   .  Favourite: [ '+favourite+' ]'
 	LOG_THIS('NOTICE',LOGGING(script_name)+message)
+
+	#xbmcgui.Dialog().ok('['+menu_path+']','['+mode+']')
+	#xbmcgui.Dialog().ok('['+menu_label+']','['+menu_path+']')
 
 	UPDATE_RANDOM_MENUS = mode2==16 and mode0 not in [160,165]
 	UPDATE_RANDOM_SUBMENUS = mode2==16 and 'UPDATE' in text
@@ -434,6 +435,7 @@ NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
 				,'HELAL-ITEMS-1st'
 				,'YOUTUBE-RANDOM_USERAGENT-1st'
 				,'LIBRARY-HTTPS-1st'
+				,'IPTV-CHECK_ACCOUNT-1st'
 				]
 """				,'AKOAM-MENU-1st'
 				,'AKWAM-MENU-1st'
@@ -726,7 +728,7 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 			reason = reason4+' ( '+reason+' )'
 			html = '___Error___:'+str(code)+':'+reason
 			response.content = html
-		#if 'google-analytics' not in url:
+		#elif 'google-analytics' in url:
 		if code in [7,11001,10054] and dnsurl==None:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 			url = url+'||MyDNSUrl='
@@ -823,7 +825,7 @@ def KEYBOARD(header='لوحة المفاتيح',default=''):
 	return text
 
 def ADD_TO_LAST_VIDEO_FILES():
-	#vod_play_modes = [12,24,33,43,53,63,74,82,92,112,123,134,143,182,202,212,223,236,243,252]
+	#vod_play_modes = [12,24,33,43,53,63,74,82,92,112,123,134,143,182,202,212,223,235,243,252]
 	#live_play_modes = [235,105]
 	#if int(mode)in vod_play_modes: filename = lastvodfile
 	#elif int(mode)in live_play_modes: filename = lastlivefile

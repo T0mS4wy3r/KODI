@@ -26,7 +26,7 @@
 		<include>Viewtype_Gallery_Fanart</include>		<!-- 59 -->
 		<include>Viewtype_Gallery_Square</include>		<!-- 58 -->
 		<include>Viewtype_Panel_Square</include>		<!-- 559 -->
-		<include>Viewtype_Collide</include>			<!-- 553 -->
+		<AAAinclude>Viewtype_Collide</AAAinclude>			<!-- 553 -->
 		<include>Viewtype_Logo</include>			<!-- 56 -->
 		<include>Viewtype_TallGenre</include>			<!-- 501 -->
 		<include>Global_ContextFilter</include>

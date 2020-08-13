@@ -1,4 +1,10 @@
 ﻿
+v7.0.3	2020-08-13
+Added IPTV account check
+Skipped bad IPTV streams
+Fixed AKOAM resolver
+
+
 v7.0.2	2020-08-08
 Fixed IPTV download bug
 

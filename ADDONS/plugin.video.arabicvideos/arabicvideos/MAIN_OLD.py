@@ -75,7 +75,7 @@ if 0:
 #SITES_PLAY_MODES = mode2 in [27,41,135]
 #if SITES_PLAY_MODES: succeeded = False
 
-#IPTV_PLAY_MODES = mode2 in [235,236]
+#IPTV_PLAY_MODES = mode2 in [235]
 #if IPTV_PLAY_MODES: succeeded = False
 
 

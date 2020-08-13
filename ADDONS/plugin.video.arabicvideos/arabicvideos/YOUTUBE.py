@@ -5,6 +5,8 @@ script_name='YOUTUBE'
 menu_name='_YUT_'
 website0a = WEBSITES[script_name][0]
 
+settings = xbmcaddon.Addon(id=addon_id)
+
 #headers = '' 
 #headers = {'User-Agent':''}
 
@@ -137,6 +139,7 @@ def TRENDING_MENU(url):
 	return
 
 def CHANNEL_ITEMS(url,page_type,vistordetails):
+	global settings
 	html,c = GET_PAGE_DATA(url,vistordetails)
 	if c=='': CHANNEL_ITEMS_OLD(url,html) ; return
 	not_entry_urls = ['/videos','/playlists','/channels','/featured','ss=','ctoken=','key=','shelf_id=']
@@ -254,7 +257,6 @@ def CHANNEL_ITEMS(url,page_type,vistordetails):
 		if not found: CHANNEL_ITEMS(url,'','')
 	# home page main categories
 	if (page_type=='6' or not found) and 'shelf_id' not in url:
-		settings = xbmcaddon.Addon(id=addon_id)
 		for i in range(len(f)):
 			#xbmcgui.Dialog().ok(str(i),str(len(f)))
 			try:
@@ -286,7 +288,6 @@ def CHANNEL_ITEMS(url,page_type,vistordetails):
 					found = True
 				except: pass
 			if found: page_type = '7'
-	settings = xbmcaddon.Addon(id=addon_id)
 	if 'continuations' in ff.keys() and 'shelf_id' not in url:
 		continuation = settings.getSetting('youtube.continuation')
 		VISITOR_INFO1_LIVE = settings.getSetting('youtube.VISITOR_INFO1_LIVE')
@@ -369,6 +370,7 @@ def ITEMS_RENDER(item):
 	return True,title,link,img,count,duration,live,paid
 
 def TITLES(url,index='0',vistordetails=''):
+	global settings
 	html,c = GET_PAGE_DATA(url,vistordetails)
 	if c=='': TITLES_OLD(url,html) ; return
 	if index=='': index = '0'
@@ -405,7 +407,6 @@ def TITLES(url,index='0',vistordetails=''):
 		except: item = e[i]
 		#if item.keys()[0]=='shelfRenderer': continue
 		ISERT_ITEM_TO_MENU(item)
-	settings = xbmcaddon.Addon(id=addon_id)
 	key = settings.getSetting('youtube.key')
 	visitorData = settings.getSetting('youtube.visitorData')
 	url2 = ''
@@ -476,10 +477,10 @@ def RANDOM_USERAGENT():
 	return useragent
 
 def GET_PAGE_DATA(url,vistordetails='',request='initial_data'):
+	global settings
 	useragent = RANDOM_USERAGENT()
 	headers2 = {'User-Agent':useragent,'Cookie':'PREF=hl=ar'}
 	#headers2 = headers.copy()
-	settings = xbmcaddon.Addon(id=addon_id)
 	if 'key=' in url:
 		clientversion = settings.getSetting('youtube.clientversion')
 		token = settings.getSetting('youtube.token')

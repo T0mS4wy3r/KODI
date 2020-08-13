@@ -383,22 +383,6 @@
 			<property name="group">1036</property>
 			<property name="isSubmenu">True</property>
 		</item>
-		<item id="2">
-			<property name="id">$NUMBER[2]</property>
-			<property name="mainmenuid">1</property>
-			<label>YouTube</label>
-			<label2>$ADDON[script.skinshortcuts 32021]</label2>
-			<icon>DefaultAddonVideo.png</icon>
-			<thumb>special://home/addons/plugin.video.youtube/icon.png</thumb>
-			<property name="labelID">plugin.video.youtube</property>
-			<property name="defaultID">plugin.video.youtube</property>
-			<onclick>ActivateWindow(Videos,plugin://plugin.video.youtube,return)</onclick>
-			<property name="path">ActivateWindow(Videos,plugin://plugin.video.youtube,return)</property>
-			<property name="list">plugin://plugin.video.youtube</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),num-1036)</visible>
-			<property name="group">1036</property>
-			<property name="isSubmenu">True</property>
-		</item>
 		<item id="1">
 			<property name="id">$NUMBER[1]</property>
 			<property name="mainmenuid">2</property>
@@ -2241,22 +2225,6 @@
 			<property name="group">1036</property>
 			<property name="isSubmenu">True</property>
 		</item>
-		<item id="2">
-			<property name="id">$NUMBER[2]</property>
-			<property name="mainmenuid">1</property>
-			<label>YouTube</label>
-			<label2>$ADDON[script.skinshortcuts 32021]</label2>
-			<icon>DefaultAddonVideo.png</icon>
-			<thumb>special://home/addons/plugin.video.youtube/icon.png</thumb>
-			<property name="labelID">plugin.video.youtube</property>
-			<property name="defaultID">plugin.video.youtube</property>
-			<onclick>ActivateWindow(Videos,plugin://plugin.video.youtube,return)</onclick>
-			<property name="path">ActivateWindow(Videos,plugin://plugin.video.youtube,return)</property>
-			<property name="list">plugin://plugin.video.youtube</property>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">1036</property>
-			<property name="isSubmenu">True</property>
-		</item>
 	</include>
 	<include name="skinshortcuts-group-alt-num-1036">
 		<item id="1">
@@ -2271,22 +2239,6 @@
 			<onclick>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
 			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
 			<property name="list">plugin://plugin.video.arabicvideos</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),num-1036)</visible>
-			<property name="group">1036</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="2">
-			<property name="id">$NUMBER[2]</property>
-			<property name="mainmenuid">1</property>
-			<label>YouTube</label>
-			<label2>$ADDON[script.skinshortcuts 32021]</label2>
-			<icon>DefaultAddonVideo.png</icon>
-			<thumb>special://home/addons/plugin.video.youtube/icon.png</thumb>
-			<property name="labelID">plugin.video.youtube</property>
-			<property name="defaultID">plugin.video.youtube</property>
-			<onclick>ActivateWindow(Videos,plugin://plugin.video.youtube,return)</onclick>
-			<property name="path">ActivateWindow(Videos,plugin://plugin.video.youtube,return)</property>
-			<property name="list">plugin://plugin.video.youtube</property>
 			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),num-1036)</visible>
 			<property name="group">1036</property>
 			<property name="isSubmenu">True</property>

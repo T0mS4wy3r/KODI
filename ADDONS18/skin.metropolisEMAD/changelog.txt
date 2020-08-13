@@ -1,4 +1,12 @@
 
+v18.3.1.1	2020-08-13
+Modified TextViewer Dialog
+Fixed list right pageup/pagedown
+Disabled viewtype collide
+Fixed OSD and seekbar fading
+Fixed keyboard entry viewer
+
+
 v18.3.1.0	2020-07-15
 Imported changes from Metropolis v3.4.30 root folder downloaded at 10th July 2020
 

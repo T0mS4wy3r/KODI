@@ -38,7 +38,7 @@
 	<include file="Viewtype_Poster_Large_Fixed.xml" />	<!-- 552 -->
 	<include file="Viewtype_Poster_Large_Wrap.xml" />	<!-- 551 -->
 	<include file="Viewtype_TallGenre.xml" />		<!-- 501 -->
-	<include file="Viewtype_Collide.xml" />		<!-- 553 -->
+	<AAAinclude file="Viewtype_Collide.xml" />		<!-- 553 -->
 
 	<!-- Global dimensions -->
 	<include name="Dimensions_Fullscreen">
@@ -1434,6 +1434,12 @@
 		<control type="group">
 			<include>Animation_CommonFade</include>
 			<include>Animation_FadedByOSDSettings</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),5)">Animation_FadeOSD5</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),10)">Animation_FadeOSD10</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),15)">Animation_FadeOSD15</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),20)">Animation_FadeOSD20</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),25)">Animation_FadeOSD25</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),30)">Animation_FadeOSD30</include>
 			<control type="image">
 				<posx>0</posx>
 				<posy>545</posy>
@@ -1445,7 +1451,7 @@
 			<!-- FileNameAndPath -->
 			<control type="label" id="1112">
 				<posx>300</posx>
-				<posy>633</posy>
+				<posy>632</posy>
 				<width>700</width>
 				<height>35</height>
 				<scroll>true</scroll>
@@ -1458,7 +1464,7 @@
 			<!-- Title -->
 			<control type="fadelabel">
 				<posx>300</posx>
-				<posy>586</posy>
+				<posy>582</posy>
 				<width>700</width>
 				<height>40</height>
 				<font>METF_TitleTextMedium</font>
@@ -1605,13 +1611,12 @@
 		<control type="group">
 			<include>Animation_CommonFade</include>
 			<include>Animation_FadedByOSDSettings</include>
-			<!-- Background Image -->
-			<control type="image">
-				<width>1280</width>
-				<height>70</height>
-				<texture>osd/osd_dialog_bg_top.png</texture>
-				<colordiffuse>OSDBackgroundColor</colordiffuse>
-			</control>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),5)">Animation_FadeOSD5</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),10)">Animation_FadeOSD10</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),15)">Animation_FadeOSD15</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),20)">Animation_FadeOSD20</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),25)">Animation_FadeOSD25</include>
+			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),30)">Animation_FadeOSD30</include>
 			<control type="progress" id="23">
 				<description>ProgressbarCache</description>
 				<posx>185</posx>
@@ -1664,7 +1669,7 @@
 			</control>
 			<!-- Finish Time -->
 			<control type="label">
-				<posx>1040</posx>
+				<posx>1020</posx>
 				<posy>5</posy>
 				<width>250</width>
 				<height>40</height>
@@ -1673,11 +1678,11 @@
 				<align>right</align>
 				<aligny>center</aligny>
 				<label>$LOCALIZE[31409]: $INFO[Player.FinishTime]</label>
-				<visible>!VideoPlayer.Content(LiveTV)</visible>
+				<visible>!VideoPlayer.Content(LiveTV) + !String.IsEmpty(Player.TimeRemaining)</visible>
 			</control>
 			<!-- Remaining Time -->
 			<control type="label">
-				<posx>800</posx>
+				<posx>780</posx>
 				<posy>5</posy>
 				<width>250</width>
 				<height>40</height>
@@ -1686,7 +1691,7 @@
 				<font>METF_OSDTime</font>
 				<textcolor>OSDFinishTime</textcolor>
 				<label>Remain: $INFO[Player.TimeRemaining(h:mm:ss)]</label>
-				<visible>!VideoPlayer.Content(LiveTV)</visible>
+				<visible>!VideoPlayer.Content(LiveTV) + !String.IsEmpty(Player.TimeRemaining)</visible>
 			</control>
 		</control>
 	</include>
@@ -1740,6 +1745,46 @@
 			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),20)">Animation_FadeOSD20</include>
 			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),25)">Animation_FadeOSD25</include>
 			<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),30)">Animation_FadeOSD30</include>
+
+			<AAA>
+				<control type="label">
+					<posx>200</posx>
+					<posy>100</posy>
+					<label>Player.Playing: 1</label>
+					<visible>Player.Playing</visible>
+				</control>
+				<control type="label">
+					<posx>200</posx>
+					<posy>150</posy>
+					<label>Player.SeekBar: 1</label>
+					<visible>Player.SeekBar</visible>
+				</control>
+				<control type="label">
+					<posx>200</posx>
+					<posy>200</posy>
+					<label>Player.DisplayAfterSeek: 1</label>
+					<visible>Player.DisplayAfterSeek</visible>
+				</control>
+				<control type="label">
+					<posx>200</posx>
+					<posy>100</posy>
+					<label>Player.Playing: 0</label>
+					<visible>!Player.Playing</visible>
+				</control>
+				<control type="label">
+					<posx>200</posx>
+					<posy>150</posy>
+					<label>Player.SeekBar: 0</label>
+					<visible>!Player.SeekBar</visible>
+				</control>
+				<control type="label">
+					<posx>200</posx>
+					<posy>200</posy>
+					<label>Player.DisplayAfterSeek: 0</label>
+					<visible>!Player.DisplayAfterSeek</visible>
+				</control>
+			</AAA>
+
 			<control type="label">
 				<include>OSD_Player_Labels</include>
 				<label>[UPPERCASE]$LOCALIZE[112][/UPPERCASE]</label>
@@ -1799,7 +1844,8 @@
 			<control type="label">
 				<include>OSD_Player_Labels</include>
 				<label>[UPPERCASE]$LOCALIZE[31244][/UPPERCASE]</label>
-				<visible>Player.Playing + ![Player.SeekBar | Player.DisplayAfterSeek] + !Player.IsTempo</visible>
+				<AAAvisible>Player.Playing + ![Player.SeekBar | Player.DisplayAfterSeek] + Player.IsTempo</AAAvisible>
+				<visible>Player.Playing + !Player.SeekBar</visible>
 			</control>
 			<control type="label">
 				<include>OSD_Player_Labels</include>
@@ -1835,6 +1881,13 @@
 			<include condition="!String.IsEqual(Skin.String(OSDFade),Disabled) + String.IsEqual(Skin.String(OSDFadeTime),20)">Animation_FadeOSD20</include>
 			<include condition="!String.IsEqual(Skin.String(OSDFade),Disabled) + String.IsEqual(Skin.String(OSDFadeTime),25)">Animation_FadeOSD25</include>
 			<include condition="!String.IsEqual(Skin.String(OSDFade),Disabled) + String.IsEqual(Skin.String(OSDFadeTime),30)">Animation_FadeOSD30</include>
+			<!-- Background Image -->
+			<control type="image">
+				<width>1280</width>
+				<height>70</height>
+				<texture>osd/osd_dialog_bg_top.png</texture>
+				<colordiffuse>OSDBackgroundColor</colordiffuse>
+			</control>
 			<control type="group">
 				<posx>225</posx>
 				<posy>6</posy>

@@ -16,7 +16,7 @@
 				<onup>55</onup>
 				<ondown>55</ondown>
 				<include condition="!Skin.HasSetting(ViewLockdown)">OnLeft7000</include>
-				<onright>997</onright>
+				<onright>998</onright>
 				<scrolltime>160</scrolltime>
 				<viewtype label="31285">list</viewtype>
 				<orientation>vertical</orientation>

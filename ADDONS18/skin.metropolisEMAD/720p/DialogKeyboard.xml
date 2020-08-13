@@ -16,7 +16,7 @@
 	</coordinates>
 	<controls>
 		<control type="panel">
-			<content>plugin://skin.metropolisEMAD18?mode=0&text=$INFO[Control.GetLabel(312).index(1)]</content>
+			<content>plugin://skin.metropolisEMAD?mode=0&text=$INFO[Control.GetLabel(312).index(1)]</content>
 		</control>
 		<control type="group">
 			<visible>!Window.IsVisible(numericinput)</visible>

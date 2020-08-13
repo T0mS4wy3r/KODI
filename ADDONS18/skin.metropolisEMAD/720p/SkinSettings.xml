@@ -734,12 +734,12 @@
 						<onclick>Skin.ToggleSetting(ShowVideoPlotFullscreen)</onclick>
 						<selected>Skin.HasSetting(ShowVideoPlotFullscreen)</selected>
 					</control>
-					<control type="radiobutton" id="804">
+					<AAAcontrol type="radiobutton" id="804">
 						<include>SettingsLabel</include>
 						<label>$LOCALIZE[31436]</label>
 						<onclick>Skin.ToggleSetting(Slim_Seekbar)</onclick>
 						<selected>Skin.HasSetting(Slim_Seekbar)</selected>
-					</control>
+					</AAAcontrol>
 					<control type="radiobutton" id="805">
 						<include>SettingsLabel</include>
 						<label>$LOCALIZE[31474]</label>

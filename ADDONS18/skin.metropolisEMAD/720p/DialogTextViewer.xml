@@ -12,15 +12,12 @@
 			<animation effect="slide" start="830,0" end="0,0" time="400" tween="quadratic" easing="out">WindowOpen</animation>
 			<animation effect="slide" start="0,0" end="830,0" time="400" tween="quadratic" easing="out">WindowClose</animation>
 			<control type="image">
-				<posx>0</posx>
-				<posy>0</posy>
-				<width>850</width>
-				<height>444</height>
-				<texture background="true">buttonfo.png</texture>
-				<aspectratio>scale</aspectratio>
-				<colordiffuse>DialogBackgroundColor</colordiffuse>
-				<bordertexture border="8,8,0,8">frames/thumb_border_round2.png</bordertexture>
-				<bordersize>4,4,0,4</bordersize>
+				<posx>-50</posx>
+				<posy>-50</posy>
+				<width>900</width>
+				<height>550</height>
+				<texture>dialogs/dialogbg_icon2.png</texture>
+				<colordiffuse>DialogDropdownColor</colordiffuse>
 			</control>
 			<control type="group">
 				<animation effect="fade" start="0" end="100" time="100">WindowOpen</animation>
