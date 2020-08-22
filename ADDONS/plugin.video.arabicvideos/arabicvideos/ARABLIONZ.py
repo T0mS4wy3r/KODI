@@ -28,12 +28,13 @@ def MENU(website=''):
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-MENU-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
-	block = html_blocks[0]
-	items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
-	for url,title in items:
-		link = website0a+'/getposts?type=one&data='+url
-		addMenuItem('folder',website+'::'+menu_name+title,link,201)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	if html_blocks:
+		block = html_blocks[0]
+		items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
+		for url,title in items:
+			link = website0a+'/getposts?type=one&data='+url
+			addMenuItem('folder',website+'::'+menu_name+title,link,201)
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)

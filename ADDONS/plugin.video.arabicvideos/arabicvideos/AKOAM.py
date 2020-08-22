@@ -22,10 +22,10 @@ def MENU(website=''):
 	addMenuItem('folder',menu_name+'بحث في الموقع','',79)
 	addMenuItem('folder',website+'::'+menu_name+'المميزة',website0a,72,'','','featured')
 	addMenuItem('folder',website+'::'+menu_name+'المزيد',website0a,72,'','','more')
-	addMenuItem('folder',menu_name+'سلسلة افلام',website0a,79,'','','سلسلة افلام')
+	addMenuItem('folder',menu_name+'سلسلة أفلام',website0a,79,'','','سلسلة أفلام')
 	addMenuItem('folder',menu_name+'سلاسل منوعة',website0a,79,'','','سلسلة')
-	#addMenuItem('folder',website+'::'+menu_name+'الاخبار',website0a,72,'','','news')
-	#addMenuItem('folder',website+'::'+menu_name+'الاخبار',website0a,72,'','','news')
+	#addMenuItem('folder',website+'::'+menu_name+'الأخبار',website0a,72,'','','news')
+	#addMenuItem('folder',website+'::'+menu_name+'الأخبار',website0a,72,'','','news')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات','المصارعة الحرة']
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')

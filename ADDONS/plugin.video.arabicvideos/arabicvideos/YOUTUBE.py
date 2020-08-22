@@ -458,22 +458,22 @@ def CLEAN_AJAX(text):
 	return text
 
 def RANDOM_USERAGENT():
-	# https://github.com/lobstrio/shadow-useragent/blob/master/shadow_useragent/core.py
-	url = 'http://51.158.74.109/useragents/?format=json'
-	response = openURL_requests_cached(VERY_LONG_CACHE,'GET',url,'','','',False,'YOUTUBE-RANDOM_USERAGENT-1st')
+	# Latest and most common user agents (always updated)
+	url = 'https://techblog.willshouse.com/2012/01/03/most-common-user-agents/'
+	headers = {'Referer':url}
+	response = openURL_requests_cached(VERY_LONG_CACHE,'GET',url,'',headers,'',False,'YOUTUBE-RANDOM_USERAGENT-1st')
 	html = response.content
-	if '___Error___' in html:
+	count = html.count('Mozilla')
+	if '___Error___' in html or count<100:
 		useragentfile = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'arabicvideos','useragents.txt'))
 		with open(useragentfile,'r') as f: text = f.read()
-		a = re.findall('(Mozilla.*?)\n',text,re.DOTALL)
-		b = random.sample(a,1)
-		#xbmcgui.Dialog().ok(str(b),str(a))
-		useragent = b[0]
 	else:
-		a = EVAL(html)
-		b = random.sample(a,1)
-		#xbmcgui.Dialog().ok(str(b),str(a))
-		useragent = b[0]['useragent']
+		text = re.findall('get-the-list.*?>(.*?)<',html,re.DOTALL)
+		text = text[0]
+	a = re.findall('(Mozilla.*?)\n',text,re.DOTALL)
+	b = random.sample(a,1)
+	useragent = b[0]
+	#xbmcgui.Dialog().ok(str(b),str(a))
 	return useragent
 
 def GET_PAGE_DATA(url,vistordetails='',request='initial_data'):

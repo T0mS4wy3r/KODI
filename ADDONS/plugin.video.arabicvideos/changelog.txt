@@ -1,4 +1,15 @@
 ﻿
+v7.0.4	2020-08-22
+Minimized PLAY_VIDEO for live IPTV
+Fixed OPENURL Arabic payload
+Fixed HELAL video items
+Fixed ARABLIONZ main menu
+Changed HELAL website name
+Updated YOUTUBE cipher file
+Changed RANDOM_USERAGENT source
+Minor fixes & improvements
+
+
 v7.0.3	2020-08-13
 Added IPTV account check
 Skipped bad IPTV streams

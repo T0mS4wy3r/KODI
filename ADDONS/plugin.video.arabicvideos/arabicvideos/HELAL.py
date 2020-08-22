@@ -28,7 +28,7 @@ def MENU(website=''):
 	addMenuItem('folder',website+'::'+menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
 	addMenuItem('folder',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/?type=view',91)
 	addMenuItem('folder',website+'::'+menu_name+'المثبت',website0a+'/?type=pin',91)
-	addMenuItem('folder',website+'::'+menu_name+'جديد الافلام',website0a+'/?type=newMovies',91)
+	addMenuItem('folder',website+'::'+menu_name+'جديد الأفلام',website0a+'/?type=newMovies',91)
 	addMenuItem('folder',website+'::'+menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',website+'::'+menu_name+'جديد الموقع',website0a,91)
@@ -49,14 +49,14 @@ def ITEMS(url):
 	if '/search.php' in url:
 		url,search = url.split('?t=')
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
-		payload = { 't' : search }
-		data = urllib.urlencode(payload)
-		html = openURL_cached(REGULAR_CACHE,url,data,headers,'','HELAL-ITEMS-1st')
+		data = { 't' : search }
+		response = openURL_requests_cached(REGULAR_CACHE,'POST',url,data,headers,'','','HELAL-ITEMS-1st')
+		html = response.content
 	else:
 		headers = { 'User-Agent' : '' }
 		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-ITEMS-2nd')
 	#xbmcgui.Dialog().ok('',str(html))
-	html_blocks = re.findall('id="movies-items(.*?)class="clear',html,re.DOTALL)
+	html_blocks = re.findall('id="movies-items(.*?)class="listfoot"',html,re.DOTALL)
 	if html_blocks: block = html_blocks[0]
 	else: block = ''
 	items = re.findall('background-image:url\((.*?)\).*?href="(.*?)".*?movie-title">(.*?)<',block,re.DOTALL)

@@ -106,12 +106,12 @@ def CHECK_ACCOUNT(showDialog=True):
 					is_trial = dict['user_info']['is_trial']
 					parts = iptvURL.split('&',1)
 					message = parts[0]+sep1+'&'+parts[1]+sep1
-					message += sep1+'Status:  '+status
-					message += sep1+'Trial:    '+str(is_trial=='1')
-					message += sep1+'Created  At:  '+created_at
-					message += sep1+'Expiry Date:  '+exp_date
-					message += sep1+'Connections   ( Active / Maximum ) :  '+active+' / '+max
-					message += sep1+'Allowed Outputs:   '+" , ".join(dict['user_info']['allowed_output_formats'])
+					message += sep1+'Status:  '+'[COLOR FFC89008]'+status+'[/COLOR]'
+					message += sep1+'Trial:    '+'[COLOR FFC89008]'+str(is_trial=='1')+'[/COLOR]'
+					message += sep1+'Created  At:  '+'[COLOR FFC89008]'+created_at+'[/COLOR]'
+					message += sep1+'Expiry Date:  '+'[COLOR FFC89008]'+exp_date+'[/COLOR]'
+					message += sep1+'Connections   ( Active / Maximum ) :  '+'[COLOR FFC89008]'+active+' / '+max+'[/COLOR]'
+					message += sep1+'Allowed Outputs:   '+'[COLOR FFC89008]'+" , ".join(dict['user_info']['allowed_output_formats'])+'[/COLOR]'
 					message += sep1+sep1+str(dict['server_info'])
 					if status=='Active': xbmcgui.Dialog().textviewer('الاشتراك يعمل بدون مشاكل',message)
 					else: xbmcgui.Dialog().textviewer('يبدو أن هناك مشكلة في الاشتراك',message)
@@ -197,11 +197,11 @@ def ITEMS(TYPE,GROUP):
 			title = dict['title']
 			url = dict['url']
 			img = dict['img']
-			if   'ARCHIVED' in TYPE: addMenuItem('folder',menu_name+' '+title,url,238,img,'','archive')
-			elif 'EPG' in TYPE: addMenuItem('folder',menu_name+' '+title,url,238,img,'','full_epg')
-			elif 'TIMESHIFT' in TYPE: addMenuItem('folder',menu_name+' '+title,url,238,img,'','timeshift')
-			elif 'LIVE' in TYPE: addMenuItem('live',menu_name+' '+title,url,235,img)
-			else: addMenuItem('video',menu_name+' '+title,url,235,img)
+			if   'ARCHIVED' in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','archive')
+			elif 'EPG' in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','full_epg')
+			elif 'TIMESHIFT' in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','timeshift')
+			elif 'LIVE' in TYPE: addMenuItem('live',menu_name+title,url,235,img)
+			else: addMenuItem('video',menu_name+title,url,235,img)
 	#xbmcgui.Dialog().ok('OUT',str(menuItemsLIST))
 	WRITE_TO_SQL3('IPTV_ITEMS',[TYPE,GROUP],menuItemsLIST,VERY_LONG_CACHE)
 	menuItemsLIST[:] = previous_menuItemsLIST+menuItemsLIST
@@ -231,12 +231,12 @@ def EPG_ITEMS(url,function):
 	all_epg = archive_files['epg_listings']
 	epg_items = []
 	if function in ['archive','timeshift']:
-		addMenuItem('link',menu_name+'الملفات الأولي بهذه القائمة قد لا تعمل','',9999)
 		for dict in all_epg:
 			if dict['has_archive']==1:
 				epg_items.append(dict)
 				if function in ['timeshift']: break
 		if not epg_items: return
+		addMenuItem('link',menu_name+'الملفات الأولي بهذه القائمة قد لا تعمل','',9999)
 		if function in ['timeshift']:
 			length_hours = 2
 			length_secs = length_hours*HOUR
@@ -258,7 +258,7 @@ def EPG_ITEMS(url,function):
 				dict['stop_timestamp'] = str(start_timestamp+duration)
 				epg_items.append(dict)
 	elif function in ['short_epg','full_epg']: epg_items = all_epg
-	if function=='full_epg': addMenuItem('link',menu_name+'هذه قائمة برامج القنوات (جدول فقط)','',9999)
+	if function=='full_epg' and len(epg_items)>0: addMenuItem('link',menu_name+'هذه قائمة برامج القنوات (جدول فقط)','',9999)
 	#english = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed' , 'Thu', 'Fri']
 	#arabic = ['سبت', 'أحد', 'أثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة']
 	epg_list = []
@@ -290,6 +290,15 @@ def EPG_ITEMS(url,function):
 
 def PLAY(url,type):
 	if headers!='' and headers['User-Agent']!='': url = url+'|User-Agent='+headers['User-Agent']
+	"""
+	if type=='live':
+		xbmc.Player().play(url)
+		randomNumber = str(random.randrange(111111111111,999999999999))
+		url2 = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+script_name+'&z='+randomNumber
+		html = openURL_requests('GET',url2,'','',True,False,'IPTV-PLAY-1st')
+		ADD_TO_LAST_VIDEO_FILES()
+	else:
+	"""
 	PLAY_VIDEO(url,script_name,type)
 	return
 
@@ -448,7 +457,7 @@ def CREATE_STREAMS(ask_dialog=True):
 		pDialog.close()
 		return
 	if pDialog.iscanceled(): return
-	pDialog.update(35,'جلب الملف الثانوي:- الملف رقم','1/3')
+	pDialog.update(35,'جلب الملفات الثانوية:- الملف رقم','1/3')
 	m3u_text = m3u_text.replace('"tvg-','" tvg-')
 	m3u_text = m3u_text.replace('َ','').replace('ً','').replace('ُ','').replace('ٌ','')
 	m3u_text = m3u_text.replace('ّ','').replace('ِ','').replace('ٍ','').replace('ْ','')
@@ -461,7 +470,7 @@ def CREATE_STREAMS(ask_dialog=True):
 	url = server+'/player_api.php?username='+username+'&password='+password+'&action=get_series_categories'
 	html = openURL_cached(SHORT_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-2nd')
 	if pDialog.iscanceled(): return
-	pDialog.update(40,'جلب الملف الثانوي:- الملف رقم','2/3')
+	pDialog.update(40,'جلب الملفات الثانوية:- الملف رقم','2/3')
 	series_groups = re.findall('category_name":"(.*?)"',html,re.DOTALL)
 	#xbmcgui.Dialog().ok('','')
 	for group in series_groups:
@@ -469,7 +478,7 @@ def CREATE_STREAMS(ask_dialog=True):
 		m3u_text = m3u_text.replace('group="'+group+'"','group="__SERIES__'+group+'"')
 	url = server+'/player_api.php?username='+username+'&password='+password+'&action=get_vod_categories'
 	html = openURL_cached(SHORT_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-3rd')
-	pDialog.update(45,'جلب الملف الثانوي:- الملف رقم','3/3')
+	pDialog.update(45,'جلب الملفات الثانوية:- الملف رقم','3/3')
 	vod_groups = re.findall('category_name":"(.*?)"',html,re.DOTALL)
 	for group in vod_groups:
 		group = group.replace('\/','/').decode('unicode_escape').encode('utf8')

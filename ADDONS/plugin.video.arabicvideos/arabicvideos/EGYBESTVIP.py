@@ -165,7 +165,7 @@ def PLAY(url):
 	watchitem = re.findall('id="video".*?data-src="(.*?)"',htmlWatch,re.DOTALL)
 	if watchitem:
 		url2 = watchitem[0]#+'||MyProxyUrl=http://79.165.242.84:4145'
-		if 'uploaded.egybest.download' in url2:
+		if 'uploaded.egybest.download' in url2 and '/?id=_' not in url2:
 			html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','EGYBESTVIP-PLAY-4th')
 			watchlist = re.findall('source src="(.*?)" title="(.*?)"',html2,re.DOTALL)
 			if watchlist:
@@ -191,6 +191,7 @@ def PLAY(url):
 	#if selection == -1 : return
 	newLIST = []
 	for link in linkLIST:
+		# faselhd	https://movies.egybest.vip/movie/watch/فيلم-the-space-between-us-2017-مترجم/e53047e2cbc712380c0cb5f42ed4038f
 		if 'faselhd' in link: continue
 		if 'egybest.vip?name' in link: continue
 		newLIST.append(link)

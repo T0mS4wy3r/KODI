@@ -230,8 +230,8 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs=True,source=''):
 	KP_DAT2 = cookies['KP_DAT2__']
 	cookies2 = 'KP_DAT2__=' + KP_DAT2
 	headers2 = { 'Cookie' : cookies2 }
-	#payload2 = { 'page' : quote(url) }
-	#data2 = urllib.urlencode(payload2)
+	#payload = { 'page' : quote(url) }
+	#data2 = urllib.urlencode(payload)
 	html2 = openURL_cached(VERY_SHORT_CACHE,'http://kproxy.com/doproxy.jsp?page='+quote(url),'',headers2,False,'LIBRARY-openURL_KPROXYCOM-2nd')
 	proxyURL = re.findall('url=(.*?)"',html2,re.DOTALL)
 	if proxyURL:

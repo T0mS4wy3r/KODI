@@ -360,7 +360,10 @@ def SERVERS_cached(linkLIST2,script_name2=''):
 		if link=='': continue
 		server1,server2,type,filetype,quality = RESOLVABLE(link)
 		if quality=='': quality = 0
-		else: quality = int(quality.replace('p','').replace('%','').replace(' ',''))
+		else:
+			quality = re.findall('\d+',quality)[0]
+			#quality = quality.replace('p','').replace('hd','').replace('%','').replace(' ','')
+			quality = int(quality)
 		serversDICT.append([server1,server2,type,filetype,quality,link])
 	sortedDICT = sorted(serversDICT, reverse=True, key=lambda key: (key[4],key[2],key[0],key[3],key[1]))
 	for server1,server2,type,filetype,quality,link in sortedDICT:
