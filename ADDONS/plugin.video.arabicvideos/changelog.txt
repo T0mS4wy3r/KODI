@@ -6,6 +6,7 @@ Added new website CIMANOW
 Added new 330 websites using my YOUTUBE_CHANNELS
 Added new 46 menus for my YOUTUBE_CHANNELS
 Added 5th FAVOURITES menu
+Added changlelog dialog for new installations/upgrades
 Minor fixes & improvements
 
 
