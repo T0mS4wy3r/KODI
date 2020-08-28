@@ -96,7 +96,7 @@ def EPISODES(url,page):
 		return
 	totalpages = int(items[0])
 	name = re.findall('main-title.*?</a> >(.*?)<',html,re.DOTALL)
-	if name: name = name[0].replace('\n','').strip(' ')
+	if name: name = name[0].strip(' ')
 	else: name = xbmc.getInfoLabel('ListItem.Label')
 	#xbmcgui.Dialog().ok(name, str(''))
 	if '/category/' in url:

@@ -139,10 +139,12 @@ def RESOLVABLE(url):
 			quality = '%%%%%%%%%'+quality
 			quality = ' '+quality[-9:]
 	#if any(value in server for value in doNOTresolveMElist): return ''
-	#xbmcgui.Dialog().ok(server,type)
+	#xbmcgui.Dialog().ok(server,source)
 	if   'arabseed'		in server: named	= menuname
 	elif 'akoam'		in source: named	= menuname
 	elif 'akwam'		in source: private	= 'akwam'
+	elif 'cima now'		in name:   private	= menuname
+	elif 'cimanow.net'	in url2:   private	= ' '
 	elif 'shahid4u'		in server: named	= menuname
 	elif 'youtu'	 	in server: private	= 'youtube'
 	elif 'y2u.be'	 	in server: private	= 'youtube'
@@ -223,6 +225,7 @@ def INTERNAL_RESOLVERS(url):
 	if   'akoam'		in source: errormsg,titleLIST,linkLIST = AKOAM(url2,name)
 	elif 'akwam'		in source: errormsg,titleLIST,linkLIST = AKWAM(url2,type,quality)
 	elif 'shahid4u'		in server: errormsg,titleLIST,linkLIST = SHAHID4U(url2)
+	elif 'cimanow'		in server: errormsg,titleLIST,linkLIST = CIMANOW(url2)
 	elif 'arabseed'		in server: errormsg,titleLIST,linkLIST = ARABSEED(url2)
 	elif 'arblionz'		in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
 	elif 'arablionz'	in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
@@ -365,7 +368,7 @@ def SERVERS_cached(linkLIST2,script_name2=''):
 			#quality = quality.replace('p','').replace('hd','').replace('%','').replace(' ','')
 			quality = int(quality)
 		serversDICT.append([server1,server2,type,filetype,quality,link])
-	sortedDICT = sorted(serversDICT, reverse=True, key=lambda key: (key[4],key[2],key[0],key[3],key[1]))
+	sortedDICT = sorted(serversDICT, reverse=True, key=lambda key: (key[0],key[2],key[4],key[3],key[1]))
 	for server1,server2,type,filetype,quality,link in sortedDICT:
 		if quality==0: quality = ''
 		title = 'سيرفر'+' '+type+' '+server1+' '+str(quality)+' '+filetype+' '+server2
@@ -597,6 +600,34 @@ def SERIES4WATCH(link):
 	#errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVERS(url2)
 	#return errormsg,titleLIST,linkLIST
 	return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
+
+def CIMANOW(link):
+	# https://cimanow.cam/wp-content/themes/CimaNow/Interface/server.php?postid=42869&serverid=4
+	# https://watch4.cimanow.net/uploads/2020/08/14/_Cima-Now.CoM_ Project.Power.2020.WEB-DL/[Cima-Now.CoM] Project.Power.2020.WEB-DL-1080p.mp4
+	#xbmcgui.Dialog().ok(url,html)
+	if 'postid' in link:
+		parts = re.findall('(http.*?)\?postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL)
+		url,postid,serverid = parts[0]
+		data = {'id':postid,'server':serverid}
+		response = openURL_requests_cached(REGULAR_CACHE,'POST',url,data,'','','','RESOLVERS-CIMANOW-1st')
+		html = response.content
+		url2 = re.findall('iframe src="(.*?)"',html,re.DOTALL)[0]
+		if 'cimanow' in url2:
+			headers = {'Referer':'https://cima-now.com'}
+			response = openURL_requests_cached(REGULAR_CACHE,'GET',url2,'',headers,'','','RESOLVERS-CIMANOW-2nd')
+			html2 = response.content
+			items = re.findall('src="(.*?)".*?size="(.*?)"',html2,re.DOTALL)
+			titleLIST,linkLIST = [],[]
+			server = SERVER(url2)
+			for link,quality in reversed(items):
+				link = server+link+'|Referer=https://cima-now.com'
+				titleLIST.append(quality)
+				linkLIST.append(link)
+			return '',titleLIST,linkLIST
+		else: return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
+	else:
+		link = link+'|Referer=https://cima-now.com'
+		return '',[''],[link]
 
 def ARABLIONZ(link):
 	# http://arablionz.tv/?postid=159485&serverid=0

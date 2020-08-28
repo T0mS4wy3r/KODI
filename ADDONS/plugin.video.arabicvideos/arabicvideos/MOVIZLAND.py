@@ -158,7 +158,7 @@ def PLAY(url):
 						title_blocks = re.findall('<(.*?)http://up.movizland.(online|com)/uploads/',block,re.DOTALL)
 						title = re.findall('> *([^<>]+) *<',title_blocks[0][0],re.DOTALL)
 						title = ' '.join(title)
-						title = title.replace('\n','').strip(' ')
+						title = title.strip(' ')
 						title = title.replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ')
 						titleLIST2.append(title)
 					selection = xbmcgui.Dialog().select('أختر الفيديو المطلوب:', titleLIST2)

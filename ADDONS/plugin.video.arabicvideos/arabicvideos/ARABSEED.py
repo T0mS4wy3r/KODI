@@ -5,7 +5,7 @@ script_name='ARABSEED'
 headers = { 'User-Agent' : '' }
 menu_name='_ARS_'
 website0a = WEBSITES[script_name][0]
-ignoreLIST = ['الرئيسية','مصارعه','افلام']
+ignoreLIST = ['الرئيسية','مصارعه','افلام','اعلن معنا &#8211; For ads']
 
 def MAIN(mode,url,text):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)

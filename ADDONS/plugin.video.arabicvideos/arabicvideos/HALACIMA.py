@@ -62,7 +62,6 @@ def ITEMS(url,html='',type='',page='0'):
 	allTitles,allLinks,allEpisodes,allImages = [],[],[],[]
 	for link,img,title in items:
 		episodeNo = '99999'
-		title = title.replace('\n','')
 		if 'حلقة' in title and 'موسم' not in title:
 			episode = re.findall('حلقة (\d+)',title,re.DOTALL)
 			if episode: episodeNo = episode[0]

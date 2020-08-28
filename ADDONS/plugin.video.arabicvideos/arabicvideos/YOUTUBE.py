@@ -28,9 +28,10 @@ def MAIN(mode,url,text,type,page):
 	return results
 
 def MENU():
-	addMenuItem('folder',menu_name+'بحث: موقع يوتيوب','',149)
-	addMenuItem('folder',menu_name+'الفيديوهات المقترحة',website0a,141)
-	addMenuItem('folder',menu_name+'المحتوى الرائج',website0a+'/feed/trending',144)
+	addMenuItem('folder',menu_name+'بحث في موقع يوتيوب','',149)
+	addMenuItem('folder',menu_name+'فيديوهات تقترحها يوتيوب',website0a,141)
+	addMenuItem('folder',menu_name+'يوتيوب اختارت المحتوى الرائج',website0a+'/feed/trending',144)
+	addMenuItem('folder','_YTC_'+'مواقع المبرمج اختارها من يوتيوب','',290)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',menu_name+'TEST_YOUTUBE','',144)
 	addMenuItem('folder',menu_name+'بحث: قنوات عربية','',147)
@@ -38,20 +39,21 @@ def MENU():
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder',menu_name+'بحث: افلام عربية',website0a+'/results?search_query=فيلم',141)
 	addMenuItem('folder',menu_name+'بحث: افلام اجنبية',website0a+'/results?search_query=movie',141)
+	addMenuItem('folder',menu_name+'بحث: مسرحيات عربية',website0a+'/results?search_query=مسرحية',141)
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder',menu_name+'بحث: مسلسلات عربية',website0a+'/results?search_query=مسلسل&sp=EgIQAw==',141)
 	addMenuItem('folder',menu_name+'بحث: مسلسلات اجنبية',website0a+'/results?search_query=series&sp=EgIQAw==',141)
-	addMenuItem('folder',menu_name+'بحث: مسرحيات عربية',website0a+'/results?search_query=مسرحية',141)
 	addMenuItem('folder',menu_name+'بحث: مسلسلات كارتون',website0a+'/results?search_query=كارتون&sp=EgIQAw==',141)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder',menu_name+'بحث: خطبة المرجعية',website0a+'/results?search_query=قناة+كربلاء+الفضائية+خطبة+الجمعة&sp=CAISAhAB',141)
-	addMenuItem('folder',menu_name+'قناة كربلاء الفضائية',website0a+'/user/karbalatvchannel',146)
+	#addMenuItem('folder',menu_name+'قناة كربلاء الفضائية',website0a+'/user/karbalatvchannel',146)
 	addMenuItem('folder',menu_name+'العراق خطبة المرجعية',website0a+'/playlist?list=PL4jUq6pnG36QjuXDhNnIlriuzroTFtmfr',142)
-	addMenuItem('folder',menu_name+'العتبة الحسينية المقدسة',website0a+'/user/ImamHussaindotorg',146)
+	#addMenuItem('folder',menu_name+'العتبة الحسينية المقدسة',website0a+'/user/ImamHussaindotorg',146)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder',menu_name+'شوف دراما الاولى',website0a+'/channel/UCgd_tWU4X7s10DKdgt-XDNQ',146)
-	addMenuItem('folder',menu_name+'شوف دراما الثانية',website0a+'/channel/UC25ZB5ZMqLQwxFDV9FHvF8g',146)
-	addMenuItem('folder',menu_name+'شوف دراما الثالثة',website0a+'/channel/UCQOz2_AhxeHUbNMYan-6ZQQ',146)
-	addMenuItem('folder',menu_name+'شبكة وطن',website0a+'/user/WatanNetwork',146)
+	#addMenuItem('folder',menu_name+'شوف دراما الاولى',website0a+'/channel/UCgd_tWU4X7s10DKdgt-XDNQ',146)
+	#addMenuItem('folder',menu_name+'شوف دراما الثانية',website0a+'/channel/UC25ZB5ZMqLQwxFDV9FHvF8g',146)
+	#addMenuItem('folder',menu_name+'شوف دراما الثالثة',website0a+'/channel/UCQOz2_AhxeHUbNMYan-6ZQQ',146)
+	#addMenuItem('folder',menu_name+'شبكة وطن',website0a+'/user/WatanNetwork',146)
 	#addMenuItem('folder',menu_name+'اعدادات اضافة يوتيوب','',144)
 	#yes = xbmcgui.Dialog().yesno('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
 	#if yes:
@@ -145,11 +147,11 @@ def CHANNEL_ITEMS(url,page_type,vistordetails):
 	not_entry_urls = ['/videos','/playlists','/channels','/featured','ss=','ctoken=','key=','shelf_id=']
 	entry_page = any(value in url for value in not_entry_urls)
 	if not entry_page:
+		if '"title":"قوائم التشغيل"' in html: addMenuItem('folder',menu_name+'القوائم',url+'/playlists',146)
 		if '"title":"الفيديوهات"' in html: addMenuItem('folder',menu_name+'الفيديوهات',url+'/videos',146)
-		if '"title":"قوائم التشغيل"' in html: addMenuItem('folder',menu_name+'قوائم التشغيل',url+'/playlists',146)
 		if '"title":"القنوات"' in html: addMenuItem('folder',menu_name+'القنوات',url+'/channels',146)#,'','','UPDATE')
 		if '"title":"Videos"' in html: addMenuItem('folder',menu_name+'الفيديوهات',url+'/videos',146)
-		if '"title":"Playlists"' in html: addMenuItem('folder',menu_name+'قوائم التشغيل',url+'/playlists',146)
+		if '"title":"Playlists"' in html: addMenuItem('folder',menu_name+'القوائم',url+'/playlists',146)
 		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+'القنوات',url+'/channels',146)#,'','','UPDATE')
 	f,g = {},{}
 	if 'key=' in url:

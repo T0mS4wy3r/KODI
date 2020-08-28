@@ -87,6 +87,7 @@ kodi_version = float(kodi_version[0])
 #xbmcgui.Dialog().ok(kodi_release,str(kodi_version))
 icon = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'icon.png'))
 fanart = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'fanart.jpg'))
+changelogfile = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'changelog.txt'))
 
 addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
 dbfile = os.path.join(addoncachefolder,"webcache_"+addon_version+".db")
@@ -126,6 +127,9 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'YOUTUBE'		:['https://www.youtube.com']
 			,'LIVETV'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport']
 			,'IPTV'			:['https://nowhere.com']
+			,'CIMANOW'		:['https://cima-now.com']
+			,'SHIAVOICE'	:['https://shiavoice.com']
+			,'KARBALATV'	:['https://karbala-tv.net']
 			#,'EGY4BEST'	:['https://egybest.vip']
 			#,'EGYBEST'		:['https://egy.best']
 			#,'HALACIMA'	:['https://www.halacima.co']
@@ -142,6 +146,9 @@ def MAIN():
 	if not os.path.exists(dbfile):
 		LOG_THIS('NOTICE','  .  New Arabic Videos version installed  .  path: [ '+addon_path+' ]')
 		xbmcgui.Dialog().ok('برنامج عماد للفيديوهات العربية','تم تحديث برنامج عماد للفيديوهات العربية إلى الإصدار الجديد . أو تم مسح الكاش الموجود في البرنامج . سيقوم البرنامج الآن ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
+		with open(changelogfile,'r') as f: changelog = f.read()
+		changelog = changelog.replace('\t','        ')
+		xbmcgui.Dialog().textviewer('التغببرات الاخيرة في البرامج',changelog)
 		CLEAN_KODI_CACHE_FOLDER()
 		conn = sqlite3.connect(dbfile)
 		conn.close()
@@ -169,19 +176,19 @@ def MAIN():
 		menu_label2 = menu_label.replace('   ','  ').replace('   ','  ').replace('   ','  ')
 		menu_path2 = menu_path.replace('   ','  ').replace('   ','  ').replace('   ','  ')
 		message = '  Label: [ '+menu_label2+' ]  Mode: [ '+mode+' ]  Path: [ '+menu_path2+' ]'
-	if favourite not in ['','1','2','3','4','NOREFRESH']:
+	if favourite not in ['','1','2','3','4','5','NOREFRESH']:
 		message = message+'   .  Favourite: [ '+favourite+' ]'
 	LOG_THIS('NOTICE',LOGGING(script_name)+message)
 	#xbmcgui.Dialog().ok('['+menu_path+']','['+mode+']')
 	#xbmcgui.Dialog().ok('['+menu_label+']','['+menu_path+']')
 	UPDATE_RANDOM_MENUS = mode2==16 and mode0 not in [160,165]
 	UPDATE_RANDOM_SUBMENUS = mode2==16 and 'UPDATE' in text
-	SEARCH_MODES = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259]
-	SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25]
+	SEARCH_MODES = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259,309]
+	SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25,30]
 	IPTV_MODES = mode2==23 and text!=''
 	YOUTUBE_UPDATE = mode2==14 and 'UPDATE' in text
 	#xbmcgui.Dialog().ok(addon_path,str(addon_handle))
-	if favourite not in ['','1','2','3','4','NOREFRESH']:
+	if favourite not in ['','1','2','3','4','5','NOREFRESH']:
 		import FAVOURITES
 		FAVOURITES.FAVOURITES_DISPATCHER(favourite)
 		#"Container.Refresh" used because there is no addon_handle number to use for ending directory
@@ -269,6 +276,10 @@ def MAIN_DISPATCHER(type,name,url,mode,image,page,text,favourite):
 	elif mode2==26: import MENUS 		; results = MENUS.MAIN(mode,url,text)
 	elif mode2==27: import FAVOURITES 	; results = FAVOURITES.MAIN(mode,favourite)
 	elif mode2==28: import IPTV 		; results = IPTV.MAIN(mode,url,text,type)
+	elif mode2==29: import YTB_CHANNELS	; results = YTB_CHANNELS.MAIN(mode,url,text)
+	elif mode2==30: import CIMANOW		; results = CIMANOW.MAIN(mode,url,text)
+	elif mode2==31: import SHIAVOICE	; results = SHIAVOICE.MAIN(mode,url,text)
+	elif mode2==32: import KARBALATV	; results = KARBALATV.MAIN(mode,url,text)
 	return results
 
 def LOG_MENU_LABEL(script_name,label,mode,path):
@@ -460,6 +471,8 @@ contentsDICT = {}
 menuItemsLIST = []
 
 def addMenuItem(type,name,url,mode,image='',page='',text='',favourite=''):
+	name = name.replace('\r','').replace('\n','').replace('\t','')
+	url = url.replace('\r','').replace('\n','').replace('\t','')
 	website = ''
 	if '::' in name: website,name = name.split('::',1)
 	if type=='folder' and website!='' and '_' in name:
@@ -602,7 +615,7 @@ class dummy_object(): pass
 
 def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source):
 	if data=='': data = {}
-	if headers=='': headers = {}
+	if headers=='': headers = {'User-Agent':None}
 	if allow_redirects=='': allow_redirects = True
 	if showDialogs=='': showDialogs = True
 	#url = url + '||MyProxyUrl=http://188.166.59.17:8118'
@@ -1263,6 +1276,9 @@ def TRANSLATE(text):
 	,'SHOOFMAX'		:'موقع شوف ماكس'
 	,'ARABSEED'		:'موقع عرب سييد'
 	,'YOUTUBE'		:'موقع يوتيوب'
+	,'CIMANOW'		:'موقع سيما ناو'
+	,'SHIAVOICE'	:'موقع صوت الشيعة'
+	,'KARBALATV'	:'موقع قناة كربلاء'
 	,'LIVETV'		:'ملف'
 	,'IPTV'			:'ملف'
 	,'LIBRARY'		:'ملف'

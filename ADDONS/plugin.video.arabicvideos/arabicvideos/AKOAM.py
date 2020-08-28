@@ -75,7 +75,7 @@ def TITLES(url,type):
 		block = html_blocks[0]
 		items = re.findall('div class="subject_box.*?href="(.*?)".*?src="(.*?)".*?<h3.*?>(.*?)</h3>',block,re.DOTALL)
 	for link,img,title in items:
-		title = title.strip(' ').replace('\t','').replace('\n','')
+		title = title.strip(' ')
 		title = unescapeHTML(title)
 		if any(value in title for value in noEpisodesLIST): addMenuItem('video',menu_name+title,link,73,img)
 		else: addMenuItem('folder',menu_name+title,link,73,img)
@@ -121,7 +121,7 @@ def SECTIONS(url):
 		xbmcgui.Dialog().notification('خطأ خارجي','لا يوجد ملف فيديو')
 		return
 	name,img,block = html_blocks[0]
-	name = name.replace('\n','').replace('\t','').strip(' ')
+	name = name.strip(' ')
 	if 'sub_epsiode_title' in block:
 		items = re.findall('sub_epsiode_title">(.*?)</h2>.*?sub_file_title.*?>(.*?)<',block,re.DOTALL)
 	else:
@@ -140,7 +140,7 @@ def SECTIONS(url):
 		if '.' in filename: filetype = filename.split('.')[-1]
 		#if any(value in filetype for value in notvideosLIST):
 		#	if 'رابط التشغيل' not in title: title = title + ':'
-		title = title.replace('\n','').strip(' ')
+		title = title.strip(' ')
 		titleLIST.append(title)
 		episodeLIST.append(count)
 		count += 1

@@ -21,15 +21,15 @@ else:
 	menu_label2 = menu_label.replace('   ','  ').replace('   ','  ').replace('   ','  ')
 	menu_path2 = menu_path.replace('   ','  ').replace('   ','  ').replace('   ','  ')
 	message = '  Label: [ '+menu_label2+' ]  Mode: [ '+mode+' ]  Path: [ '+menu_path2+' ]'
-if favourite not in ['','1','2','3','4','NOREFRESH']:
+if favourite not in ['','1','2','3','4','5','NOREFRESH']:
 	message = message+'   .  Favourite: [ '+favourite+' ]'
 LOG_THIS('NOTICE',LOGGING(script_name)+message)
 
 
 UPDATE_RANDOM_MENUS = mode2==16 and mode0 not in [160,165]
 UPDATE_RANDOM_SUBMENUS = mode2==16 and 'UPDATE' in text
-SEARCH_MODES = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259]
-SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25]
+SEARCH_MODES = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259,309]
+SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25,30]
 IPTV_MODES = mode2==23 and text!=''
 YOUTUBE_UPDATE = mode2==14 and 'UPDATE' in text
 
@@ -37,7 +37,7 @@ YOUTUBE_UPDATE = mode2==14 and 'UPDATE' in text
 #xbmcgui.Dialog().ok(addon_path,str(addon_handle))
 
 
-if favourite not in ['','1','2','3','4','NOREFRESH']:
+if favourite not in ['','1','2','3','4','5','NOREFRESH']:
 	import FAVOURITES
 	FAVOURITES.FAVOURITES_DISPATCHER(favourite)
 	#"Container.Refresh" used because there is no addon_handle number to use for ending directory

@@ -216,7 +216,7 @@ def SEARCH(search=''):
 	items = re.findall('href="(.*?)".*?background-image: url\((.*?)\).*?<span>(.*?)</span>',block,re.DOTALL)
 	if items:
 		for link,img,title in items:
-			title = title.replace('\n','').decode('utf8').encode('utf8')
+			title = title.decode('utf8').encode('utf8')
 			url = website0a + link
 			if '/program/' in url:
 				if '?ep=' in url:

@@ -1,6 +1,16 @@
 ﻿
+v7.1.0	2020-08-28
+Added new website SHIAVOICE
+Added new website KARBALATV
+Added new website CIMANOW
+Added new 330 websites using my YOUTUBE_CHANNELS
+Added new 46 menus for my YOUTUBE_CHANNELS
+Added 5th FAVOURITES menu
+Minor fixes & improvements
+
+
 v7.0.4	2020-08-22
-Minimized PLAY_VIDEO for live IPTV
+Minimized PLAY_VIDEO code for live IPTV
 Fixed OPENURL Arabic payload
 Fixed HELAL video items
 Fixed ARABLIONZ main menu

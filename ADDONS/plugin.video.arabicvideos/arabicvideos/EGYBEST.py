@@ -111,7 +111,6 @@ def TITLES(url,page):
 		if '/series/' in url and '/season\/' not in link: continue
 		if '/season/' in url and '/episode\/' not in link: continue
 		title = name + escapeUNICODE(title).strip(' ')
-		title = title.replace('\n','')
 		link = link.replace('\/','/')
 		img = img.replace('\/','/')
 		if 'http' not in img: img = 'http:' + img

@@ -107,7 +107,7 @@ def SEARCH_RANDOM_VIDEOS(options):
 	search = list2[selection]
 	"""
 	if 'SITES' in options:
-		search_modes = [19,29,39,49,59,69,79,99,119,139,149,209,229,249,259]
+		search_modes = [19,29,39,49,59,69,79,99,119,139,149,209,229,249,259,309]
 	elif 'IPTV' in options:
 		search_modes = [239]
 		import IPTV
@@ -214,6 +214,26 @@ def IMPORT_SITES():
 	if failed<=5:
 		try:
 			import EGYBESTVIP ; html = EGYBESTVIP.MENU('EGYBESTVIP')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
+	if failed<=5:
+		try:
+			import CIMANOW ; html = CIMANOW.MENU('CIMANOW')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
+	if failed<=5:
+		try:
+			import SHIAVOICE ; html = SHIAVOICE.MENU('CIMANOW')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
+	if failed<=5:
+		try:
+			import KARBALATV ; html = KARBALATV.MENU('CIMANOW')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
+	if failed<=5:
+		try:
+			import YTB_CHANNELS ; html = YTB_CHANNELS.MENU('CIMANOW')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
 	#import EGYBEST			;	EGYBEST.MENU('EGYBEST')
@@ -351,9 +371,6 @@ def CLEAN_RANDOM_LIST(menuItemsLIST):
 		if 'صفحة' in name or 'صفحه' in name or 'page' in name.lower(): continue
 		menuItemsLIST2.append([type,name,url,mode,image,page,text,favourite])
 	return menuItemsLIST2
-
-
-
 
 
 

@@ -105,7 +105,7 @@ def GET_FAVOURITES_CONTEXT_MENU(path):
 	contextMenu = []
 	menuItem = EXTRACT_KODI_PATH(path)
 	type,name,url,mode,image,page,text,favourite = menuItem
-	if favourite not in ['','1','2','3','4','NOREFRESH']: favourite = '_'+favourite
+	if favourite not in ['','1','2','3','4','5','NOREFRESH']: favourite = '_'+favourite
 	favouritesDICT = GET_ALL_FAVOURITES()
 	if mode=='270':
 		if favourite in favouritesDICT.keys() and len(favouritesDICT[favourite])>0:
@@ -117,7 +117,8 @@ def GET_FAVOURITES_CONTEXT_MENU(path):
 		contextMenu2 = CREATE_ONE_CONTEXT_MENU('2',favourite,path,menuItem,favouritesDICT)
 		contextMenu3 = CREATE_ONE_CONTEXT_MENU('3',favourite,path,menuItem,favouritesDICT)
 		contextMenu4 = CREATE_ONE_CONTEXT_MENU('4',favourite,path,menuItem,favouritesDICT)
-		contextMenu = contextMenu1+contextMenu2+contextMenu3+contextMenu4
+		contextMenu5 = CREATE_ONE_CONTEXT_MENU('5',favourite,path,menuItem,favouritesDICT)
+		contextMenu = contextMenu1+contextMenu2+contextMenu3+contextMenu4+contextMenu5
 	contextMenuNEW = []
 	for i1,i2 in contextMenu:
 		#i1 = '[COLOR FFFFFF00][B]'+i1+'[/B][/COLOR]'
