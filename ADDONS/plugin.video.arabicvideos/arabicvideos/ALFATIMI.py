@@ -20,14 +20,14 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',69)
-	addMenuItem('folder',website+'::'+menu_name+'ما يتم مشاهدته الان',website0a,64,'','','recent_viewed_vids')
-	addMenuItem('folder',website+'::'+menu_name+'الاكثر مشاهدة',website0a,64,'','','most_viewed_vids')
-	addMenuItem('folder',website+'::'+menu_name+'اضيفت مؤخرا',website0a,64,'','','recently_added_vids')
-	addMenuItem('folder',website+'::'+menu_name+'فيديو عشوائي',website0a,64,'','','random_vids')
-	addMenuItem('folder',website+'::'+menu_name+'افلام ومسلسلات',website0a,61,'','','-1')
-	addMenuItem('folder',website+'::'+menu_name+'البرامج الدينية',website0a,61,'','','-2')
-	addMenuItem('folder',website+'::'+menu_name+'English Videos',website0a,61,'','','-3')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',69,'','','NOUPDATE')
+	addMenuItem('folder',website+'___'+menu_name+'ما يتم مشاهدته الان',website0a,64,'','','recent_viewed_vids')
+	addMenuItem('folder',website+'___'+menu_name+'الاكثر مشاهدة',website0a,64,'','','most_viewed_vids')
+	addMenuItem('folder',website+'___'+menu_name+'اضيفت مؤخرا',website0a,64,'','','recently_added_vids')
+	addMenuItem('folder',website+'___'+menu_name+'فيديو عشوائي',website0a,64,'','','random_vids')
+	addMenuItem('folder',website+'___'+menu_name+'افلام ومسلسلات',website0a,61,'','','-1')
+	addMenuItem('folder',website+'___'+menu_name+'البرامج الدينية',website0a,61,'','','-2')
+	addMenuItem('folder',website+'___'+menu_name+'English Videos',website0a,61,'','','-3')
 	return ''
 
 def TITLES(url,category):
@@ -100,12 +100,13 @@ def MOSTS(category):
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		exit = False
 	else: exit = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	#xbmcgui.Dialog().ok(search, website0a)
 	new_search = search.replace(' ','+')
 	url = website0a + '/search_result.php?query=' + new_search # + '&page=1'

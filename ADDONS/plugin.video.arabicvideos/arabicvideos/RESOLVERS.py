@@ -39,11 +39,11 @@ def PLAY(linkLIST,script_name,type=''):
 			if '\n' not in errormsg: error1,error2 = errormsg,''
 			else: error1,error2 = errormsg.split('\n',1)
 			#xbmcgui.Dialog().ok(result,errormsg)
-			if result in ['playing','canceled_1st_menu'] or len(linkLIST)==1: break
+			if result in ['download','playing','canceled_1st_menu'] or len(linkLIST)==1: break
 			elif result in ['failed','timeout','tried']: break
 			elif result not in ['canceled_2nd_menu','https']: xbmcgui.Dialog().ok('رسالة من المبرمج','السيرفر لم يعمل جرب سيرفر غيره',error1,error2)
 	if result=='unresolved' and len(titleLIST)>0: xbmcgui.Dialog().ok('رسالة من المبرمج','سيرفر هذا الفيديو لم يعمل جرب فيديو غيره',errormsg)
-	elif result in ['failed','timeout']: xbmcgui.Dialog().ok('رسالة من المبرمج',errormsg)
+	elif result in ['failed','timeout'] and errormsg!='': xbmcgui.Dialog().ok('رسالة من المبرمج',errormsg)
 	"""
 	elif result in ['canceled_1st_menu','canceled_2nd_menu']:
 		#LOG_THIS('NOTICE',LOGGING(script_name)+'   Test:   '+sys.argv[0]+sys.argv[2])
@@ -93,7 +93,7 @@ def PLAY_LINK(url,script_name,type=''):
 		"""
 	else:
 		result = 'unresolved'
-		videofiletype = re.findall('(\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
+		videofiletype = re.findall('(\.avi|\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url.lower()+'&&',re.DOTALL|re.IGNORECASE)
 		if videofiletype: result = PLAY_VIDEO(url,script_name,type)
 	return result,errormsg
 	#title = xbmc.getInfoLabel( "ListItem.Label" )
@@ -1439,8 +1439,8 @@ def	XFILESHARING(url):
 	#xbmcgui.Dialog().ok(url,id)
 	headers = { 'User-Agent':'' , 'Content-Type':'application/x-www-form-urlencoded' }
 	payload = { 'id':id , 'op':'download2' }
-	data = urllib.urlencode(payload)
-	html = openURL_cached(SHORT_CACHE,url,data,headers,'','RESOLVERS-XFILESHARING-1st')
+	response = openURL_requests_cached(SHORT_CACHE,'POST',url,payload,headers,'','','RESOLVERS-XFILESHARING-1st')
+	html = response.content
 	#xbmcgui.Dialog().ok(url,html)
 	#LOG_THIS('NOTICE','----------------------------------')
 	#LOG_THIS('NOTICE',html)

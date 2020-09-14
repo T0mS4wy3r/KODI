@@ -24,16 +24,16 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',189)
-	addMenuItem('folder',website+'::'+menu_name+'بوكس اوفيس موفيز لاند',website0a,181,'','','box-office')
-	addMenuItem('folder',website+'::'+menu_name+'أحدث الافلام',website0a,181,'','','latest-movies')
-	addMenuItem('folder',website+'::'+menu_name+'تليفزيون موفيز لاند',website0a,181,'','','tv')
-	addMenuItem('folder',website+'::'+menu_name+'الاكثر مشاهدة',website0a,181,'','','top-views')
-	addMenuItem('folder',website+'::'+menu_name+'أقوى الافلام الحالية',website0a,181,'','','top-movies')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',189,'','','NOUPDATE')
+	addMenuItem('folder',website+'___'+menu_name+'بوكس اوفيس موفيز لاند',website0a,181,'','','box-office')
+	addMenuItem('folder',website+'___'+menu_name+'أحدث الافلام',website0a,181,'','','latest-movies')
+	addMenuItem('folder',website+'___'+menu_name+'تليفزيون موفيز لاند',website0a,181,'','','tv')
+	addMenuItem('folder',website+'___'+menu_name+'الاكثر مشاهدة',website0a,181,'','','top-views')
+	addMenuItem('folder',website+'___'+menu_name+'أقوى الافلام الحالية',website0a,181,'','','top-movies')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','MOVIZLAND-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)".*?">(.*?)<',html,re.DOTALL)
 	for link,title in items:
-		addMenuItem('folder',website+'::'+menu_name+title,link,181)
+		addMenuItem('folder',website+'___'+menu_name+title,link,181)
 	#xbmcgui.Dialog().ok(html,html)
 	return html
 
@@ -213,12 +213,13 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	search = search.replace(' ','+')
 	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','MOVIZLAND-SEARCH-1st')
 	items = re.findall('<option value="(.*?)">(.*?)</option>',html,re.DOTALL)

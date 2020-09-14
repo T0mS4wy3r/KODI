@@ -13,16 +13,16 @@ def MAIN(mode,url,text):
 	elif mode==201: results = TITLES(url)
 	elif mode==202: results = PLAY(url)
 	elif mode==203: results = EPISODES(url)
-	elif mode==204: results = FILTERS_MENU(url,'FILTERS::'+text)
-	elif mode==205: results = FILTERS_MENU(url,'CATEGORIES::'+text)
+	elif mode==204: results = FILTERS_MENU(url,'FILTERS___'+text)
+	elif mode==205: results = FILTERS_MENU(url,'CATEGORIES___'+text)
 	elif mode==209: results = SEARCH(text)
 	else: results = False
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',209)
-	addMenuItem('folder',menu_name+'فلتر محدد',website0a,205)
-	addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',209,'','','NOUPDATE')
+	#addMenuItem('folder',menu_name+'فلتر محدد',website0a,205)
+	#addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-MENU-1st')
@@ -33,7 +33,7 @@ def MENU(website=''):
 		items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
 		for url,title in items:
 			link = website0a+'/getposts?type=one&data='+url
-			addMenuItem('folder',website+'::'+menu_name+title,link,201)
+			addMenuItem('folder',website+'___'+menu_name+title,link,201)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -43,7 +43,7 @@ def MENU(website=''):
 		if 'http' not in link: link = website0a+link
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
-			addMenuItem('folder',website+'::'+menu_name+title,link,201)
+			addMenuItem('folder',website+'___'+menu_name+title,link,201)
 	return html
 
 def TITLES(url):
@@ -269,12 +269,13 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	search = search.replace(' ','+')
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-SEARCH-1st')
 	html = response.content#.encode('utf8')
@@ -299,16 +300,16 @@ def FILTERS_MENU(url,filter):
 	#xbmcgui.Dialog().ok(filter,url)
 	menu_list = ['category','genre','release-year']
 	if '?' in url: url = url.split('/getposts?')[0]
-	type,filter = filter.split('::',1)
+	type,filter = filter.split('___',1)
 	if filter=='': filter_options,filter_values = '',''
-	else: filter_options,filter_values = filter.split('::')
+	else: filter_options,filter_values = filter.split('___')
 	if type=='CATEGORIES':
 		if menu_list[0]+'=' not in filter_options: category = menu_list[0]
 		for i in range(len(menu_list[0:-1])):
 			if menu_list[i]+'=' in filter_options: category = menu_list[i+1]
 		new_options = filter_options+'&'+category+'=0'
 		new_values = filter_values+'&'+category+'=0'
-		new_filter = new_options.strip('&')+'::'+new_values.strip('&')
+		new_filter = new_options.strip('&')+'___'+new_values.strip('&')
 		clean_filter = RECONSTRUCT_FILTER(filter_values,'modified_filters')
 		url2 = url+'/getposts?'+clean_filter
 	elif type=='FILTERS':
@@ -334,7 +335,7 @@ def FILTERS_MENU(url,filter):
 			if category!=category2: continue
 			elif len(items)<=1:
 				if category2==menu_list[-1]: TITLES(url2)
-				else: FILTERS_MENU(url2,'CATEGORIES::'+new_filter)
+				else: FILTERS_MENU(url2,'CATEGORIES___'+new_filter)
 				return
 			else:
 				if category2==menu_list[-1]: addMenuItem('folder',menu_name+'الجميع ',url2,201)
@@ -342,7 +343,7 @@ def FILTERS_MENU(url,filter):
 		elif type=='FILTERS':
 			new_options = filter_options+'&'+category2+'=0'
 			new_values = filter_values+'&'+category2+'=0'
-			new_filter = new_options+'::'+new_values
+			new_filter = new_options+'___'+new_values
 			addMenuItem('folder',menu_name+'الجميع :'+name,url2,204,'','',new_filter)
 		dict[category2] = {}
 		for value,option in items:
@@ -352,7 +353,7 @@ def FILTERS_MENU(url,filter):
 			dict[category2][value] = option
 			new_options = filter_options+'&'+category2+'='+option
 			new_values = filter_values+'&'+category2+'='+value
-			new_filter2 = new_options+'::'+new_values
+			new_filter2 = new_options+'___'+new_values
 			title = option+' :'#+dict[category2]['0']
 			title = option+' :'+name
 			if type=='FILTERS': addMenuItem('folder',menu_name+title,url,204,'','',new_filter2)

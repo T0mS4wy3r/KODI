@@ -20,23 +20,23 @@ def MAIN(mode,url,text=''):
 	return results
 
 def MENU():
-	addMenuItem('folder','[COLOR FFC89008]  1.  [/COLOR]'+'قسم عشوائي','',162,'','','SITES')
-	addMenuItem('folder','[COLOR FFC89008]  2.  [/COLOR]'+'فيديوهات عشوائية','',163,'','','SITES_RANDOM')
-	addMenuItem('folder','[COLOR FFC89008]  3.  [/COLOR]'+'فيديوهات بحث عشوائي','',164,'','','SITES_RANDOM')
-	addMenuItem('folder','[COLOR FFC89008]  4.  [/COLOR]'+'فيديوهات عشوائية من قسم','',165,'','','SITES_RANDOM')
-	addMenuItem('folder','[COLOR FFC89008]  5.  [/COLOR]'+'قنوات تلفزيون عشوائية','',161,'','','LIVETV_RANDOM')
+	addMenuItem('folder','[COLOR FFC89008]  1.  [/COLOR]'+'قسم عشوائي','',162,'','','SITES_NOUPDATE')
+	addMenuItem('folder','[COLOR FFC89008]  2.  [/COLOR]'+'فيديوهات عشوائية','',163,'','','SITES_RANDOM_NOUPDATE')
+	addMenuItem('folder','[COLOR FFC89008]  3.  [/COLOR]'+'فيديوهات بحث عشوائي','',164,'','','SITES_RANDOM_NOUPDATE')
+	addMenuItem('folder','[COLOR FFC89008]  4.  [/COLOR]'+'فيديوهات عشوائية من قسم','',165,'','','SITES_RANDOM_NOUPDATE')
+	addMenuItem('folder','[COLOR FFC89008]  5.  [/COLOR]'+'قنوات تلفزيون عشوائية','',161,'','','LIVETV_RANDOM_NOUPDATE')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','[COLOR FFC89008]  6.  [/COLOR]'+'قسم قنوات IPTV عشوائي','',162,'','','IPTV_LIVE')
-	addMenuItem('folder','[COLOR FFC89008]  7.  [/COLOR]'+'قسم فيديو IPTV عشوائي','',162,'','','IPTV_VOD')
-	addMenuItem('folder','[COLOR FFC89008]  8.  [/COLOR]'+'قنوات IPTV عشوائية','',163,'','','IPTV_LIVE_RANDOM')
-	addMenuItem('folder','[COLOR FFC89008]  9.  [/COLOR]'+'فيديوهات IPTV عشوائية','',163,'','','IPTV_VOD_RANDOM')
-	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'فيديوهات IPTV بحث عشوائي','',164,'','','IPTV_RANDOM')
-	addMenuItem('folder','[COLOR FFC89008]11.  [/COLOR]'+'فيديوهات IPTV عشوائية من قسم','',165,'','','IPTV_RANDOM')
+	addMenuItem('folder','[COLOR FFC89008]  6.  [/COLOR]'+'قسم قنوات IPTV عشوائي','',162,'','','IPTV_LIVE_NOUPDATE')
+	addMenuItem('folder','[COLOR FFC89008]  7.  [/COLOR]'+'قسم فيديو IPTV عشوائي','',162,'','','IPTV_VOD_NOUPDATE')
+	addMenuItem('folder','[COLOR FFC89008]  8.  [/COLOR]'+'قنوات IPTV عشوائية','',163,'','','IPTV_LIVE_RANDOM_NOUPDATE')
+	addMenuItem('folder','[COLOR FFC89008]  9.  [/COLOR]'+'فيديوهات IPTV عشوائية','',163,'','','IPTV_VOD_RANDOM_NOUPDATE')
+	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'فيديوهات IPTV بحث عشوائي','',164,'','','IPTV_RANDOM_NOUPDATE')
+	addMenuItem('folder','[COLOR FFC89008]11.  [/COLOR]'+'فيديوهات IPTV عشوائية من قسم','',165,'','','IPTV_RANDOM_NOUPDATE')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
 def RANDOM_LIVETV(options):
-	addMenuItem('folder','إعادة طلب قنوات عشوائية','',161,'','','UPDATE_LIVETV_RANDOM')
+	addMenuItem('folder','إعادة طلب قنوات عشوائية','',161,'','','NOUPDATE_LIVETV_RANDOM')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	previous = menuItemsLIST[:]
 	menuItemsLIST[:] = []
@@ -58,7 +58,7 @@ def RANDOM_LIVETV(options):
 	return
 
 def SEARCH_RANDOM_VIDEOS(options):
-	options = options.replace('UPDATE_','')
+	options = options.replace('NOUPDATE_','')
 	headers = { 'User-Agent' : '' }
 	url = 'https://www.bestrandoms.com/random-arabic-words'
 	payload = { 'quantity' : '50' }
@@ -113,14 +113,14 @@ def SEARCH_RANDOM_VIDEOS(options):
 		import IPTV
 		if not IPTV.isIPTVFiles(True): return
 	count,repeats = 0,0
-	addMenuItem('folder','البحث عن : [  ]','',164,'','','UPDATE_'+options)
-	addMenuItem('folder','إعادة البحث العشوائي','',164,'','','UPDATE_'+options)
+	addMenuItem('folder','البحث عن : [  ]','',164,'','','NOUPDATE_'+options)
+	addMenuItem('folder','إعادة البحث العشوائي','',164,'','','NOUPDATE_'+options)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	previuosLIST = menuItemsLIST[:]
 	menuItemsLIST[:] = []
 	for i in range(0,20):
 		text = random.sample(list2,1)[0]
-		text = text+'::'
+		text = text+'___'
 		mode = random.sample(search_modes,1)[0]
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Random Video Search   mode:'+str(mode)+'  text:'+text)
 		results = MAIN_DISPATCHER('','','',mode,'','',text,'')
@@ -259,7 +259,7 @@ def IMPORT_IPTV(options):
 			try: IPTV.GROUPS('LIVE_GROUPED','',options+'_TV')
 			except: xbmcgui.Dialog().ok('موقع IPTV للقنوات',message)
 		for item in menuItemsLIST:
-			item[1] = item[1].replace('IPTV_','').replace('_MOD_','').replace('UPDATE_','')
+			item[1] = item[1].replace('IPTV_','').replace('_MOD_','').replace('NOUPDATE_','')
 			if item[1].count('_')>1: item[1] = item[1].split('_',2)[2]
 			if item[1]=='': item[1] = '....'
 	else: EXIT_PROGRAM('RANDOMS-IMPORT_IPTV-1st')
@@ -267,8 +267,8 @@ def IMPORT_IPTV(options):
 
 def CATEGORIES_MENU(options):
 	#xbmcgui.Dialog().ok('',options)
-	clean_options = options.replace('UPDATE_','').replace('DELETE_','')
-	addMenuItem('folder','تحديث هذه القائمة','',165,'','','UPDATE_DELETE_'+clean_options)
+	clean_options = options.replace('NOUPDATE_','').replace('DELETE_','')
+	addMenuItem('folder','تحديث هذه القائمة','',165,'','','NOUPDATE_DELETE_'+clean_options)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	if 'SITES' in options:
 		if 'DELETE' in options: DELETE_FROM_SQL3('IMPORT_SECTIONS','SITES')
@@ -283,13 +283,13 @@ def CATEGORIES_MENU(options):
 	return
 
 def RANDOM_VOD_ITEMS(nameonly,options):
-	options = options.replace('UPDATE_','')
+	options = options.replace('NOUPDATE_','')
 	#xbmcgui.Dialog().ok(nameonly,options)
 	IMPORT_SITES()
 	if contentsDICT=={}: return
 	if 'RANDOM' in options:
-		addMenuItem('folder','[ [COLOR FFC89008]'+nameonly+'[/COLOR] القسم : [ ',nameonly,166,'','','UPDATE_'+options)
-		addMenuItem('folder','إعادة الطلب العشوائي من نفس القسم',nameonly,166,'','','UPDATE_'+options)
+		addMenuItem('folder','[ [COLOR FFC89008]'+nameonly+'[/COLOR] القسم : [ ',nameonly,166,'','','NOUPDATE_'+options)
+		addMenuItem('folder','إعادة الطلب العشوائي من نفس القسم',nameonly,166,'','','NOUPDATE_'+options)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	for website in sorted(contentsDICT[nameonly].keys()):
 		type,name,url,mode2,image,page,text,favourite = contentsDICT[nameonly][website]
@@ -306,11 +306,11 @@ def RANDOM_VOD_ITEMS(nameonly,options):
 	return
 
 def RANDOM_CATEGORY(options,mode):
-	options = options.replace('UPDATE_','')
+	options = options.replace('NOUPDATE_','')
 	#xbmcgui.Dialog().ok(options,str(mode))
 	name,menuItemsLIST2 = '',[]
-	addMenuItem('folder','[ [COLOR FFC89008]'+name+'[/COLOR] القسم : [ ','',mode,'','','UPDATE_'+options)
-	addMenuItem('folder','إعادة طلب قسم عشوائي','',mode,'','','UPDATE_'+options)
+	addMenuItem('folder','[ [COLOR FFC89008]'+name+'[/COLOR] القسم : [ ','',mode,'','','NOUPDATE_'+options)
+	addMenuItem('folder','إعادة طلب قسم عشوائي','',mode,'','','NOUPDATE_'+options)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	previousLIST = menuItemsLIST[:]
 	menuItemsLIST[:] = []
@@ -349,12 +349,12 @@ def RANDOM_CATEGORY(options,mode):
 	return
 
 def RANDOM_IPTV_ITEMS(TYPE,GROUP):
-	GROUP = GROUP.replace('UPDATE_','')
+	GROUP = GROUP.replace('NOUPDATE_','')
 	#xbmcgui.Dialog().ok(TYPE,GROUP)
 	if '____' in GROUP: GROUP2 = GROUP.split('____')[0]
 	else: GROUP2 = GROUP
-	addMenuItem('folder','[ [COLOR FFC89008]'+GROUP2+'[/COLOR] القسم : [ ',TYPE,167,'','','UPDATE_'+GROUP)
-	addMenuItem('folder','إعادة الطلب العشوائي من نفس القسم',TYPE,167,'','','UPDATE_'+GROUP)
+	addMenuItem('folder','[ [COLOR FFC89008]'+GROUP2+'[/COLOR] القسم : [ ',TYPE,167,'','','NOUPDATE_'+GROUP)
+	addMenuItem('folder','إعادة الطلب العشوائي من نفس القسم',TYPE,167,'','','NOUPDATE_'+GROUP)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	import IPTV
 	if 'VOD_SERIES' in TYPE: IPTV.GROUPS(TYPE,GROUP,'')

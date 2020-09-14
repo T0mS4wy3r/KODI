@@ -42,6 +42,16 @@ def MAIN(mode,text=''):
 	elif mode==196: CONTACT_ME()
 	elif mode==197: KODI_SKIN()
 	elif mode==198: KODI_REMOTE_CONTROL()
+	elif mode==199: CHANGELOG()
+	return
+
+def CHANGELOG():
+	with open(changelogfile,'r') as f: changelog = f.read()
+	changelog = changelog.replace('\t','        ')
+	versions = re.findall('(v\d.*?)[\n\r]',changelog)
+	for line in versions:
+		changelog = changelog.replace(line,'[COLOR FFFFFF00]'+line+'[/COLOR]')
+	xbmcgui.Dialog().textviewer('التغببرات الاخيرة في البرامج',changelog)
 	return
 
 def KODI_REMOTE_CONTROL():
@@ -98,11 +108,15 @@ def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
 			dataNEW = reversed(dataNEW)
 			logfileNEW = ''.join(dataNEW)
 			#logfileNEW = ''.join(dataNEW[-1000:])
+			#logfileNEW = logfileNEW[:102400]
+			#logfileNEW = quote(logfileNEW)
 			logfileNEW = base64.b64encode(logfileNEW)
 		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
 		payload = { 'subject' : subject , 'message' : message , 'logfile' : logfileNEW }
-		data = urllib.urlencode(payload)
-		html = openURL_cached(NO_CACHE,url,data,'','','SERVICES-SEND_EMAIL-1st')
+		#logfileNEW = base64.b64decode(logfileNEW)
+		#with open('S:\\00emad.log','w') as f: f.write(logfileNEW)
+		response = openURL_requests_cached(NO_CACHE,'POST',url,payload,'','','','SERVICES-SEND_EMAIL-1st')
+		html = response.content
 		result = html[0:6]
 		if showDialogs:
 			if result == 'Error ':
@@ -497,7 +511,7 @@ def ANALYTICS_REPORT():
 	return
 
 def KODI_SKIN():
-	xbmcgui.Dialog().textviewer('رسالة من المبرمج','هذا البرنامج يعمل افضل باستخدام واجهة كودي (Kodi Skin) التي اسمها\n"[COLOR FFC89008]metropolisEMAD[/COLOR]"\n\n وممكن تنصيبها إما باستخدام مخزن عماد EMAD Repository أو ممكن جلبها من موقع البرنامج\n[COLOR FFC89008]https://github.com/emadmahdi/KODI [/COLOR]\n\n هذه الرسالة وغيرها كثير موجودة في قائمة خدمات البرنامج والمزيد أيضا موجود في قائمة أجوبة البرنامج')
+	xbmcgui.Dialog().textviewer('رسالة من المبرمج','هذا البرنامج يعمل افضل باستخدام واجهة كودي (Kodi Skin) التي اسمها\n"[COLOR FFFFFF00]metropolisEMAD[/COLOR]"\n\n وممكن تنصيبها إما باستخدام مخزن عماد EMAD Repository أو ممكن جلبها من موقع البرنامج\n[COLOR FFFFFF00]https://github.com/emadmahdi/KODI [/COLOR]\n\n هذه الرسالة وغيرها كثير موجودة في قائمة خدمات البرنامج والمزيد أيضا موجود في قائمة أجوبة البرنامج')
 	return
 
 def RESOLVEURL_SETTINGS():

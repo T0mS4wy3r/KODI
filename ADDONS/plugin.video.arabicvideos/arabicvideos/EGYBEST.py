@@ -31,18 +31,18 @@ def TERMINATED_ADBLOCKER():
 def MENU(website=''):
 	#addMenuItem('folder',menu_name+'تحذير','',126)
 	#addMenuItem('folder',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',129)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',129,'','','NOUPDATE')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBEST-MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
-	addMenuItem('folder',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
-	addMenuItem('folder',website+'::'+menu_name+'الأفلام',website0a+'/movies/',121)
-	addMenuItem('folder',website+'::'+menu_name+'المسلسلات',website0a+'/tv/',121)
+	addMenuItem('folder',website+'___'+menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
+	addMenuItem('folder',website+'___'+menu_name+'الأفلام',website0a+'/movies/',121)
+	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/tv/',121)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks=re.findall('class="ba(.*?)class="mgb',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addMenuItem('folder',website+'::'+menu_name+title,link,122,'','1')
+		addMenuItem('folder',website+'___'+menu_name+title,link,122,'','1')
 	return html
 
 def FILTERS_MENU(link):
@@ -346,12 +346,13 @@ def WARNING():
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	new_search = search.replace(' ','+')
 	url = website0a + '/explore/?q=' + new_search
 	TITLES(url,'1')

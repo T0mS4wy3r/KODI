@@ -22,14 +22,14 @@ def MAIN(mode,url,page,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39)
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39,'','','NOUPDATE')
 	addMenuItem('live',website+menu_name+'قناة هلا من موقع بانيت','',38)
-	addMenuItem('folder',website+'::'+menu_name+'مسلسلات وبرامج',website0a+'/series',31)
-	addMenuItem('folder',website+'::'+menu_name+'المسلسلات الاكثر مشاهدة',website0a+'/series',37)
-	addMenuItem('folder',website+'::'+menu_name+'افلام حسب النوع',website0a+'/movies',35)
-	#addMenuItem('folder',website+'::'+menu_name+'افلام حسب الممثل',website0a+'/movies',36)
-	addMenuItem('folder',website+'::'+menu_name+'احدث الافلام',website0a+'/movies',32)
-	addMenuItem('folder',website+'::'+menu_name+'مسرحيات',website0a+'/movies/genre/4/1',32)
+	addMenuItem('folder',website+'___'+menu_name+'مسلسلات وبرامج',website0a+'/series',31)
+	addMenuItem('folder',website+'___'+menu_name+'المسلسلات الاكثر مشاهدة',website0a+'/series',37)
+	addMenuItem('folder',website+'___'+menu_name+'افلام حسب النوع',website0a+'/movies',35)
+	#addMenuItem('folder',website+'___'+menu_name+'افلام حسب الممثل',website0a+'/movies',36)
+	addMenuItem('folder',website+'___'+menu_name+'احدث الافلام',website0a+'/movies',32)
+	addMenuItem('folder',website+'___'+menu_name+'مسرحيات',website0a+'/movies/genre/4/1',32)
 	return ''
 
 def CATEGORIES(url,select=''):
@@ -145,12 +145,13 @@ def PLAY(url):
 
 def SEARCH(search,page):
 	#xbmcgui.Dialog().ok(search,page)
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	new_search = search.replace(' ','%20')
 	typeLIST = [ 'movies' , 'series']
 	if category:

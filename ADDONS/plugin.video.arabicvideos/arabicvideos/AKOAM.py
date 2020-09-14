@@ -8,6 +8,7 @@ website0a = WEBSITES[script_name][0]
 noEpisodesLIST = ['فيلم','كليب','العرض الاسبوعي','مسرحية','مسرحيه','اغنية','اعلان','لقاء']
 
 def MAIN(mode,url,text):
+	#xbmcgui.Dialog().ok(text,str(mode))
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if   mode==70: results = MENU(url)
 	elif mode==71: results = CATEGORIES(url)
@@ -19,13 +20,13 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',79)
-	addMenuItem('folder',website+'::'+menu_name+'المميزة',website0a,72,'','','featured')
-	addMenuItem('folder',website+'::'+menu_name+'المزيد',website0a,72,'','','more')
-	addMenuItem('folder',menu_name+'سلسلة أفلام',website0a,79,'','','سلسلة أفلام')
-	addMenuItem('folder',menu_name+'سلاسل منوعة',website0a,79,'','','سلسلة')
-	#addMenuItem('folder',website+'::'+menu_name+'الأخبار',website0a,72,'','','news')
-	#addMenuItem('folder',website+'::'+menu_name+'الأخبار',website0a,72,'','','news')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',79,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'سلسلة افلام','',79,'','','NOUPDATEسلسلة افلام')
+	addMenuItem('folder',menu_name+'سلاسل منوعة','',79,'','','NOUPDATEسلسلة')
+	#addMenuItem('folder',website+'___'+menu_name+'المميزة',website0a,72,'','','featured')
+	#addMenuItem('folder',website+'___'+menu_name+'المزيد',website0a,72,'','','more')
+	#addMenuItem('folder',website+'___'+menu_name+'الأخبار',website0a,72,'','','news')
+	#addMenuItem('folder',website+'___'+menu_name+'الأخبار',website0a,72,'','','news')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات','المصارعة الحرة']
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
@@ -35,7 +36,7 @@ def MENU(website=''):
 		items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 		for link,title in items:
 			if title not in ignoreLIST:
-				addMenuItem('folder',website+'::'+menu_name+title,link,71)
+				addMenuItem('folder',website+'___'+menu_name+title,link,71)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
@@ -79,10 +80,10 @@ def TITLES(url,type):
 		title = unescapeHTML(title)
 		if any(value in title for value in noEpisodesLIST): addMenuItem('video',menu_name+title,link,73,img)
 		else: addMenuItem('folder',menu_name+title,link,73,img)
-	html_blocks = re.findall('pagination(.*?)</div',html,re.DOTALL)
+	html_blocks = re.findall('class="pagination"(.*?)</ul>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
-		items = re.findall("<li>.*?href='(.*?)'>(.*?)<",block,re.DOTALL)
+		items = re.findall("</li><li >.*?href='(.*?)'>(.*?)<",block,re.DOTALL)
 		for link,title in items:
 			addMenuItem('folder',menu_name+'صفحة '+title,link,72,'','',type)
 	return
@@ -203,12 +204,14 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	#xbmcgui.Dialog().ok(search,'')
+	if '___' in search:
+		search = search.split('___')[0]
 		exit = False
 	else: exit = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	new_search = search.replace(' ','%20')
 	#xbmcgui.Dialog().ok(str(len(search)) , str(len(new_search)) )
 	url = website0a + '/search/'+new_search

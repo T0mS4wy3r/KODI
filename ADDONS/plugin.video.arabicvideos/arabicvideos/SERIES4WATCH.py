@@ -28,14 +28,14 @@ def MENU(website=''):
 	addMenuItem('folder',menu_name+'بحث في الموقع','',219)
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	url = website0a+'/getpostsPin?type=one&data=pin&limit=25'
-	addMenuItem('folder',website+'::'+menu_name+'المميزة',url,211)
+	addMenuItem('folder',website+'___'+menu_name+'المميزة',url,211)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SERIES4WATCH-MENU-1st')
 	html_blocks = re.findall('FiltersButtons(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?</i>(.*?)<',block,re.DOTALL)
 	for link,title in items:#[1:-1]:
 		url = website0a+'/getposts?type=one&data='+link
-		addMenuItem('folder',website+'::'+menu_name+title,url,211)
+		addMenuItem('folder',website+'___'+menu_name+title,url,211)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(http.*?)">(.*?)<',block,re.DOTALL)
@@ -45,7 +45,7 @@ def MENU(website=''):
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
 		#	if any(value in title for value in keepLIST):
-			addMenuItem('folder',website+'::'+menu_name+title,link,211)
+			addMenuItem('folder',website+'___'+menu_name+title,link,211)
 	return html
 
 def TITLES(url):
@@ -183,12 +183,13 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	search = search.replace(' ','+')
 	url = website0a + '/search?s='+search
 	TITLES(url)

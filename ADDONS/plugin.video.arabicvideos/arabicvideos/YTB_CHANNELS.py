@@ -14,19 +14,19 @@ def MAIN(mode,url,text):
 def MENU(website=''):
 	if website=='':
 		addMenuItem('link',menu_name+'[COLOR FFC89008]إضافة وحذف مواقع من هذه القائمة[/COLOR]','',292)
-		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#xbmcgui.Dialog().ok('',str(YTB_CHANNELS))
 	for seq in range(len(YTB_CHANNELS)):
-		addMenuItem('folder',website+'::'+menu_name+YTB_CHANNELS[seq][0],'',291,'','',str(seq))
+		addMenuItem('folder',website+'___'+menu_name+YTB_CHANNELS[seq][0],'',291,'','',str(seq))
 	return
 
 def ITEMS(seq):
 	addMenuItem('link',menu_name+'[COLOR FFC89008]إضافة وحذف مواقع من هذه القائمة[/COLOR]','',292)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	seq = int(seq)
 	del YTB_CHANNELS[seq][0]
 	for title,url in YTB_CHANNELS[seq]:
-		addMenuItem('folder',menu_name+title,url,146)
+		addMenuItem('folder',menu_name+title,url,144)
 	return
 
 def MODIFY():
@@ -148,7 +148,7 @@ YTB_CHANNELS = [
 
 
 
-,['قنوات فضائية اخبارية'
+,['مواقع قنوات فضائية اخبارية'
 ,('Fadak News Net'						,'https://www.youtube.com/c/FadakNewsNetwork')
 ,('BBC News عربي'						,'https://www.youtube.com/c/bbcarabic')
 ,('RT Arabic'							,'https://www.youtube.com/user/RTarabic')
@@ -470,6 +470,7 @@ YTB_CHANNELS = [
 ,('عالم تفصيل فى خياطة creative woman'	,'https://www.youtube.com/channel/UCviRR8_ByPAE-i19S8ZxJ6A')
 ,('أفكار و ابداعات خياطة'				,'https://www.youtube.com/channel/UC7eAoDwZL3I4h4uVbSDqPgA')
 ,('خياطة و تطريز ماريمار للسيدات'		,'https://www.youtube.com/channel/UC2K3YiEZ82svrqPjRIbd7CQ')
+,('عالم الصناعة التقليدية و العصرية'	,'https://www.youtube.com/channel/UC2RkiLoyZVLu62hKZwjsMZg')
 ]
 
 
@@ -600,7 +601,74 @@ YTB_CHANNELS = [
 ,('عالم مكياج وجمال'					,'https://www.youtube.com/channel/UCxd4NYCTIqVpzSlkpmOqpEA')
 ,('مكياج حواء'							,'https://www.youtube.com/channel/UCVU9ZZrLC-1bRG1FLEUvqpg')
 ,('مكياج خبيرة تجميل_ Makeup artist'	,'https://www.youtube.com/channel/UCv1E3AI0tHxVVXpH-5doBEg')
+,('عالم رسم الحنه - ساره أبو المعاطي'	,'https://www.youtube.com/c/سارهأبوالمعاطي')
 ]
+
+
+
+,['مواقع زراعة'
+,('زراعة بلكونة'						,'https://www.youtube.com/c/زراعةبلكونة')
+,('World of Agriculture'				,'https://www.youtube.com/c/zera3atty99')
+,('زراعة الاسطح'							,'https://www.youtube.com/c/زراعةالاسطح')
+,('الزراعة المنزلية'					,'https://www.youtube.com/channel/UCYImI0nx4k0ArX3kybB_PQQ')
+,('How To Plant كيفية زراعة وتجذير النباتات'			,'https://www.youtube.com/channel/UCGnjDpDAo5zVm4qKTdb06qg')
+]
+
+
+
+,['مواقع صناعة'
+,('تكنولوجيا عالم الصناعة الحديثة'		,'https://www.youtube.com/channel/UCg5wb97dazk1WOYFROhZpeA')
+,('ملك الصناعة'							,'https://www.youtube.com/c/ملكالصناعة')
+,('الصناعة اليدوية - Handmade Diy'		,'https://www.youtube.com/channel/UCJU_Fx7lIlKTEGguK-gZj3w')
+,('صناعة الاجبان والالبان'				,'https://www.youtube.com/c/صناعةالاجبانوالالبان')
+,('الصناعة التقليدية'					,'https://www.youtube.com/channel/UClIbKsoR8UlhlwzfDEas9Bw')
+]
+
+
+
+,['مواقع تجارة'
+,('قناة التجارة العالمية GBC Arabic'	,'https://www.youtube.com/c/GBCtvarabic')
+,('مشاريع تجارية مربحة'					,'https://www.youtube.com/channel/UCWXoLHm32U-ArbZDe0Cmjxw')
+,('الفوركس العربي'						,'https://www.youtube.com/c/ForexarabyOfficial')
+]
+
+
+
+,['مواقع رسم'
+,('رسم وإبداع'							,'https://www.youtube.com/c/رسموإبداع')
+,('رسم X رسم'							,'https://www.youtube.com/channel/UCICu_9Wu5KU5BYnRfmVu5vg')
+,('أرسم'								,'https://www.youtube.com/channel/UCiQf-LeinzBD4ajuH0EB3LQ')
+,('متعة الرسم'							,'https://www.youtube.com/user/massiouimohamed')
+,('رسم و تلوين للأطفال'					,'https://www.youtube.com/channel/UC5_dms8wrv2fvDEEje78FvA')
+]
+
+
+
+
+,['مواقع خط'
+,('تعليم الخط العربى'					,'https://www.youtube.com/channel/UCBcHXptiGN4u0wwKN8jhN3Q')
+,('learn arabic calligraphy'			,'https://www.youtube.com/channel/UCRu_uRw9H2GTJgOZlD2PZgw')
+,('مهارات الخط'							,'https://www.youtube.com/channel/UCFvW1gh2XsjVOmkj-ILVjhg')
+,('بيت الخط العربي'						,'https://www.youtube.com/c/بيتالخطالعربي')
+]
+
+
+
+,['مواقع صباغة'
+,('تعليم الخط العربى'					,'https://www.youtube.com/channel/UCBcHXptiGN4u0wwKN8jhN3Q')
+,('learn arabic calligraphy'			,'https://www.youtube.com/channel/UCRu_uRw9H2GTJgOZlD2PZgw')
+,('مهارات الخط'							,'https://www.youtube.com/channel/UCFvW1gh2XsjVOmkj-ILVjhg')
+,('بيت الخط العربي'						,'https://www.youtube.com/c/بيتالخطالعربي')
+]
+
+
+
+,['مواقع صباغة ودهان'
+,('دهان سيارات تدهين سيارات'			,'https://www.youtube.com/channel/UCy4MqmVqIRdmowB18THu3Aw')
+,('ادهن بيتك بنفسك paint your house by yourself'		,'https://www.youtube.com/channel/UCkV9S-O71RntMFLmkvJIjgA')
+]
+
+
 
 
 

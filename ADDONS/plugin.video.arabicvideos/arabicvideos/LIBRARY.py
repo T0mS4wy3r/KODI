@@ -1,7 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
 
-# import MAIN
-
 # total cost = 0 ms
 # Because they are already included with some other modules
 import xbmcplugin,xbmcgui,xbmcaddon,xbmc,sys,os,re,time,thread # total cost = 0ms
@@ -102,7 +100,7 @@ LONG_CACHE = 24*HOUR*3
 REGULAR_CACHE = 16*HOUR
 SHORT_CACHE = 2*HOUR
 VERY_SHORT_CACHE = 30*MINUTE
-VERY_LONG_CACHE = 24*HOUR*90
+VERY_LONG_CACHE = 24*HOUR*30
 NO_CACHE = 0
 now = int(time.time())
 
@@ -121,7 +119,7 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'HELAL'		:['https://4helal.me']	#4helal.tv #4helal.cc
 			,'IFILM'		:['http://ar.ifilmtv.com','http://en.ifilmtv.com','http://fa.ifilmtv.com','http://fa2.ifilmtv.com']
 			,'PANET'		:['http://www.panet.co.il']
-			,'SHAHID4U'		:['https://shahid4u.net']
+			,'SHAHID4U'		:['https://shahid4u.com']  #  https://shahid4u.tv  https://shahid4u.net
 			,'SHOOFMAX'		:['https://shoofmax.com','https://static.shoofmax.com']
 			,'ARABSEED'		:['https://arabseed.net']
 			,'YOUTUBE'		:['https://www.youtube.com']
@@ -138,21 +136,17 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			}
 
 def MAIN():
-	# -*- coding: utf-8 -*-
-	#from LIBRARY import *
 	LOG_THIS('NOTICE','============================================================================================')
 	script_name = 'MAIN'
-	if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 	if not os.path.exists(dbfile):
+		if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 		LOG_THIS('NOTICE','  .  New Arabic Videos version installed  .  path: [ '+addon_path+' ]')
 		xbmcgui.Dialog().ok('برنامج عماد للفيديوهات العربية','تم تحديث برنامج عماد للفيديوهات العربية إلى الإصدار الجديد . أو تم مسح الكاش الموجود في البرنامج . سيقوم البرنامج الآن ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
-		with open(changelogfile,'r') as f: changelog = f.read()
-		changelog = changelog.replace('\t','        ')
-		xbmcgui.Dialog().textviewer('التغببرات الاخيرة في البرامج',changelog)
+		import SERVICES
+		SERVICES.CHANGELOG()
 		CLEAN_KODI_CACHE_FOLDER()
 		conn = sqlite3.connect(dbfile)
 		conn.close()
-		import SERVICES
 		SERVICES.KODI_SKIN()
 		#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص اضافات adaptive + rtmp')
 		#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص مخزن عماد')
@@ -166,55 +160,71 @@ def MAIN():
 		xbmcgui.Dialog().ok('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
 		import IPTV
 		IPTV.CREATE_STREAMS(False)
-	type,name99,url99,mode,image99,page99,text,favourite = EXTRACT_KODI_PATH()
+	type,name99,url99,mode,image99,page99,text,context = EXTRACT_KODI_PATH()
 	mode0 = int(mode)
 	mode1 = int(mode0%10)
 	mode2 = int(mode0/10)
 	#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
-	if mode0==260: message = '  Version: [ '+addon_version+' ]  Kodi: [ '+kodi_release+' ]'
+	#xbmcgui.Dialog().ok('['+menu_path+']','['+addon_path+']')
+	#xbmcgui.Dialog().ok('['+menu_label+']','['+menu_path+']')
+	if mode0==260:
+		message = '  Version: [ '+addon_version+' ]  Kodi: [ '+kodi_release+' ]'
 	else:
 		menu_label2 = menu_label.replace('   ','  ').replace('   ','  ').replace('   ','  ')
 		menu_path2 = menu_path.replace('   ','  ').replace('   ','  ').replace('   ','  ')
 		message = '  Label: [ '+menu_label2+' ]  Mode: [ '+mode+' ]  Path: [ '+menu_path2+' ]'
-	if favourite not in ['','1','2','3','4','5','NOREFRESH']:
-		message = message+'   .  Favourite: [ '+favourite+' ]'
 	LOG_THIS('NOTICE',LOGGING(script_name)+message)
-	#xbmcgui.Dialog().ok('['+menu_path+']','['+mode+']')
-	#xbmcgui.Dialog().ok('['+menu_label+']','['+menu_path+']')
 	UPDATE_RANDOM_MENUS = mode2==16 and mode0 not in [160,165]
-	UPDATE_RANDOM_SUBMENUS = mode2==16 and 'UPDATE' in text
-	SEARCH_MODES = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259,309]
-	SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25,30]
+	UPDATE_RANDOM_SUBMENUS = mode2==16 and 'NOUPDATE' in text
+	SEARCH_MODES = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259,309,319,329]
+	SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25,30,31,32]
 	IPTV_MODES = mode2==23 and text!=''
-	YOUTUBE_UPDATE = mode2==14 and 'UPDATE' in text
+	YOUTUBE_UPDATE = False# mode2==14 and 'NOUPDATE' in text
 	#xbmcgui.Dialog().ok(addon_path,str(addon_handle))
-	if favourite not in ['','1','2','3','4','5','NOREFRESH']:
+	if '_' in context: context1,context2 = context.split('_',1)
+	else: context1,context2 = context,''
+	if context1=='6':
+		if context2=='': xbmcgui.Dialog().notification('يرجى الانتظار','جاري فحص ملف التحميل',sound=False)
+		results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,context)
+		xbmc.executebuiltin("Container.Refresh")
+		EXIT_PROGRAM('MAIN-MAIN-1st',False)
+	elif context1 in ['1','2','3','4','5'] and context2!='':
 		import FAVOURITES
-		FAVOURITES.FAVOURITES_DISPATCHER(favourite)
+		FAVOURITES.FAVOURITES_DISPATCHER(context)
 		#"Container.Refresh" used because there is no addon_handle number to use for ending directory
 		#"Container.Update" used to open a menu list using specific addon_path
-		#xbmc.executebuiltin("Container.Update("+sys.argv[0]+addon_path.split('&favourite=')[0]+")")
-		if 'NOREFRESH' not in favourite: xbmc.executebuiltin("Container.Refresh")
-		EXIT_PROGRAM('MAIN-MAIN-1st',False)
+		#xbmc.executebuiltin("Container.Update("+sys.argv[0]+addon_path.split('&context=')[0]+")")
+		#xbmcgui.Dialog().ok(text,mode)
+		xbmc.executebuiltin("Container.Refresh")
+		EXIT_PROGRAM('MAIN-MAIN-2nd',False)
 	if mode0==266:
 		import MENUS
 		MENUS.DELETE_LAST_VIDEOS_MENU(text)
 		xbmc.executebuiltin("Container.Refresh")
-		EXIT_PROGRAM('MAIN-MAIN-2nd',False)
-	if (SEARCH_MODES and menu_label not in ['..','Main Menu']) or (UPDATE_RANDOM_MENUS and menu_label!='Main Menu'):
-		LOG_THIS('NOTICE','  .  Writing random list  .  path: [ '+addon_path+' ]')
-		results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,favourite)
-		new_menuItemsLIST = []
-		for type88,name88,url88,mode88,image88,page88,text88,favourite88 in menuItemsLIST:
-			new_menuItemsLIST.append((type88,name88,url88,mode88,image88,page88,text88,'NOREFRESH'))
-		newFILE = str(new_menuItemsLIST)
-		with open(lastrandomfile,'w') as f: f.write(newFILE)
-		menuItemsLIST[:] = new_menuItemsLIST
-	elif (SEARCH_MODES and menu_label in ['..','Main Menu']) or (UPDATE_RANDOM_MENUS and menu_label=='Main Menu'):
-		LOG_THIS('NOTICE','  .  Reading random list  .  path: [ '+addon_path+' ]')
-		with open(lastrandomfile,'r') as f: oldFILE = f.read()
-		menuItemsLIST[:] = eval(oldFILE)
-	else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,favourite)
+		EXIT_PROGRAM('MAIN-MAIN-3rd',False)
+	previous_path = xbmc.getInfoLabel('ListItem.FolderPath')
+	previous_path = unquote(previous_path)
+	if mode0==262:
+		if 'text=' in previous_path:
+			search = previous_path.split('text=')[1]
+			if '&' in search: search = search.split('&')[0]
+			search = search.replace('NOUPDATE','')
+		else: search = 'NOUPDATE'
+		#xbmcgui.Dialog().ok(search,'')
+		results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,search,context)
+	elif SEARCH_MODES or UPDATE_RANDOM_MENUS:
+		#LOG_THIS('NOTICE',path)
+		#LOG_THIS('NOTICE',addon_path)
+		if 'NOUPDATE' in previous_path:
+			LOG_THIS('NOTICE','  .  Writing last menu  .  path: [ '+addon_path+' ]')
+			results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,context)
+			newFILE = str(menuItemsLIST)
+			with open(lastrandomfile,'w') as f: f.write(newFILE)
+		else:
+			LOG_THIS('NOTICE','  .  Reading last menu  .  path: [ '+addon_path+' ]')
+			with open(lastrandomfile,'r') as f: oldFILE = f.read()
+			menuItemsLIST[:] = eval(oldFILE)
+	else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,context)
 	#xbmcgui.Dialog().ok(addon_path,str(mode0))
 	if addon_handle>-1:
 		if type=='folder' and menu_label!='..' and (SITES_MODES or IPTV_MODES): ADD_TO_LAST_VIDEO_FILES()
@@ -242,7 +252,7 @@ def MAIN():
 	#xbmcgui.Dialog().ok(str(addon_handle),addon_path)
 	return
 
-def MAIN_DISPATCHER(type,name,url,mode,image,page,text,favourite):
+def MAIN_DISPATCHER(type,name,url,mode,image,page,text,context):
 	mode = int(mode)
 	mode2 = int(mode/10)
 	#xbmcgui.Dialog().ok(str(mode),str(mode2))
@@ -274,12 +284,13 @@ def MAIN_DISPATCHER(type,name,url,mode,image,page,text,favourite):
 	elif mode2==24: import AKWAM 		; results = AKWAM.MAIN(mode,url,text)
 	elif mode2==25: import ARABSEED 	; results = ARABSEED.MAIN(mode,url,text)
 	elif mode2==26: import MENUS 		; results = MENUS.MAIN(mode,url,text)
-	elif mode2==27: import FAVOURITES 	; results = FAVOURITES.MAIN(mode,favourite)
+	elif mode2==27: import FAVOURITES 	; results = FAVOURITES.MAIN(mode,context)
 	elif mode2==28: import IPTV 		; results = IPTV.MAIN(mode,url,text,type)
 	elif mode2==29: import YTB_CHANNELS	; results = YTB_CHANNELS.MAIN(mode,url,text)
 	elif mode2==30: import CIMANOW		; results = CIMANOW.MAIN(mode,url,text)
 	elif mode2==31: import SHIAVOICE	; results = SHIAVOICE.MAIN(mode,url,text)
 	elif mode2==32: import KARBALATV	; results = KARBALATV.MAIN(mode,url,text)
+	elif mode2==33: import DOWNLOAD		; results = DOWNLOAD.MAIN(mode,url,context)
 	return results
 
 def LOG_MENU_LABEL(script_name,label,mode,path):
@@ -339,7 +350,7 @@ class CustomThread():
 	def start_new_thread(self,id,func,*args):
 		id = str(id)
 		self.statusDICT[id] = 'running'
-		if self.showDialogs: xbmcgui.Dialog().notification('',id)
+		if self.showDialogs: xbmcgui.Dialog().notification('',id,sound=False)
 		thread.start_new_thread(self.run,(id,func,args))
 		#sys.stderr.write('9999: 1111:'+str(self.statusDICT.values()))
 	def run(self,id,func,args):
@@ -460,7 +471,10 @@ def EXIT_PROGRAM(source='',showLog=True):
 
 def CLEAN_KODI_CACHE_FOLDER():
 	exceptionLIST = [lastvideosfile,favouritesfile]
+	#delete = xbmcgui.Dialog().yesno('مسح ملفات الفيديو القديمة','سوف يتم ايضا مسح ملفات الفيديو القديمة التي انت انزلتها باستخدام هذا البرنامج . هل تريد مسحها ام لا ؟','','','كلا','نعم')
 	for filename in os.listdir(addoncachefolder):
+		#if not delete and 'file_' in filename: continue
+		if 'file_' in filename: continue
 		filename_full = os.path.join(addoncachefolder,filename)
 		if filename_full not in exceptionLIST:
 			try: os.remove(filename_full)
@@ -470,11 +484,11 @@ def CLEAN_KODI_CACHE_FOLDER():
 contentsDICT = {}
 menuItemsLIST = []
 
-def addMenuItem(type,name,url,mode,image='',page='',text='',favourite=''):
+def addMenuItem(type,name,url,mode='',image='',page='',text='',context=''):
 	name = name.replace('\r','').replace('\n','').replace('\t','')
 	url = url.replace('\r','').replace('\n','').replace('\t','')
 	website = ''
-	if '::' in name: website,name = name.split('::',1)
+	if '___' in name: website,name = name.split('___',1)
 	if type=='folder' and website!='' and '_' in name:
 		nameonly = name.split('_')[2]
 		nameonly = nameonly.replace('ـ','').replace('  ',' ').replace('إ','ا').replace('آ','ا')
@@ -499,12 +513,12 @@ def addMenuItem(type,name,url,mode,image='',page='',text='',favourite=''):
 		name = name.replace('VOD_','').replace('_MOD_','')
 		if name.count('_')>1: name = name.split('_',2)[2]
 		if name=='': name = '....'
-		contentsDICT[nameonly][website] = [type,name,url,mode,image,page,text,favourite]
-	menuItemsLIST.append([type,name,url,mode,image,page,text,favourite])
+		contentsDICT[nameonly][website] = [type,name,url,mode,image,page,text,context]
+	menuItemsLIST.append([type,name,url,mode,image,page,text,context])
 	return
 
 def getKodiMenuItem(menuItem):
-	type,name,url,mode,image,text1,text2,favourite = menuItem
+	type,name,url,mode,image,text1,text2,context = menuItem
 	if type=='folder': start1,start2 = ';',','
 	else: start1,start2 = escapeUNICODE('\u02d1'),' '
 	name2 = re.findall('&&_(\D\D\w)__MOD_(.*?)&&','&&'+name+'&&',re.DOTALL)
@@ -514,7 +528,7 @@ def getKodiMenuItem(menuItem):
 	path = 'plugin://'+addon_id+'/?type='+type.strip(' ')
 	path = path+'&mode='+str(mode).strip(' ')
 	if type=='folder' and text1!='': path = path+'&page='+quote(text1.strip(' '))
-	if favourite!='': path = path+'&favourite='+favourite.strip(' ')
+	if context!='': path = path+'&context='+context.strip(' ')
 	if name!='': path = path+'&name='+quote(name)#.strip(' '))
 	if text2!='': path = path+'&text='+quote(text2.strip(' '))
 	if image!='': path = path+'&image='+quote(image.strip(' '))
@@ -533,11 +547,18 @@ def getKodiMenuItem(menuItem):
 		length = MENUS.LAST_VIDEOS_MENU(text2,True)
 		if length>0:
 			run_path = 'plugin://'+addon_id+'?mode=266&text='+text2
-			run_text = '[COLOR FFFFFF00]مسح قائمة آخر 30 '+TRANSLATE(text2)+'[/COLOR]'
+			run_text = '[COLOR FFFFFF00]مسح قائمة آخر 50 '+TRANSLATE(text2)+'[/COLOR]'
 			run_item = (run_text,'XBMC.RunPlugin('+run_path+')')
 			context_menu.append(run_item)
 	import FAVOURITES
 	context_menu += FAVOURITES.GET_FAVOURITES_CONTEXT_MENU(path)
+	if type=='video' and mode!=331:
+		run_path = path+'&context=6'
+		run_text = '[COLOR FFFFFF00]تحميل ملف الفيديو[/COLOR]'
+		run_item = (run_text,'XBMC.RunPlugin('+run_path+')')
+		context_menu.append(run_item)
+	if mode==331:
+		context_menu.append(('[COLOR FFFFFF00]حذف ملف الفيديو[/COLOR] ','XBMC.RunPlugin('+path+'&context=6_REMOVE'+')'))
 	listitem.addContextMenuItems(context_menu)
 	if type in ['link','live']: isFolder = False
 	elif type=='video':
@@ -546,8 +567,8 @@ def getKodiMenuItem(menuItem):
 		if text1!='':
 			duration = '0:0:0:0:0:'+text1
 			dummy,days,hours,minutes,seconds = duration.rsplit(':',4)
-			duration = int(days)*24*HOUR+int(hours)*HOUR+int(minutes)*60+int(seconds)
-			listitem.setInfo('video',{'duration':duration})
+			duration2 = int(days)*24*HOUR+int(hours)*HOUR+int(minutes)*60+int(seconds)
+			listitem.setInfo('video',{'duration':duration2})
 		listitem.setProperty('IsPlayable','true')
 		xbmcplugin.setContent(addon_handle,'videos')
 	elif type=='folder':
@@ -557,23 +578,23 @@ def getKodiMenuItem(menuItem):
 	return (path,listitem,isFolder)
 
 def EXTRACT_KODI_PATH(path=''):
-	args1 = {'type':'','mode':'','url':'','text':'','page':'','name':'','image':'','favourite':''}
+	args1 = {'type':'','mode':'','url':'','text':'','page':'','name':'','image':'','context':''}
 	if path=='': path = addon_path
-	if '?' in path: path = path.split('?')[1]
+	if '?' in path: path = path.split('?',1)[1]
 	url2,args2 = URLDECODE(path)
 	args = dict(args1.items()+args2.items())
 	mode = args['mode']
-	url = urllib2.unquote(args['url'])
-	text = urllib2.unquote(args['text'])
-	page = urllib2.unquote(args['page'])
-	type = urllib2.unquote(args['type'])
-	name = urllib2.unquote(args['name'])
-	image = urllib2.unquote(args['image'])
-	favourite = args['favourite']
+	url = unquote(args['url'])
+	text = unquote(args['text'])
+	page = unquote(args['page'])
+	type = unquote(args['type'])
+	name = unquote(args['name'])
+	image = unquote(args['image'])
+	context = args['context']
 	#name = xbmc.getInfoLabel('ListItem.Label')
 	#image = xbmc.getInfoLabel('ListItem.Icon')
 	if mode=='': type = 'folder' ; mode = '260'
-	return type,name,url,mode,image,page,text,favourite
+	return type,name,url,mode,image,page,text,context
 
 def openURL_requests_cached(expiry,method,url,data,headers,allow_redirects,showDialogs,source):
 	if expiry==0: return openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
@@ -694,6 +715,8 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 		response2.cookies = {}
 		response2.url     = ''
 		response2.content = '___Error___:'+str(code)+':'+reason
+	try: response.close()
+	except: pass
 	response = response2
 	html = str(response.content)
 	htmlLower = html.lower()
@@ -770,6 +793,14 @@ def unescapeHTML(string):
 		string = string.encode('utf8')
 	return string
 
+def remove_special_chars(string):
+	string2 = ''.join(x for x in string if x.isalnum())
+	return string2
+
+def windows_filename(filename):
+	filename2 = ''.join(i for i in filename if i not in '\/":*?<>|'+escapeUNICODE('\u02d1'))
+	return filename2
+
 def escapeUNICODE(string):
 	if '\\u' in string:
 		string = string.decode('unicode_escape')
@@ -818,7 +849,7 @@ def ADD_TO_LAST_VIDEO_FILES():
 	#if int(mode)in vod_play_modes: filename = lastvodfile
 	#elif int(mode)in live_play_modes: filename = lastlivefile
 	#else: filename = ''
-	type,name,url99,mode99,image99,page99,text99,favourite = EXTRACT_KODI_PATH()
+	type,name,url99,mode99,image99,page99,text99,context = EXTRACT_KODI_PATH()
 	newItem = (type,name,url99,mode99,image99,page99,text99)
 	if os.path.exists(lastvideosfile):
 		with open(lastvideosfile,'r') as f: oldFILE = f.read()
@@ -835,120 +866,13 @@ def ADD_TO_LAST_VIDEO_FILES():
 					index = oldLIST.index(newItem)
 					del oldLIST[index]
 				newLIST = [newItem]+oldLIST
-				newLIST = newLIST[:30]
+				newLIST = newLIST[:50]
 				newFILE[TYPE] = newLIST
 			else: newFILE[TYPE] = oldFILE[TYPE]
 	if type not in newFILE.keys(): newFILE[type] = [newItem]
 	newFILE = str(newFILE)
 	with open(lastvideosfile,'w') as f: f.write(newFILE)
 	return
-
-def PLAY_VIDEO(url3,website='',type='video'):
-	url,result,subtitlemessage,httpd = url3,'canceled0','',''
-	if type=='video' or website!='IPTV':
-		if len(url3)==3:
-			url,subtitle,httpd = url3
-			if subtitle!='': subtitlemessage = '   Subtitle: [ '+subtitle+' ]'
-		else: url,subtitle,httpd = url3,'',''
-		url = url.replace(' ','%20')
-		#url = quote(url)
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to play video   URL: [ '+url+' ]'+subtitlemessage)
-		videofiletype = re.findall('(\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url+'&&',re.DOTALL)
-		if videofiletype: videofiletype = videofiletype[0][0]
-		else: videofiletype = ''
-		if videofiletype=='.m3u8' and website!='IPTV':
-			headers = { 'User-Agent' : '' }
-			titleLIST,linkLIST = EXTRACT_M3U8(url,headers)
-			if len(linkLIST)>1:
-				selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
-				if selection == -1:
-					xbmcgui.Dialog().notification('تم الغاء التشغيل','')
-					return result
-			else: selection = 0
-			url = linkLIST[selection]
-			if titleLIST[0]!='-1':
-				LOG_THIS('NOTICE',LOGGING(script_name)+'   Video Selected   Selection: [ '+titleLIST[selection]+' ]   URL: [ '+url+' ]')
-		if 'http' in url.lower() and '/dash/' not in url and 'youtube.mpd' not in url:
-			if 'https://' in url.lower():
-				if '|' not in url: url = url+'|verifypeer=false'
-				else: url = url+'&verifypeer=false'
-			if 'user-agent' not in url.lower() and website!='IPTV':
-				if '|' not in url: url = url+'|User-Agent=&'
-				else: url = url+'&User-Agent=&'
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Got final url   URL: [ '+url+' ]')
-	if type=='video' or website!='IPTV':
-		play_item = xbmcgui.ListItem()
-		#play_item = xbmcgui.ListItem(path=url)
-		play_item.setProperty('inputstreamaddon', '')
-		play_item.setMimeType('mime/x-type')
-		play_item.setInfo('Video', {'mediatype': 'video'})
-		type99,name,url99,mode99,image,page99,text99,favourite = EXTRACT_KODI_PATH()
-		#img = xbmc.getInfoLabel('ListItem.icon')
-		play_item.setArt({'icon':image,'thumb':image,'fanart':fanart})
-		play_item.setInfo( "Video",{'Title':name,'Label':name})
-		#name = xbmc.getInfoLabel('ListItem.Label')
-		#name = name.strip(' ')
-		if videofiletype in ['.ts','.mkv','.mp4','.mp3','.flv']:
-			#when set to "False" it makes glarabTV fails and make WS2TV opens fast
-			play_item.setContentLookup(False)
-		#if videofiletype in ['.m3u8']: play_item.setContentLookup(False)
-		if 'rtmp' in url: enabled = ENABLE_RTMP(True)
-		if videofiletype=='.mpd' or '/dash/' in url:
-			enabled = ENABLE_MPD(True)
-			play_item.setProperty('inputstreamaddon','inputstream.adaptive')
-			play_item.setProperty('inputstream.adaptive.manifest_type','mpd')
-		if subtitle!='':
-			play_item.setSubtitles([subtitle])
-			#xbmc.log(LOGGING(script_name)+'      Added subtitle to video   Subtitle:['+subtitle+']', level=xbmc.LOGNOTICE)
-		if type=='video':
-			#title = xbmc.getInfoLabel('ListItem.Title')
-			#play_item.setInfo('Video', {'duration': 3600})
-			play_item.setPath(url)
-			xbmcplugin.setResolvedUrl(addon_handle,True,play_item)
-	myplayer = CustomePlayer()
-	if type=='live':
-		myplayer.play(url)
-		#xbmc.Player().play(url,play_item)
-	ADD_TO_LAST_VIDEO_FILES()
-	#logfilename = xbmc.translatePath('special://logpath')+'kodi.log'
-	timeout,step,result = 60,1,'tried'
-	for i in range(0,timeout,step):
-		xbmc.sleep(step*1000)
-		result = myplayer.status
-		if result=='playing':
-			xbmcgui.Dialog().notification('الفيديو يعمل','','',500)
-			LOG_THIS('NOTICE',LOGGING(script_name)+'   Success: Video is playing   URL: [ '+url+' ]'+subtitlemessage)
-			break
-		elif result=='failed':
-			xbmcgui.Dialog().notification('الفيديو لم يعمل','')
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed playing video   URL: [ '+url+' ]'+subtitlemessage)
-			break
-		xbmcgui.Dialog().notification(myplayer.status +'جاري تشغيل الفيديو','باقي '+str(timeout-i)+' ثانية')
-	else:
-		result = 'timeout'
-		myplayer.stop()
-		xbmcgui.Dialog().notification('الفيديو لم يعمل','')
-		LOG_THIS('ERROR',LOGGING(script_name)+'   Timeout unknown problem   URL: [ '+url+' ]'+subtitlemessage)
-	if httpd!='':
-		#xbmcgui.Dialog().ok('click ok to shutdown the http server','')
-		#html = openURL_cached(NO_CACHE,'http://localhost:55055/shutdown','','','','LIBRARY-PLAY_VIDEO-2nd')
-		httpd.shutdown()
-		#xbmcgui.Dialog().ok('http server is down','')
-	if result=='playing':
-		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
-		randomNumber = str(random.randrange(111111111111,999999999999))
-		url2 = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+website+'&z='+randomNumber
-		html = openURL_requests('GET',url2,'','',True,False,'LIBRARY-PLAY_VIDEO-1st')
-		#except: pass
-	#LOG_THIS('NOTICE',LOGGING(script_name)+'   EEEEE finished PLAY_VIDEO')
-	if result in ['tried','failed','timeout','playing']: EXIT_PROGRAM('LIBRARY-PLAY_VIDEO-2nd',False)
-	#EXIT_PROGRAM('LIBRARY-PLAY_VIDEO-3rd')
-	#if 'https://' in url and result in ['failed','timeout']:
-	#	working = HTTPS(False)
-	#	if not working:
-	#		xbmcgui.Dialog().ok('الاتصال مشفر','مشكلة ... هذا الفيديو يحتاج الى اتصال مشفر (ربط مشفر) ولكن للأسف الاتصال المشفر لا يعمل على جهازك')
-	#		return 'https'
-	return result
 
 def EXTRACT_M3U8(url,headers=''):
 	#headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36' }
@@ -961,13 +885,13 @@ def EXTRACT_M3U8(url,headers=''):
 	#if 'TYPE=SUBTITLES' in html: return ['-1'],[url]
 	#xbmc.log(item, level=xbmc.LOGNOTICE)
 	titleLIST,linkLIST,qualityLIST,bitrateLIST = [],[],[],[]
-	lines = re.findall('EXT-X-STREAM-INF:(.*?)[\n\r]+(.*?)[\n\r]+',html+'\n\r',re.DOTALL)
+	lines = re.findall('\#EXT-X-STREAM-INF:(.*?)[\n\r](.*?)[\n\r]',html+'\n\r',re.DOTALL)
 	if not lines: return ['-1'],[url]
 	#xbmcgui.Dialog().ok('22','')
 	for line,link in lines:
 		lineDICT,bitrate,quality = {},-1,-1
-		videofiletype = re.findall('(\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',link+'&&',re.DOTALL)
-		if videofiletype: title = videofiletype[0][0][1:]+'   '
+		videofiletype = re.findall('(\.avi|\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',link.lower()+'&&',re.DOTALL|re.IGNORECASE)
+		if videofiletype: title = videofiletype[0][0][1:]+'  '
 		else: title = ''
 		line = line.lower()
 		items = line.split(',')
@@ -977,17 +901,17 @@ def EXTRACT_M3U8(url,headers=''):
 				lineDICT[key] = value
 		if 'average-bandwidth' in line:
 			bitrate = int(lineDICT['average-bandwidth'])/1024
-			#title += 'AvgBW: '+str(bitrate)+'kbps   '
-			title += str(bitrate)+'kbps   '
+			#title += 'AvgBW: '+str(bitrate)+'kbps  '
+			title += str(bitrate)+'kbps  '
 		elif 'bandwidth' in line:
 			bitrate = int(lineDICT['bandwidth'])/1024
-			#title += 'BW: '+str(bitrate)+'kbps   '
-			title += str(bitrate)+'kbps   '
+			#title += 'BW: '+str(bitrate)+'kbps  '
+			title += str(bitrate)+'kbps  '
 		if 'resolution' in line:
 			quality = int(lineDICT['resolution'].split('x')[1])
-			#title += 'Res: '+str(quality)+'   '
-			title += str(quality)+'   '
-		title = title.strip('   ')
+			#title += 'Res: '+str(quality)+'  '
+			title += str(quality)+'  '
+		title = title.strip('  ')
 		if title=='': title = 'Unknown'
 		if 'http' not in link: link = url.rsplit('/',1)[0]+'/'+link
 		titleLIST.append(title)
@@ -999,9 +923,9 @@ def EXTRACT_M3U8(url,headers=''):
 	z = sorted(z, reverse=True, key=lambda key: key[3])
 	titleLIST,linkLIST,qualityLIST,bitrateLIST = zip(*z)
 	titleLIST,linkLIST = list(titleLIST),list(linkLIST)
+	#xbmcgui.Dialog().ok('99','')
 	#selection = xbmcgui.Dialog().select('', titleLIST)
 	#selection = xbmcgui.Dialog().select('', linkLIST)
-	#xbmcgui.Dialog().ok('99','')
 	return titleLIST,linkLIST
 
 def dummyClientID(length):
@@ -1035,7 +959,7 @@ def dummyClientID(length):
 	#settings.setSetting('user.hash4','')
 	#else: file = 'saverealhash4'
 	#url = 'http://emadmahdi.pythonanywhere.com/saveinput'
-	#input = md5full + '  ::  Found at:' + str(i) + '  ::  ' + hashComponents
+	#input = md5full + '  ___  Found at:' + str(i) + '  ___  ' + hashComponents
 	#	#payload = { 'file' : file , 'input' : input }
 	#	#data = urllib.urlencode(payload)
 	#	#html = openURL_cached(NO_CACHE,url,data,'','','LIBRARY-DUMMYCLIENTID-1st')
@@ -1046,7 +970,7 @@ def dummyClientID(length):
 	#	#html = response.content
 	#	#xbmcgui.Dialog().ok(html,html)
 	#url = 'http://emadmahdi.pythonanywhere.com/saveinput'
-	#payload = { 'file' : 'savehash' , 'input' : md5full + '  ::  ' + hashComponents }
+	#payload = { 'file' : 'savehash' , 'input' : md5full + '  ___  ' + hashComponents }
 	#data = urllib.urlencode(payload)
 	#return ''
 	"""
@@ -1118,7 +1042,7 @@ def RATING_CHECK(script_name,url,ratingLIST):
 		cond2 = 'not rated' not in ratingLIST[0].lower()
 		if cond1 and cond2:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Blocked adults video   URL: [ '+url+' ]')
-			xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
+			xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته',sound=False)
 			return True
 	return False
 
@@ -1290,6 +1214,124 @@ def TRANSLATE(text):
 	}
 	if text in dict.keys(): return dict[text]
 	return ''
+
+def PLAY_VIDEO(url3,website='',type='video'):
+	#url3 = unescapeHTML(url3)
+	result,subtitlemessage,httpd = 'canceled0','',''
+	if len(url3)==3:
+		url,subtitle,httpd = url3
+		if subtitle!='': subtitlemessage = '   Subtitle: [ '+subtitle+' ]'
+	else: url,subtitle,httpd = url3,'',''
+	videofiletype = re.findall('(\.avi|\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url.lower()+'&&',re.DOTALL|re.IGNORECASE)
+	if videofiletype: videofiletype = videofiletype[0][0]
+	else: videofiletype = ''
+	if website not in ['DOWNLOAD','IPTV']:
+		if website!='DOWNLOAD': url = url.replace(' ','%20')
+		#url = quote(url)
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to play video   URL: [ '+url+' ]'+subtitlemessage)
+		if videofiletype=='.m3u8' and website not in ['IPTV','YOUTUBE']:
+			headers = {'User-Agent':''}
+			titleLIST,linkLIST = EXTRACT_M3U8(url,headers)
+			if len(linkLIST)>1:
+				selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
+				if selection == -1:
+					xbmcgui.Dialog().notification('تم الغاء التشغيل','',sound=False)
+					return result
+			else: selection = 0
+			url = linkLIST[selection]
+			if titleLIST[0]!='-1':
+				LOG_THIS('NOTICE',LOGGING(script_name)+'   Video Selected   Selection: [ '+titleLIST[selection]+' ]   URL: [ '+url+' ]')
+		if 'http' in url.lower() and '/dash/' not in url and 'youtube.mpd' not in url:
+			if 'https://' in url.lower():
+				if '|' not in url: url = url+'|verifypeer=false'
+				else: url = url+'&verifypeer=false'
+			if 'user-agent' not in url.lower() and website!='IPTV':
+				if '|' not in url: url = url+'|User-Agent=&'
+				else: url = url+'&User-Agent=&'
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Got final url   URL: [ '+url+' ]')
+	play_item = xbmcgui.ListItem()
+	type99,name,url99,mode99,image,page99,text99,context = EXTRACT_KODI_PATH()
+	myplayer = CustomePlayer()
+	if website not in ['DOWNLOAD','IPTV']:
+		#play_item = xbmcgui.ListItem(path=url)
+		play_item.setProperty('inputstreamaddon', '')
+		play_item.setMimeType('mime/x-type')
+		play_item.setInfo('Video', {'mediatype': 'video'})
+		#img = xbmc.getInfoLabel('ListItem.icon')
+		play_item.setArt({'icon':image,'thumb':image,'fanart':fanart})
+		play_item.setInfo( "Video",{'Title':name})
+		#name = xbmc.getInfoLabel('ListItem.Label')
+		#name = name.strip(' ')
+		if videofiletype in ['.avi','.ts','.mkv','.mp4','.mp3','.flv']:
+			#when set to "False" it makes glarabTV fails and make WS2TV opens fast
+			play_item.setContentLookup(False)
+		#if videofiletype in ['.m3u8']: play_item.setContentLookup(False)
+		if 'rtmp' in url: enabled = ENABLE_RTMP(True)
+		if videofiletype=='.mpd' or '/dash/' in url:
+			enabled = ENABLE_MPD(True)
+			play_item.setProperty('inputstreamaddon','inputstream.adaptive')
+			play_item.setProperty('inputstream.adaptive.manifest_type','mpd')
+		if subtitle!='':
+			play_item.setSubtitles([subtitle])
+			#xbmc.log(LOGGING(script_name)+'      Added subtitle to video   Subtitle:['+subtitle+']', level=xbmc.LOGNOTICE)
+	if type=='video' and context.startswith('6'):
+			result = 'download'
+			import DOWNLOAD
+			DOWNLOAD.DOWNLOAD_VIDEO(url,videofiletype)
+	elif type=='video':
+		#title = xbmc.getInfoLabel('ListItem.Title')
+		#play_item.setInfo('Video', {'duration': 3600})
+		play_item.setPath(url)
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing video file using setResolvedUrl()   URL: [ '+url+' ]')
+		xbmcplugin.setResolvedUrl(addon_handle,True,play_item)
+	elif type=='live':
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing video file using play()   URL: [ '+url+' ]')
+		myplayer.play(url,play_item)
+		#xbmc.Player().play(url,play_item)
+		#xbmcgui.Dialog().ok(url,type)
+	ADD_TO_LAST_VIDEO_FILES()
+	#logfilename = xbmc.translatePath('special://logpath')+'kodi.log'
+	if result=='playing' or result=='download':
+		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
+		randomNumber = str(random.randrange(111111111111,999999999999))
+		url2 = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+website+'&z='+randomNumber
+		html = openURL_requests('GET',url2,'','',True,False,'LIBRARY-PLAY_VIDEO-1st')
+		#except: pass
+	if httpd!='':
+		#xbmcgui.Dialog().ok('click ok to shutdown the http server','')
+		#html = openURL_cached(NO_CACHE,'http://localhost:55055/shutdown','','','','LIBRARY-PLAY_VIDEO-2nd')
+		time.sleep(1)
+		httpd.shutdown()
+		#xbmcgui.Dialog().ok('http server is down','')
+	if result!='download':
+		timeout,step,result = 60,1,'tried'
+		for i in range(0,timeout,step):
+			xbmc.sleep(step*1000)
+			result = myplayer.status
+			if result=='playing':
+				xbmcgui.Dialog().notification('الفيديو يعمل','',time=500,sound=False)
+				LOG_THIS('NOTICE',LOGGING(script_name)+'   Success: Video is playing   URL: [ '+url+' ]'+subtitlemessage)
+				break
+			elif result=='failed':
+				LOG_THIS('ERROR',LOGGING(script_name)+'   Failed playing video   URL: [ '+url+' ]'+subtitlemessage)
+				if website!='DOWNLOAD': xbmcgui.Dialog().notification('الفيديو لم يعمل','',sound=False)
+				break
+			xbmcgui.Dialog().notification(myplayer.status +'جاري تشغيل الفيديو','باقي '+str(timeout-i)+' ثانية',sound=False)
+		else:
+			result = 'timeout'
+			myplayer.stop()
+			xbmcgui.Dialog().notification('الفيديو لم يعمل','',sound=False)
+			LOG_THIS('ERROR',LOGGING(script_name)+'   Timeout unknown problem   URL: [ '+url+' ]'+subtitlemessage)
+	#if result in ['download','tried','failed','timeout','playing']: EXIT_PROGRAM('LIBRARY-PLAY_VIDEO-2nd',False)
+	#EXIT_PROGRAM('LIBRARY-PLAY_VIDEO-3rd')
+	#if 'https://' in url and result in ['failed','timeout']:
+	#	working = HTTPS(False)
+	#	if not working:
+	#		xbmcgui.Dialog().ok('الاتصال مشفر','مشكلة ... هذا الفيديو يحتاج الى اتصال مشفر (ربط مشفر) ولكن للأسف الاتصال المشفر لا يعمل على جهازك')
+	#		return 'https'
+	return result
+
+
 
 
 

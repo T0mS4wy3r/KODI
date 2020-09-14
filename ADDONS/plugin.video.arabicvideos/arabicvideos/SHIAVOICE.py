@@ -18,24 +18,24 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',319)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',319,'','','NOUPDATE')
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'','','','','SHIAVOICE-MENU-1st')
 	html = response.content
 	html_blocks = re.findall('id="menulinks"(.*?)</ul>',html,re.DOTALL)
 	block = html_blocks[0]
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder',website+'::'+menu_name+'مقاطع شهر',website0a,314,'','','0')
+	addMenuItem('folder',website+'___'+menu_name+'مقاطع شهر',website0a,314,'','','0')
 	items = re.findall('<h5>(.*?)</h5>',html,re.DOTALL)
 	for seq in range(len(items)):
 		title = items[seq].strip(' ')
-		addMenuItem('folder',website+'::'+menu_name+title,website0a,314,'','',str(seq+1))
+		addMenuItem('folder',website+'___'+menu_name+title,website0a,314,'','',str(seq+1))
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	items = re.findall('href="(.*?)".*?<B>(.*?)</B>',block,re.DOTALL)
 	for link,title in items:
 		#title = title.strip(' ')
 		#url = website0a+'/wp-content/themes/CimaNow/Interface/filter.php'
-		addMenuItem('folder',website+'::'+menu_name+title,link,311)
+		addMenuItem('folder',website+'___'+menu_name+title,link,311)
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
@@ -67,11 +67,13 @@ def LATEST(seq):
 		seq = int(seq)-4
 		block = html_blocks[seq]
 		items = re.findall('src="(.*?)".*?href="(.*?)".*?title="(.*?)".*?<strong>(.*?)<.*?-cell">(.*?)<',block,re.DOTALL)
-		for img,link,name2,title,name in items:
+		for img,link,name1,title,name2 in items:
 			title = title.strip(' ')
-			name = name.strip(' ')
-			#name2 = name2.strip(' ')
-			title = title+' ('+name+')'#+' '+name2
+			name1 = name1.strip(' ')
+			name2 = name2.strip(' ')
+			if name1: name = name1
+			else: name = name2
+			title = title+' ('+name+')'
 			addMenuItem('video',menu_name+title,link,312,img)
 	return
 
@@ -81,9 +83,10 @@ def TITLES(url):
 	html = response.content
 	html_blocks = re.findall('ibox-heading"(.*?)class="float-right',html,re.DOTALL)
 	block = html_blocks[0]
-	items = re.findall('src="(.*?)".*?href="(.*?)".*?<strong>(.*?)<.*?catsum-mobile">.*?(\d+).*?<',block,re.DOTALL)
+	items = re.findall('src="(.*?)".*?href="(.*?)".*?<strong>(.*?)<.*?catsum-mobile">(.*?)<',block,re.DOTALL)
 	if not items: EPISODES(html)
 	for img,link,title,count in items:
+		count = count.replace(' الصوتية: ',':')
 		title = title.strip(' ')
 		title = title+' ('+count+')'
 		addMenuItem('folder',menu_name+title,link,311,img)
@@ -125,9 +128,10 @@ def PLAY(url):
 
 def SEARCH(search):
 	#search = 'مختار'
-	if '::' in search: search = search.split('::')[0]
+	if '___' in search: search = search.split('___')[0]
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	search = search.replace(' ','+')
 	searchTitle = ['قارئ','إصدار / مجلد','مقطع الصوتي']
 	typeList = ['&t=a','&t=c','&t=s']

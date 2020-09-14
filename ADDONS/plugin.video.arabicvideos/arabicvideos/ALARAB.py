@@ -25,9 +25,9 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',19)
-	addMenuItem('folder',website+'::'+menu_name+'اخر الاضافات','',14)
-	addMenuItem('folder',website+'::'+menu_name+'مسلسلات رمضان','',15)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',19,'','','NOUPDATE')
+	addMenuItem('folder',website+'___'+menu_name+'اخر الاضافات','',14)
+	addMenuItem('folder',website+'___'+menu_name+'مسلسلات رمضان','',15)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
 	html_blocks=re.findall('id="nav-slider"(.*?)</div>',html,re.DOTALL)
 	block1 = html_blocks[0]
@@ -35,14 +35,14 @@ def MENU(website=''):
 	for link,title in items:
 		link = website0a+link
 		title = title.strip(' ')
-		addMenuItem('folder',website+'::'+menu_name+title,link,11)
+		addMenuItem('folder',website+'___'+menu_name+title,link,11)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('id="navbar"(.*?)</div>',html,re.DOTALL)
 	block2 = html_blocks[0]
 	items = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	for link,title in items:
 		link = website0a+link
-		addMenuItem('folder',website+'::'+menu_name+title,link,11)
+		addMenuItem('folder',website+'___'+menu_name+title,link,11)
 	return html
 
 def RAMADAN_MENU():
@@ -285,12 +285,13 @@ def RAMADAN():
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		exit = False
 	else: exit = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	new_search = search.replace(' ','%20')
 	url = website0a + "/q/" + new_search
 	#xbmcgui.Dialog().ok('333',url)

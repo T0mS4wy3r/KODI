@@ -23,17 +23,17 @@ def MAIN(mode,url,text):
 
 def MENU(website=''):
 	addMenuItem('live',menu_name+'البث الحي لقناة المعارف','',41)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',49)
-	addMenuItem('folder',website+'::'+menu_name+'البرامج الحالية','',46)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',49,'','','NOUPDATE')
+	addMenuItem('folder',website+'___'+menu_name+'البرامج الحالية','',46)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALMAAREF-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)">(.*?)</a></h2>',html,re.DOTALL)
 	for link,name in items:
-		addMenuItem('folder',website+'::'+menu_name+name,link,45,'','','3')
+		addMenuItem('folder',website+'___'+menu_name+name,link,45,'','','3')
 	name = re.findall('recent-default.*?<h2>(.*?)</h2>',html,re.DOTALL)
-	if name: addMenuItem('folder',website+'::'+menu_name+name[0],website0a,45,'','','2')
+	if name: addMenuItem('folder',website+'___'+menu_name+name[0],website0a,45,'','','2')
 	name = ['ارشيف البرامج']
 	#name = re.findall('categories"><div class="widget-top"><h4>(.*?)</h4>',html,re.DOTALL)
-	if name: addMenuItem('folder',website+'::'+menu_name+name[0],website0a,44,'','','0')
+	if name: addMenuItem('folder',website+'___'+menu_name+name[0],website0a,44,'','','0')
 	return html
 
 def TITLES(url,select):
@@ -160,12 +160,13 @@ def LIVE():
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		exit = False
 	else: exit = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	new_search = search.replace(' ','%20')
 	url = website0b + '/?s=' + new_search
 	TITLES(url,'3')

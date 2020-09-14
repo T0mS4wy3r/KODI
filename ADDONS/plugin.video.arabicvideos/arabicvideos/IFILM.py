@@ -62,7 +62,7 @@ def MENU(website0):
 		name3 = 'سريال ها مرتب حروف الفبا'
 		name4 = 'پخش زنده از اي فيلم كانال'
 		addMenuItem('live',menu_name+name4,website0,27)
-		addMenuItem('folder',menu_name+name0,website0,29)
+		addMenuItem('folder',menu_name+name0,website0,29,'','','NOUPDATE')
 	html = openURL_cached(LONG_CACHE,website0+'/home','','','','IFILM-MENU-1st')
 	#html = openURL_cached(LONG_CACHE,website0+'/home/index','','','','IFILM-MENU-1st')
 	html_blocks=re.findall('button-menu(.*?)nav',html,re.DOTALL)
@@ -74,15 +74,15 @@ def MENU(website0):
 			#xbmcgui.Dialog().ok(link,str(title))
 			url = website0+link
 			if 'Series' in link:
-				addMenuItem('folder',website+'::'+menu_name+name1,url,22,'','100')
-				addMenuItem('folder',website+'::'+menu_name+name2,url,22,'','101')
-				addMenuItem('folder',website+'::'+menu_name+name3,url,22,'','201')
+				addMenuItem('folder',website+'___'+menu_name+name1,url,22,'','100')
+				addMenuItem('folder',website+'___'+menu_name+name2,url,22,'','101')
+				addMenuItem('folder',website+'___'+menu_name+name3,url,22,'','201')
 			elif 'Music' in link:
 				if website!='': title = 'موسيقى'
-				addMenuItem('folder',website+'::'+menu_name+title,url,25,'','101')
+				addMenuItem('folder',website+'___'+menu_name+title,url,25,'','101')
 			elif 'Program':
 				if website!='': title = 'برامج'
-				addMenuItem('folder',website+'::'+menu_name+title,url,22,'','101')
+				addMenuItem('folder',website+'___'+menu_name+title,url,22,'','101')
 	return html
 
 def MUSIC_MENU(url):
@@ -273,12 +273,13 @@ def LIVE(url):
 	return
 
 def SEARCH(url,search=''):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	if url=='' and category:
 		urlLIST = [ website0a , website0b , website0c , website0d ]
 		nameLIST = [ 'عربي' , 'English' , 'فارسى' , 'فارسى 2' ]

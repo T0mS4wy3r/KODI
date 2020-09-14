@@ -19,20 +19,20 @@ def MAIN(mode,url,page,text):
 
 def MENU(website=''):
 	addMenuItem('live',menu_name+'البث الحي لقناة الكوثر','',135)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',139)
-	addMenuItem('folder',website+'::'+menu_name+'المسلسلات',website0a+'/category/543',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'الافلام',website0a+'/category/628',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'برامج الصغار والشباب',website0a+'/category/517',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'ابرز البرامج',website0a+'/category/1763',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'المحاضرات',website0a+'/category/943',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'عاشوراء',website0a+'/category/1353',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'البرامج الاجتماعية',website0a+'/category/501',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'البرامج الدينية',website0a+'/category/509',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'البرامج الوثائقية',website0a+'/category/553',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'البرامج السياسية',website0a+'/category/545',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'كتب',website0a+'/category/291',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'تعلم الفارسية',website0a+'/category/88',132,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'ارشيف البرامج',website0a+'/category/1279',132,'','1')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',139,'','','NOUPDATE')
+	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/category/543',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'الافلام',website0a+'/category/628',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'برامج الصغار والشباب',website0a+'/category/517',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'ابرز البرامج',website0a+'/category/1763',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'المحاضرات',website0a+'/category/943',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'عاشوراء',website0a+'/category/1353',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'البرامج الاجتماعية',website0a+'/category/501',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'البرامج الدينية',website0a+'/category/509',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'البرامج الوثائقية',website0a+'/category/553',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'البرامج السياسية',website0a+'/category/545',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'كتب',website0a+'/category/291',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'تعلم الفارسية',website0a+'/category/88',132,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'ارشيف البرامج',website0a+'/category/1279',132,'','1')
 	return ''
 	"""
 	html = openURL_cached(REGULAR_CACHE,website0a,'','',True,'ALKAWTHAR-MENU-1st')
@@ -190,9 +190,10 @@ def LIVE():
 	return
 
 def SEARCH(search,url=''):
-	if '::' in search: search = search.split('::')[0]
+	if '___' in search: search = search.split('___')[0]
 	if url=='':
 		#search = 'man'
+		search = search.replace('NOUPDATE','')
 		if search=='': search = KEYBOARD()
 		if search=='': return
 		#search = search.replace(' ','+')
@@ -237,7 +238,7 @@ def SEARCH(search,url=''):
 		for title,start in items:
 			if title==currentPage: continue
 			url = url.split('start=')[0]+'start='+start
-			addMenuItem('folder',menu_name+'صفحة '+title,url,139)
+			addMenuItem('folder',menu_name+'صفحة '+title,url,139,'','','NOUPDATE')
 	return
 
 

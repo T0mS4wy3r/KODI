@@ -25,10 +25,10 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',89)
-	addMenuItem('folder',website+'::'+menu_name+'المضاف حديثا','',84,'','0')
-	addMenuItem('folder',website+'::'+menu_name+'افلام ومسلسلات مميزة','',85,'','0')
-	addMenuItem('folder',website+'::'+menu_name+'الاكثر مشاهدة','',86,'','0')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',89,'','','NOUPDATE')
+	addMenuItem('folder',website+'___'+menu_name+'المضاف حديثا','',84,'','0')
+	addMenuItem('folder',website+'___'+menu_name+'افلام ومسلسلات مميزة','',85,'','0')
+	addMenuItem('folder',website+'___'+menu_name+'الاكثر مشاهدة','',86,'','0')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
@@ -39,7 +39,7 @@ def MENU(website=''):
 	for link,title in items:
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
-			addMenuItem('folder',website+'::'+menu_name+title,link,81)
+			addMenuItem('folder',website+'___'+menu_name+title,link,81)
 	return html
 
 def ITEMS(url,html='',type='',page='0'):
@@ -146,12 +146,13 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	#search = search.replace(' ','+')
 	url = website0a + '/search.html'
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }

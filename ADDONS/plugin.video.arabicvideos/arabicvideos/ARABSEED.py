@@ -13,8 +13,8 @@ def MAIN(mode,url,text):
 	elif mode==251: results = TITLES(url)
 	elif mode==252: results = PLAY(url)
 	elif mode==253: results = EPISODES(url)
-	elif mode==254: results = FILTERS_MENU(url,'FILTERS;;'+text)
-	elif mode==255: results = FILTERS_MENU(url,'CATEGORIES;;'+text)
+	elif mode==254: results = FILTERS_MENU(url,'FILTERS___'+text)
+	elif mode==255: results = FILTERS_MENU(url,'CATEGORIES___'+text)
 	elif mode==256: results = FILTERING(url)
 	elif mode==257: results = SORTING(url)
 	elif mode==258: results = FEATURED(url)
@@ -28,19 +28,19 @@ def MENU(website=''):
 	block2 = html_blocks2[0]
 	items2 = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	server = SERVER(items2[0][0])
-	addMenuItem('folder',menu_name+'بحث في الموقع','',259)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',259,'','','NOUPDATE')
 	addMenuItem('folder',menu_name+'فلتر محدد',server,255)
 	addMenuItem('folder',menu_name+'فلتر كامل',server,254)
 	addMenuItem('folder',menu_name+'المميزة',server,258)
 	addMenuItem('folder',menu_name+'الرئيسية',server,251)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	#addMenuItem('folder',website+'::'+menu_name+'فلتر','',254,server)
+	#addMenuItem('folder',website+'___'+menu_name+'فلتر','',254,server)
 	#html_blocks = re.findall('class="tabs-menu(.*?)</ul>',html,re.DOTALL)
 	#block = html_blocks[0]
 	#items = re.findall('<li data-key="(.*?)".*?</i>(.*?)</li>',block,re.DOTALL)
 	#for filter,title in items:
 	#	link = server+'/wp-content/themes/ArbSeed/ajaxCenter/Home/Filtering.php?key='+filter
-	#	addMenuItem('folder',website+'::'+menu_name+title,link,256)
+	#	addMenuItem('folder',website+'___'+menu_name+title,link,256)
 	#if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#keepLIST = ['مسلسلات ','افلام ','برامج','عروض','كليبات','اغانى']
 	for link,title in items2:
@@ -50,7 +50,7 @@ def MENU(website=''):
 		#	if any(value in title for value in keepLIST):
 		if title not in ignoreLIST:
 			if 'http' not in link: link = server+link
-			addMenuItem('folder',website+'::'+menu_name+title,link,256)
+			addMenuItem('folder',website+'___'+menu_name+title,link,256)
 	return html
 
 def FEATURED(url):
@@ -317,10 +317,11 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '::' in search: search = search.split('::')[0]
+	if '___' in search: search = search.split('___')[0]
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
-	search = search.replace(' ','+')
+	if search=='': return
+	search = search.replace(' ','%20')
 	url = website0a+'/?s='+search
 	TITLES(url)
 	return
@@ -329,16 +330,16 @@ def FILTERS_MENU(url,filter):
 	#xbmcgui.Dialog().ok(filter,url)
 	menu_list = ['category','genre','release-year']
 	if '?' in url: url = url.split('/wp-content/themes/ArbSeed/ajaxCenter/Home/AdvFiltering.php?')[0]
-	type,filter = filter.split(';;',1)
+	type,filter = filter.split('___',1)
 	if filter=='': filter_options,filter_values = '',''
-	else: filter_options,filter_values = filter.split(';;')
+	else: filter_options,filter_values = filter.split('___')
 	if type=='CATEGORIES':
 		if menu_list[0]+'=' not in filter_options: category = menu_list[0]
 		for i in range(len(menu_list[0:-1])):
 			if menu_list[i]+'=' in filter_options: category = menu_list[i+1]
 		new_options = filter_options+'&'+category+'=0'
 		new_values = filter_values+'&'+category+'=0'
-		new_filter = new_options.strip('&')+';;'+new_values.strip('&')
+		new_filter = new_options.strip('&')+'___'+new_values.strip('&')
 		clean_filter = RECONSTRUCT_FILTER(filter_values,'all')
 		#xbmcgui.Dialog().ok('','')
 		filter_show = RECONSTRUCT_FILTER(filter_options,'modified_values')
@@ -368,7 +369,7 @@ def FILTERS_MENU(url,filter):
 			if category!=category2: continue
 			elif len(items)<=1:
 				if category2==menu_list[-1]: TITLES(url2)
-				else: FILTERS_MENU(url2,'CATEGORIES;;'+new_filter)
+				else: FILTERS_MENU(url2,'CATEGORIES___'+new_filter)
 				return
 			else:
 				#xbmcgui.Dialog().ok(url,url2)
@@ -377,7 +378,7 @@ def FILTERS_MENU(url,filter):
 		elif type=='FILTERS':
 			new_options = filter_options+'&'+category2+'=0'
 			new_values = filter_values+'&'+category2+'=0'
-			new_filter = new_options+';;'+new_values
+			new_filter = new_options+'___'+new_values
 			addMenuItem('folder',menu_name+'الكل :'+name,url2,254,'','',new_filter)
 		dict[category2] = {}
 		for value,option in items:
@@ -388,7 +389,7 @@ def FILTERS_MENU(url,filter):
 			dict[category2][value] = option
 			new_options = filter_options+'&'+category2+'='+option
 			new_values = filter_values+'&'+category2+'='+value
-			new_filter2 = new_options+';;'+new_values
+			new_filter2 = new_options+'___'+new_values
 			title = option+' :'#+dict[category2]['0']
 			title = option+' :'+name
 			if type=='FILTERS': addMenuItem('folder',menu_name+title,url,254,'','',new_filter2)
@@ -427,8 +428,8 @@ def RECONSTRUCT_FILTER(filters,mode):
 
 """
 def SEARCH_OLD(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
 	if search=='': search = KEYBOARD()

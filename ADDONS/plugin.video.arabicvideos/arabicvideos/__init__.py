@@ -1,2 +1,7 @@
-import LIBRARY
-LIBRARY.MAIN()
+from LIBRARY import MAIN
+
+MAIN()
+
+
+#import TEST
+

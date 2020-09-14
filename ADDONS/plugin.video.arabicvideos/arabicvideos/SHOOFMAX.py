@@ -21,9 +21,9 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',59)
-	addMenuItem('folder',website+'::'+menu_name+'المسلسلات','',56)
-	addMenuItem('folder',website+'::'+menu_name+'الافلام','',55)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',59,'','','NOUPDATE')
+	addMenuItem('folder',website+'___'+menu_name+'المسلسلات','',56)
+	addMenuItem('folder',website+'___'+menu_name+'الافلام','',55)
 	return ''
 
 def MOVIES_MENU():
@@ -192,12 +192,13 @@ def FILTERS(url,type):
 	return
 
 def SEARCH(search=''):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	#xbmcgui.Dialog().ok(search,search)
 	new_search = search.replace(' ','%20')
 	response = openURL_requests_cached(SHORT_CACHE,'GET', website0a, '', '', True,'','SHOOFMAX-SEARCH-1st')

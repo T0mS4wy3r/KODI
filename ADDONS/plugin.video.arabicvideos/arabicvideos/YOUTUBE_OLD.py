@@ -1,4 +1,4 @@
-"""
+
 def TEST_YOUTUBE():
 	headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4086.0 Safari/537.36'}
 	url = 'https://www.youtube.com/results?search_query=قناة+بث&sp=EgJAAQ=='
@@ -25,7 +25,7 @@ def CHANNEL_MENU(url):
 	if 'ctoken=' not in url:
 		if '"title":"Videos"' in html: addMenuItem('folder',menu_name+'فيديوهات',url+'/videos',146)
 		if '"title":"Playlists"' in html: addMenuItem('folder',menu_name+'قوائم',url+'/playlists',146)
-		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+'قنوات',url+'/channels',146)#,'','','UPDATE')
+		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+'قنوات',url+'/channels',146)#,'','','NOUPDATE')
 		d = c['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
 	else: d = c[1]['response']['continuationContents']['sectionListContinuation']
 	e = d['contents']
@@ -178,6 +178,142 @@ def TITLES_OLD(url,html):
 		for link,title in items:
 			addMenuItem('folder',menu_name+'صفحة '+title,website0a+link,141)
 	return
-"""
+
+def CLEAN_AJAX(text):
+	text = text.replace('\\u003c','<')
+	text = text.replace('\\u003e','>')
+	text = text.replace('\\u0026','&')
+	text = text.replace('\\"','"')
+	text = text.replace('\\/','/')
+	text = text.replace('\\n','\n')
+	#text = text.encode('utf8')
+	#text = text.decode('unicode_escape')
+	#text = escapeUNICODE(text)
+	#file = open('s:\emad.txt', 'w')
+	#file.write(text)
+	#file.close()
+	return text
+
+def PLAYLIST_ITEMS(url,vistor):
+	# https://www.youtube.com/watch?v=nMaNCKJCLfE&list=PLbg43835F8ge08Sb_gl6dbdGZzD3hCnQL
+	# https://www.youtube.com/playlist?list=PLbg43835F8ge08Sb_gl6dbdGZzD3hCnQL
+	html,c = GET_PAGE_DATA(url,vistor)
+	if c=='': PLAYLIST_ITEMS_OLD(url,html) ; return
+	token = ''
+	if '/watch?v=' in url:
+		listID = re.findall('list=(.*?)&',url+'&',re.DOTALL)
+		url = website0a+'/playlist?list='+listID[0]
+		html,c = GET_PAGE_DATA(url)
+	if 'ctoken' in url:
+		f = c[1]['response']['continuationContents']['playlistVideoListContinuation']
+		if 'continuations' in f.keys(): token = f['continuations'][0]['nextContinuationData']['continuation']
+	else:
+		d = c['contents']
+		if '/watch?v=' in url: f = d['twoColumnWatchNextResults']['playlist']['playlist']
+		else:
+			e = d['twoColumnBrowseResultsRenderer']['tabs'][0]
+			f = e['tabRenderer']['content']['sectionListRenderer']['contents'][0]['itemSectionRenderer']['contents'][0]['playlistVideoListRenderer']
+			if 'continuations' in f.keys(): token = f['continuations'][0]['nextContinuationData']['continuation']
+	g = f['contents']
+	for i in range(len(g)):
+		item = g[i]
+		INSERT_ITEM_TO_MENU(item)
+		#if item.keys()[0]=='shelfRenderer': continue
+		#succeeded,title,link,img,count,duration,live,paid = RENDER(item)
+		#if not succeeded: continue
+		#addMenuItem('video',menu_name+title,link,143,img,duration)
+	if '"continuations"' in html:
+		continuation = settings.getSetting('youtube.continuation')
+		VISITOR_INFO1_LIVE = settings.getSetting('youtube.VISITOR_INFO1_LIVE')
+		url2 = website0a+'/browse_ajax?ctoken='+continuation
+		addMenuItem('folder',menu_name+'صفحة اخرى 3333',url2,142,'','',VISITOR_INFO1_LIVE)
+	"""
+		addMenuItem('folder',menu_name+'صفحة اخرى 9999',url2,142,'',index,VISITOR_INFO1_LIVE)
+	elif '"token"' in html:
+		key = settings.getSetting('youtube.key')
+		visitorData = settings.getSetting('youtube.visitorData')
+		url2 = website0a+'/youtubei/v1/browse?key='+key
+		addMenuItem('folder',menu_name+'صفحة اخرى 4444',url2,144,'',index,visitorData)
+	"""
+	return
+
+def DISPATCHER(url,page,text):
+	if '/feed/trending' in url: TRENDING_MENU(url)
+	elif '/feed/guide_builder' in url: CHANNEL_ITEMS(url,page,text)
+	else: CHANNEL_ITEMS(url,page,text)
+	return
+
+def TITLES(url,index='',vistor=''):
+	html,c = GET_PAGE_DATA(url,vistor)
+	#if c=='': TITLES_OLD(url,html) ; return
+	if index=='': index = '0'
+	#xbmcgui.Dialog().ok(url,index)
+	#LOG_THIS('NOTICE',url)
+	#LOG_THIS('NOTICE',html)
+	#token = ''
+	if 'search_query' in url:
+		d = c['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents']
+		for i in range(len(d)):
+			try: e = d[i]['itemSectionRenderer']['contents'] ; break
+			except: pass
+	elif '/search?key=' in url: 
+		e = c['onResponseReceivedCommands'][0]['appendContinuationItemsAction']['continuationItems'][0]['itemSectionRenderer']['contents']
+	elif '/browse?key=' in url:
+		e = c['onResponseReceivedActions'][0]['appendContinuationItemsAction']['continuationItems']
+	elif '/trending' in url:
+		d = c['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents'][int(index)]['itemSectionRenderer']
+		e = d['contents'][0]['shelfRenderer']['content']['expandedShelfContentsRenderer']['items']
+	elif '"text":"Recommended"' in html:
+		e = c['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['richGridRenderer']['contents']
+	elif '"text":"الفيديوهات المقترحة"' in html:
+		e = c['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['richGridRenderer']['contents']
+	else: e = []
+	"""
+	elif 'ctoken' in url:
+		d = c[1]['response']['continuationContents']['itemSectionContinuation']
+		e = d['contents']
+		try: token = d['continuations'][0]['nextContinuationData']['continuation']
+		except: pass
+	"""
+	for i in range(len(e)):
+		try: item = e[i]['richItemRenderer']['content']
+		except: item = e[i]
+		#if item.keys()[0]=='shelfRenderer': continue
+		INSERT_ITEM_TO_MENU(item)
+	if '"token"' in html:
+		global settings
+		key = settings.getSetting('youtube.key')
+		visitorData = settings.getSetting('youtube.visitorData')
+		url2 = ''
+		if 'search_query' in url or '/search?key=' in url: url2 = website0a+'/youtubei/v1/search?key='+key
+		elif url==website0a or '/browse?key=' in url: url2 = website0a+'/youtubei/v1/browse?key='+key
+		if url2!='': addMenuItem('folder',menu_name+'صفحة اخرى 6666',url2,141,'',index,visitorData)
+	"""
+	elif '"continuations"' in html:
+		continuation = settings.getSetting('youtube.continuation')
+		VISITOR_INFO1_LIVE = settings.getSetting('youtube.VISITOR_INFO1_LIVE')
+		url2 = website0a+'/browse_ajax?ctoken='+continuation
+		addMenuItem('folder',menu_name+'صفحة اخرى 5555',url2,141,'',index,VISITOR_INFO1_LIVE)
+	"""
+	return
+
+def GUIDE_BUILDER_MENU(url,index=''):
+	html,cc = GET_PAGE_DATA(url)
+	dd = cc['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['sectionListRenderer']['contents']
+	if index=='':
+		for i in range(len(dd)):
+			item = dd[i]['itemSectionRenderer']['contents'][0]['shelfRenderer']
+			title = item['title']['simpleText']
+			title = escapeUNICODE(title)
+			addMenuItem('folder',menu_name+title,url,144,'',str(i))
+	else:
+		ee = dd[int(index)]['itemSectionRenderer']['contents'][0]['shelfRenderer']['content']['horizontalListRenderer']['items']
+		for i in range(len(ee)):
+			item = ee[i]
+			INSERT_ITEM_TO_MENU(item)
+	return
+
+
+
 
 

@@ -16,7 +16,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',309)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',309,'','','NOUPDATE')
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,'','','SHIAVOICE-MENU-1st')
 	html = response.content
@@ -27,7 +27,7 @@ def MENU(website=''):
 	for key,title in items:
 		title = title.strip(' ')
 		url = website0a+'/wp-content/themes/CimaNow/Interface/filter.php'
-		addMenuItem('folder',website+'::'+menu_name+title,url,301,'','',key)
+		addMenuItem('folder',website+'___'+menu_name+title,url,301,'','',key)
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('class="mainMenu"(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -37,7 +37,7 @@ def MENU(website=''):
 	for link,title in items:
 		#if any(value in title for value in keepLIST):
 		if not any(value in title for value in ignoreLIST):
-			addMenuItem('folder',website+'::'+menu_name+title,link,301)
+			addMenuItem('folder',website+'___'+menu_name+title,link,301)
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
@@ -85,11 +85,13 @@ def TITLES(url,key=''):
 
 def PLAY(url):
 	linkLIST = []
-	response = openURL_requests_cached(SHORT_CACHE,'GET',url,'','','','','CIMANOW-PLAY-1st')
-	html = response.content
-	url2 = re.findall('redirect=(.*?)"',html,re.DOTALL)
-	url2 = base64.b64decode(url2[0])
-	#xbmcgui.Dialog().ok(link,'')
+	#xbmcgui.Dialog().ok(url,'')
+	#response = openURL_requests_cached(SHORT_CACHE,'GET',url,'','','','','CIMANOW-PLAY-1st')
+	#html = response.content
+	#url2 = re.findall('redirect=(.*?)"',html,re.DOTALL)
+	#if url2: url2 = base64.b64decode(url2[0])
+	#else: 
+	url2 = url+'watch'
 	response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'','','','','CIMANOW-PLAY-2nd')
 	html2 = response.content
 	# watch links
@@ -123,9 +125,10 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '::' in search: search = search.split('::')[0]
+	if '___' in search: search = search.split('___')[0]
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	search = search.replace(' ','+')
 	url = website0a + '/?s='+search
 	TITLES(url)

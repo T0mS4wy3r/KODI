@@ -1,4 +1,30 @@
 ﻿
+v7.2.0	2020-09-14
+Added DOWNLOAD to download video files
+Added YOUTUBE channel browse menu
+Added search within YOUTUBE channel/user
+Added 30 more YOUTUBE channels
+Added 7 more YOUTUBE categories
+Added cache for YOUTUBE useragent
+Added AKWAM recent videos
+Added AKWAM new main menu
+Added menu item for changelog file
+Cancelled file MAIN
+Removed AKWAM 'progarms' & 'games'
+Updated CIMANOW video playing
+Changed SHAHID4U website address
+Increased the last items menus to 50 items
+Consildate YOUTUBE functions to one function
+Colored changelog contants
+Fixed YOUTUBE pagination
+Fixed AKOAM pagination
+Fixed sending logfile
+Fixed the update of RANDOM & SEARCH context menus
+Fixed the update of GLOBAL_SEARCH context menus
+Modified PLAY_VIDEO
+Minor fixes & improvements
+
+
 v7.1.0	2020-08-28
 Added new website SHIAVOICE
 Added new website KARBALATV

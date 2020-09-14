@@ -17,8 +17,9 @@ def MENU(favouriteID):
 		#addMenuItem('folder','مسح هذه القائمة','',271,'','','',favouriteID)
 		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		menuLIST = favouritesDICT[favouriteID]
+		context = favouriteID
 		for type,name,url,mode,image,page,text in menuLIST:
-			addMenuItem(type,name,url,mode,image,page,text,favouriteID)
+			addMenuItem(type,name,url,mode,image,page,text,context)
 	return
 
 def FAVOURITES_DISPATCHER(favourite):
@@ -34,7 +35,7 @@ def FAVOURITES_DISPATCHER(favourite):
 	return
 
 def MOVE_FAVOURITES(favouriteID,move_up,repeat):
-	type,name,url,mode,image,page,text,favourite = EXTRACT_KODI_PATH()
+	type,name,url,mode,image,page,text,context = EXTRACT_KODI_PATH()
 	menuItem = (type,name,url,mode,image,page,text)
 	favouritesDICT = GET_ALL_FAVOURITES()
 	if favouriteID in favouritesDICT.keys():
@@ -53,7 +54,7 @@ def MOVE_FAVOURITES(favouriteID,move_up,repeat):
 	return
 
 def ADD_TO_FAVOURITES(favouriteID):
-	type,name,url,mode,image,page,text,favourite = EXTRACT_KODI_PATH()
+	type,name,url,mode,image,page,text,context = EXTRACT_KODI_PATH()
 	newItem = (type,name,url,mode,image,page,text)
 	oldFILE = GET_ALL_FAVOURITES()
 	newFILE = {}
@@ -74,7 +75,7 @@ def ADD_TO_FAVOURITES(favouriteID):
 	return
 
 def REMOVE_FROM_FAVOURITES(favouriteID):
-	type,name,url,mode,image,page,text,favourite = EXTRACT_KODI_PATH()
+	type,name,url,mode,image,page,text,context = EXTRACT_KODI_PATH()
 	menuItem = (type,name,url,mode,image,page,text)
 	favouritesDICT = GET_ALL_FAVOURITES()
 	if favouriteID in favouritesDICT.keys() and menuItem in favouritesDICT[favouriteID]:
@@ -104,20 +105,20 @@ def GET_ALL_FAVOURITES():
 def GET_FAVOURITES_CONTEXT_MENU(path):
 	contextMenu = []
 	menuItem = EXTRACT_KODI_PATH(path)
-	type,name,url,mode,image,page,text,favourite = menuItem
-	if favourite not in ['','1','2','3','4','5','NOREFRESH']: favourite = '_'+favourite
+	type,name,url,mode,image,page,text,context = menuItem
+	if context not in ['','1','2','3','4','5']: context = '_'+context
 	favouritesDICT = GET_ALL_FAVOURITES()
 	if mode=='270':
-		if favourite in favouritesDICT.keys() and len(favouritesDICT[favourite])>0:
-			contextMenu.append(('مسح قائمة مفضلة '+favourite,'XBMC.RunPlugin('+path+'&favourite='+favourite+'_DELETE'+favourite+')'))
+		if context in favouritesDICT.keys() and len(favouritesDICT[context])>0:
+			contextMenu.append(('مسح قائمة مفضلة '+context,'XBMC.RunPlugin('+path+'&context='+context+'_DELETE'+context+')'))
 	else:
 		menuItem = menuItem[:-1]
 		menuItem = tuple(menuItem)
-		contextMenu1 = CREATE_ONE_CONTEXT_MENU('1',favourite,path,menuItem,favouritesDICT)
-		contextMenu2 = CREATE_ONE_CONTEXT_MENU('2',favourite,path,menuItem,favouritesDICT)
-		contextMenu3 = CREATE_ONE_CONTEXT_MENU('3',favourite,path,menuItem,favouritesDICT)
-		contextMenu4 = CREATE_ONE_CONTEXT_MENU('4',favourite,path,menuItem,favouritesDICT)
-		contextMenu5 = CREATE_ONE_CONTEXT_MENU('5',favourite,path,menuItem,favouritesDICT)
+		contextMenu1 = CREATE_ONE_CONTEXT_MENU('1',context,path,menuItem,favouritesDICT)
+		contextMenu2 = CREATE_ONE_CONTEXT_MENU('2',context,path,menuItem,favouritesDICT)
+		contextMenu3 = CREATE_ONE_CONTEXT_MENU('3',context,path,menuItem,favouritesDICT)
+		contextMenu4 = CREATE_ONE_CONTEXT_MENU('4',context,path,menuItem,favouritesDICT)
+		contextMenu5 = CREATE_ONE_CONTEXT_MENU('5',context,path,menuItem,favouritesDICT)
 		contextMenu = contextMenu1+contextMenu2+contextMenu3+contextMenu4+contextMenu5
 	contextMenuNEW = []
 	for i1,i2 in contextMenu:
@@ -126,17 +127,17 @@ def GET_FAVOURITES_CONTEXT_MENU(path):
 		contextMenuNEW.append((i1,i2,))
 	return contextMenuNEW
 
-def CREATE_ONE_CONTEXT_MENU(favouriteID,favourite,path,menuItem,favouritesDICT):
+def CREATE_ONE_CONTEXT_MENU(favouriteID,context,path,menuItem,favouritesDICT):
 	contextMenu = []
 	if favouriteID in favouritesDICT.keys() and menuItem in favouritesDICT[favouriteID]:
-		contextMenu.append(('مسح من مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&favourite='+favouriteID+'_REMOVE1'+favourite+')'))
-		if favourite==favouriteID:
+		contextMenu.append(('مسح من مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_REMOVE1'+context+')'))
+		if context==favouriteID:
 			count = len(favouritesDICT[favouriteID])
-			if count>1: contextMenu.append(('تحريك 1 للأعلى','XBMC.RunPlugin('+path+'&favourite='+favouriteID+'_UP1'+favourite+')'))
-			if count>4: contextMenu.append(('تحريك 4 للأعلى','XBMC.RunPlugin('+path+'&favourite='+favouriteID+'_UP4'+favourite+')'))
-			if count>1: contextMenu.append(('تحريك 1 للأسفل','XBMC.RunPlugin('+path+'&favourite='+favouriteID+'_DOWN1'+favourite+')'))
-			if count>4: contextMenu.append(('تحريك 4 للأسفل','XBMC.RunPlugin('+path+'&favourite='+favouriteID+'_DOWN4'+favourite+')'))
-	else: contextMenu.append(('إضافة إلى مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&favourite='+favouriteID+'_ADD1'+favourite+')'))
+			if count>1: contextMenu.append(('تحريك 1 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP1'+context+')'))
+			if count>4: contextMenu.append(('تحريك 4 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP4'+context+')'))
+			if count>1: contextMenu.append(('تحريك 1 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN1'+context+')'))
+			if count>4: contextMenu.append(('تحريك 4 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN4'+context+')'))
+	else: contextMenu.append(('إضافة إلى مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_ADD1'+context+')'))
 	return contextMenu
 
 

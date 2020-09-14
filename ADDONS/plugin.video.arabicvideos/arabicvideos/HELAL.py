@@ -22,16 +22,16 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',99)
-	addMenuItem('folder',website+'::'+menu_name+'المضاف حديثا','',94)
-	addMenuItem('folder',website+'::'+menu_name+'الأحدث',website0a+'/?type=latest',91)
-	addMenuItem('folder',website+'::'+menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
-	addMenuItem('folder',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/?type=view',91)
-	addMenuItem('folder',website+'::'+menu_name+'المثبت',website0a+'/?type=pin',91)
-	addMenuItem('folder',website+'::'+menu_name+'جديد الأفلام',website0a+'/?type=newMovies',91)
-	addMenuItem('folder',website+'::'+menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',99,'','','NOUPDATE')
+	addMenuItem('folder',website+'___'+menu_name+'المضاف حديثا','',94)
+	addMenuItem('folder',website+'___'+menu_name+'الأحدث',website0a+'/?type=latest',91)
+	addMenuItem('folder',website+'___'+menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
+	addMenuItem('folder',website+'___'+menu_name+'الأكثر مشاهدة',website0a+'/?type=view',91)
+	addMenuItem('folder',website+'___'+menu_name+'المثبت',website0a+'/?type=pin',91)
+	addMenuItem('folder',website+'___'+menu_name+'جديد الأفلام',website0a+'/?type=newMovies',91)
+	addMenuItem('folder',website+'___'+menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	#addMenuItem('folder',website+'::'+menu_name+'جديد الموقع',website0a,91)
+	#addMenuItem('folder',website+'___'+menu_name+'جديد الموقع',website0a,91)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
 	#upper menu
 	html_blocks = re.findall('class="mainmenu(.*?)nav',html,re.DOTALL)
@@ -41,7 +41,7 @@ def MENU(website=''):
 	for link,title in items:
 		title = title.strip(' ')
 		if not any(value in title for value in ignoreLIST):
-			addMenuItem('folder',website+'::'+menu_name+title,link,91)
+			addMenuItem('folder',website+'___'+menu_name+title,link,91)
 	return html
 
 def ITEMS(url):
@@ -149,9 +149,10 @@ def LATEST():
 
 def SEARCH(search=''):
 	#xbmcgui.Dialog().ok(str(search),str(''))
-	if '::' in search: search = search.split('::')[0]
+	if '___' in search: search = search.split('___')[0]
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
-	if search == '': return
+	if search=='': return
 	search = search.replace(' ','+')
 	#xbmcgui.Dialog().ok(str(search),str(''))
 	url = website0a + '/search.php?t='+search

@@ -36,17 +36,17 @@ def MENU(website=''):
 	#items=re.findall('href="(.*?)".*?i>(.*?)\n',block,re.DOTALL)
 	#for url,title in items:
 	#	if url!=website0a: addMenuItem('folder',menu_name+title,url,221)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',229)
-	addMenuItem('folder',website+'::'+menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
-	addMenuItem('folder',website+'::'+menu_name+'الافلام',website0a+'/movies',221)
-	addMenuItem('folder',website+'::'+menu_name+'المسلسلات',website0a+'/tv',221)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',229,'','','NOUPDATE')
+	addMenuItem('folder',website+'___'+menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
+	addMenuItem('folder',website+'___'+menu_name+'الافلام',website0a+'/movies',221)
+	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/tv',221)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBESTVIP-MENU-1st')
 	html_blocks=re.findall('class="ba mgb(.*?)>EgyBest</a>',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addMenuItem('folder',website+'::'+menu_name+title,link,222,'','1')
+		addMenuItem('folder',website+'___'+menu_name+title,link,222,'','1')
 	return html
 	"""
 	# egybest1.com
@@ -202,10 +202,11 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '::' in search:
-		search = search.split('::')[0]
+	if '___' in search:
+		search = search.split('___')[0]
 		category = False
 	else: category = True
+	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','+')
