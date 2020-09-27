@@ -1,4 +1,8 @@
 ﻿
+v7.2.2	2020-09-27
+Added creation of lastmenufile when missing
+
+
 v7.2.1	2020-09-27
 Added IPTV categories to VOD_ORIGINAL
 Added cache to SHIAVOICE menu for latest items

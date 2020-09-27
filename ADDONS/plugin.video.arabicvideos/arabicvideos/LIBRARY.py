@@ -203,11 +203,11 @@ def MAIN():
 	GLOBAL_SEARCH = mode0==262
 	SITES_SEARCH = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259,309,319,329]
 	SEARCH_MODES = SITES_SEARCH or YOUTUBE_CHANNELS_SEARCH
-	RANDOM_MODES = mode2==16
+	RANDOM_MODES = mode2==16 and mode0!=160
 	if SEARCH_MODES or RANDOM_MODES:
 		#previous_path = xbmc.getInfoLabel('ListItem.FolderPath')
 		#previous_path = unquote(previous_path)
-		if '_REMEMBERRESULTS_' in text and menu_label in ['..','Main Menu']:
+		if '_REMEMBERRESULTS_' in text and menu_label in ['..','Main Menu'] and os.path.exists(lastmenufile):
 			LOG_THIS('NOTICE','  .  Reading last menu   Path: [ '+addon_path+' ]')
 			with open(lastmenufile,'r') as f: oldFILE = f.read()
 			menuItemsLIST[:] = eval(oldFILE)
