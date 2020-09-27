@@ -25,7 +25,7 @@ def CHANNEL_MENU(url):
 	if 'ctoken=' not in url:
 		if '"title":"Videos"' in html: addMenuItem('folder',menu_name+'فيديوهات',url+'/videos',146)
 		if '"title":"Playlists"' in html: addMenuItem('folder',menu_name+'قوائم',url+'/playlists',146)
-		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+'قنوات',url+'/channels',146)#,'','','NOUPDATE')
+		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+'قنوات',url+'/channels',146)
 		d = c['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['sectionListRenderer']
 	else: d = c[1]['response']['continuationContents']['sectionListContinuation']
 	e = d['contents']

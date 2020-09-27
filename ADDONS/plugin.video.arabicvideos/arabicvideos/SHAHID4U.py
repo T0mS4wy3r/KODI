@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',119,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',119,'','','____REMEMBERRESULTS_')
 	addMenuItem('folder',menu_name+'فلتر محدد',website0a,115)
 	addMenuItem('folder',menu_name+'فلتر كامل',website0a,114)
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
@@ -268,7 +268,6 @@ def SEARCH(search):
 		search = search.split('___')[0]
 		category = False
 	else: category = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')

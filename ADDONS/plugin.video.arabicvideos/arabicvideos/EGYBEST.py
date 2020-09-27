@@ -6,7 +6,17 @@ from LIBRARY import *
 #website0a = 'https://egybest1.com'
 #website0a = 'https://egybest.vip'
 
-headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+"""
+https://ww.egy.best
+https://movies.egybest.site
+https://series.egybest.tv
+https://back.egybest.co
+https://ww.egybest.blog
+"""
+
+#headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+#headers = {'User-Agent':''}
+headers = {'User-Agent':None}
 script_name = 'EGYBEST'
 menu_name='_EGB_'
 website0a = WEBSITES[script_name][0]
@@ -31,18 +41,25 @@ def TERMINATED_ADBLOCKER():
 def MENU(website=''):
 	#addMenuItem('folder',menu_name+'تحذير','',126)
 	#addMenuItem('folder',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',129,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',129,'','','____REMEMBERRESULTS_')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBEST-MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
-	addMenuItem('folder',website+'___'+menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
-	addMenuItem('folder',website+'___'+menu_name+'الأفلام',website0a+'/movies/',121)
-	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/tv/',121)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	html_blocks=re.findall('class="ba(.*?)class="mgb',html,re.DOTALL)
+	#addMenuItem('folder',website+'___'+menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
+	#addMenuItem('folder',website+'___'+menu_name+'الأفلام',website0a+'/movies/',121)
+	#addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/tv/',121)
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	html_blocks=re.findall('class="ba(.*?)<script',html,re.DOTALL)
 	block = html_blocks[0]
-	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
+	items=re.findall('pda bdb"><strong>(.*?)<.*?href="(.*?)"',html,re.DOTALL)
+	ignoreLIST = ['تابع ايجي بست']
+	for title,link in items:
+		if title not in ignoreLIST: addMenuItem('folder',website+'___'+menu_name+title,link,122,'','1')
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 	for link,title in items:
-		addMenuItem('folder',website+'___'+menu_name+title,link,122,'','1')
+		#if title not in ignoreLIST: addMenuItem('folder',website+'___'+menu_name+title,link,122,'','1')
+		if not link.endswith('/'): addMenuItem('folder',website+'___'+menu_name+title,link,122,'','1')
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def FILTERS_MENU(link):
@@ -110,12 +127,12 @@ def TITLES(url,page):
 	for link,img,title in items:
 		if '/series/' in url and '/season\/' not in link: continue
 		if '/season/' in url and '/episode\/' not in link: continue
-		title = name + escapeUNICODE(title).strip(' ')
+		title = name+escapeUNICODE(title).strip(' ')
 		link = link.replace('\/','/')
 		img = img.replace('\/','/')
-		if 'http' not in img: img = 'http:' + img
+		if 'http' not in img: img = 'http:'+img
 		#xbmcgui.Dialog().notification(img,'')
-		url2 = website0a + link
+		url2 = website0a+link
 		if '/movie/' in url2 or '/episode/' in url2:
 			addMenuItem('video',menu_name+title,url2.rstrip('/'),123,img)
 			found = True
@@ -157,16 +174,16 @@ def PLAY(url):
 	#xbmcgui.Dialog().ok(url2, str(html2))
 	# https://vidstream.top/embed/o2RbrN9bqf/?vclid=44711370a2655b3f2d23487cb74c05e5347648e8bb9571dfa7c5d5e4zlllsCGMDslElsMaYXobviuROhYfamfMOhlsEslsWQUlslElsMOcSbzMykqapaqlsEslsxMcGlslElsOGsabiZusOxySMgOpEaucSxiSVGEBOlOouQzsEslsxWdlslElsmmmlRPMMslnfpaqlsEslsCMcGlslElsOEOEEZlEMOuzslh
 	if watchitem:
-		url2 = watchitem[0]#+'||MyProxyUrl=http://79.165.242.84:4145'
+		url2 = website0a+watchitem[0]#+'||MyProxyUrl=http://79.165.242.84:4145'
 		server = SERVER(url2)
 		#xbmcgui.Dialog().ok(server,'')
 		response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'','',True,'','EGYBEST-PLAY-2nd')
 		#html2 = response.content
-		cookies = response.cookies.get_dict()
-		PHPSID = cookies['PHPSID']
+		#cookies = response.cookies.get_dict()
+		#PHPSID = cookies['PHPSID']
 		#xbmcgui.Dialog().ok(server, str(PHPSID))
 		headers2 = headers
-		headers2['Cookie'] = 'PHPSID='+PHPSID
+		#headers2['Cookie'] = 'PHPSID='+PHPSID
 		response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'',headers2,False,'','EGYBEST-PLAY-3rd')
 		html2 = response.content
 		#xbmc.log(html2, level=xbmc.LOGNOTICE)
@@ -184,14 +201,14 @@ def PLAY(url):
 				else: quality = ''
 				linkLIST.append(link+'?named=vidstream__watch__m3u8__'+quality)
 		#else: linkLIST.append(url2+'?named=vidstream__watch__m3u8')
-	items = re.findall('</td> <td>(.*?)<.*?data-url="(.*?)"',html,re.DOTALL)
-	for quality,link in items:
-		#xbmc.log(quality, level=xbmc.LOGNOTICE)
+	items = re.findall('</td> <td>(.*?)<.*?data-url="(.*?)".*?data-url="(.*?)"',html,re.DOTALL)
+	for quality,link1,link2 in items:
 		quality = quality.strip(' ').split(' ')[-1]
-		url = website0a + link # + '&v=1'
-		url = url+'?PHPSID='+PHPSID
-		linkLIST.append(url+'?named=vidstream__download__mp4__'+quality)
-		linkLIST.append(url+'?named=vidstream__watch__mp4__'+quality)
+		url1 = website0a+link1 # + '&v=1'
+		url2 = website0a+link2 # + '&v=1'
+		#url = url+'?PHPSID='+PHPSID
+		linkLIST.append(url1+'?named=vidstream__download__mp4__'+quality)
+		linkLIST.append(url2+'?named=vidstream__watch__mp4__'+quality)
 	#if not linkLIST:
 	#	WARNING()
 	#	return
@@ -209,8 +226,8 @@ def PLAY(url):
 			qualityLIST.append ('m3u8   '+qualtiy)
 			datacallLIST.append (url)
 	"""
-	selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', linkLIST)
-	if selection == -1 : return
+	#selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', linkLIST)
+	#if selection == -1 : return
 	#url = linkLIST[selection]
 	"""
 	if 'http' not in url:
@@ -350,7 +367,6 @@ def SEARCH(search):
 		search = search.split('___')[0]
 		category = False
 	else: category = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','+')

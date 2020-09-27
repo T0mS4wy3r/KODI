@@ -22,7 +22,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',99,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',99,'','','____REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'المضاف حديثا','',94)
 	addMenuItem('folder',website+'___'+menu_name+'الأحدث',website0a+'/?type=latest',91)
 	addMenuItem('folder',website+'___'+menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)
@@ -150,7 +150,6 @@ def LATEST():
 def SEARCH(search=''):
 	#xbmcgui.Dialog().ok(str(search),str(''))
 	if '___' in search: search = search.split('___')[0]
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')

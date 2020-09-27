@@ -25,7 +25,7 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',219)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',219,'','','____REMEMBERRESULTS_')
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	url = website0a+'/getpostsPin?type=one&data=pin&limit=25'
 	addMenuItem('folder',website+'___'+menu_name+'المميزة',url,211)
@@ -187,7 +187,6 @@ def SEARCH(search):
 		search = search.split('___')[0]
 		category = False
 	else: category = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')

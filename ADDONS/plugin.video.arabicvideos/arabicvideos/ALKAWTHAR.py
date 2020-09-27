@@ -19,7 +19,7 @@ def MAIN(mode,url,page,text):
 
 def MENU(website=''):
 	addMenuItem('live',menu_name+'البث الحي لقناة الكوثر','',135)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',139,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',139,'','','____REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/category/543',132,'','1')
 	addMenuItem('folder',website+'___'+menu_name+'الافلام',website0a+'/category/628',132,'','1')
 	addMenuItem('folder',website+'___'+menu_name+'برامج الصغار والشباب',website0a+'/category/517',132,'','1')
@@ -167,7 +167,7 @@ def PLAY(url):
 	return
 
 def LIVE():
-	BUSY_DIALOG('start')
+	#BUSY_DIALOG('start')
 	#xbmcgui.Dialog().notification('جاري تشغيل القناة','')
 	url = website0a+'/live'
 	html = openURL_cached(LONG_CACHE,url,'','',True,'ALKAWTHAR-LIVE-1st')
@@ -185,7 +185,7 @@ def LIVE():
 	url = re.findall('"(.*?)"',html,re.DOTALL)
 	url = url[0].replace('\/','/')
 	#xbmcgui.Dialog().ok(url,html)
-	BUSY_DIALOG('stop')
+	#BUSY_DIALOG('stop')
 	PLAY_VIDEO(url,script_name,'live')
 	return
 
@@ -193,7 +193,6 @@ def SEARCH(search,url=''):
 	if '___' in search: search = search.split('___')[0]
 	if url=='':
 		#search = 'man'
-		search = search.replace('NOUPDATE','')
 		if search=='': search = KEYBOARD()
 		if search=='': return
 		#search = search.replace(' ','+')
@@ -238,7 +237,7 @@ def SEARCH(search,url=''):
 		for title,start in items:
 			if title==currentPage: continue
 			url = url.split('start=')[0]+'start='+start
-			addMenuItem('folder',menu_name+'صفحة '+title,url,139,'','','NOUPDATE')
+			addMenuItem('folder',menu_name+'صفحة '+title,url,139)
 	return
 
 

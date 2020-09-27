@@ -4,9 +4,9 @@ from LIBRARY import *
 script_name='YTB_CHANNELS'
 menu_name='_YTC_'
 
-def MAIN(mode,url,text):
+def MAIN(mode,url,page,text):
 	if   mode==290: results = MENU(url)
-	elif mode==291: results = ITEMS(text)
+	elif mode==291: results = ITEMS(text,page)
 	elif mode==292: results = MODIFY()
 	else: results = False
 	return results
@@ -15,14 +15,18 @@ def MENU(website=''):
 	if website=='':
 		addMenuItem('link',menu_name+'[COLOR FFC89008]إضافة وحذف مواقع من هذه القائمة[/COLOR]','',292)
 		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	#xbmcgui.Dialog().ok('',str(YTB_CHANNELS))
+	#xbmcgui.Dialog().ok(website,str(YTB_CHANNELS))
 	for seq in range(len(YTB_CHANNELS)):
-		addMenuItem('folder',website+'___'+menu_name+YTB_CHANNELS[seq][0],'',291,'','',str(seq))
+		name = YTB_CHANNELS[seq][0]
+		if website!='': name = name.replace('مواقع','')
+		addMenuItem('folder',website+'___'+menu_name+name,'',291,'',website,str(seq))
 	return
 
-def ITEMS(seq):
-	addMenuItem('link',menu_name+'[COLOR FFC89008]إضافة وحذف مواقع من هذه القائمة[/COLOR]','',292)
-	#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+def ITEMS(seq,website=''):
+	#xbmcgui.Dialog().ok(website,str(seq))
+	if website=='':
+		addMenuItem('link',menu_name+'[COLOR FFC89008]إضافة وحذف مواقع من هذه القائمة[/COLOR]','',292)
+		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	seq = int(seq)
 	del YTB_CHANNELS[seq][0]
 	for title,url in YTB_CHANNELS[seq]:
@@ -76,6 +80,17 @@ YTB_CHANNELS = [
 ,('قصص الاطفال باللغة العربية - Arabian Fairy Tales'		,'https://www.youtube.com/channel/UCWlrq6k6eaDHUcyroV4aw3Q')
 ,('الأطفال السعداء أغاني الأطفال Arabic Kids Songs'		,'https://www.youtube.com/c/الأطفالالسعداءنغماتروضةالأطفال')
 ,('Arabic Fairy Tales for Kids - قصص اطفال'				,'https://www.youtube.com/c/smartkidstvarabicArabicFairyTales')
+]
+
+
+
+,['مواقع برامج وثائقية'
+,('Nat Geo Abu Dhabi'					,'https://www.youtube.com/c/natgeoabudhabime')
+,('DW Documentary وثائقية دي دبليو'		,'https://www.youtube.com/c/dwdocarabia')
+,('جرائم الارهاب في العراق'				,'https://www.youtube.com/user/PhotosterrorismIraq')
+,('متع عقلك | حقائق'					,'https://www.youtube.com/channel/UCQ0imqAHB4pJWvIih3xTH5A')
+,('متع عقلك | شخصيات'					,'https://www.youtube.com/channel/UCjYuzWEBTpM4llxH0mLNLGw')
+,('Al Jazeera Documentary الجزيرة الوثائقية'			,'https://www.youtube.com/user/aljazeeradoc')
 ]
 
 
@@ -278,17 +293,6 @@ YTB_CHANNELS = [
 ,('قرية العجائب'						,'https://www.youtube.com/c/VillageofWonders')
 ,('هل تعلم ! Did you know'				,'https://www.youtube.com/channel/UC3QLsqW5lI_QJXz5I_sj4dQ')
 ,('اليوم - Today'						,'https://www.youtube.com/channel/UCI89nC3uvqhFhYmkxbnys6w')
-]
-
-
-
-,['مواقع برامج وثائقية'
-,('DW Documentary وثائقية دي دبليو'		,'https://www.youtube.com/c/dwdocarabia')
-,('جرائم الارهاب في العراق'				,'https://www.youtube.com/user/PhotosterrorismIraq')
-,('متع عقلك | حقائق'					,'https://www.youtube.com/channel/UCQ0imqAHB4pJWvIih3xTH5A')
-,('متع عقلك | شخصيات'					,'https://www.youtube.com/channel/UCjYuzWEBTpM4llxH0mLNLGw')
-,('Nat Geo Abu Dhabi'					,'https://www.youtube.com/c/natgeoabudhabime')
-,('Al Jazeera Documentary الجزيرة الوثائقية'			,'https://www.youtube.com/user/aljazeeradoc')
 ]
 
 

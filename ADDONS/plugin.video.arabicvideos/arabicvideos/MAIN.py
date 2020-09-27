@@ -44,11 +44,11 @@ LOG_THIS('NOTICE',LOGGING(script_name)+message)
 #xbmcgui.Dialog().ok('['+menu_path+']','['+mode+']')
 #xbmcgui.Dialog().ok('['+menu_label+']','['+menu_path+']')
 UPDATE_RANDOM_MENUS = mode2==16 and mode0 not in [160,165]
-UPDATE_RANDOM_SUBMENUS = mode2==16 and 'NOUPDATE' in text
+UPDATE_RANDOM_SUBMENUS = mode2==16 and '_REMEMBERRESULTS_' in text
 SEARCH_MODES = mode0 in [19,29,39,49,59,69,79,99,119,139,149,209,229,239,249,259,309,319,329]
 SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25,30,31,32]
 IPTV_MODES = mode2==23 and text!=''
-YOUTUBE_UPDATE = False# mode2==14 and 'NOUPDATE' in text
+YOUTUBE_UPDATE = False# mode2==14 and '_REMEMBERRESULTS_' in text
 #xbmcgui.Dialog().ok(addon_path,str(addon_handle))
 if favourite not in ['','1','2','3','4','5']:
 	import FAVOURITES
@@ -70,14 +70,14 @@ if mode0==262:
 	if 'text=' in previous_path:
 		search = previous_path.split('text=')[1]
 		if '&' in search: search = search.split('&')[0]
-		search = search.replace('NOUPDATE','')
-	else: search = 'NOUPDATE'
+		search = search.replace('_REMEMBERRESULTS_','')
+	else: search = '_REMEMBERRESULTS_'
 	#xbmcgui.Dialog().ok(search,'')
 	results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,search,favourite)
 elif SEARCH_MODES or UPDATE_RANDOM_MENUS:
 	#LOG_THIS('NOTICE',path)
 	#LOG_THIS('NOTICE',addon_path)
-	if 'NOUPDATE' in previous_path:
+	if '_REMEMBERRESULTS_' in previous_path:
 		LOG_THIS('NOTICE','  .  Writing last menu  .  path: [ '+addon_path+' ]')
 		results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,favourite)
 		newFILE = str(menuItemsLIST)
@@ -91,7 +91,7 @@ else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,favou
 if addon_handle>-1:
 	if type=='folder' and menu_label!='..' and (SITES_MODES or IPTV_MODES): ADD_TO_LAST_VIDEO_FILES()
 	FILTERING_MENUS = mode0 in [114,204,244,254] and text!=''
-	DELETE_LAST_VIDEOS = mode0 in [266,268]
+	DELETE_LAST_VIDEOS = mode0 in [266]
 	# kodi defaults
 	succeeded,updateListing,cacheToDisc = True,False,True
 	if menuItemsLIST:

@@ -93,8 +93,8 @@ lastvideos_modes = [265,267]
 search_modes = [19,29,39,49,59,69,79,99,119,139,149,209,229,249,259]
 website_mainmenu_modes = [11,51,61,64,91,111,132,181,201,211,251]
 filter_modes = [114,204,244,254]
-menu_update1 = (int(mode) in filter_modes+[266,268])
-menu_update2 = (int(mode)==165 and 'DELETE' in text)
+menu_update1 = (int(mode) in filter_modes+[266])
+menu_update2 = (int(mode)==165 and '_FORGETRESULTS_' in text)
 allowed_empty_modes1 = (int(mode) in search_modes+website_mainmenu_modes+[265])
 allowed_empty_modes2 = (len(menuItemsLIST)>0)
 #xbmcgui.Dialog().ok(mode,text)
@@ -123,12 +123,12 @@ filter_modes = [114,204,244,254]
 succeeded = True
 if int(mode) not in search_modes+sites_mainmenu_modes+[265]: succeeded = False
 if len(menuItemsLIST)==0: succeeded = False
-if int(mode) not in filter_modes+[266,268]: succeeded = False
-if int(mode)!=165 or 'DELETE' not in text: succeeded = False
+if int(mode) not in filter_modes+[266]: succeeded = False
+if int(mode)!=165 or '_FORGETRESULTS_' not in text: succeeded = False
 
 updateListing = False
-if int(mode) not in filter_modes+[266,268]: updateListing = True
-if int(mode)!=165 or 'DELETE' not in text: updateListing = True
+if int(mode) not in filter_modes+[266]: updateListing = True
+if int(mode)!=165 or '_FORGETRESULTS_' not in text: updateListing = True
 
 cacheToDisc = True
 xbmcplugin.endOfDirectory(addon_handle,succeeded,updateListing,cacheToDisc)

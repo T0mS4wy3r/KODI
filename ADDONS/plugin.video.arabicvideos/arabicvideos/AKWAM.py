@@ -26,15 +26,26 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',249,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',249,'','','____REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'فلتر محدد',website0a,246)
 	addMenuItem('folder',website+'___'+menu_name+'فلتر كامل',website0a,247)
-	addMenuItem('folder',website+'___'+menu_name+'المميزة',website0a+'/e',241,'','','featured')
-	addMenuItem('folder',website+'___'+menu_name+'اضيف حديثا',website0a+'/recent',241)
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',website+'___'+menu_name+'المزيد',website0a,242,'','','more')
 	#addMenuItem('folder',website+'___'+menu_name+'الاخبار',website0a,242,'','','news')
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKWAM-MENU-1st')
+	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','AKWAM-MENU-1st')
+	url2 = re.findall('recently-container.*?href="(.*?)"',html,re.DOTALL)
+	if url2: url = url2[0]
+	addMenuItem('folder',website+'___'+menu_name+'اضيف حديثا',url,241)
+	url2 = re.findall('@id":"(.*?)"',html,re.DOTALL)
+	if url2: url = url2[0]
+	addMenuItem('folder',website+'___'+menu_name+'المميزة',url,241,'','','featured')
+	html_blocks = re.findall('main-categories-list(.*?)main-categories-list',html,re.DOTALL)
+	if html_blocks:
+		block = html_blocks[0]
+		items = re.findall('href="(.*?)".*?class="font.*?>(.*?)<',block,re.DOTALL)
+		for link,title in items:
+			if title not in ignoreLIST: addMenuItem('folder',menu_name+title,link,241)
+		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('class="categories-box(.*?)<footer',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -99,7 +110,6 @@ def TITLES(url,type=''):
 def SEARCH(search):
 	# https://akwam.net/search?q=%D8%A8%D8%AD%D8%AB
 	if '___' in search: search = search.split('___')[0]
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')

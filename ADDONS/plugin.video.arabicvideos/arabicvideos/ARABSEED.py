@@ -28,7 +28,7 @@ def MENU(website=''):
 	block2 = html_blocks2[0]
 	items2 = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	server = SERVER(items2[0][0])
-	addMenuItem('folder',menu_name+'بحث في الموقع','',259,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',259,'','','____REMEMBERRESULTS_')
 	addMenuItem('folder',menu_name+'فلتر محدد',server,255)
 	addMenuItem('folder',menu_name+'فلتر كامل',server,254)
 	addMenuItem('folder',menu_name+'المميزة',server,258)
@@ -59,6 +59,7 @@ def FEATURED(url):
 	for link,img,title in items:
 		addMenuItem('video',menu_name+title,link,252,img)
 	return
+
 
 def FILTERING(url):
 	#xbmcgui.Dialog().ok(url,'')
@@ -318,7 +319,6 @@ def PLAY(url):
 
 def SEARCH(search):
 	if '___' in search: search = search.split('___')[0]
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','%20')

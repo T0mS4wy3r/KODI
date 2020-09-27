@@ -100,7 +100,7 @@ if addon_handle>-1:
 	if type=='folder' and menu_label!='..' and (SITES_MODES or IPTV_MODES): ADD_TO_LAST_VIDEO_FILES()
 
 	FILTERING_MENUS = mode0 in [114,204,244,254] and text!=''
-	DELETE_LAST_VIDEOS = mode0 in [266,268]
+	DELETE_LAST_VIDEOS = mode0 in [266]
 
 	# kodi defaults
 	succeeded,updateListing,cacheToDisc = True,False,True

@@ -18,18 +18,18 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',319,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',319,'','','____REMEMBERRESULTS_')
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'','','','','SHIAVOICE-MENU-1st')
 	html = response.content
 	html_blocks = re.findall('id="menulinks"(.*?)</ul>',html,re.DOTALL)
 	block = html_blocks[0]
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder',website+'___'+menu_name+'مقاطع شهر',website0a,314,'','','0')
 	items = re.findall('<h5>(.*?)</h5>',html,re.DOTALL)
 	for seq in range(len(items)):
 		title = items[seq].strip(' ')
 		addMenuItem('folder',website+'___'+menu_name+title,website0a,314,'','',str(seq+1))
+	addMenuItem('folder',website+'___'+menu_name+'مقاطع شهر',website0a,314,'','','0')
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	items = re.findall('href="(.*?)".*?<B>(.*?)</B>',block,re.DOTALL)
 	for link,title in items:
@@ -40,8 +40,11 @@ def MENU(website=''):
 	return html
 
 def LATEST(seq):
-	response = openURL_requests_cached(NO_CACHE,'GET',website0a,'','','','','SHIAVOICE-LATEST-1st')
+	#t1 = time.time()
+	#LOG_THIS('NOTICE','start')
+	response = openURL_requests_cached(SHORT_CACHE,'GET',website0a,'','','','','SHIAVOICE-LATEST-1st')
 	html = response.content
+	#LOG_THIS('NOTICE','elpased = '+str(time.time()-t1))
 	if seq=='0':
 		html_blocks = re.findall('class="tab-content"(.*?)</table>',html,re.DOTALL)
 		block = html_blocks[0]
@@ -78,25 +81,27 @@ def LATEST(seq):
 	return
 
 def TITLES(url):
-	#xbmcgui.Dialog().ok(url,html)
+	#xbmcgui.Dialog().ok(url,'')
 	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','','','','SHIAVOICE-TITLES-1st')
 	html = response.content
 	html_blocks = re.findall('ibox-heading"(.*?)class="float-right',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)".*?<strong>(.*?)<.*?catsum-mobile">(.*?)<',block,re.DOTALL)
-	if not items: EPISODES(html)
-	for img,link,title,count in items:
-		count = count.replace(' الصوتية: ',':')
-		title = title.strip(' ')
-		title = title+' ('+count+')'
-		addMenuItem('folder',menu_name+title,link,311,img)
+	if items:
+		for img,link,title,count in items:
+			count = count.replace(' الصوتية: ',':')
+			title = title.strip(' ')
+			title = title+' ('+count+')'
+			addMenuItem('folder',menu_name+title,link,311,img)
+	else: EPISODES(html)
 	return
 
 def EPISODES(html):
-	html_blocks = re.findall('class="ibox-content"(.*?)class="ibox-content"',html,re.DOTALL)
+	html_blocks = re.findall('class="ibox-content"(.*?)class="pagination',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(http.*?)".*?</i>(.*?)<.*?cell">(.*?)<.*?cell">(.*?)<.*?cell">(.*?)<',block,re.DOTALL)
 	for link,title,name,count,duration in items:
+		#xbmcgui.Dialog().ok('',link+','+title+','+name+','+count+','+duration)
 		title = title.strip(' ')
 		name = name.strip(' ')
 		title = title+' ('+name+')'
@@ -129,7 +134,6 @@ def PLAY(url):
 def SEARCH(search):
 	#search = 'مختار'
 	if '___' in search: search = search.split('___')[0]
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')

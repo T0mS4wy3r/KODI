@@ -20,9 +20,9 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',79,'','','NOUPDATE')
-	addMenuItem('folder',menu_name+'سلسلة افلام','',79,'','','NOUPDATEسلسلة افلام')
-	addMenuItem('folder',menu_name+'سلاسل منوعة','',79,'','','NOUPDATEسلسلة')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',79,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'سلسلة افلام','',79,'','','سلسلة افلام')
+	addMenuItem('folder',menu_name+'سلاسل منوعة','',79,'','','سلسلة')
 	#addMenuItem('folder',website+'___'+menu_name+'المميزة',website0a,72,'','','featured')
 	#addMenuItem('folder',website+'___'+menu_name+'المزيد',website0a,72,'','','more')
 	#addMenuItem('folder',website+'___'+menu_name+'الأخبار',website0a,72,'','','news')
@@ -209,7 +209,6 @@ def SEARCH(search):
 		search = search.split('___')[0]
 		exit = False
 	else: exit = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')

@@ -16,7 +16,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',309,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',309,'','','____REMEMBERRESULTS_')
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,'','','SHIAVOICE-MENU-1st')
 	html = response.content
@@ -126,7 +126,6 @@ def PLAY(url):
 
 def SEARCH(search):
 	if '___' in search: search = search.split('___')[0]
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')

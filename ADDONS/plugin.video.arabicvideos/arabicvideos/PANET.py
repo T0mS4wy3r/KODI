@@ -22,7 +22,7 @@ def MAIN(mode,url,page,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39,'','','NOUPDATE')
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39,'','','____REMEMBERRESULTS_')
 	addMenuItem('live',website+menu_name+'قناة هلا من موقع بانيت','',38)
 	addMenuItem('folder',website+'___'+menu_name+'مسلسلات وبرامج',website0a+'/series',31)
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات الاكثر مشاهدة',website0a+'/series',37)
@@ -149,7 +149,6 @@ def SEARCH(search,page):
 		search = search.split('___')[0]
 		category = False
 	else: category = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')

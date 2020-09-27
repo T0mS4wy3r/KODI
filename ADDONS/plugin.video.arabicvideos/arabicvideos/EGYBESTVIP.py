@@ -36,7 +36,7 @@ def MENU(website=''):
 	#items=re.findall('href="(.*?)".*?i>(.*?)\n',block,re.DOTALL)
 	#for url,title in items:
 	#	if url!=website0a: addMenuItem('folder',menu_name+title,url,221)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',229,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',229,'','','____REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
 	addMenuItem('folder',website+'___'+menu_name+'الافلام',website0a+'/movies',221)
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/tv',221)
@@ -161,11 +161,12 @@ def PLAY(url):
 			elif '/download/' in link: downloadURL = link
 		if watchURL!='': htmlWatch = openURL_cached(LONG_CACHE,watchURL,'',headers,'','EGYBESTVIP-PLAY-2nd')
 		if downloadURL!='': htmlDownload = openURL_cached(LONG_CACHE,downloadURL,'',headers,'','EGYBESTVIP-PLAY-3rd')
+	#xbmcgui.Dialog().ok(downloadURL,watchURL)
 	# https://uploaded.egybest.download/?id=__the_lion_king_2019
 	watchitem = re.findall('id="video".*?data-src="(.*?)"',htmlWatch,re.DOTALL)
 	if watchitem:
 		url2 = watchitem[0]#+'||MyProxyUrl=http://79.165.242.84:4145'
-		if 'uploaded.egybest.download' in url2 and '/?id=_' not in url2:
+		if url2!='' and 'uploaded.egybest.download' in url2 and '/?id=_' not in url2:
 			html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','EGYBESTVIP-PLAY-4th')
 			watchlist = re.findall('source src="(.*?)" title="(.*?)"',html2,re.DOTALL)
 			if watchlist:
@@ -174,7 +175,8 @@ def PLAY(url):
 			else:
 				server = url2.split('/')[2]
 				linkLIST.append(url2+'?named='+server+'__watch')
-		else:
+		elif url2!='':
+			#xbmcgui.Dialog().ok(url2,str(watchitem))
 			server = url2.split('/')[2]
 			linkLIST.append(url2+'?named='+server+'__watch')
 	# https://inflam.cc/VLO1NNdGuy
@@ -206,7 +208,6 @@ def SEARCH(search):
 		search = search.split('___')[0]
 		category = False
 	else: category = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','+')

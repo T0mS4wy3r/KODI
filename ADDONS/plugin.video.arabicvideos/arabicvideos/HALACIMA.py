@@ -25,7 +25,7 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',89,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',89,'','','____REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'المضاف حديثا','',84,'','0')
 	addMenuItem('folder',website+'___'+menu_name+'افلام ومسلسلات مميزة','',85,'','0')
 	addMenuItem('folder',website+'___'+menu_name+'الاكثر مشاهدة','',86,'','0')
@@ -150,7 +150,6 @@ def SEARCH(search):
 		search = search.split('___')[0]
 		category = False
 	else: category = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	#search = search.replace(' ','+')

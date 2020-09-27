@@ -17,7 +17,7 @@ def MAIN(mode,url,text,type,page):
 	#elif mode==142: results = PLAYLIST_ITEMS(url,text)
 	elif mode==143: results = PLAY(url,type)
 	elif mode==144: results = ITEMS(url,page,text)
-	elif mode==145: results = CHANNEL_SEARCH(url)
+	elif mode==145: results = SEARCH_CHANNEL(url)
 	elif mode==146: results = TRENDING_MENU(url)
 	elif mode==147: results = LIVE_ARABIC()
 	elif mode==148: results = LIVE_ENGLISH()
@@ -26,7 +26,7 @@ def MAIN(mode,url,text,type,page):
 	return results
 
 def MENU():
-	addMenuItem('folder',menu_name+'بحث في الموقع','',149,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',149,'','','____REMEMBERRESULTS_')
 	addMenuItem('folder',menu_name+'الصفحة الرئيسية',website0a,144)
 	addMenuItem('folder',menu_name+'المحتوى الرائج',website0a+'/feed/trending',146)
 	addMenuItem('folder',menu_name+'مواقع اختارها يوتيوب',website0a+'/feed/guide_builder',144)
@@ -122,14 +122,14 @@ def ITEMS(url,index='',visitor=''):
 	not_entry_urls = ['/search','/videos','/channels','/playlists','/featured','ss=','ctoken=','key=','bp=','shelf_id=']
 	channels_entry_page = not any(value in url for value in not_entry_urls)
 	if channels_entry_page:
-		if '"title":"بحث"' in html: addMenuItem('folder',menu_name+'بحث في هذا الموقع',url,145)
+		if '"title":"بحث"' in html: addMenuItem('folder',menu_name+'بحث في هذا الموقع',url,145,'','','_REMEMBERRESULTS_')
 		if '"title":"قوائم التشغيل"' in html: addMenuItem('folder',menu_name+'القوائم',url+'/playlists',144)
 		if '"title":"الفيديوهات"' in html: addMenuItem('folder',menu_name+'الفيديوهات',url+'/videos',144)
-		if '"title":"القنوات"' in html: addMenuItem('folder',menu_name+'القنوات',url+'/channels',144)#,'','','NOUPDATE')
-		if '"title":"Search"' in html: addMenuItem('folder',menu_name+'بحث في هذا الموقع',url,145)
+		if '"title":"القنوات"' in html: addMenuItem('folder',menu_name+'القنوات',url+'/channels',144)
+		if '"title":"Search"' in html: addMenuItem('folder',menu_name+'بحث في هذا الموقع',url,145,'','','_REMEMBERRESULTS_')
 		if '"title":"Playlists"' in html: addMenuItem('folder',menu_name+'القوائم',url+'/playlists',144)
 		if '"title":"Videos"' in html: addMenuItem('folder',menu_name+'الفيديوهات',url+'/videos',144)
-		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+'القنوات',url+'/channels',144)#,'','','NOUPDATE')
+		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+'القنوات',url+'/channels',144)
 	ff = ''
 	if 'search_query' in url:
 		dd = cc['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents']
@@ -307,10 +307,6 @@ def RENDER(item):
 	else: count = ''
 	return True,title,link,img,count,duration,live,paid
 
-def ARABIC_HEX(str1):
-	str2 = repr(str1.encode('utf8')).replace("'",'')
-	return str2
-
 def INSERT_ITEM_TO_MENU(item,url='',index='',visitor=''):
 	succeeded,title,link,img,count,duration,live,paid = RENDER(item)
 	#xbmcgui.Dialog().textviewer('',str(item))
@@ -423,7 +419,7 @@ def GET_PAGE_DATA(url,visitor='',request='',):
 	#with open('S:\\00emad.html','w') as f: f.write(html)
 	return html,bb
 
-def CHANNEL_SEARCH(url):
+def SEARCH_CHANNEL(url):
 	search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
@@ -437,7 +433,6 @@ def SEARCH(search):
 		search = search.split('___')[0]
 		category = False
 	else: category = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','%20')
@@ -452,9 +447,11 @@ def SEARCH(search):
 	#xbmc.executebuiltin('ActivateWindow(videos,'+url2+',return)')
 	fileterLIST_sort = ['بدون ترتيب','ترتيب حسب مدى الصلة','ترتيب حسب تاريخ التحميل','ترتيب حسب عدد المشاهدات','ترتيب حسب التقييم']
 	linkLIST_sort = ['','&sp=CAA%253D','&sp=CAI%253D','&sp=CAM%253D','&sp=CAE%253D']
-	selection_sort = xbmcgui.Dialog().select('اختر الترتيب المناسب:', fileterLIST_sort)
-	if selection_sort == -1: return
-	link_sort = linkLIST_sort[selection_sort]
+	if category:
+		selection_sort = xbmcgui.Dialog().select('اختر الترتيب المناسب:', fileterLIST_sort)
+		if selection_sort == -1: return
+		link_sort = linkLIST_sort[selection_sort]
+	else: link_sort = ''
 	url2 = website0a+'/results?search_query='+search
 	html,c = GET_PAGE_DATA(url2+link_sort)
 	if c!='':

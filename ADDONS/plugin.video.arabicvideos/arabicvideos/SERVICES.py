@@ -43,6 +43,43 @@ def MAIN(mode,text=''):
 	elif mode==197: KODI_SKIN()
 	elif mode==198: KODI_REMOTE_CONTROL()
 	elif mode==199: CHANGELOG()
+	elif mode==340: SHOW_LOGFILE()
+	return
+
+def IGNORE_LOGLINE(line):
+	if "extension '' is not currently supported" in line: return True
+	if 'Checking for Malicious scripts' in line: return True
+	#if 'Previous line repeats' in line: return True
+	if 'PVR IPTV Simple Client' in line: return True
+	if 'this hash function is broken' in line: return True
+	if 'uses plain HTTP for add-on downloads' in line: return True
+	if 'NOTICE: ADDON:' in line and line.endswith('installed\n'): return True
+	return False
+
+def SHOW_LOGFILE():
+	dataNEW,counts = [],0
+	f = open(logfile,'rb')
+	size = os.path.getsize(logfile)
+	if size>60000: f.seek(-60000, os.SEEK_END)
+	data = f.readlines()
+	for line in reversed(data):
+		line = line.replace('============================================================================================_','=-+0+-=')
+		ignore = IGNORE_LOGLINE(line)
+		if not ignore:
+			#line = '0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz'
+			string = ''
+			size = 55
+			for i in range(1+len(line)/size):
+				string = string+line[i*size:i*size+size]+'\n'
+			dataNEW.append(string)
+			counts += 1
+			if counts==100: break
+	#dataNEW = reversed(dataNEW)
+	logfileNEW = ''.join(dataNEW)
+	logfileNEW = logfileNEW.replace('\n\n\n','')
+	logfileNEW = logfileNEW.replace('ERROR:','[COLOR FFFFFF00]ERROR:[/COLOR]')
+	logfileNEW = logfileNEW.replace('=-+0+-=','[COLOR FFFFFF00]==============================[/COLOR]')
+	xbmcgui.Dialog().textviewer('آخر أسطر سجل الأخطاء والاستخدام',logfileNEW)
 	return
 
 def CHANGELOG():
@@ -63,7 +100,7 @@ def KODI_REMOTE_CONTROL():
 	return
 
 def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
-	if 'PROBLEM' in text: problem = True
+	if '_PROBLEM_' in text: problem = True
 	else: problem = False
 	sendit,html = 1,''
 	if showDialogs:
@@ -88,30 +125,24 @@ def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
 		logfileNEW = ''
 		if problem:
 			dataNEW,counts = [],0
-			logfile = xbmc.translatePath('special://logpath')+'kodi.log'
 			#logfile = 'S://DOWNLOADS/6ac26462c99fc35816f3532bb17608f4-5.8.1.log'
 			f = open(logfile,'rb')
 			size = os.path.getsize(logfile)
 			if size>600000: f.seek(-600000, os.SEEK_END)
 			data = f.readlines()
 			for line in reversed(data):
-				if "extension '' is not currently supported" in line: continue
-				if 'Checking for Malicious scripts' in line: continue
-				#if 'Previous line repeats' in line: continue
-				if 'PVR IPTV Simple Client' in line: continue
-				if 'this hash function is broken' in line: continue
-				if 'uses plain HTTP for add-on downloads' in line: continue
-				if 'NOTICE: ADDON:' in line and line.endswith('installed\n'): continue
-				dataNEW.append(line)
-				counts += 1
-				if counts==1000: break
+				ignore = IGNORE_LOGLINE(line)
+				if not ignore:
+					dataNEW.append(line)
+					counts += 1
+					if counts==1000: break
 			dataNEW = reversed(dataNEW)
 			logfileNEW = ''.join(dataNEW)
 			#logfileNEW = ''.join(dataNEW[-1000:])
 			#logfileNEW = logfileNEW[:102400]
 			#logfileNEW = quote(logfileNEW)
 			logfileNEW = base64.b64encode(logfileNEW)
-		url = 'http://emadmahdi.pythonanywhere.com/sendemail'
+		url = WEBSITES['LIVETV'][2]
 		payload = { 'subject' : subject , 'message' : message , 'logfile' : logfileNEW }
 		#logfileNEW = base64.b64decode(logfileNEW)
 		#with open('S:\\00emad.log','w') as f: f.write(logfileNEW)
@@ -257,7 +288,7 @@ def HTTPS_FAILED():
 	return
 
 def SEND_MESSAGE(text=''):
-	if 'PROBLEM' in text: problem = True
+	if '_PROBLEM_' in text: problem = True
 	else:
 		problem = False
 		yes = xbmcgui.Dialog().yesno('','هل تريد أن ترسل رسالة أم تريد أن ترسل مشكلة ؟','','','إرسال رسالة','إرسال مشكلة')
@@ -287,7 +318,7 @@ def SEND_MESSAGE(text=''):
 	if search=='': return ''
 	message = search
 	subject = 'Message: From Arabic Videos'
-	if problem: text = 'PROBLEM'
+	if problem: text = '_PROBLEM_'
 	result = SEND_EMAIL(subject,message,True,'','EMAIL-FROM-USERS',text)
 	#	url = 'my API and/or SMTP server'
 	#	payload = '{"api_key":"MY API KEY","to":["me@email.com"],"sender":"me@email.com","subject":"From Arabic Videos","text_body":"'+message+'"}'
@@ -322,7 +353,7 @@ def DMCA():
 	return
 
 def VERSIONS():
-	BUSY_DIALOG('start')
+	#BUSY_DIALOG('start')
 	#url = 'http://raw.githack.com/emadmahdi/KODI/master/addons.xml'
 	#url = 'https://github.com/emadmahdi/KODI/raw/master/addons.xml'
 	#xbmcgui.Dialog().notification('جاري جمع المعلومات','الرجاء الانتظار')
@@ -358,7 +389,7 @@ def VERSIONS():
 	#xbmcgui.Dialog().notification('thread submitted','')
 	#time.sleep(5)
 	LATEST_KODI()
-	BUSY_DIALOG('stop')
+	#BUSY_DIALOG('stop')
 	if need_update:
 		INSTALL_REPOSITORY(False)
 		CHECK_FOR_ADDONS_UPDATES()
@@ -454,10 +485,11 @@ def TEST_ALL_WEBSITES():
 	return
 
 def ANALYTICS_REPORT():
-	BUSY_DIALOG('start')
+	#BUSY_DIALOG('start')
 	payload,usageDICT,message1,message2,message3,message4 = {'a':'a'},{},'','','',''
-	data = urllib.urlencode(payload)
-	html = openURL_cached(SHORT_CACHE,WEBSITES['LIVETV'][1],data,'','','SERVICES-ANALYTICS_REPORT-1st')
+	#data = urllib.urlencode(payload)
+	response = openURL_requests_cached(NO_CACHE,'POST',WEBSITES['LIVETV'][1],payload,'','','','SERVICES-ANALYTICS_REPORT-1st')
+	html = response.content
 	#xbmcgui.Dialog().ok('',html)
 	resultsLIST = eval(html)
 	siteLIST,countLIST,countryLIST = zip(*resultsLIST)
@@ -505,7 +537,7 @@ def ANALYTICS_REPORT():
 	message5 += 'وهذا معناه إذا لديك مشكلة فهي ليست من البرنامج'+'\n'
 	message5 += '[COLOR FFC89008]'+message2+'[/COLOR]'+'\n\n'
 	"""
-	BUSY_DIALOG('stop')
+	#BUSY_DIALOG('stop')
 	xbmcgui.Dialog().textviewer('مواقع اشتغلت مؤخراً في جميع دول العالم',message5)
 	xbmcgui.Dialog().textviewer('أعلى الدول التي استخدمت مؤخراً البرنامج',message4)
 	return

@@ -49,24 +49,27 @@ def MENU(website0):
 		name2 = 'المسلسلات مرتبة حسب الاحدث'
 		name3 = 'المسلسلات مرتبة حسب الابجدية'
 		name4 = 'البث الحي لقناة اي فيلم'
+		name5 = 'أفلام'
 	elif lang=='en':
 		name0 = 'Search in site'
 		name1 = 'Current Series'
 		name2 = 'Series sorted by Latest'
 		name3 = 'Series sorted by Alphabet'
 		name4 = 'Live broadcast of iFilm channel'
+		name5 = 'Movies'
 	elif lang in ['fa','fa2']:
 		name0 = 'جستجو در سایت'
 		name1 = 'سريال ها جاری'
 		name2 = 'سريال ها مرتب سازى براساس'
 		name3 = 'سريال ها مرتب حروف الفبا'
 		name4 = 'پخش زنده از اي فيلم كانال'
+		name5 = 'فيلم'
 		addMenuItem('live',menu_name+name4,website0,27)
-		addMenuItem('folder',menu_name+name0,website0,29,'','','NOUPDATE')
+		addMenuItem('folder',menu_name+name0,website0,29,'','','____REMEMBERRESULTS_')
 	html = openURL_cached(LONG_CACHE,website0+'/home','','','','IFILM-MENU-1st')
 	#html = openURL_cached(LONG_CACHE,website0+'/home/index','','','','IFILM-MENU-1st')
 	html_blocks=re.findall('button-menu(.*?)nav',html,re.DOTALL)
-	menu = ['Series', 'Program', 'Music']
+	menu = ['Series','Program','Music']#,'Film']
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
@@ -83,6 +86,9 @@ def MENU(website0):
 			elif 'Program':
 				if website!='': title = 'برامج'
 				addMenuItem('folder',website+'___'+menu_name+title,url,22,'','101')
+			elif 'Film':
+				if website!='': title = 'فيلم'
+				addMenuItem('folder',website+'___'+menu_name+name5,url,22,'','100')
 	return html
 
 def MUSIC_MENU(url):
@@ -118,8 +124,9 @@ def TITLES(url,page):
 			addMenuItem('folder',menu_name+title,link,23,img,order+'01')
 	count_items=0
 	if type=='Series': category='3'
+	if type=='Film': category='5'
 	if type=='Program': category='7'
-	if (type=='Series' or type=='Program') and page!='0':
+	if type in ['Series','Program','Film'] and page!='0':
 		url2 = website0+'/Home/PageingItem?category='+category+'&page='+page+'&size=30&orderby='+order
 		html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-TITLES-2nd')
 		#xbmcgui.Dialog().ok(url2, html)
@@ -131,7 +138,8 @@ def TITLES(url,page):
 			count_items += 1
 			link = website0 + '/' + type + '/Content/' + id
 			img = website0 + quote(img)
-			addMenuItem('folder',menu_name+title,link,23,img,order+'01')
+			if type=='Film': addMenuItem('video',menu_name+title,link,24,img,order+'01')
+			else: addMenuItem('folder',menu_name+title,link,23,img,order+'01')
 	if type=='Music':
 		html = openURL_cached(REGULAR_CACHE,website0+'/Music/Index?page='+page,'','','','IFILM-TITLES-3rd')
 		html_blocks = re.findall('pagination-demo(.*?)pagination-demo',html,re.DOTALL)
@@ -171,10 +179,12 @@ def EPISODES(url,page):
 		if lang=='fa2': title = ' - قسمت '
 		if lang=='fa': linklang = ''
 		else: linklang = lang
+		parts2 = re.findall('data-video="(.*?)(\'.*?\'_)(.*?)">',html,re.DOTALL)
 		for name,count,img,link in items:
 			for episode in range(int(count),0,-1):
 				img1 = img + linklang + id + '/' + str(episode) + '.png' 
-				link1 = link + linklang + id + '/' + str(episode) + '.mp4' 
+				#link1 = link + linklang + id + '/' + str(episode) + '.mp4' 
+				link1 = parts2[0][0]+lang+id+'/,'+str(episode)+','+str(episode)+'_'+parts2[0][2]
 				name1 = name + title + str(episode)
 				name1 = unescapeHTML(name1)
 				addMenuItem('video',menu_name+name1,link1,24,img1)
@@ -277,7 +287,6 @@ def SEARCH(url,search=''):
 		search = search.split('___')[0]
 		category = False
 	else: category = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	if url=='' and category:

@@ -12,7 +12,7 @@ def MAIN(mode,url,context):
 	elif mode==330: results = LIST_FILES()
 	elif mode==331: results = PLAY(url)
 	elif mode==332: results = CHANGE_FOLDER()
-	elif mode==333: results = ADDING_MESSAGE()
+	elif mode==333: results = TO_ADD()
 	else: results = False
 	return results
 
@@ -27,7 +27,7 @@ def PLAY(url):
 	#xbmcgui.Dialog().ok(url,result)
 	return
 
-def ADDING_MESSAGE():
+def TO_ADD():
 	message = 'أذهب الى رابط الفيديو او الصوت في الموقع المطلوب ثم أضغط على زر القائمة اليمين ثم أختار "تحميل ملفات فيديو" ثم اختار دقة الصورة واختار نوع ملف الصورة وبعدها سوف يبدأ التحميل'
 	xbmcgui.Dialog().ok('طريقة تحميل الملفات',message)
 	return
@@ -35,13 +35,20 @@ def ADDING_MESSAGE():
 def LIST_FILES():
 	addMenuItem('link','[COLOR FFC89008]طريقة تحميل ملفات الفيديو[/COLOR]','',333)
 	downloadpath = GET_DOWNLOAD_FOLDER()
+	mtime = os.stat(downloadpath).st_mtime
+	files = []
 	for filename in os.listdir(unicode(downloadpath,'utf8')):
-		try: filename = filename.encode('utf8')
-		except: pass
-		if filename.startswith('file_'):
-			filenamepath = os.path.join(downloadpath,filename)
-			addMenuItem('video',filename,filenamepath,331)
-	#if len(menuItemsLIST)==0: addMenuItem('link','لا يوجد ملفات محملة','',9999)
+		if not filename.startswith('file_'): continue
+		filepath = os.path.join(downloadpath,filename)
+		mtime = os.path.getmtime(filepath)
+		#ctime = os.path.getctime(filepath)
+		#mtime = os.stat(filepath).ct_mtime
+		#filename = filename.decode('utf8').encode('utf8')
+		files.append([filename,mtime])
+	files = sorted(files,reverse=True,key=lambda key: key[1])
+	for filename,mtime in files:
+		filepath = os.path.join(downloadpath,filename)
+		addMenuItem('video',filename,filepath,331)
 	return
 
 def GET_DOWNLOAD_FOLDER():
@@ -66,12 +73,14 @@ def CHANGE_FOLDER():
 
 def DOWNLOAD_VIDEO(url,videofiletype):
 	xbmcgui.Dialog().notification('يرجى الانتظار','جاري فحص ملف التحميل',sound=False)
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to download the video file   URL: [ '+url+' ]')
 	#xbmcgui.Dialog().ok(url,videofiletype)
 	if videofiletype=='':
 		if 'mp4' in url.lower(): videofiletype = '.mp4'
 		elif 'm3u8' in url.lower(): videofiletype = '.m3u8'
 	if videofiletype not in ['.ts','.mkv','.mp4','.mp3','.flv','.m3u8','avi']:
 		xbmcgui.Dialog().ok('تنزيل ملف الفيديو','الملف من نوع '+videofiletype+' والبرنامج حاليا غير جاهز لتحميل هذا النوع من الملفات')
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   Video type/extension is not supported   URL: [ '+url+' ]')
 		return
 	#xbmcgui.Dialog().ok('free space',str(freediskspace_MB))
 	settings = xbmcaddon.Addon(id=addon_id)
@@ -93,7 +102,7 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 	referer = referer.replace('|','').replace('&','')
 	headers = {'User-Agent':useragent}
 	if referer!='':	headers['Referer'] = referer
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Downloading video file   URL: [ '+url2+' ]   Headers: [ '+str(headers)+' ]')
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Downloading video file   URL: [ '+url2+' ]   Headers: [ '+str(headers)+' ]   File: [ '+filenamepath+' ]')
 	#xbmcgui.Dialog().ok(url2,str(headers))
 	#xbmcgui.Dialog().ok(xbmc.getInfoLabel('System.UsedSpace'),xbmc.getInfoLabel('System.TotalSpace'))
 	#xbmcgui.Dialog().ok(xbmc.getInfoLabel('System.UsedSpacePercent'),xbmc.getInfoLabel('System.FreeSpacePercent'))
@@ -110,16 +119,19 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 			#xbmcgui.Dialog().ok(str(freeuserspace),str(dir(st)))
 		except: pass
 		if freediskspace_MB==0:
-			xbmcgui.Dialog().textviewer('مساحة التخزين مجهولة','للأسف البرنامج غير قادر ان يحدد مقدار مساحة التخزين الفارغة في جهازك وعليه فان تحميل الفيديوهات لن يعمل عندك الى ان يقوم مبرمجي برنامج كودي بحل هذه المشكلة لان تحميل الفيدوهات قد يسبب امتلاء جهازك بالملفات وهذا فيه خطورة على عمل جهازك بصورة صحيحة ولهذا السبب قام المبرمج مؤقتا بمنع جهازك من تحميل الفيديوهات')
+			xbmcgui.Dialog().textviewer('مساحة التخزين مجهولة','للأسف البرنامج غير قادر أن يحدد مقدار مساحة التخزين الفارغة في جهازك وعليه فان تحميل الفيديوهات لن يعمل عندك إلى أن يقوم مبرمجي برنامج كودي بحل هذه المشكلة لان تحميل الفيديوهات قد يسبب امتلاء جهازك بالملفات وهذا فيه خطورة على عمل جهازك بصورة صحيحة ولهذا السبب قام المبرمج مؤقتا بمنع البرنامج من تحميل الفيديوهات')
+			LOG_THIS('NOTICE',LOGGING(script_name)+'   Unable to determine the disk free space')
 			return
 	import requests
 	if videofiletype=='.m3u8':
 		windowsfilenamepath = windowsfilenamepath.rsplit('.m3u8')[0]+'.mp4'
-		response = openURL_requests_cached(NO_CACHE,'GET',url2,'',headers,'','','DOWNLOAD-CONVERT_M3U8_TO_MP4-1st')
+		response = openURL_requests_cached(NO_CACHE,'GET',url2,'',headers,'','','DOWNLOAD-DOWNLOAD_VIDEO-1st')
 		m3u8 = response.content
 		linkLIST = []
 		links = re.findall('\#EXTINF:.*?[\n\r](.*?)[\n\r]',m3u8+'\n\r',re.DOTALL)
-		if not links: return ['-1'],[url2]
+		if not links:
+			LOG_THIS('NOTICE',LOGGING(script_name)+'   The m3u8 file did not have the required links   URL: [ '+url2+' ]')
+			return
 		try: file = open(windowsfilenamepath,'wb')
 		except: file = open(windowsfilenamepath.encode('utf8'),'wb')
 		response = requests.get(links[0])
@@ -140,26 +152,27 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 			except: file = open(windowsfilenamepath.encode('utf8'),'wb')
 	filesize_MB = int(1+filesize/MegaByte)
 	if filesize<=102400:
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Video file is too small to download   URL: [ '+url2+' ]   Video file size: [ '+str(filesize_MB)+' MB ]   Available size: [ '+str(freediskspace_MB)+' MB ]')
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   Video file is too small and/or something wrong   URL: [ '+url2+' ]   Video file size: [ '+str(filesize_MB)+' MB ]   Available size: [ '+str(freediskspace_MB)+' MB ]   File: [ '+filenamepath+' ]')
 		xbmcgui.Dialog().ok('رسالة من المبرمج','فشل في معرفة حجم ملف الفيديو ولهذا لا يمكن للبرنامج تحميل هذا الملف')
 		if videofiletype=='.m3u8': file.close()
 		return
 	freeafterdownload_MB = freediskspace_MB-filesize_MB
 	if freeafterdownload_MB<500:
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Not enough storage to download the video file   URL: [ '+url2+' ]   Video file size: [ '+str(filesize_MB)+' MB ]   Available size: [ '+str(freediskspace_MB)+' MB ]')
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   Not enough disk space to download the video file   URL: [ '+url2+' ]   Video file size: [ '+str(filesize_MB)+' MB ]   Available size: [ '+str(freediskspace_MB)+' MB ]   File: [ '+filenamepath+' ]')
 		xbmcgui.Dialog().ok('لا يوجد مساحة كافية للتحميل','الملف المطلوب تحميله حجمه '+str(filesize_MB)+' ميغابايت وجهازك فيه مساحة فارغة '+str(freediskspace_MB)+' ميغابايت وللمحافظة على عمل جهازك بدون مشاكل يجب ابقاء 500 ميغابايت فارغة دائما وهذا معناه جهازك لا توجد فيه مساحة كافية لتحميل ملف الفيديو المطلوب')
 		file.close()
 		return
-	yes = xbmcgui.Dialog().yesno('هل تريد تحميل الملف ؟','الملف المطلوب حجمه تقريبا '+str(filesize_MB)+' ميغابايت وجهازك فيه مساحة فارغة تقريبا '+str(freediskspace_MB)+' ميغابايت وهذا الملف قد يحتاج بعض الوقت للتحميل من الانترنيت الى جهازك . هل انت متأكد وتريد الاستمرار بتحميل ملف الفيديو ؟','','','كلا','نعم')
+	yes = xbmcgui.Dialog().yesno('هل تريد تحميل الملف ؟','الملف المطلوب حجمه تقريبا '+str(filesize_MB)+' ميغابايت وجهازك فيه مساحة فارغة تقريبا '+str(freediskspace_MB)+' ميغابايت وهذا الملف قد يحتاج بعض الوقت للتحميل من الأنترنيت إلى جهازك . هل انت متأكد وتريد الاستمرار بتحميل ملف الفيديو ؟','','','كلا','نعم')
 	if not yes:
-		xbmcgui.Dialog().ok('','تم الغاء عملية تحميل ملف الفيديو')
+		xbmcgui.Dialog().ok('','تم إلغاء عملية تحميل ملف الفيديو')
 		file.close()
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   User refused to start the download of the video file   URL: [ '+url2+' ]   File: [ '+filenamepath+' ]')
 		return
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   Downloading to   Folder: [ '+filenamepath+' ]')
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Download started successfully')
 	pDialog = xbmcgui.DialogProgress()
 	pDialog.create(windowsfilenamepath,'السطر فوق هو مكان تخزين ملف الفيديو')
 	Finished = True
-	if videofiletype=='.m3u8':
+	if videofiletype=='.m3u8': # m3u8 and multi chunks video files
 		for i in range(1,chunkscount):
 			link = links[i]
 			if 'http' not in link: link = url2.rsplit('/',1)[0]+'/'+link
@@ -171,7 +184,7 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 			if pDialog.iscanceled():
 				Finished = False
 				break
-	else:
+	else: # mp4 and other single file videos
 		i = 0
 		for chunk in response.iter_content(chunk_size=chunksize):
 			file.write(chunk)
@@ -186,12 +199,13 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 	file.close()
 	pDialog.close()
 	if not Finished:
-		xbmcgui.Dialog().ok('','تم الغاء عملية تحميل ملف الفيديو')
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Downloading video file cancled by the user   URL: [ '+url2+' ]')
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   User cancelled/interrupted the download process   URL: [ '+url2+' ]   File: [ '+filenamepath+' ]')
+		xbmcgui.Dialog().ok('','تم إلغاء عملية تحميل ملف الفيديو')
+		return
 	else:
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Video file downloading finished   URL: [ '+url2+' ]   File: [ '+filenamepath+' ]')
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   Video file downloaded successfully   URL: [ '+url2+' ]   File: [ '+filenamepath+' ]')
 		xbmcgui.Dialog().ok('','تم تحميل ملف الفيديو بنجاح')
-	return
+		return
 
 
 

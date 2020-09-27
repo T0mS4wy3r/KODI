@@ -7,7 +7,7 @@ from LIBRARY import *
 #website0a = 'http://vod.alarab.com/index.php'
 
 script_name = 'ALARAB'
-headers = { 'User-Agent' : '' }
+headers = {'User-Agent':''}
 menu_name='_KLA_'
 website0a = WEBSITES[script_name][0]
 
@@ -25,7 +25,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',19,'','','NOUPDATE')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',19,'','','____REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'اخر الاضافات','',14)
 	addMenuItem('folder',website+'___'+menu_name+'مسلسلات رمضان','',15)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
@@ -68,9 +68,12 @@ def LATEST():
 	return
 
 def TITLES(url):
-	#xbmcgui.Dialog().ok('111',url)
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'ALARAB-TITLES-1st')
+	#xbmcgui.Dialog().ok('TITLES',url)
+	response = openURL_requests_cached(NO_CACHE,'GET',url,'',headers,True,True,'ALARAB-TITLES-1st')
+	html = response.content
+	#with open('S:\\00emad.html','w') as f: f.write(str(html))
 	html_blocks = re.findall('video-category(.*?)right_content',html,re.DOTALL)
+	if not html_blocks: return
 	block = html_blocks[0]
 	found = False
 	#items = re.findall('src="(http.*?)".*?<h[52].*?href="(.*?)">(.*?)<',block,re.DOTALL)
@@ -289,7 +292,6 @@ def SEARCH(search):
 		search = search.split('___')[0]
 		exit = False
 	else: exit = True
-	search = search.replace('NOUPDATE','')
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')

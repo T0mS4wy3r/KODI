@@ -31,7 +31,7 @@ def FAVOURITES_DISPATCHER(favourite):
 	elif 'DOWN1'	in favourite: MOVE_FAVOURITES(favouriteID,False,1)
 	elif 'UP4'		in favourite: MOVE_FAVOURITES(favouriteID,True,4)
 	elif 'DOWN4'	in favourite: MOVE_FAVOURITES(favouriteID,False,4)
-	elif 'DELETE'	in favourite: DELETE_FAVOURITES(favouriteID)
+	elif '_FORGETRESULTS_'	in favourite: DELETE_FAVOURITES(favouriteID)
 	return
 
 def MOVE_FAVOURITES(favouriteID,move_up,repeat):
@@ -110,7 +110,7 @@ def GET_FAVOURITES_CONTEXT_MENU(path):
 	favouritesDICT = GET_ALL_FAVOURITES()
 	if mode=='270':
 		if context in favouritesDICT.keys() and len(favouritesDICT[context])>0:
-			contextMenu.append(('مسح قائمة مفضلة '+context,'XBMC.RunPlugin('+path+'&context='+context+'_DELETE'+context+')'))
+			contextMenu.append(('مسح قائمة مفضلة '+context,'XBMC.RunPlugin('+path+'&context='+context+'__FORGETRESULTS_'+context+')'))
 	else:
 		menuItem = menuItem[:-1]
 		menuItem = tuple(menuItem)

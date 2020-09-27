@@ -2,7 +2,7 @@
 from LIBRARY import *
 
 script_name='LIVETV'
-website0a = WEBSITES[script_name][0]
+website0a = WEBSITES['LIVETV'][0]
 
 def MAIN(mode,url):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
@@ -81,7 +81,7 @@ def ITEMS(menu,show=True):
 	return
 
 def PLAY(id):
-	BUSY_DIALOG('start')
+	#BUSY_DIALOG('start')
 	#xbmcgui.Dialog().notification('جاري تشغيل القناة','')
 	source,server,id2,menu = id.split(';;')
 	url = ''
@@ -95,7 +95,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			BUSY_DIALOG('stop')
+			#BUSY_DIALOG('stop')
 			return
 		#proxyname,proxyurl = RANDOM_HTTPS_PROXY()
 		url = response.headers['Location']#+'||MyProxyUrl='+proxyurl
@@ -110,7 +110,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-3rd')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			BUSY_DIALOG('stop')
+			#BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location'].replace('__ID2__',id2)
 		headers = { 'Cookie' : 'ASP.NET_SessionId='+session }
@@ -128,7 +128,7 @@ def PLAY(id):
 		selection = 0
 		#selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
 		if selection == -1:
-			BUSY_DIALOG('stop')
+			#BUSY_DIALOG('stop')
 			return
 		else: url = linkLIST[selection]
 		#xbmcgui.Dialog().ok(items[0],url)
@@ -149,7 +149,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			BUSY_DIALOG('stop')
+			#BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location']
 		url = url.replace('%20',' ')
@@ -163,7 +163,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-6th')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			BUSY_DIALOG('stop')
+			#BUSY_DIALOG('stop')
 			return
 		response = openURL_requests_cached(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-7th')
 		html = response.content
@@ -176,7 +176,7 @@ def PLAY(id):
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-8th')
 		if 'Not Allowed' in response.content:
 			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			BUSY_DIALOG('stop')
+			#BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location']
 		if source=='FM':
@@ -184,7 +184,7 @@ def PLAY(id):
 			response = openURL_requests_cached(NO_CACHE,'GET', url, '', '', False,'','LIVETV-PLAY-9th')
 			url = response.headers['Location']
 			url = url.replace('https','http')
-	BUSY_DIALOG('stop')
+	#BUSY_DIALOG('stop')
 	result = PLAY_VIDEO(url,script_name,'live')
 	#except:
 	#	xbmcgui.Dialog().ok('هذه القناة فيها مشكلة من الموقع الاصلي',page_error)
