@@ -139,14 +139,14 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 		response.close()
 		file.write(chunk)
 		chunksize = len(chunk)
-		chunkscount = len(links)
-		filesize = chunksize*chunkscount
+		chunksCount = len(links)
+		filesize = chunksize*chunksCount
 	else:
 		chunksize = 1*MegaByte
 		response = requests.request('GET',url2,headers=headers,verify=False,stream=True)
 		try: filesize = int(response.headers['Content-Length'])
 		except: filesize = 0
-		chunkscount = int(filesize/chunksize)
+		chunksCount = int(filesize/chunksize)
 		if filesize>102400:
 			try: file = open(windowsfilenamepath,'wb')
 			except: file = open(windowsfilenamepath.encode('utf8'),'wb')
@@ -172,15 +172,21 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 	pDialog = xbmcgui.DialogProgress()
 	pDialog.create(windowsfilenamepath,'السطر فوق هو مكان تخزين ملف الفيديو')
 	Finished = True
+	t1 = time.time()
 	if videofiletype=='.m3u8': # m3u8 and multi chunks video files
-		for i in range(1,chunkscount):
+		for i in range(1,chunksCount):
 			link = links[i]
 			if 'http' not in link: link = url2.rsplit('/',1)[0]+'/'+link
 			response = requests.get(link)
 			chunk = response.content
 			response.close()
 			file.write(chunk)
-			pDialog.update(int(100*i/(chunkscount+1)),'السطر فوق هو مكان تخزين ملف الفيديو','جلب ملف الفيديو:- الجزء رقم',str(i*chunksize/MegaByte)+'/'+str(filesize_MB)+' MB')
+			t2 = time.time()
+			timeElapsed = t2-t1
+			chunkTime = timeElapsed/i
+			timeTotal = chunkTime*(chunksCount+1)
+			timeRemaining = timeTotal-timeElapsed
+			pDialog.update(int(100*i/(chunksCount+1)),'السطر فوق هو مكان تخزين ملف الفيديو','جلب ملف الفيديو:- الجزء رقم',str(i*chunksize/MegaByte)+'/'+str(filesize_MB)+' MB    وقت متبقي: '+time.strftime("%H:%M:%S",time.gmtime(timeRemaining))+' ـ')
 			if pDialog.iscanceled():
 				Finished = False
 				break
@@ -190,7 +196,12 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 			file.write(chunk)
 			#file = file+chunk
 			i = i+1
-			pDialog.update(int(100*i/(chunkscount+1)),'السطر فوق هو مكان تخزين ملف الفيديو','جلب ملف الفيديو:- الجزء رقم',str(i*chunksize/MegaByte)+'/'+str(filesize_MB)+' MB')
+			t2 = time.time()
+			timeElapsed = t2-t1
+			chunkTime = timeElapsed/i
+			timeTotal = chunkTime*(chunksCount+1)
+			timeRemaining = timeTotal-timeElapsed
+			pDialog.update(int(100*i/(chunksCount+1)),'السطر فوق هو مكان تخزين ملف الفيديو','جلب ملف الفيديو:- الجزء رقم',str(i*chunksize/MegaByte)+'/'+str(filesize_MB)+' MB    وقت متبقي: '+time.strftime("%H:%M:%S",time.gmtime(timeRemaining))+' ـ')
 			if pDialog.iscanceled():
 				Finished = False
 				break

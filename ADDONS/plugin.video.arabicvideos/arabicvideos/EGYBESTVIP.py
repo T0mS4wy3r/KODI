@@ -36,7 +36,7 @@ def MENU(website=''):
 	#items=re.findall('href="(.*?)".*?i>(.*?)\n',block,re.DOTALL)
 	#for url,title in items:
 	#	if url!=website0a: addMenuItem('folder',menu_name+title,url,221)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',229,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',229,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'الأكثر مشاهدة',website0a+'/trending',222,'','1')
 	addMenuItem('folder',website+'___'+menu_name+'الافلام',website0a+'/movies',221)
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/tv',221)
@@ -204,10 +204,7 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '___' in search:
-		search = search.split('___')[0]
-		category = False
-	else: category = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','+')

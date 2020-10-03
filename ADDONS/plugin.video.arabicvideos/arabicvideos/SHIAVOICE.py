@@ -18,7 +18,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',319,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',319,'','','_REMEMBERRESULTS_')
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'','','','','SHIAVOICE-MENU-1st')
 	html = response.content
@@ -132,15 +132,16 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	#search = 'مختار'
-	if '___' in search: search = search.split('___')[0]
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
-	searchTitle = ['قارئ','إصدار / مجلد','مقطع الصوتي']
 	typeList = ['&t=a','&t=c','&t=s']
-	selection = xbmcgui.Dialog().select('أختر البحث المناسب', searchTitle)
-	if selection == -1: return
+	if showdialogs:
+		searchTitle = ['قارئ','إصدار / مجلد','مقطع الصوتي']
+		selection = xbmcgui.Dialog().select('أختر البحث المناسب', searchTitle)
+		if selection == -1: return
+	else: selection = 2
 	type = typeList[selection]
 	url = website0a+'/search.php?q='+search+type
 	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','','','','SHIAVOICE-SEARCH-1st')

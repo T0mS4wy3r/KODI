@@ -23,7 +23,7 @@ def MAIN(mode,url,text):
 
 def MENU(website=''):
 	addMenuItem('live',menu_name+'البث الحي لقناة المعارف','',41)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',49,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',49,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'البرامج الحالية','',46)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALMAAREF-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)">(.*?)</a></h2>',html,re.DOTALL)
@@ -160,10 +160,7 @@ def LIVE():
 	return
 
 def SEARCH(search):
-	if '___' in search:
-		search = search.split('___')[0]
-		exit = False
-	else: exit = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')

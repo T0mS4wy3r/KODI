@@ -28,7 +28,7 @@ def MENU(website=''):
 	block2 = html_blocks2[0]
 	items2 = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	server = SERVER(items2[0][0])
-	addMenuItem('folder',menu_name+'بحث في الموقع','',259,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',259,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',menu_name+'فلتر محدد',server,255)
 	addMenuItem('folder',menu_name+'فلتر كامل',server,254)
 	addMenuItem('folder',menu_name+'المميزة',server,258)
@@ -318,7 +318,7 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '___' in search: search = search.split('___')[0]
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','%20')

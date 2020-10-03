@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',119,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',119,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',menu_name+'فلتر محدد',website0a,115)
 	addMenuItem('folder',menu_name+'فلتر كامل',website0a,114)
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
@@ -264,16 +264,13 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '___' in search:
-		search = search.split('___')[0]
-		category = False
-	else: category = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,True,'SHAHID4U-SEARCH-1st')
 	html_blocks = re.findall('chevron-select(.*?)</div>',html,re.DOTALL)
-	if category and html_blocks:
+	if showdialogs and html_blocks:
 		block = html_blocks[0]
 		items = re.findall('value="(.*?)".*?>(.*?)<',block,re.DOTALL)
 		categoryLIST,filterLIST = [],[]

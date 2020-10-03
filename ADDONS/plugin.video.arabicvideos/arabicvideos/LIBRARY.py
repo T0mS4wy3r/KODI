@@ -9,6 +9,7 @@ import urllib		# 160ms
 import urllib2		# 354ms (contains urllib)
 import sqlite3		# 50ms (with threading 71ms)
 
+
 #import requests   	# 986ms (contains urllib,urllib2,urllib3)
 #import threading	# 54ms (with sqlite3 71ms)
 #import urllib3		# 621ms (contains urllib)
@@ -87,6 +88,7 @@ icon = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'icon.p
 fanart = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'fanart.jpg'))
 changelogfile = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'changelog.txt'))
 logfile = xbmc.translatePath('special://logpath')+'kodi.log'
+oldlogfile = xbmc.translatePath('special://logpath')+'kodi.old.log'
 
 addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
 dbfile = os.path.join(addoncachefolder,"webcache_"+addon_version+".db")
@@ -94,6 +96,9 @@ lastvideosfile = os.path.join(addoncachefolder,"lastvideos.lst")
 lastmenufile = os.path.join(addoncachefolder,"lastmenu.lst")
 favouritesfile = os.path.join(addoncachefolder,"favourites.lst")
 dummyiptvfile = os.path.join(addoncachefolder,"dummy.iptv")
+fulliptvfile = os.path.join(addoncachefolder,"fulliptvfile.m3u")
+addonfolder = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
+
 
 MINUTE = 60
 HOUR = 60*MINUTE
@@ -125,7 +130,7 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'SHOOFMAX'		:['https://shoofmax.com','https://static.shoofmax.com']
 			,'ARABSEED'		:['https://arabseed.net']
 			,'YOUTUBE'		:['https://www.youtube.com']
-			,'LIVETV'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport','http://emadmahdi.pythonanywhere.com/sendemail']
+			,'EMAD'			:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport','http://emadmahdi.pythonanywhere.com/sendemail']
 			,'IPTV'			:['https://nowhere.com']
 			,'CIMANOW'		:['https://cima-now.com']
 			,'SHIAVOICE'	:['https://shiavoice.com']
@@ -636,13 +641,39 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 			address = (host,port)
 			return original_create_connection(address,*args,**kwargs)
 		urllib3.util.connection.create_connection = patched_create_connection
+	BUSY_DIALOG('start')
 	if proxyurl!=None:
 		if headers=='': headers = { 'User-Agent' : '' }
 		elif 'User-Agent' not in headers: headers['User-Agent'] = ''
 		if proxyurl=='': proxyname,proxyurl = RANDOM_HTTPS_PROXY()
 		# if testing proxies then timeout=10
 		if url2=='https://www.google.com': timeout = 10
-		proxies={"http":proxyurl,"https":proxyurl}
+	if 'pythonanywhere' in url2:
+		try:
+			sock22 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			result22 = sock22.connect_ex(('emadmahdi.pythonanywhere.com',80))
+			proxyurl = None
+		except:
+			LOG_THIS('ERROR',LOGGING(script_name)+'   pythonanywhere is not accessible. Will try proxies   URL: [ '+url2+' ]')
+			#proxyurl = 'socks4://217.164.255.35:54670'	# UAE - socks4
+			#proxyurl = 'socks4://41.33.212.68:4145'	# EGYPT - socks4
+			#proxyurl = 'http://168.169.96.2:8080'		# USA - no https
+			#proxyurl = 'http://168.169.96.14:8080'		# USA - no https
+			proxy1 = 'http://95.174.67.50:18080'		# Netherlands http & https
+			proxy2 = 'http://83.97.23.90:18080'			# Germany http & https
+			proxy3 = 'http://201.149.34.167:8080'		# Mexico http & https
+			proxyLIST = [proxy1,proxy2,proxy3]
+			for i in range(0,5): random.shuffle(proxyLIST)
+			sock22 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			for proxy in proxyLIST:
+				type,host,port = proxy.replace('//','').split(':')
+				try:
+					result22 = sock22.connect_ex((host,int(port)))
+					break
+				except: LOG_THIS('ERROR',LOGGING(script_name)+'   Proxy failed   Proxy: [ '+proxy+' ]')
+			proxyurl = type+'://'+host+':'+port
+			LOG_THIS('ERROR',LOGGING(script_name)+'   Will use this proxy: [ '+proxyurl+' ]   URL: [ '+url2+' ]')
+	proxies={"http":proxyurl,"https":proxyurl}
 	if sslurl!=None: verify = True
 	else: verify = False
 	try:
@@ -712,6 +743,7 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 	#if condition2: xbmcgui.Dialog().ok('','Cloudflare')
 	condition3 = '___Error___' in htmlLower
 	condition4 = '5 sec' in htmlLower and 'browser' in htmlLower and code!=200
+	BUSY_DIALOG('stop')
 	if condition1 or condition2 or condition3 or condition4:
 		if condition2:
 			#xbmcgui.Dialog().ok('','Cloudflare')
@@ -826,6 +858,19 @@ def KEYBOARD(header='لوحة المفاتيح',default=''):
 	#keyboard.setHeading(header)
 	#kb.doModal()
 	#if kb.isConfirmed(): text = kb.getText()
+	#dialog = xbmcgui.WindowXMLDialog('DialogKeyboard22.xml',addonfolder,'default','720p')
+	#dialog.show()
+	#dialog.doModal()
+	#dialog.getControl(99991).setPosition(0,0)
+	#dialog.getControl(311).setLabel(text)
+	#dialog.getControl(5).setText(logfileNEW)
+	#width = xbmcgui.getScreenWidth()
+	#height = xbmcgui.getScreenHeight()
+	#resolution = (0.0+width)/height
+	#dialog.getControl(5).setWidth(width-180)
+	#dialog.getControl(5).setHeight(height-180)
+	#text = dialog.getControl(312).getLabel()
+	#del dialog
 	text = xbmcgui.Dialog().input(header,default,type=xbmcgui.INPUT_ALPHANUM)
 	text = text.strip(' ')
 	if len(text.decode('utf8'))<1:
@@ -1312,11 +1357,13 @@ def PLAY_VIDEO(url3,website='',type='video'):
 			myplayer.stop()
 			xbmcgui.Dialog().notification('الفيديو لم يعمل','',sound=False)
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Timeout unknown problem   URL: [ '+url+' ]'+subtitlemessage)
-	if result in ['playing','download','play_download']:
+	cond1 = result in ['playing','play_download']
+	cond2 = result=='download' and videofiletype in ['.ts','.mkv','.mp4','.mp3','.flv','.m3u8','avi']
+	if cond1 or cond2:
 		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 		randomNumber = str(random.randrange(111111111111,999999999999))
 		url2 = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+website+'&z='+randomNumber
-		response = openURL_requests_cached('GET',NO_CACHE,url2,'','',True,False,'LIBRARY-PLAY_VIDEO-1st')
+		response = openURL_requests_cached(NO_CACHE,'GET',url2,'','','',False,'LIBRARY-PLAY_VIDEO-1st')
 		#html = response.content
 	if httpd!='':
 		#xbmcgui.Dialog().ok('click ok to shutdown the http server','')
@@ -1336,10 +1383,15 @@ def PLAY_VIDEO(url3,website='',type='video'):
 	#		return 'https'
 	return result
 
-
-
-
-
+def SEARCH_OPTIONS(search):
+	options,showdialogs = '',True
+	if search.count('_')>=2:
+		search,options = search.split('_',1)
+		options = '_'+options
+		if '_NODIALOGS_' in options: showdialogs = False
+		else: showdialogs = True
+	#xbmcgui.Dialog().ok(search,options)
+	return search,options,showdialogs
 
 
 

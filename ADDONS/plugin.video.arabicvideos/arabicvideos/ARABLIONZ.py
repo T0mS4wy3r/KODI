@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',209,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',209,'','','_REMEMBERRESULTS_')
 	#addMenuItem('folder',menu_name+'فلتر محدد',website0a,205)
 	#addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
@@ -269,17 +269,14 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '___' in search:
-		search = search.split('___')[0]
-		category = False
-	else: category = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-SEARCH-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('chevron-select(.*?)</div>',html,re.DOTALL)
-	if category and html_blocks:
+	if showdialogs and html_blocks:
 		block = html_blocks[0]
 		items = re.findall('value="(.*?)".*?>(.*?)<',block,re.DOTALL)
 		categoryLIST,filterLIST = [],[]

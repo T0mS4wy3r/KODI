@@ -120,10 +120,10 @@ def SEARCH_RANDOM_VIDEOS(options):
 	menuItemsLIST[:] = []
 	for i in range(0,20):
 		text = random.sample(list2,1)[0]
-		text = text+'___'
+		#text = text+'___'
 		mode = random.sample(search_modes,1)[0]
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Random Video Search   mode:'+str(mode)+'  text:'+text)
-		results = MAIN_DISPATCHER('','','',mode,'','',text,'')
+		results = MAIN_DISPATCHER('','','',mode,'','',text+'_NODIALOGS_','')
 		if len(menuItemsLIST)>0: break
 	#text = text.replace('_','')
 	previuosLIST[0][1] = '[ [COLOR FFC89008]'+text[:-2]+'[/COLOR] البحث عن : [ '

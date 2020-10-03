@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',69,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',69,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'ما يتم مشاهدته الان',website0a,64,'','','recent_viewed_vids')
 	addMenuItem('folder',website+'___'+menu_name+'الاكثر مشاهدة',website0a,64,'','','most_viewed_vids')
 	addMenuItem('folder',website+'___'+menu_name+'اضيفت مؤخرا',website0a,64,'','','recently_added_vids')
@@ -100,10 +100,7 @@ def MOSTS(category):
 	return
 
 def SEARCH(search):
-	if '___' in search:
-		search = search.split('___')[0]
-		exit = False
-	else: exit = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	#xbmcgui.Dialog().ok(search, website0a)

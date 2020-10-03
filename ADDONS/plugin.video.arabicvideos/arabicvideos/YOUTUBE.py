@@ -26,7 +26,7 @@ def MAIN(mode,url,text,type,page):
 	return results
 
 def MENU():
-	addMenuItem('folder',menu_name+'بحث في الموقع','',149,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',149,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',menu_name+'الصفحة الرئيسية',website0a,144)
 	addMenuItem('folder',menu_name+'المحتوى الرائج',website0a+'/feed/trending',146)
 	addMenuItem('folder',menu_name+'مواقع اختارها يوتيوب',website0a+'/feed/guide_builder',144)
@@ -428,11 +428,7 @@ def SEARCH_CHANNEL(url):
 	return
 
 def SEARCH(search):
-	#search = 'test'
-	if '___' in search:
-		search = search.split('___')[0]
-		category = False
-	else: category = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','%20')
@@ -447,7 +443,7 @@ def SEARCH(search):
 	#xbmc.executebuiltin('ActivateWindow(videos,'+url2+',return)')
 	fileterLIST_sort = ['بدون ترتيب','ترتيب حسب مدى الصلة','ترتيب حسب تاريخ التحميل','ترتيب حسب عدد المشاهدات','ترتيب حسب التقييم']
 	linkLIST_sort = ['','&sp=CAA%253D','&sp=CAI%253D','&sp=CAM%253D','&sp=CAE%253D']
-	if category:
+	if showdialogs:
 		selection_sort = xbmcgui.Dialog().select('اختر الترتيب المناسب:', fileterLIST_sort)
 		if selection_sort == -1: return
 		link_sort = linkLIST_sort[selection_sort]
@@ -492,7 +488,7 @@ def SEARCH(search):
 				fileterLIST_sort.append(escapeUNICODE(title))
 				linkLIST_sort.append(link)
 	"""
-	if category:
+	if showdialogs:
 		selection_search = xbmcgui.Dialog().select('اختر الفلتر المناسب:', fileterLIST_search)
 		if selection_search == -1: return
 		link_search = linkLIST_search[selection_search]

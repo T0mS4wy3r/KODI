@@ -25,7 +25,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',19,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',19,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'اخر الاضافات','',14)
 	addMenuItem('folder',website+'___'+menu_name+'مسلسلات رمضان','',15)
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
@@ -288,10 +288,7 @@ def RAMADAN():
 	return
 
 def SEARCH(search):
-	if '___' in search:
-		search = search.split('___')[0]
-		exit = False
-	else: exit = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')

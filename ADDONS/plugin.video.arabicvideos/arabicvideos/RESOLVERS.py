@@ -126,7 +126,7 @@ def RESOLVABLE(url):
 	# external	: سيرفر عام خارجي
 	# resolver	: سيرفر عام خارجي
 	# named		: سيرفر محدد
-	result1,result2,private,known,external,named,resolver = '','',None,None,None,None,None
+	familiar,name,private,known,external,named,resolver = '','',None,None,None,None,None
 	url2,named2,server,menuname,name,type,filetype,quality,source = EXTRACT_NAMED_URL(url)
 	if '?named=' in url:
 		if type=='watch': type = ' '+'مشاهدة'
@@ -198,13 +198,13 @@ def RESOLVABLE(url):
 					resolver = True
 					break
 	#xbmcgui.Dialog().ok(url,url2)
-	if   private:	result1,result2 = 'خاص',private
-	elif named:		result1,result2 = '%محدد',named
-	elif known:		result1,result2 = '%%عام معروف',known
-	elif external:	result1,result2 = '%%%عام خارجي',external
-	elif resolver:	result1,result2 = '%%%%عام خارجي',menuname
-	else:			result1,result2 = '%%%%%عام مجهول',menuname
-	return result1,result2,type,filetype,quality
+	if   private:	familiar,name = 'خاص',private
+	elif named:		familiar,name = '%محدد',named
+	elif known:		familiar,name = '%%عام معروف',known
+	elif external:	familiar,name = '%%%عام خارجي',external
+	elif resolver:	familiar,name = '%%%%عام خارجي',menuname
+	else:			familiar,name = '%%%%%عام مجهول',menuname
+	return familiar,name,type,filetype,quality
 	"""
 	elif 'playr.4helal'	in server2:	private = 'helal'
 	elif 'estream'	 	in server2:	known = 'estream'
@@ -361,17 +361,17 @@ def SERVERS_cached(linkLIST2,script_name2=''):
 	titleLIST,linkLIST,serversDICT = [],[],[]
 	for link in linkLIST2:
 		if link=='': continue
-		server1,server2,type,filetype,quality = RESOLVABLE(link)
+		familiar,name,type,filetype,quality = RESOLVABLE(link)
 		if quality=='': quality = 0
 		else:
 			quality = re.findall('\d+',quality)[0]
 			#quality = quality.replace('p','').replace('hd','').replace('%','').replace(' ','')
 			quality = int(quality)
-		serversDICT.append([server1,server2,type,filetype,quality,link])
-	sortedDICT = sorted(serversDICT, reverse=True, key=lambda key: (key[0],key[2],key[4],key[3],key[1]))
-	for server1,server2,type,filetype,quality,link in sortedDICT:
+		serversDICT.append([familiar,name,type,filetype,quality,link])
+	sortedDICT = sorted(serversDICT, reverse=True, key=lambda key: (key[0],key[4],key[2],key[1],key[3],key[5]))
+	for familiar,name,type,filetype,quality,link in sortedDICT:
 		if quality==0: quality = ''
-		title = 'سيرفر'+' '+type+' '+server1+' '+str(quality)+' '+filetype+' '+server2
+		title = 'سيرفر'+' '+type+' '+familiar+' '+str(quality)+' '+filetype+' '+name
 		title = title.replace('%','').strip(' ').replace('  ',' ').replace('  ',' ').replace('  ',' ')
 		titleLIST.append(title)
 		linkLIST.append(link)

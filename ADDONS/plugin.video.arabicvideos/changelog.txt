@@ -1,4 +1,20 @@
 ﻿
+v7.3.0	2020-10-03
+Added new search support function for all sites
+Added conditional proxy for pythonanywhere
+Added time remaining for DOWNLOAD & IPTV
+Added IPTV empty live group
+Added IPTV m3u file in cache-folder
+Added customized text-viewer screen for log-file
+Added reading of old-log-file
+Rewrote reading of log-file
+Fixed IPTV empty country/language/title
+Fixed AKOAM main menu
+Fixed AKWAM main menu
+Fixed reporting to analytics
+Minor fixes & improvements
+
+
 v7.2.2	2020-09-27
 Added creation of lastmenufile when missing
 

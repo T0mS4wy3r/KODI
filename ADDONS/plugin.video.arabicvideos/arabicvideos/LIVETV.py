@@ -2,7 +2,7 @@
 from LIBRARY import *
 
 script_name='LIVETV'
-website0a = WEBSITES['LIVETV'][0]
+website0a = WEBSITES['EMAD'][0]
 
 def MAIN(mode,url):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)

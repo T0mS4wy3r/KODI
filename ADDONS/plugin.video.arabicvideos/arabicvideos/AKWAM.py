@@ -26,7 +26,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',249,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',249,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'فلتر محدد',website0a,246)
 	addMenuItem('folder',website+'___'+menu_name+'فلتر كامل',website0a,247)
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
@@ -35,6 +35,7 @@ def MENU(website=''):
 	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','AKWAM-MENU-1st')
 	url2 = re.findall('recently-container.*?href="(.*?)"',html,re.DOTALL)
 	if url2: url = url2[0]
+	else: url = website0a
 	addMenuItem('folder',website+'___'+menu_name+'اضيف حديثا',url,241)
 	url2 = re.findall('@id":"(.*?)"',html,re.DOTALL)
 	if url2: url = url2[0]
@@ -51,6 +52,7 @@ def MENU(website=''):
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?">(.*?)<',block,re.DOTALL)
 		for link,title in items:
+			link = unescapeHTML(link)
 			if title not in ignoreLIST: addMenuItem('folder',menu_name+title,link,241)
 		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
@@ -109,7 +111,7 @@ def TITLES(url,type=''):
 
 def SEARCH(search):
 	# https://akwam.net/search?q=%D8%A8%D8%AD%D8%AB
-	if '___' in search: search = search.split('___')[0]
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')

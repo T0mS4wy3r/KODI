@@ -21,7 +21,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',59,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',59,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات','',56)
 	addMenuItem('folder',website+'___'+menu_name+'الافلام','',55)
 	return ''
@@ -192,10 +192,7 @@ def FILTERS(url,type):
 	return
 
 def SEARCH(search=''):
-	if '___' in search:
-		search = search.split('___')[0]
-		category = False
-	else: category = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	#xbmcgui.Dialog().ok(search,search)

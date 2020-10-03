@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',79,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',79,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',menu_name+'سلسلة افلام','',79,'','','سلسلة افلام')
 	addMenuItem('folder',menu_name+'سلاسل منوعة','',79,'','','سلسلة')
 	#addMenuItem('folder',website+'___'+menu_name+'المميزة',website0a,72,'','','featured')
@@ -30,7 +30,7 @@ def MENU(website=''):
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	ignoreLIST = ['الكتب و الابحاث','الكورسات التعليمية','الألعاب','البرامج','الاجهزة اللوحية','الصور و الخلفيات','المصارعة الحرة']
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','AKOAM-MENU-1st')
-	html_blocks = re.findall('big_parts_menu(.*?)main_partions',html,re.DOTALL)
+	html_blocks = re.findall('big_parts_menu(.*?)class="sidebar_search',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
@@ -205,10 +205,7 @@ def PLAY(url):
 
 def SEARCH(search):
 	#xbmcgui.Dialog().ok(search,'')
-	if '___' in search:
-		search = search.split('___')[0]
-		exit = False
-	else: exit = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')

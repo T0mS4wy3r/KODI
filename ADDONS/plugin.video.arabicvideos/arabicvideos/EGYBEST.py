@@ -41,7 +41,7 @@ def TERMINATED_ADBLOCKER():
 def MENU(website=''):
 	#addMenuItem('folder',menu_name+'تحذير','',126)
 	#addMenuItem('folder',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',129,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',129,'','','_REMEMBERRESULTS_')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBEST-MENU-1st')
 	#xbmcgui.Dialog().ok(website0a, html)
 	#addMenuItem('folder',website+'___'+menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
@@ -363,10 +363,7 @@ def WARNING():
 	return
 
 def SEARCH(search):
-	if '___' in search:
-		search = search.split('___')[0]
-		category = False
-	else: category = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','+')

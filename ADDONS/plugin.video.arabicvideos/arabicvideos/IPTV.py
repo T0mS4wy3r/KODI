@@ -23,19 +23,19 @@ def MAIN(mode,url,text,type):
 	return results
 
 def MENU():
-	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'بحث في ملفات IPTV','',239,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'بحث في ملفات IPTV','',239,'','','_REMEMBERRESULTS_')
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة','LIVE_GROUPED',233)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'أفلام مصنفة','VOD_MOVIES_GROUPED',233)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'مسلسلات مصنفة','VOD_SERIES_GROUPED',233)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مجهولة','VOD_UNKNOWN_GROUPED',233)
-	#addMenuItem('folder',menu_name+'قنوات مجهولة','LIVE_UNKNOWN',233)
+	#addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مجهولة','LIVE_UNKNOWN',233)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مصنفة ومرتبة','LIVE_GROUPED_SORTED',233)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'أفلام مصنفة ومرتبة','VOD_MOVIES_GROUPED_SORTED',233)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'مسلسلات مصنفة ومرتبة','VOD_SERIES_GROUPED_SORTED',233)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'فيديوهات مجهولة ومرتبة','VOD_UNKNOWN_GROUPED_SORTED',233)
-	#addMenuItem('folder',menu_name+'قنوات مجهولة','LIVE_UNKNOWN_SORTED',233)
+	#addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'قنوات مجهولة','LIVE_UNKNOWN_SORTED',233)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'القنوات الأصلية بدون تغيير','LIVE_ORIGINAL_GROUPED',233)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'الفيديوهات الأصلية بدون تغيير','VOD_ORIGINAL_GROUPED',233)
@@ -345,21 +345,20 @@ def ADD_ACCOUNT():
 	return
 
 def SEARCH(search=''):
-	if '___' in search:
-		if not isIPTVFiles(False): return
-		search = search.split('___')[0]
-		exit = False
-		TYPE = 'VOD_FROM_NAME_SORTED'
-	else:
+	search,options,showdialogs = SEARCH_OPTIONS(search)
+	if showdialogs:
+		#xbmcgui.Dialog().ok('','')
 		if not isIPTVFiles(True): return
 		if search=='': search = KEYBOARD()
 		if search=='': return
-		exit = True
 		searchTitle = ['الكل','قنوات','أفلام','مسلسلات','أخرى']
 		typeList = ['ALL','LIVE_GROUPED_SORTED','VOD_MOVIES_GROUPED_SORTED','VOD_SERIES_GROUPED_SORTED','VOD_UNKNOWN_GROUPED_SORTED']
 		selection = xbmcgui.Dialog().select('أختر البحث المناسب', searchTitle)
 		if selection == -1: return
 		TYPE = typeList[selection]
+	else:
+		if not isIPTVFiles(False): return
+		TYPE = 'ALL'
 	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
 	searchLower = search.lower()
 	uniqueLIST = []
@@ -399,6 +398,7 @@ def CLEAN_NAME(title):
 	return title
 
 def SPLIT_NAME(title):
+	if title=='!!__UNKNOWN__!!': return title
 	lowest,lang = 9999,''
 	first = title[0:2]
 	separators = [' ',':','-','|',']',')','#','.',',','$',"'",'!','@','%','&','*','^']
@@ -443,43 +443,51 @@ def CREATE_STREAMS(ask_dialog=True):
 	response = requests.get(iptvURL,headers=headers,stream=True)
 	filesize = int(response.headers['Content-Length'])
 	filesize_MB = int(1+filesize/MegaByte)
-	chunkscount = int(filesize/chunksize)
+	chunksCount = int(filesize/chunksize)
 	i = 0
+	t1 = time.time()
 	for chunk in response.iter_content(chunk_size=chunksize):
 		i = i+1
+		#if i==2: break
 		if pDialog.iscanceled():
 			response.close()
 			return
-		pDialog.update(0+int(35*i/chunkscount),'جلب الملف الرئيسي:- الجزء رقم',str(i*chunksize/MegaByte)+'/'+str(filesize_MB)+' MB')
+		t2 = time.time()
+		timeElapsed = t2-t1
+		chunkTime = timeElapsed/i
+		timeTotal = chunkTime*(chunksCount+1)
+		timeRemaining = timeTotal-timeElapsed
+		pDialog.update(0+int(35*i/chunksCount),'جلب الملف الرئيسي:- الجزء رقم',str(i*chunksize/MegaByte)+'/'+str(filesize_MB)+' MB    وقت متبقي: '+time.strftime("%H:%M:%S",time.gmtime(timeRemaining))+' ـ')
 		m3u_text = m3u_text+chunk
-		#m3u_filename = 'iptv_'+str(int(now))+'_.m3u'
-		#iptvfile = os.path.join(addoncachefolder,m3u_filename)
-		#with open(iptvfile,'w') as f: f.write(m3u_text)
-		#xbmcgui.Dialog().ok(iptvURL,m3u_text)
-		"""
-		response.close()
-		chunks_count = filesize/MegaByte
-		def get_chunk(start):
-			headers = {'Range':'bytes=%s-%s'%(start,start+MegaByte)}
-			response = requests.get(iptvURL,headers=headers)
-			chunk = response.content
-			return chunk
-		chunk = get_chunk(0)
-		xbmcgui.Dialog().ok('',str(len(chunk)))
-		mythread = CustomThread()
-		for i in chunks_count:
-			mythread.start_new_thread(i,get_chunk,i*MegaByte)
-		count = 0
-		while count<=chunks_count:
-			time.sleep(1000)
-			count = len(mythread.finishedLIST)
-			if pDialog.iscanceled(): return
-			pDialog.update(0+int(35*count/chunks_count),'جلب الملف الرئيسي:- الجزء رقم',str(count)+'/'+str(chunks_count)+' MB')
-		#mythread.wait_finishing_all_threads()
-		for id in chunks_count:
-			chunk = mythread.resultsDICT[id]
-			m3u_text = m3u_text+chunk
-		"""
+	with open(fulliptvfile,'wb') as f: f.write(m3u_text)
+	#m3u_filename = 'iptv_'+str(int(now))+'_.m3u'
+	#iptvfile = os.path.join(addoncachefolder,m3u_filename)
+	#return
+	#xbmcgui.Dialog().ok(iptvURL,m3u_text)
+	"""
+	response.close()
+	chunks_count = filesize/MegaByte
+	def get_chunk(start):
+		headers = {'Range':'bytes=%s-%s'%(start,start+MegaByte)}
+		response = requests.get(iptvURL,headers=headers)
+		chunk = response.content
+		return chunk
+	chunk = get_chunk(0)
+	xbmcgui.Dialog().ok('',str(len(chunk)))
+	mythread = CustomThread()
+	for i in chunks_count:
+		mythread.start_new_thread(i,get_chunk,i*MegaByte)
+	count = 0
+	while count<=chunks_count:
+		time.sleep(1000)
+		count = len(mythread.finishedLIST)
+		if pDialog.iscanceled(): return
+		pDialog.update(0+int(35*count/chunks_count),'جلب الملف الرئيسي:- الجزء رقم',str(count)+'/'+str(chunks_count)+' MB')
+	#mythread.wait_finishing_all_threads()
+	for id in chunks_count:
+		chunk = mythread.resultsDICT[id]
+		m3u_text = m3u_text+chunk
+	"""
 	if pDialog.iscanceled(): return
 	pDialog.update(35,'جلب الملفات الثانوية:- الملف رقم','1/3')
 	m3u_text = m3u_text.replace('"tvg-','" tvg-')
@@ -487,6 +495,7 @@ def CREATE_STREAMS(ask_dialog=True):
 	m3u_text = m3u_text.replace('ّ','').replace('ِ','').replace('ٍ','').replace('ْ','')
 	m3u_text = m3u_text.replace('group-title=','group=')
 	m3u_text = m3u_text.replace('tvg-','')
+	#m3u_text = m3u_text.replace('group="AR | ISLAMIC"','group=""')
 	username = settings.getSetting('iptv.username')
 	password = settings.getSetting('iptv.password')
 	server = settings.getSetting('iptv.server')
@@ -520,20 +529,21 @@ def CREATE_STREAMS(ask_dialog=True):
 	length = len(lines)
 	i = 0
 	for line in lines:
+		group,title,type = '','',''
+		dict = {}
 		i = i+1
 		if pDialog.iscanceled(): return
 		pDialog.update(50+int(25*i/length),'قراءة الملفات الجديدة:- الفيديو رقم',str(i)+'/'+str(length))
 		line = line.replace('\r','').replace('\n','')
 		line,url = line.rsplit('http',1)
 		url = 'http'+url
-		try: 
+		try:
 			line,title = line.rsplit('",',1)
 			line = line+'"'
 		except:
 			#xbmcgui.Dialog().ok('FAILED','FAILED')
 			try: line,title = line.rsplit('1,',1)
-			except: continue
-		dict = {}
+			except: title = ''
 		dict['url'] = url
 		params = re.findall(' (.*?)="(.*?)"',line,re.DOTALL)
 		for key,value in params:
@@ -541,16 +551,15 @@ def CREATE_STREAMS(ask_dialog=True):
 			dict[key] = value.strip(' ')
 		dict['org_title'] = title
 		if title=='':
-			if 'name' in dict.keys(): title = dict['name']
+			if 'name' in dict.keys() and dict['name']!='': title = dict['name']
 			else: title = '!!__UNKNOWN__!!'
 		dict['title'] = title.strip(' ').replace('  ',' ').replace('  ',' ')
 		if 'logo' in dict.keys():
 			dict['img'] = dict['logo']
 			del dict['logo']
 		else: dict['img'] = ''
-		group = ''
-		if 'group' in dict.keys(): group = dict['group']
-		if group=='': group = '!!__UNKNOWN__!!'
+		if 'group' in dict.keys() and dict['group']!='': group = dict['group']
+		else: group = '!!__UNKNOWN__!!'
 		dict['org_group'] = group
 		videofiletype = re.findall('(\.avi|\.mp4|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url.lower()+'&&',re.DOTALL|re.IGNORECASE)
 		if videofiletype or '__IPTVSeries__' in group or '__MOVIES__' in group:
@@ -564,9 +573,11 @@ def CREATE_STREAMS(ask_dialog=True):
 			if group=='': type = type+'_UNKNOWN'
 			if title in live_epg_channels: type = type+'_EPG'
 			if title in live_archived_channels: type = type+'_ARCHIVED'
+		#LOG_THIS('NOTICE','EMAD 2222  .  '+str(i*2)+'  .  '+group)
 		dict['type'] = type
 		group = group.strip(' ').replace('  ',' ').replace('  ',' ').upper()
-		if type=='VOD_UNKNOWN': group = '!!__UNKNOWN__!!'
+		if type=='LIVE_UNKNOWN': group = '!!__UNKNOWN__!!'
+		elif type=='VOD_UNKNOWN': group = '!!__UNKNOWN__!!'
 		elif type=='VOD_SERIES':
 			series_title = re.findall('(.*?) [Ss]\d+ +[Ee]\d+',dict['title'],re.DOTALL)
 			if series_title: group = group+'__IPTVSeries__'+series_title[0]
@@ -578,8 +589,10 @@ def CREATE_STREAMS(ask_dialog=True):
 		title = dict['title']
 		if '\u' in title.lower(): title = title.decode('unicode_escape')
 		title = CLEAN_NAME(title)
-		country = SPLIT_NAME(title)
-		language = SPLIT_NAME(group)
+		try: country = SPLIT_NAME(title)
+		except: country = '!!__UNKNOWN__!!'
+		try: language = SPLIT_NAME(group)
+		except: language = '!!__UNKNOWN__!!'
 		dict['title'] = title.upper()
 		dict['country'] = country.upper()
 		dict['language'] = language.upper()
@@ -596,7 +609,8 @@ def CREATE_STREAMS(ask_dialog=True):
 			'LIVE_ORIGINAL_GROUPED','VOD_ORIGINAL_GROUPED','LIVE_FROM_NAME_SORTED','VOD_FROM_NAME_SORTED',
 			'LIVE_GROUPED_SORTED','LIVE_UNKNOWN','VOD_MOVIES_GROUPED_SORTED','VOD_SERIES_GROUPED_SORTED',
 			'VOD_UNKNOWN_GROUPED_SORTED','DUMMY','LIVE_FROM_GROUP_SORTED','VOD_FROM_GROUP_SORTED',
-			'LIVE_ARCHIVED_GROUPED_SORTED','LIVE_EPG_GROUPED_SORTED','LIVE_TIMESHIFT_GROUPED_SORTED']
+			'LIVE_ARCHIVED_GROUPED_SORTED','LIVE_EPG_GROUPED_SORTED','LIVE_TIMESHIFT_GROUPED_SORTED',
+			'LIVE_UNKNOWN_SORTED']
 	for type in types: grouped_streams[type] = []
 	#LOG_THIS('NOTICE','EMAD 555 CREATE STREAMS START creating 1st STREAMS dictionary')
 	for dict in streams_sorted:
@@ -639,10 +653,17 @@ def CREATE_STREAMS(ask_dialog=True):
 	DELETE_IPTV_FILES(False)
 	length = len(types)
 	i = 0
+	t1 = time.time()
+	chunksCount = len(types)
 	for TYPE in types:
 		i = i+1
 		if pDialog.iscanceled(): return
-		pDialog.update(85+int(15*i/length),'تخزين الملفات:- الملف رقم',str(i)+'/'+str(length))
+		t2 = time.time()
+		timeElapsed = t2-t1
+		chunkTime = timeElapsed/i
+		timeTotal = chunkTime*(chunksCount+1)
+		timeRemaining = timeTotal-timeElapsed
+		pDialog.update(85+int(15*i/length),'تخزين الملفات:- الملف رقم','وقت متبقي: '+time.strftime("%H:%M:%S",time.gmtime(timeRemaining))+'      '+str(i)+'/'+str(length))
 		WRITE_TO_SQL3('IPTV_STREAMS',TYPE,grouped_streams[TYPE],PERMANENT_CACHE)
 	#streams = READ_FROM_SQL3('IPTV_STREAMS','LIVE_GROUPED')
 	#for dict in streams:
@@ -658,7 +679,9 @@ def DELETE_IPTV_FILES(show=True):
 		yes = xbmcgui.Dialog().yesno('مسح ملفات IPTV','تستطيع في أي وقت الدخول إلى قائمة IPTV وجلب ملفات IPTV جديدة .. هل تريد الآن مسح الملفات القديمة المخزنة في البرنامج ؟!','','','كلا','نعم')
 		if not yes: return
 	else: yes = False
-	if isIPTVFiles(False): os.remove(dummyiptvfile)
+	if isIPTVFiles(False):
+		os.remove(dummyiptvfile)
+		os.remove(fulliptvfile)
 	DELETE_FROM_SQL3('IPTV_ITEMS')
 	DELETE_FROM_SQL3('IPTV_GROUPS')
 	DELETE_FROM_SQL3('IPTV_STREAMS')

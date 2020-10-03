@@ -574,6 +574,11 @@ class MyHTTPSHandler(urllib2.HTTPSHandler):
 
 
 
+def FREE_GATE_WEBPROXY(url):
+	website:	http://dongtaiwang.com/home_en.php
+	GET:		http://dongtaiwang.com/loc/redirect.php?pm=y&URL=https%3A%2F%2Femadmahdi.pythonanywhere.com
+	Referer:	http://dongtaiwang.com
+	return html
 
 
 

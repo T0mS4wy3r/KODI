@@ -64,8 +64,8 @@ def MENU(website0):
 		name3 = 'سريال ها مرتب حروف الفبا'
 		name4 = 'پخش زنده از اي فيلم كانال'
 		name5 = 'فيلم'
-		addMenuItem('live',menu_name+name4,website0,27)
-		addMenuItem('folder',menu_name+name0,website0,29,'','','____REMEMBERRESULTS_')
+	addMenuItem('live',menu_name+name4,website0,27)
+	addMenuItem('folder',menu_name+name0,website0,29,'','','_REMEMBERRESULTS_')
 	html = openURL_cached(LONG_CACHE,website0+'/home','','','','IFILM-MENU-1st')
 	#html = openURL_cached(LONG_CACHE,website0+'/home/index','','','','IFILM-MENU-1st')
 	html_blocks=re.findall('button-menu(.*?)nav',html,re.DOTALL)
@@ -283,13 +283,10 @@ def LIVE(url):
 	return
 
 def SEARCH(url,search=''):
-	if '___' in search:
-		search = search.split('___')[0]
-		category = False
-	else: category = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
-	if url=='' and category:
+	if url=='' and showdialogs:
 		urlLIST = [ website0a , website0b , website0c , website0d ]
 		nameLIST = [ 'عربي' , 'English' , 'فارسى' , 'فارسى 2' ]
 		selection = xbmcgui.Dialog().select('اختر اللغة المناسبة:', nameLIST)

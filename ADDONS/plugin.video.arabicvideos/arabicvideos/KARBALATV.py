@@ -15,7 +15,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',329,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',329,'','','_REMEMBERRESULTS_')
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	response = openURL_requests_cached(LONG_CACHE,'GET',website0a+'/video.php','',headers,'','','KARBALATV-MENU-1st')
 	html = response.content
@@ -69,7 +69,7 @@ def PLAY(url):
 
 def SEARCH(search):
 	#search = 'مختار'
-	if '___' in search: search = search.split('___')[0]
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')

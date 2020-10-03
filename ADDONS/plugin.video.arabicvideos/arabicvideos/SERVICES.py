@@ -6,7 +6,8 @@ script_name='SERVICES'
 
 def MAIN(mode,text=''):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
-	if   mode==  2: SEND_MESSAGE(text)
+	if   mode==  0: ARABIC_KEYBOARD(text)
+	elif mode==  2: SEND_MESSAGE(text)
 	elif mode==  3: DMCA()
 	elif mode==  4: HTTPS_TEST()
 	elif mode==  5: INPUTSTREAM_ADAPTIVE_SETTINGS()
@@ -46,7 +47,30 @@ def MAIN(mode,text=''):
 	elif mode==340: SHOW_LOGFILE()
 	return
 
-def IGNORE_LOGLINE(line):
+def ARABIC_KEYBOARD(text):
+	if text!='':
+		text = mixARABIC(text)
+		text = text.decode('utf8').encode('utf8')
+		window_id = 10103
+		#xbmc.log('EMAD222::   window_id: ['+str(window_id)+']', level=xbmc.LOGNOTICE)
+		window = xbmcgui.Window(window_id)
+		window.getControl(311).setLabel(text)
+		#xbmc.log('EMAD333::   text: ['+text+']', level=xbmc.LOGNOTICE)
+		#dialog = xbmcgui.WindowXMLDialog('DialogKeyboard22.xml', xbmcaddon.Addon().getAddonInfo('path').decode('utf-8'),'Default','720p')
+		#dialog.show()
+		#dialog.getControl(99991).setPosition(0,0)
+		#dialog.getControl(311).setLabel(text)
+		#dialog.getControl(5).setText(logfileNEW)
+		#width = xbmcgui.getScreenWidth()
+		#height = xbmcgui.getScreenHeight()
+		#resolution = (0.0+width)/height
+		#dialog.getControl(5).setWidth(width-180)
+		#dialog.getControl(5).setHeight(height-180)
+		#dialog.doModal()
+		#del dialog
+	return
+
+def CHECK_LOGLINE(line):
 	if "extension '' is not currently supported" in line: return True
 	if 'Checking for Malicious scripts' in line: return True
 	#if 'Previous line repeats' in line: return True
@@ -57,29 +81,57 @@ def IGNORE_LOGLINE(line):
 	return False
 
 def SHOW_LOGFILE():
+	new = xbmcgui.Dialog().yesno('حدد الملف المطلوب','أختر الملف الذي تريد عرضه أو قراءته . الملف القديم هو سجل الأخطاء والاستخدام ولكنه السجل الذي كان يستخدمه كودي قبل آخر إطفاء لبرنامج كودي . والملف الحالي هو السجل الذي يستخدمه كودي الآن','','','الملف القديم','الملف الحالي')
+	if new: logfilename = logfile
+	else: logfilename = oldlogfile
 	dataNEW,counts = [],0
-	f = open(logfile,'rb')
+	f = open(logfilename,'rb')
 	size = os.path.getsize(logfile)
-	if size>60000: f.seek(-60000, os.SEEK_END)
+	if size>120000: f.seek(-120000,os.SEEK_END)
 	data = f.readlines()
-	for line in reversed(data):
-		line = line.replace('============================================================================================_','=-+0+-=')
-		ignore = IGNORE_LOGLINE(line)
+	f.close()
+	#xbmcgui.Dialog().ok(str(size),str(len(data)))
+	limit = 74
+	for line in reversed(data):  # reversed needed to get the last 100 lines in the log file
+		line = line.replace('============================================================================================_','=========================')
+		#line = '0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz'
+		ignore = CHECK_LOGLINE(line)
 		if not ignore:
-			#line = '0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz'
-			string = ''
-			size = 55
-			for i in range(1+len(line)/size):
-				string = string+line[i*size:i*size+size]+'\n'
-			dataNEW.append(string)
+			#LOG_THIS('NOTICE',line)
+			line = line.replace('    ','')
+			count = 1+len(line)/limit
+			text = ''
+			for i in range(count): text = text+line[i*limit+i:i*limit+i+limit+1]+' '
+			line_start = re.findall('^\d+-\d+-\d+ \d+:\d+:\d+\.\d+ T:\d+',text)
+			if not line_start: line_start = re.findall('^\d+:\d+:\d+\.\d+ T:\d+',text)
+			if line_start: text = text.replace(line_start[0],'[COLOR FFC89008]'+line_start[0]+'[/COLOR]')
+			dataNEW.append(text)
 			counts += 1
-			if counts==100: break
-	#dataNEW = reversed(dataNEW)
+			if counts==200: break
+	dataNEW = reversed(dataNEW)   # reversed needed to get the last 100 lines in the log file
 	logfileNEW = ''.join(dataNEW)
-	logfileNEW = logfileNEW.replace('\n\n\n','')
-	logfileNEW = logfileNEW.replace('ERROR:','[COLOR FFFFFF00]ERROR:[/COLOR]')
-	logfileNEW = logfileNEW.replace('=-+0+-=','[COLOR FFFFFF00]==============================[/COLOR]')
-	xbmcgui.Dialog().textviewer('آخر أسطر سجل الأخطاء والاستخدام',logfileNEW)
+	logfileNEW = logfileNEW.replace('    ','')
+	logfileNEW = logfileNEW.replace('ERROR:','[COLOR FFFF0000]ERROR:[/COLOR]')
+	logfileNEW = logfileNEW.replace('=========================','[COLOR FFFFFF00]=========================[/COLOR]')
+	#logfileNEW = logfileNEW.replace('\r','').replace('\n\n','\n').replace('\n\n','\n')
+	#logfileNEW = logfileNEW.replace('\n','%').replace('\r','$')
+	#testing = '00 11 22 33 44 55 66 77 88 99 00 11 22 33 44 55 66 77 88 99 00 11 22 33 44 55 66 77 88 99'
+	#testing = '0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz'
+	#xbmcgui.Dialog().textviewer('آخر أسطر سجل الأخطاء والاستخدام',logfileNEW)
+	#dialog = xbmcgui.WindowXML('Font22.xml',addonfolder)
+	#dialog.show()
+	dialog = xbmcgui.WindowXMLDialog('DialogTextViewer22.xml',addonfolder)
+	dialog.show()
+	dialog.getControl(99991).setPosition(0,0)
+	dialog.getControl(1).setLabel('آخر أسطر سجل الأخطاء والاستخدام')
+	dialog.getControl(5).setText(logfileNEW)
+	#width = xbmcgui.getScreenWidth()
+	#height = xbmcgui.getScreenHeight()
+	#resolution = (0.0+width)/height
+	#dialog.getControl(5).setWidth(width-180)
+	#dialog.getControl(5).setHeight(height-180)
+	dialog.doModal()
+	del dialog
 	return
 
 def CHANGELOG():
@@ -88,7 +140,7 @@ def CHANGELOG():
 	versions = re.findall('(v\d.*?)[\n\r]',changelog)
 	for line in versions:
 		changelog = changelog.replace(line,'[COLOR FFFFFF00]'+line+'[/COLOR]')
-	xbmcgui.Dialog().textviewer('التغببرات الاخيرة في البرامج',changelog)
+	xbmcgui.Dialog().textviewer('التغييرات الأخيرة في البرامج',changelog)
 	return
 
 def KODI_REMOTE_CONTROL():
@@ -104,9 +156,9 @@ def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
 	else: problem = False
 	sendit,html = 1,''
 	if showDialogs:
-		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة الى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
+		sendit = xbmcgui.Dialog().yesno('هل ترسل هذه الرسالة إلى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
 		if sendit==0: 
-			xbmcgui.Dialog().ok('رسالة من المبرمج','تم الغاء الارسال بناء على طلبك')
+			xbmcgui.Dialog().ok('رسالة من المبرمج','تم إلغاء الإرسال بناء على طلبك')
 			return ''
 	if sendit==1:
 		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
@@ -131,7 +183,7 @@ def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
 			if size>600000: f.seek(-600000, os.SEEK_END)
 			data = f.readlines()
 			for line in reversed(data):
-				ignore = IGNORE_LOGLINE(line)
+				ignore = CHECK_LOGLINE(line)
 				if not ignore:
 					dataNEW.append(line)
 					counts += 1
@@ -142,7 +194,7 @@ def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
 			#logfileNEW = logfileNEW[:102400]
 			#logfileNEW = quote(logfileNEW)
 			logfileNEW = base64.b64encode(logfileNEW)
-		url = WEBSITES['LIVETV'][2]
+		url = WEBSITES['EMAD'][2]
 		payload = { 'subject' : subject , 'message' : message , 'logfile' : logfileNEW }
 		#logfileNEW = base64.b64decode(logfileNEW)
 		#with open('S:\\00emad.log','w') as f: f.write(logfileNEW)
@@ -488,7 +540,7 @@ def ANALYTICS_REPORT():
 	#BUSY_DIALOG('start')
 	payload,usageDICT,message1,message2,message3,message4 = {'a':'a'},{},'','','',''
 	#data = urllib.urlencode(payload)
-	response = openURL_requests_cached(NO_CACHE,'POST',WEBSITES['LIVETV'][1],payload,'','','','SERVICES-ANALYTICS_REPORT-1st')
+	response = openURL_requests_cached(SHORT_CACHE,'POST',WEBSITES['EMAD'][1],payload,'','','','SERVICES-ANALYTICS_REPORT-1st')
 	html = response.content
 	#xbmcgui.Dialog().ok('',html)
 	resultsLIST = eval(html)

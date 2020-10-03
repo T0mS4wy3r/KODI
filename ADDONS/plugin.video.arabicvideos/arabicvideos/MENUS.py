@@ -141,6 +141,7 @@ def ANSWERS_MENU():
 	return
 
 def GLOBAL_SEARCH_MENU(search='',show=True):
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   .  Global Search For: [ '+search+' ]')

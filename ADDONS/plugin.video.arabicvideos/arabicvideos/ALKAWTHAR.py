@@ -19,7 +19,7 @@ def MAIN(mode,url,page,text):
 
 def MENU(website=''):
 	addMenuItem('live',menu_name+'البث الحي لقناة الكوثر','',135)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',139,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',139,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/category/543',132,'','1')
 	addMenuItem('folder',website+'___'+menu_name+'الافلام',website0a+'/category/628',132,'','1')
 	addMenuItem('folder',website+'___'+menu_name+'برامج الصغار والشباب',website0a+'/category/517',132,'','1')
@@ -190,7 +190,7 @@ def LIVE():
 	return
 
 def SEARCH(search,url=''):
-	if '___' in search: search = search.split('___')[0]
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if url=='':
 		#search = 'man'
 		if search=='': search = KEYBOARD()

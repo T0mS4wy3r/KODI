@@ -24,7 +24,7 @@ def TERMINATED_CHANGED():
 	return
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',189,'','','____REMEMBERRESULTS_')
+	addMenuItem('folder',menu_name+'بحث في الموقع','',189,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'بوكس اوفيس موفيز لاند',website0a,181,'','','box-office')
 	addMenuItem('folder',website+'___'+menu_name+'أحدث الافلام',website0a,181,'','','latest-movies')
 	addMenuItem('folder',website+'___'+menu_name+'تليفزيون موفيز لاند',website0a,181,'','','tv')
@@ -213,10 +213,7 @@ def PLAY(url):
 	return
 
 def SEARCH(search):
-	if '___' in search:
-		search = search.split('___')[0]
-		category = False
-	else: category = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')

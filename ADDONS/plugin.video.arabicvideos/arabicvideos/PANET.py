@@ -22,7 +22,7 @@ def MAIN(mode,url,page,text):
 	return results
 
 def MENU(website=''):
-	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39,'','','____REMEMBERRESULTS_')
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',39,'','','_REMEMBERRESULTS_')
 	addMenuItem('live',website+menu_name+'قناة هلا من موقع بانيت','',38)
 	addMenuItem('folder',website+'___'+menu_name+'مسلسلات وبرامج',website0a+'/series',31)
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات الاكثر مشاهدة',website0a+'/series',37)
@@ -145,15 +145,12 @@ def PLAY(url):
 
 def SEARCH(search,page):
 	#xbmcgui.Dialog().ok(search,page)
-	if '___' in search:
-		search = search.split('___')[0]
-		category = False
-	else: category = True
+	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')
 	typeLIST = [ 'movies' , 'series']
-	if category:
+	if showdialogs:
 		if page=='':
 			page = '1'
 			nameLIST = [ 'بحث عن افلام' , 'بحث عن مسلسلات']
