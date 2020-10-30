@@ -8,6 +8,14 @@ These addons modified to suit my personal needs
 <br />
 <br />
 <br />
+
+<a href="https://github.com/emadmahdi/KODI/tree/master/INSTALL"><h2>ملفات التثبيت &nbsp; Installation files</h2></a>
+
+<a href="https://github.com/emadmahdi/KODI/tree/master/INSTALL"><h3>طريقة التثبيت مختصرة ... قم بتثبيت برنامج كودي من المتجر على جهازك ... ثم اضغط على هذا الرابط لكي تبدأ بالتحميل إلى جهازك "الملف المضغوط لمخزن عماد" ... ثم شغل كودي واذهب إلى قسم "إعدادات إضافات كودي" ... ثم اذهب إلى قسم "تثبيت الإضافات باستخدام الملفات المضغوطة" ... ثم قم بتثبيت الملف المضغوط لمخزن عماد ... ثم اذهب إلى قسم "تثبيت الإضافات باستخدام المخازن" ... ثم اذهب إلى قسم "مخزن عماد" ... ثم اذهب إلى قسم "تثبيت إضافات الفيديوهات" ... ثم قم بتثبيت برنامج "عماد للفيديوهات العربية"</a>
+
+
+<br />
+<br />
 <h2>1. برنامج الفيديوهات العربية <br />
 &nbsp; "EMAD Arabic Videos": an addon for Kodi</h2>
 <h3>&nbsp; ( plugin.video.arabicvideos )</h3>
