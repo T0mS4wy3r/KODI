@@ -1,6 +1,10 @@
 ﻿
+v5.2.0	2020-10-31
+Added gitee as a backup repository
+
+
 v5.1.0	2020-10-30
-Added backup repository using pythonanywhere
+Added pythonanywhere as a backup repository
 
 
 v5.0.2	2020-06-27
