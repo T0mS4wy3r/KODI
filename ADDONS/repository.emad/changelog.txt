@@ -1,4 +1,8 @@
 ﻿
+v5.3.0	2020-11-01
+Added KODI2 in github & gitee
+
+
 v5.2.0	2020-10-31
 Added gitee as a backup repository
 

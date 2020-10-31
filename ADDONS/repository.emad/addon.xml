@@ -1,4 +1,4 @@
-<addon id="repository.emad" name="EMAD Repository" version="5.2.0" provider-name="EMAD MAHDI">
+<addon id="repository.emad" name="EMAD Repository" version="5.3.0" provider-name="EMAD MAHDI">
 	<extension point="xbmc.addon.repository" name="EMAD Repository">
 		<dir minversion="19.0.0">
 			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/ADDONS19/addons19.xml</info>
@@ -16,14 +16,19 @@
 			<datadir zip="true">https://gitee.com/emadmahdi/KODI/raw/master/ADDONS/</datadir>
 		</dir>
 		<dir>
-			<info compressed="false">https://emadmahdi.pythonanywhere.com/KODI/addons.xml</info>
-			<checksum>https://emadmahdi.pythonanywhere.com/KODI/addons.xml.md5</checksum>
-			<datadir zip="true">http://emadmahdi.pythonanywhere.com/KODI/</datadir>
-		</dir>
-		<dir>
 			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml</info>
 			<checksum>https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml.md5</checksum>
 			<datadir zip="true">https://github.com/emadmahdi/KODI/raw/master/ADDONS/</datadir>
+		</dir>
+		<dir>
+			<info compressed="false">https://gitee.com/emadmahdi/KODI2/raw/master/ADDONS/addons.xml</info>
+			<checksum>https://gitee.com/emadmahdi/KODI2/raw/master/ADDONS/addons.xml.md5</checksum>
+			<datadir zip="true">https://gitee.com/emadmahdi/KODI2/raw/master/ADDONS/</datadir>
+		</dir>
+		<dir>
+			<info compressed="false">https://github.com/emadmahdi/KODI2/raw/master/ADDONS/addons.xml</info>
+			<checksum>https://github.com/emadmahdi/KODI2/raw/master/ADDONS/addons.xml.md5</checksum>
+			<datadir zip="true">https://github.com/emadmahdi/KODI2/raw/master/ADDONS/</datadir>
 		</dir>
 		<dir>
 			<info compressed="false">https://github.com/emadmahdi/KODI/raw/master/addons.xml</info>
@@ -34,6 +39,11 @@
 			<info compressed="false">https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/addons.xml</info>
 			<checksum>https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/addons.xml.md5</checksum>
 			<datadir zip="true">https://raw.githubusercontent.com/emadmahdi/KODI/master/ZIPS/</datadir>
+		</dir>
+		<dir>
+			<info compressed="false">https://emadmahdi.pythonanywhere.com/KODI/addons.xml</info>
+			<checksum>https://emadmahdi.pythonanywhere.com/KODI/addons.xml.md5</checksum>
+			<datadir zip="true">http://emadmahdi.pythonanywhere.com/KODI/</datadir>
 		</dir>
 		<dir>
 			<info compressed="false">https://raw.githubusercontent.com/hmemar/husham.com/master/repository/addons.xml</info>
