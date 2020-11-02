@@ -158,7 +158,7 @@ def MAIN():
 		conn = sqlite3.connect(dbfile)
 		conn.close()
 		import SERVICES
-		SERVICES.KODI_EMAD_WEBSITE()
+		SERVICES.KODIEMAD_WEBSITE()
 		XBMCGUI_DIALOG_OK('برنامج عماد للفيديوهات العربية','تم تثبيت أو تحديث الإصدار الجديد لبرنامج عماد للفيديوهات العربية . أو تم مسح كاش البرنامج . الآن سيقوم البرنامج ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
 		ENABLE_MPD(False)
 		ENABLE_RTMP(False)
