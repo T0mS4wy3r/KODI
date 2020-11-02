@@ -42,7 +42,7 @@ def MENU(website=''):
 	return html
 
 def TITLES(url,key=''):
-	#xbmcgui.Dialog().ok(url,html)
+	#XBMCGUI_DIALOG_OK(url,html)
 	url = unquote(url)
 	if 'الحلقة' in url:
 		response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','','','','CIMANOW-TITLES-1st')
@@ -52,7 +52,7 @@ def TITLES(url,key=''):
 		links = re.findall('href="(.*?)"',block,re.DOTALL)
 		url = links[2]
 		url = unquote(url)
-		#xbmcgui.Dialog().ok(url,'')
+		#XBMCGUI_DIALOG_OK(url,'')
 	if 'filter.php' in url:
 		headers = {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
 		data = {'key':key}
@@ -85,7 +85,7 @@ def TITLES(url,key=''):
 
 def PLAY(url):
 	linkLIST = []
-	#xbmcgui.Dialog().ok(url,'')
+	#XBMCGUI_DIALOG_OK(url,'')
 	#response = openURL_requests_cached(SHORT_CACHE,'GET',url,'','','','','CIMANOW-PLAY-1st')
 	#html = response.content
 	#url2 = re.findall('redirect=(.*?)"',html,re.DOTALL)
@@ -115,10 +115,10 @@ def PLAY(url):
 		else: quality = ''
 		link2 = link2 = link+'?named='+title+'__download'+quality
 		linkLIST.append(link2)
-	#selection = xbmcgui.Dialog().select('أختر البحث المناسب',linkLIST)
+	#selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب',linkLIST)
 	#LOG_THIS('NOTICE',str(linkLIST))
 	if len(linkLIST)==0:
-		xbmcgui.Dialog().ok('رسالة من المبرمج','الرابط ليس فيه فيديو')
+		XBMCGUI_DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')

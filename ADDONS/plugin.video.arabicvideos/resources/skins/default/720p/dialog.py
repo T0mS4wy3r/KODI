@@ -14,7 +14,7 @@ dialog.getControl(5).setText(text2)
 
 height = xbmcgui.getScreenHeight()
 width = xbmcgui.getScreenWidth()
-#xbmcgui.Dialog().ok(str(height),str(width))
+#XBMCGUI_DIALOG_OK(str(height),str(width))
 
 dialog.getControl(99991).setPosition(0,0)
 
@@ -46,7 +46,7 @@ del dialog
 """
 #height = xbmc.getInfoLabel('System.ScreenHeight')
 #width = xbmc.getInfoLabel('System.ScreenWidth')
-#xbmcgui.Dialog().ok(str(height),str(width))
+#XBMCGUI_DIALOG_OK(str(height),str(width))
 
 
 #dialog.getControl(99991).setWidth(width)
@@ -71,12 +71,12 @@ from LIBRARY import *
 
 #import TEST
 
-#xbmcgui.Dialog().ok(str('__init__'),str(''))
+#XBMCGUI_DIALOG_OK(str('__init__'),str(''))
 
 #window = xbmcgui.WindowXMLDialog('DialogKeyboard22.xml',addonfolder,'default','720p')
 
 #id = xbmcgui.getCurrentWindowId()
-#xbmcgui.Dialog().ok('window id',str(id))
+#XBMCGUI_DIALOG_OK('window id',str(id))
 
 
 
@@ -90,7 +90,7 @@ class MyWindow(xbmcgui.WindowXMLDialog):
 
 	def onClick(self, controlId):
 		LOG_THIS('NOTICE','EMAD EMAD KEY: '+str(controlId))
-		#xbmcgui.Dialog().ok("test", controlId.__str__())
+		#XBMCGUI_DIALOG_OK("test", controlId.__str__())
 		if controlId == 300:
 			self.close()
 
@@ -129,7 +129,7 @@ class MyWindow(xbmcgui.Window):
 
     def onClick( self, controlId ):            
         LOG_THIS('NOTICE','EMAD EMAD '+str(controlId)+': '+str(controlId.__str__()))
-		#xbmcgui.Dialog().ok("test", controlId.__str__())
+		#XBMCGUI_DIALOG_OK("test", controlId.__str__())
 
 window = MyWindow()
 window.show()
@@ -176,7 +176,7 @@ win2 = win.getProperty('status')
 
 new1 = window.getProperty('status')
 
-xbmcgui.Dialog().ok(new1,win2)
+XBMCGUI_DIALOG_OK(new1,win2)
 """
 
 #new1 = window.getControl(300).getLabel()
@@ -197,28 +197,28 @@ for i in range(10):
 	status = window.getControl(300).getLabel()
 	LOG_THIS('NOTICE','EMAD EMAD '+str(status))
 	if status!='running':
-		xbmcgui.Dialog().ok('worked','')
+		XBMCGUI_DIALOG_OK('worked','')
 		break
 	#if window.isConfirmed(): text = window.getText()
 	time.sleep(1)
 """
 
 #id = xbmcgui.getCurrentWindowId()
-#xbmcgui.Dialog().ok('window id',str(id))
+#XBMCGUI_DIALOG_OK('window id',str(id))
 
 
 #LOG_THIS('NOTICE','EMAD EMAD WIDNOW EXIT')
 
 #text = window.getControl(312).getLabel()
 
-#xbmcgui.Dialog().ok('failed','')
+#XBMCGUI_DIALOG_OK('failed','')
 
 
 
 #window = xbmcgui.WindowXMLDialog('DialogKeyboard22.xml',addonfolder,'default','720p')
 
 #id = xbmcgui.getCurrentWindowId()
-#xbmcgui.Dialog().ok('window id',str(id))
+#XBMCGUI_DIALOG_OK('window id',str(id))
 
 
 
@@ -246,7 +246,7 @@ for i in range(10):
 class MyWindow(xbmcgui.WindowXMLDialog):
 	def onClick(self, controlId):
 		LOG_THIS('NOTICE','EMAD EMAD KEY: '+str(controlId))
-		#xbmcgui.Dialog().ok("test", controlId.__str__())
+		#XBMCGUI_DIALOG_OK("test", controlId.__str__())
 		if controlId == 300: self.close()
 
 window = MyWindow('',addonfolder,'default','720p')
@@ -296,7 +296,7 @@ class MyWindow(xbmcgui.Window):
 
     def onClick( self, controlId ):            
         LOG_THIS('NOTICE','EMAD EMAD '+str(controlId)+': '+str(controlId.__str__()))
-		#xbmcgui.Dialog().ok("test", controlId.__str__())
+		#XBMCGUI_DIALOG_OK("test", controlId.__str__())
 
 window = MyWindow()
 window.show()
@@ -343,7 +343,7 @@ win2 = win.getProperty('status')
 
 new1 = window.getProperty('status')
 
-xbmcgui.Dialog().ok(new1,win2)
+XBMCGUI_DIALOG_OK(new1,win2)
 """
 
 #new1 = window.getControl(300).getLabel()
@@ -364,21 +364,21 @@ for i in range(10):
 	status = window.getControl(300).getLabel()
 	LOG_THIS('NOTICE','EMAD EMAD '+str(status))
 	if status!='running':
-		xbmcgui.Dialog().ok('worked','')
+		XBMCGUI_DIALOG_OK('worked','')
 		break
 	#if window.isConfirmed(): text = window.getText()
 	time.sleep(1)
 """
 
 #id = xbmcgui.getCurrentWindowId()
-#xbmcgui.Dialog().ok('window id',str(id))
+#XBMCGUI_DIALOG_OK('window id',str(id))
 
 
 #LOG_THIS('NOTICE','EMAD EMAD WIDNOW EXIT')
 
 #text = window.getControl(312).getLabel()
 
-#xbmcgui.Dialog().ok('failed','')
+#XBMCGUI_DIALOG_OK('failed','')
 
 
 

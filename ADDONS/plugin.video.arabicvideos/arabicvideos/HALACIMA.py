@@ -21,7 +21,7 @@ def MAIN(mode,url,page,text):
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
-	xbmcgui.Dialog().ok('رسالة من المبرمج',message)
+	XBMCGUI_DIALOG_OK('رسالة من المبرمج',message)
 	return
 
 def MENU(website=''):
@@ -34,7 +34,7 @@ def MENU(website=''):
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
 	block = html_blocks[1]
 	items = re.findall('<a href="(.*?)".*?>(.*?)<',block,re.DOTALL)
-	#xbmcgui.Dialog().ok(block,str(items))
+	#XBMCGUI_DIALOG_OK(block,str(items))
 	ignoreLIST = ['مسلسلات انمي']
 	for link,title in items:
 		title = title.strip(' ')
@@ -158,7 +158,7 @@ def SEARCH(search):
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	ITEMS('/category/',html)
 	#if 'art_list' in html: ITEMS('/category/',html)
-	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
+	#else: XBMCGUI_DIALOG_OK('no results','لا توجد نتائج للبحث')
 	return
 
 

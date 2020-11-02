@@ -34,7 +34,7 @@ def MENU(website=''):
 
 def CATEGORIES(url,select=''):
 	type = url.split('/')[3]
-	#xbmcgui.Dialog().ok(type, url)
+	#XBMCGUI_DIALOG_OK(type, url)
 	if type=='series':
 		html = openURL_cached(LONG_CACHE,url,'',headers,'','PANET-CATEGORIES-1st')
 		if select=='3':
@@ -54,7 +54,7 @@ def CATEGORIES(url,select=''):
 				url = website0a + link
 				title = title.strip(' ')
 				addMenuItem('folder',menu_name+title,url,32,img)
-		#xbmcgui.Dialog().ok(url,'')
+		#XBMCGUI_DIALOG_OK(url,'')
 	if type=='movies':
 		html = openURL_cached(LONG_CACHE,url,'',headers,'','PANET-CATEGORIES-2nd')
 		if select=='1':
@@ -76,7 +76,7 @@ def CATEGORIES(url,select=''):
 	return
 
 def ITEMS(url):
-	#xbmcgui.Dialog().ok(url,'')
+	#XBMCGUI_DIALOG_OK(url,'')
 	type = url.split('/')[3]
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','PANET-ITEMS-1st')
 	if 'home' in url: type='episodes'
@@ -98,7 +98,7 @@ def ITEMS(url):
 			addMenuItem('video',menu_name+name,url,33,img)
 	if type=='episodes':
 		page = url.split('/')[-1]
-		#xbmcgui.Dialog().ok(url,'')
+		#XBMCGUI_DIALOG_OK(url,'')
 		if page=='1':
 			html_blocks = re.findall('advBarMars(.+?)advBarMars',html,re.DOTALL)
 			block = html_blocks[0]
@@ -129,7 +129,7 @@ def ITEMS(url):
 	return
 
 def PLAY(url):
-	#xbmcgui.Dialog().ok(url,'')
+	#XBMCGUI_DIALOG_OK(url,'')
 	if 'series' in url:
 		url = website0a + '/series/v1/seriesLink/' + url.split('/')[-1]
 		html = openURL_cached(SHORT_CACHE,url,'',headers,'','PANET-PLAY-1st')
@@ -144,7 +144,7 @@ def PLAY(url):
 	return
 
 def SEARCH(search,page):
-	#xbmcgui.Dialog().ok(search,page)
+	#XBMCGUI_DIALOG_OK(search,page)
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
@@ -154,7 +154,7 @@ def SEARCH(search,page):
 		if page=='':
 			page = '1'
 			nameLIST = [ 'بحث عن افلام' , 'بحث عن مسلسلات']
-			selection = xbmcgui.Dialog().select('اختر النوع المناسب:', nameLIST)
+			selection = XBMCGUI_DIALOG_SELECT('اختر النوع المناسب:', nameLIST)
 			if selection == -1 : return
 			type = typeLIST[selection]
 		else: page,type = page.split('/')
@@ -177,7 +177,7 @@ def SEARCH(search,page):
 			page2 = str(page2)
 			if page2!=page:
 				addMenuItem('folder','صفحة '+page2,'',39,'',page2+'/'+type,search)
-	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
+	#else: XBMCGUI_DIALOG_OK('no results','لا توجد نتائج للبحث')
 	return
 
 def LIVE():

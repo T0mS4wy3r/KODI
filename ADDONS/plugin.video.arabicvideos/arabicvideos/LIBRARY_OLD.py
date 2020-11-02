@@ -5,7 +5,7 @@ def openURL_OLD(url,data='',headers='',showDialogs=True,source=''):
 	#url = url + '||MyProxyUrl=http://188.166.59.17:8118'
 	proxies,timeout = {},40
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
-	#xbmcgui.Dialog().ok(url2,'')
+	#XBMCGUI_DIALOG_OK(url2,'')
 	#url2 = quote(url2)
 	html,code,reason,finalURL = None,None,None,url2
 	if dnsurl!=None:
@@ -75,7 +75,7 @@ def openURL_OLD(url,data='',headers='',showDialogs=True,source=''):
 		#xbmc.log(str(url), level=xbmc.LOGNOTICE)
 		#xbmc.log(str(data), level=xbmc.LOGNOTICE)
 		#xbmc.log(str(headers), level=xbmc.LOGNOTICE)
-		#xbmcgui.Dialog().ok(url,'')
+		#XBMCGUI_DIALOG_OK(url,'')
 		#final_url = response.url
 		if 'google-analytics' not in url2:
 			traceback.print_exc(file=sys.stderr)
@@ -122,14 +122,14 @@ def openURL_OLD(url,data='',headers='',showDialogs=True,source=''):
 		"""
 		if 'google-analytics' in url2: send = showDialogs
 		if showDialogs=='yes':
-			xbmcgui.Dialog().ok('خطأ في الاتصال',html)
+			XBMCGUI_DIALOG_OK('خطأ في الاتصال',html)
 			if code==502 or code==7:
-				xbmcgui.Dialog().ok('Website is not available','لا يمكن الوصول الى الموقع والسبب قد يكون من جهازك او من الانترنيت الخاصة بك او من الموقع كونه مغلق للصيانة او التحديث لذا يرجى المحاولة لاحقا')
+				XBMCGUI_DIALOG_OK('Website is not available','لا يمكن الوصول الى الموقع والسبب قد يكون من جهازك او من الانترنيت الخاصة بك او من الموقع كونه مغلق للصيانة او التحديث لذا يرجى المحاولة لاحقا')
 				send = 'no'
 			elif code==404:
-				xbmcgui.Dialog().ok('File not found','الملف غير موجود والسبب غالبا هو من المصدر ومن الموقع الاصلي الذي يغذي هذا البرنامج')
+				XBMCGUI_DIALOG_OK('File not found','الملف غير موجود والسبب غالبا هو من المصدر ومن الموقع الاصلي الذي يغذي هذا البرنامج')
 			if send=='yes':
-				yes = xbmcgui.Dialog().yesno('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
+				yes = XBMCGUI_DIALOG_YESNO('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
 				if yes: message = ' \\n\\n' + KEYBOARD('Write a message   اكتب رسالة')
 		if send=='yes': SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
 		"""
@@ -151,7 +151,7 @@ def openURL_OLD(url,data='',headers='',showDialogs=True,source=''):
 		else:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed Opening URL   Code: [ '+str(code)+' ]   Reason :[ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
 		EXIT_IF_SOURCE(source,code,reason)
-	#xbmcgui.Dialog().ok('',html)
+	#XBMCGUI_DIALOG_OK('',html)
 	return html
 
 def openURL_WEBPROXIES(url,data='',headers='',showDialogs=True,source=''):
@@ -278,14 +278,14 @@ def openURL_requests_cached_OLD(cacheperiod,method,url,data='',headers='',allow_
 			c.execute("INSERT INTO responsecache VALUES (?,?,?,?,?,?,?)",t)
 			conn.commit()
 			conn.close()
-	#xbmcgui.Dialog().notification(message,'')
+	#XBMCGUI_DIALOG_NOTIFICATION(message,'')
 	return response
 
 def openURL_cached_OLD(cacheperiod,url,data='',headers='',showDialogs=True,source=''):
 	#url = url+'||MyProxyUrl=http://41.33.212.68:4145'
 	#cacheperiod = 0
 	#t1 = time.time()
-	#xbmcgui.Dialog().ok(unquote(url),source+'     cache(hours)='+str(cacheperiod/60/60))
+	#XBMCGUI_DIALOG_OK(unquote(url),source+'     cache(hours)='+str(cacheperiod/60/60))
 	#nowTEXT = time.ctime(now)
 	#xbmc.log(LOGGING(script_name)+'   opening url   Source:['+source+']   URL: [ '+url+' ]', level=xbmc.LOGNOTICE)
 	#xbmc.log('WWWW: 1111:', level=xbmc.LOGNOTICE)
@@ -330,7 +330,7 @@ def openURL_cached_OLD(cacheperiod,url,data='',headers='',showDialogs=True,sourc
 			conn.close()
 		#xbmc.log('WWWW: 7777:', level=xbmc.LOGNOTICE)
 	#t2 = time.time()
-	#xbmcgui.Dialog().notification(message,str(int(t2-t1))+' ms')
+	#XBMCGUI_DIALOG_NOTIFICATION(message,str(int(t2-t1))+' ms')
 	#xbmc.log('WWWW: 8888:', level=xbmc.LOGNOTICE)
 	return html
 
@@ -427,7 +427,7 @@ decode('windows-1256')
 """
 t1 = time.time()
 t2 = time.time()
-xbmcgui.Dialog().ok(str(t2-t1), '')
+XBMCGUI_DIALOG_OK(str(t2-t1), '')
 """
 
 
@@ -504,7 +504,7 @@ def CLEAN_EPSIODE_NAME(title):
 		if episode2: title2 = title2.replace(episode2[0],'')
 		else: title2 = title2.replace(episode[0][0]+' '+episode[0][1],'')
 		title2 = title2.strip(' ').replace('  ',' ').replace('  ',' ')
-	#xbmcgui.Dialog().ok(title,title2)
+	#XBMCGUI_DIALOG_OK(title,title2)
 	return title2
 """
 

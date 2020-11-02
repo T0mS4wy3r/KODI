@@ -22,19 +22,19 @@
 		<label>133</label>
 		<label2>32018</label2>
 		<icon>DefaultMusicArtists.png</icon>
-		<action>ActivateWindow(Videos,videodb://musicvideos/artists/,return)</action>
+		<action>ActivateWindow(Music,Artists,return)</action>
 	</shortcut>
 	<shortcut>
 		<label>132</label>
 		<label2>32018</label2>
 		<icon>DefaultMusicAlbums.png</icon>
-		<action>ActivateWindow(Videos,videodb://musicvideos/albums/,return)</action>
+		<action>ActivateWindow(Music,Albums,return)</action>
 	</shortcut>
 	<shortcut>
 		<label>134</label>
 		<label2>32018</label2>
 		<icon>DefaultMusicSongs.png</icon>
-		<action>ActivateWindow(Videos,videodb://musicvideos/titles/,Return)</action>
+		<action>ActivateWindow(Music,Songs,return)</action>
 	</shortcut>
 	<shortcut>
 		<label>31289</label>
@@ -53,5 +53,29 @@
 		<label2>32034</label2>
 		<icon>DefaultShortcut.png</icon>
 		<action>UpdateLibrary(video)</action>
+	</shortcut>
+	<shortcut>
+		<action>RunScript(script.skin.helper.service,action=musicsearch)</action>
+		<label>19140</label>
+		<label2>32034</label2>
+		<icon />
+	</shortcut>
+	<shortcut>
+		<action>ActivateWindow(Music,Files,return)</action>
+		<label>744</label>
+		<label2>32034</label2>
+		<icon />
+	</shortcut>
+	<shortcut>
+		<action>ActivateWindow(Music,Root)</action>
+		<label>15100</label>
+		<label2>32034</label2>
+		<icon />
+	</shortcut>
+	<shortcut>
+		<action>ActivateWindow(Music,Addons,return)</action>
+		<label>1038</label>
+		<label2>32034</label2>
+		<icon />
 	</shortcut>
 </shortcuts>

@@ -84,7 +84,7 @@ def FILTERS_FULL(website=''):
 	return html
 
 def TITLES(url,type=''):
-	#xbmcgui.Dialog().ok(url,'TITLES')
+	#XBMCGUI_DIALOG_OK(url,'TITLES')
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'AKWAM-TITLES-1st')
 	if type=='featured':
 		html_blocks = re.findall('swiper-container(.*?)swiper-button-prev',html,re.DOTALL)
@@ -116,12 +116,12 @@ def SEARCH(search):
 	if search=='': return
 	new_search = search.replace(' ','%20')
 	url = website0a + '/search?q='+new_search
-	#xbmcgui.Dialog().ok(url,'SEARCH_AKOAM')
+	#XBMCGUI_DIALOG_OK(url,'SEARCH_AKOAM')
 	results = TITLES(url)
 	return
 
 def EPISODES(url):
-	#xbmcgui.Dialog().ok(url,'EPISODES_AKWAM')
+	#XBMCGUI_DIALOG_OK(url,'EPISODES_AKWAM')
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'AKWAM-EPISODES-1st')
 	if '-episodes' not in html:
 		img = xbmc.getInfoLabel('ListItem.Icon')
@@ -137,20 +137,20 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
-	#xbmcgui.Dialog().ok(url,'PLAY1')
+	#XBMCGUI_DIALOG_OK(url,'PLAY1')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#with open('S:\\emad.html', 'w') as f: f.write(html)
 	html = openURL_cached(LONG_CACHE,url,'',headers,True,'AKWAM-PLAY-1st')
 	ratingLIST = re.findall('class="badge.*?>.*?(\w*).*?<',html,re.DOTALL)
 	if RATING_CHECK(script_name,url,ratingLIST): return
-	#xbmcgui.Dialog().ok('','PLAY3')
+	#XBMCGUI_DIALOG_OK('','PLAY3')
 	buttons = re.findall('li><a href="#(.*?)".*?>(.*?)<',html,re.DOTALL)
 	#buttons = (['',''],['',''])
 	linkLIST,titleLIST,blocks,qualities = [],[],[],[]
 	if buttons:
 		filetype = 'mp4'
 		for button,quality in buttons:
-			#xbmcgui.Dialog().ok(quality,button)
+			#XBMCGUI_DIALOG_OK(quality,button)
 			html_blocks = re.findall('tab-content" id="'+button+'".*?</div>.\s*</div>',html,re.DOTALL)
 			block = html_blocks[0]
 			blocks.append(block)
@@ -161,14 +161,14 @@ def PLAY(url):
 		notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
 		filetype = filename.rsplit('.',1)[1].strip(' ')
 		if filetype in notvideosLIST:
-			xbmcgui.Dialog().ok('رسالة من المبرمج','الملف ليس فيديو ولا صوت')
+			XBMCGUI_DIALOG_OK('رسالة من المبرمج','الملف ليس فيديو ولا صوت')
 			return
 		blocks.append(block)
 		qualities.append('')
-	#xbmcgui.Dialog().ok(str(qualities),'')
+	#XBMCGUI_DIALOG_OK(str(qualities),'')
 	for i in range(len(blocks)):
 		links = re.findall('href="(.*?)".*?icon-(.*?)"',blocks[i],re.DOTALL)
-		#xbmcgui.Dialog().ok(str(links),'')
+		#XBMCGUI_DIALOG_OK(str(links),'')
 		for link,icon in links:
 			if 'torrent' in icon: continue
 			elif 'download' in icon: type = 'download'
@@ -178,14 +178,14 @@ def PLAY(url):
 			#titleLIST.append(title)
 			link = link+'?named=__'+type+'____'+qualities[i]+'__akwam'
 			linkLIST.append(link)
-	#selection = xbmcgui.Dialog().select('TEST',titleLIST)
-	#selection = xbmcgui.Dialog().select('TEST',linkLIST)
+	#selection = XBMCGUI_DIALOG_SELECT('TEST',titleLIST)
+	#selection = XBMCGUI_DIALOG_SELECT('TEST',linkLIST)
 	import RESOLVERS
 	RESOLVERS.PLAY(linkLIST,script_name,'video')
 	return
 
 def FILTERS_MENU(url,filter):
-	#xbmcgui.Dialog().ok(filter,url)
+	#XBMCGUI_DIALOG_OK(filter,url)
 	menu_list = ['section','rating','category','year']
 	if '?' in url: url = url.split('?')[0]
 	type,filter = filter.split('___',1)
@@ -213,7 +213,7 @@ def FILTERS_MENU(url,filter):
 	html_blocks = re.findall('<form id(.*?)</form>',html,re.DOTALL)
 	block = html_blocks[0]
 	select_blocks = re.findall('<select.*?name="(.*?)".*?">(.*?)<(.*?)</select>',block,re.DOTALL)
-	#xbmcgui.Dialog().ok('',str(select_blocks))
+	#XBMCGUI_DIALOG_OK('',str(select_blocks))
 	dict = {}
 	for category2,name,block in select_blocks:
 		#name = name.replace('--','')
@@ -253,7 +253,7 @@ def FILTERS_MENU(url,filter):
 	return
 
 def RECONSTRUCT_FILTER(filters,mode):
-	#xbmcgui.Dialog().ok(filters,'RECONSTRUCT_FILTER 11')
+	#XBMCGUI_DIALOG_OK(filters,'RECONSTRUCT_FILTER 11')
 	# mode=='modified_values'		only non empty values
 	# mode=='modified_filters'		only non empty filters
 	# mode=='all'					all filters (includes empty filter)
@@ -277,7 +277,7 @@ def RECONSTRUCT_FILTER(filters,mode):
 	new_filters = new_filters.strip(' + ')
 	new_filters = new_filters.strip('&')
 	#new_filters = new_filters.replace('=0','=')
-	#xbmcgui.Dialog().ok(filters,'RECONSTRUCT_FILTER 22')
+	#XBMCGUI_DIALOG_OK(filters,'RECONSTRUCT_FILTER 22')
 	return new_filters
 
 

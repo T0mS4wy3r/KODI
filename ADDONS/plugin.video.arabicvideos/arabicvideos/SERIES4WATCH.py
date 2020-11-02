@@ -21,7 +21,7 @@ def MAIN(mode,url,text):
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
-	xbmcgui.Dialog().ok('رسالة من المبرمج','الموقع تغير بالكامل',message)
+	XBMCGUI_DIALOG_OK('رسالة من المبرمج','الموقع تغير بالكامل',message)
 	return
 
 def MENU(website=''):
@@ -50,7 +50,7 @@ def MENU(website=''):
 
 def TITLES(url):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-TITLES-1st')
-	#xbmcgui.Dialog().ok(url,html)
+	#XBMCGUI_DIALOG_OK(url,html)
 	if 'getposts' in url or '/search?s=' in url: block = html
 	else:
 		html_blocks = re.findall('MediaGrid"(.*?)class="pagination"',html,re.DOTALL)
@@ -176,7 +176,7 @@ def PLAY(url):
 						link = link + '?named=' + name + server + '__download'
 						linkLIST.append(link)
 	if len(linkLIST)==0:
-		xbmcgui.Dialog().ok('رسالة من المبرمج','الرابط ليس فيه فيديو')
+		XBMCGUI_DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')
@@ -200,7 +200,7 @@ def SEARCH(search):
 		for category,title in items:
 			categoryLIST.append(category)
 			filterLIST.append(title)
-		selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', filterLIST)
+		selection = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
 		if selection == -1 : return
 		category = categoryLIST[selection]
 		url = website0a + '/search?s='+search+'&category='+category

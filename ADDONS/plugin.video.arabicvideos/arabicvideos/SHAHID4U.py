@@ -20,13 +20,14 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',119,'','','_REMEMBERRESULTS_')
-	addMenuItem('folder',menu_name+'فلتر محدد',website0a,115)
-	addMenuItem('folder',menu_name+'فلتر كامل',website0a,114)
-	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	html = openURL_cached(NO_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
-	#xbmcgui.Dialog().ok('no exit',html)
+	if website=='':
+		addMenuItem('folder',menu_name+'بحث في الموقع','',119,'','','_REMEMBERRESULTS_')
+		addMenuItem('folder',menu_name+'فلتر محدد',website0a,115)
+		addMenuItem('folder',menu_name+'فلتر كامل',website0a,114)
+		#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SHAHID4U-MENU-1st')
+	#XBMCGUI_DIALOG_OK('no exit',html)
 	if '__Error__' not in html:
 		html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
 		block = html_blocks[0]
@@ -34,7 +35,7 @@ def MENU(website=''):
 		for link,title in items:
 			url = website0a+'/getposts?type=one&data='+link
 			addMenuItem('folder',website+'___'+menu_name+title,url,111)
-		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
@@ -58,7 +59,7 @@ def MENU(website=''):
 	return html
 
 def TITLES(url):
-	#xbmcgui.Dialog().ok(url,url)
+	#XBMCGUI_DIALOG_OK(url,url)
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'SHAHID4U-TITLES-1st')
 	if 'getposts' in url: block = html
 	else:
@@ -126,7 +127,7 @@ def PLAY(url):
 	#LOG_THIS('NOTICE','EMAD 111')
 	linkLIST = []
 	parts = url.split('/')
-	#xbmcgui.Dialog().ok(url,'PLAY-1st')
+	#XBMCGUI_DIALOG_OK(url,'PLAY-1st')
 	#url = unquote(quote(url))
 	hostname = website0a
 	response = openURL_requests_cached(LONG_CACHE,'GET',url,'',headers,True,True,'SHAHID4U-PLAY-1st')
@@ -135,7 +136,7 @@ def PLAY(url):
 	if not id: id = re.findall('post_id=(.*?)"',html,re.DOTALL)
 	if not id: id = re.findall('post-id="(.*?)"',html,re.DOTALL)
 	if id: id = id[0]
-	else: xbmcgui.Dialog().ok('رسالة من المبرمج','يرجى إرسال هذه المشكلة إلى المبرمج  من قائمة خدمات البرنامج')
+	else: XBMCGUI_DIALOG_OK('رسالة من المبرمج','يرجى إرسال هذه المشكلة إلى المبرمج  من قائمة خدمات البرنامج')
 	#LOG_THIS('NOTICE','EMAD START TIMING 111')
 	if True or '/watch/' in html:
 		#parts = url.split('/')
@@ -174,14 +175,14 @@ def PLAY(url):
 				link = server+'?named=__watch'+quality
 			linkLIST.append(link)
 	#LOG_THIS('NOTICE','['+quality+']    ['+title+']')
-	#selection = xbmcgui.Dialog().select('أختر البحث المناسب', linkLIST)
-	#xbmcgui.Dialog().ok('watch 1',	str(len(items)))
+	#selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب', linkLIST)
+	#XBMCGUI_DIALOG_OK('watch 1',	str(len(items)))
 	if 'DownloadNow' in html:
 		headers2 = { 'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8' }
 		url2 = url.replace(parts[3],'download')
 		response = openURL_requests_cached(LONG_CACHE,'GET',url2,'',headers2,True,'','SHAHID4U-PLAY-3rd')
 		html2 = response.content#.encode('utf8')
-		#xbmcgui.Dialog().ok(url2,html2)
+		#XBMCGUI_DIALOG_OK(url2,html2)
 		html_blocks = re.findall('<ul class="download-items(.*?)</ul>',html2,re.DOTALL)
 		for block in html_blocks:
 			items = re.findall('href="(http.*?)".*?<span>(.*?)<.*?<p>(.*?)<',block,re.DOTALL)
@@ -221,7 +222,7 @@ def PLAY(url):
 						for link5 in items5:
 							link5 = link5+'?named='+server4+'__download'+quality
 							linkLIST.append(link5)
-			#xbmcgui.Dialog().ok('download 1',	str(len(linkLIST))	)
+			#XBMCGUI_DIALOG_OK('download 1',	str(len(linkLIST))	)
 		elif 'slow-motion' in html2:
 			html2 = html2.replace('<h6 ','==END== ==START==')+'==END=='
 			html2 = html2.replace('<h3 ','==END== ==START==')+'==END=='
@@ -231,7 +232,7 @@ def PLAY(url):
 			if all_blocks:
 				for block4 in all_blocks:
 					if 'href=' not in block4: continue
-					#xbmcgui.Dialog().ok('download 111',	block4	)
+					#XBMCGUI_DIALOG_OK('download 111',	block4	)
 					quality4 = ''
 					items4 = re.findall('slow-motion">(.*?)<',block4,re.DOTALL)
 					for item4 in items4:
@@ -255,9 +256,9 @@ def PLAY(url):
 					link4 = link4.strip(' ')+'?named='+server4+'__download'
 					linkLIST.append(link4)
 	#LOG_THIS('NOTICE','EMAD 222')
-	#xbmcgui.Dialog().ok('both: watch & download',	str(len(linkLIST))	)
-	#selection = xbmcgui.Dialog().select('أختر البحث المناسب', linkLIST)
-	if len(linkLIST)==0: xbmcgui.Dialog().ok('رسالة من المبرمج','الرابط ليس فيه فيديو')
+	#XBMCGUI_DIALOG_OK('both: watch & download',	str(len(linkLIST))	)
+	#selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب', linkLIST)
+	if len(linkLIST)==0: XBMCGUI_DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')
@@ -278,7 +279,7 @@ def SEARCH(search):
 			if title in ['عروض مصارعة']: continue
 			categoryLIST.append(category)
 			filterLIST.append(title)
-		selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', filterLIST)
+		selection = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
 		if selection == -1 : return
 		category = categoryLIST[selection]
 	else: category = ''
@@ -287,7 +288,7 @@ def SEARCH(search):
 	return
 
 def FILTERS_MENU(url,filter):
-	#xbmcgui.Dialog().ok(filter,url)
+	#XBMCGUI_DIALOG_OK(filter,url)
 	menu_list = ['category','genre','release-year']
 	if '?' in url: url = url.split('/getposts?')[0]
 	type,filter = filter.split('___',1)
@@ -315,7 +316,7 @@ def FILTERS_MENU(url,filter):
 	html_blocks = re.findall('<form class(.*?)</form>',html,re.DOTALL)
 	block = html_blocks[0]
 	select_blocks = re.findall('select.*?<a.*?>(.*?)</a>.*?data-tax="(.*?)"(.*?)</ul>',block,re.DOTALL)
-	#xbmcgui.Dialog().ok('',str(select_blocks))
+	#XBMCGUI_DIALOG_OK('',str(select_blocks))
 	dict = {}
 	for name,category2,block in select_blocks:
 		name = name.replace('--','')
@@ -355,7 +356,7 @@ def FILTERS_MENU(url,filter):
 	return
 
 def RECONSTRUCT_FILTER(filters,mode):
-	#xbmcgui.Dialog().ok(filters,'RECONSTRUCT_FILTER 11')
+	#XBMCGUI_DIALOG_OK(filters,'RECONSTRUCT_FILTER 11')
 	# mode=='modified_values'		only non empty values
 	# mode=='modified_filters'		only non empty filters
 	# mode=='all'					all filters (includes empty filter)
@@ -379,6 +380,6 @@ def RECONSTRUCT_FILTER(filters,mode):
 	new_filters = new_filters.strip(' + ')
 	new_filters = new_filters.strip('&')
 	new_filters = new_filters.replace('=0','=')
-	#xbmcgui.Dialog().ok(filters,'RECONSTRUCT_FILTER 22')
+	#XBMCGUI_DIALOG_OK(filters,'RECONSTRUCT_FILTER 22')
 	return new_filters
 

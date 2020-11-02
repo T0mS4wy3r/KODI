@@ -14,7 +14,7 @@ def THEVIDEO_PROBLEM(url):
 	url = url.replace('embed-','')
 	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-THEVIDEO-1st')
 	items = re.findall('direct link" value="(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(items),html)
+	#XBMCGUI_DIALOG_OK(str(items),html)
 	if items:
 		link = items[0].rstrip('/')
 		title,url = VEVIO(link)
@@ -27,7 +27,7 @@ def HELAL_PROBLEM(url):
 	#url = url.replace('http:','https:')
 	html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-VIDBOB-1st')
 	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(items[0].rstrip('/'),'')
+	#XBMCGUI_DIALOG_OK(items[0].rstrip('/'),'')
 	if items:
 		url = items[0].replace('https:','http:')
 		return [url],[url]
@@ -65,11 +65,11 @@ def INTOUPLOAD_PROBLEM(url):
 	code = ''
 	for char in sorted(captcha):
 		code += captcha[char]
-	#xbmcgui.Dialog().ok(code,str(captcha))
+	#XBMCGUI_DIALOG_OK(code,str(captcha))
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 	payload = { 'id':id , 'op':op , 'code':code , 'rand':rand }
 	data = urllib.urlencode(payload)
-	progress = xbmcgui.DialogProgress()
+	progress = XBMCGUI_DIALOGPROGRESS()
 	progress.create('Waiting 15 seconds ...')
 	for i in range(0,15):
 		progress.update(i*100/15,str(15-i))
@@ -124,7 +124,7 @@ def GOUNLIMITED_OLD(url):
 	import requests
 	response = requests.request('GET', url, headers=headers, params=querystring)
 	items = re.findall('video="" src="(.*?)"',response.content,re.DOTALL)
-	#xbmcgui.Dialog().ok(str(response.content),str(len(response.content)))
+	#XBMCGUI_DIALOG_OK(str(response.content),str(len(response.content)))
 	if items:
 		url = items[0]
 		return [url],[url]

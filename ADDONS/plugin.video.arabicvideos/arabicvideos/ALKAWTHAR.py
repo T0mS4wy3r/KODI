@@ -88,17 +88,17 @@ def CATEGORIES(url):
 	return
 
 def EPISODES(url,page):
-	#xbmcgui.Dialog().ok(url, page)
+	#XBMCGUI_DIALOG_OK(url, page)
 	html = openURL_cached(REGULAR_CACHE,url,'','',True,'ALKAWTHAR-EPISODES-1st')
 	items = re.findall('totalpagecount=[\'"](.*?)[\'"]',html,re.DOTALL)
 	if items[0]=='':
-		xbmcgui.Dialog().ok('رسالة من المبرمج','لا يوجد حاليا ملفات فيديو في هذا الفرع')
+		XBMCGUI_DIALOG_OK('رسالة من المبرمج','لا يوجد حاليا ملفات فيديو في هذا الفرع')
 		return
 	totalpages = int(items[0])
 	name = re.findall('main-title.*?</a> >(.*?)<',html,re.DOTALL)
 	if name: name = name[0].strip(' ')
 	else: name = xbmc.getInfoLabel('ListItem.Label')
-	#xbmcgui.Dialog().ok(name, str(''))
+	#XBMCGUI_DIALOG_OK(name, str(''))
 	if '/category/' in url:
 		category = url.split('/')[-1]
 		url2 = website0a + '/category/' + category + '/' + page
@@ -155,20 +155,20 @@ def EPISODES(url,page):
 	return
 
 def PLAY(url):
-	#xbmcgui.Dialog().ok(url, '')
+	#XBMCGUI_DIALOG_OK(url, '')
 	if '/news/' in url or '/episode/' in url:
 		html = openURL_cached(LONG_CACHE,url,'','',True,'ALKAWTHAR-PLAY-1st')
 		items = re.findall("mobilevideopath.*?value='(.*?)'",html,re.DOTALL)
 		if items: url = items[0]
 		else:
-			xbmcgui.Dialog().ok('رسالة من المبرمج','لا يوجد ملف فيديو')
+			XBMCGUI_DIALOG_OK('رسالة من المبرمج','لا يوجد ملف فيديو')
 			return
 	PLAY_VIDEO(url,script_name,'video')
 	return
 
 def LIVE():
 	#BUSY_DIALOG('start')
-	#xbmcgui.Dialog().notification('جاري تشغيل القناة','')
+	#XBMCGUI_DIALOG_NOTIFICATION('جاري تشغيل القناة','')
 	url = website0a+'/live'
 	html = openURL_cached(LONG_CACHE,url,'','',True,'ALKAWTHAR-LIVE-1st')
 	items = re.findall('live-container.*?src="(.*?)"',html,re.DOTALL)
@@ -184,7 +184,7 @@ def LIVE():
 	html = response.content
 	url = re.findall('"(.*?)"',html,re.DOTALL)
 	url = url[0].replace('\/','/')
-	#xbmcgui.Dialog().ok(url,html)
+	#XBMCGUI_DIALOG_OK(url,html)
 	#BUSY_DIALOG('stop')
 	PLAY_VIDEO(url,script_name,'live')
 	return
@@ -200,18 +200,18 @@ def SEARCH(search,url=''):
 		search = '"mp4" '+search
 		search = quote(search)
 		url = website0a+'/search?q='+search
-		html = openURL_cached(NO_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-1st')
+		html = openURL_cached(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-1st')
 		#with open('S:\\emad1.html', 'w') as f: f.write(html)
-		cx = re.findall("var cx = '(.*?)'",html,re.DOTALL)[0]
-		url = re.findall("gcse.src = '(.*?)'",html,re.DOTALL)[0]
-		url = url+cx
-		html = openURL_cached(NO_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-2nd')
+		cx = re.findall("var cx = '(.*?)'",html,re.DOTALL)
+		url = re.findall("gcse.src = '(.*?)'",html,re.DOTALL)
+		url = url[0]+cx[0]
+		html = openURL_cached(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-2nd')
 		#with open('S:\\emad2.html', 'w') as f: f.write(html)
 		cse_token = re.findall('cse_token": "(.*?)"',html,re.DOTALL)[0]
 		cselibVersion = re.findall('cselibVersion": "(.*?)"',html,re.DOTALL)[0]
 		randomAPI = str(random.randint(1111,9999))
 		url = 'https://cse.google.com/cse/element/v1?rsz=filtered_cse&num=10&hl=ar&source=gcsc&gss=.com&cselibv='+cselibVersion+'&cx='+cx+'&q='+search+'&safe=off&cse_tok='+cse_token+'&sort=&exp=csqr,cc&callback=google.search.cse.api'+randomAPI+'&start=0'
-	html = openURL_cached(NO_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-3rd')
+	html = openURL_cached(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-3rd')
 	#with open('S:\\emad3.html', 'w') as f: f.write(html)
 	#LOG_THIS('NOTICE','EMAD  '+url)
 	items = re.findall('cacheUrl":.*?"title": "(.*?)".*?"url": "(.*?)".*?"metatags": {(.*?)}',html,re.DOTALL)

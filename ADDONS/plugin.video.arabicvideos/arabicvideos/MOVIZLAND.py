@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
-	xbmcgui.Dialog().ok('رسالة من المبرمج',message)
+	XBMCGUI_DIALOG_OK('رسالة من المبرمج',message)
 	return
 
 def MENU(website=''):
@@ -34,7 +34,7 @@ def MENU(website=''):
 	items = re.findall('<h2><a href="(.*?)".*?">(.*?)<',html,re.DOTALL)
 	for link,title in items:
 		addMenuItem('folder',website+'___'+menu_name+title,link,181)
-	#xbmcgui.Dialog().ok(html,html)
+	#XBMCGUI_DIALOG_OK(html,html)
 	return html
 
 def TITLES(url,type=''):
@@ -57,7 +57,7 @@ def TITLES(url,type=''):
 		else: img,title,link,link2 = img,var1,var2,var3
 		link = unquote(link)
 		link = link.replace('?view=true','')
-		#xbmcgui.Dialog().ok(link,link2)
+		#XBMCGUI_DIALOG_OK(link,link2)
 		title = unescapeHTML(title)
 		#title2 = re.findall('(.*?)(بجودة|بجوده)',title,re.DOTALL)
 		#if title2: title = title2[0][0]
@@ -97,7 +97,7 @@ def EPISODES(url):
 	items = []
 	html_blocks = re.findall('class="episodesNumbers"(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
-		#xbmcgui.Dialog().ok(url2,str(html_blocks))
+		#XBMCGUI_DIALOG_OK(url2,str(html_blocks))
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)"',block,re.DOTALL)
 		for link in items:
@@ -142,7 +142,7 @@ def PLAY(url):
 			html = html.replace('class="tborder" align="center"','src="/uploads/13721411411.png"')
 			html_blocks = re.findall('(src="/uploads/13721411411.png".*?href="http://moshahda\..*?/\w+.html".*?src="/uploads/13721411411.png")',html,re.DOTALL)
 			if html_blocks:
-				#xbmcgui.Dialog().ok(url,str(len(html_blocks)))
+				#XBMCGUI_DIALOG_OK(url,str(len(html_blocks)))
 				titleLIST2,linkLIST2 = [],[]
 				if len(html_blocks)==1:
 					title = ''
@@ -161,7 +161,7 @@ def PLAY(url):
 						title = title.strip(' ')
 						title = title.replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ')
 						titleLIST2.append(title)
-					selection = xbmcgui.Dialog().select('أختر الفيديو المطلوب:', titleLIST2)
+					selection = XBMCGUI_DIALOG_SELECT('أختر الفيديو المطلوب:', titleLIST2)
 					if selection == -1 : return
 					title = titleLIST2[selection]
 					block = html_blocks[selection]
@@ -177,7 +177,7 @@ def PLAY(url):
 				block = block.replace('روابط المشاهد','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="watch"  \n  ')
 				links_blocks = re.findall('(src="/uploads/13721411411.png".*?href="http://e5tsar.com/\d+".*?src="/uploads/13721411411.png")',block,re.DOTALL)
 				for link_block in links_blocks:
-					#xbmcgui.Dialog().ok('',str(link_block))
+					#XBMCGUI_DIALOG_OK('',str(link_block))
 					type = re.findall(' typetype="(.*?)" ',link_block)
 					if type:
 						if type[0]!='both': type = '__'+type[0]
@@ -204,9 +204,9 @@ def PLAY(url):
 		link2LIST.append(link2)
 		name2LIST.append(name2)
 	if len(linkLIST)==0:
-		xbmcgui.Dialog().ok('رسالة من المبرمج','غير قادر على ايجاد ملف الفيديو المناسب')
+		XBMCGUI_DIALOG_OK('رسالة من المبرمج','غير قادر على ايجاد ملف الفيديو المناسب')
 	else:
-		#selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', linkLIST)
+		#selection = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', linkLIST)
 		#if selection == -1 : return
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')
@@ -225,12 +225,12 @@ def SEARCH(search):
 		categoryLIST.append(category)
 		filterLIST.append(title)
 	if category:
-		selection = xbmcgui.Dialog().select('اختر الفلتر المناسب:', filterLIST)
+		selection = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
 		if selection == -1 : return
 		category = categoryLIST[selection]
 	else: category = ''
 	url = website0a + '/?s='+search+'&mcat='+category
-	#xbmcgui.Dialog().ok(url,url)
+	#XBMCGUI_DIALOG_OK(url,url)
 	TITLES(url)
 	return
 

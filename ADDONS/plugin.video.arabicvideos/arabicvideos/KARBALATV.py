@@ -30,7 +30,7 @@ def MENU(website=''):
 	return html
 
 def TITLES(url):
-	#xbmcgui.Dialog().ok(url,html)
+	#XBMCGUI_DIALOG_OK(url,html)
 	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'',headers,'','','KARBALATV-TITLES-1st')
 	html = response.content
 	html_blocks = re.findall('class="container"(.*?)class="footer',html,re.DOTALL)
@@ -63,7 +63,7 @@ def PLAY(url):
 	#link = re.findall('<audio.*?src="(.*?)"',html,re.DOTALL)
 	#if not link: 
 	link = re.findall('<video.*?src="(.*?)"',html,re.DOTALL)
-	link = website0a+link[0]
+	link = website0a+link[0]#+'|User-Agent='+RANDOM_USERAGENT()+'&verifypeer=true'
 	PLAY_VIDEO(link,script_name,'video')
 	return
 

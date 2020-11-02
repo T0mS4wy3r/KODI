@@ -57,7 +57,7 @@ def RAMADAN_MENU():
 
 def LATEST():
 	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,True,'ALARAB-LATEST-1st')
-	#xbmcgui.Dialog().ok('',html)
+	#XBMCGUI_DIALOG_OK('',html)
 	html_blocks=re.findall('heading-top(.*?)div class=',html,re.DOTALL)
 	block = html_blocks[0]+html_blocks[1]
 	items=re.findall('href="(.*?)".*?data-src="(.*?)" alt="(.*?)"',block,re.DOTALL)
@@ -68,8 +68,8 @@ def LATEST():
 	return
 
 def TITLES(url):
-	#xbmcgui.Dialog().ok('TITLES',url)
-	response = openURL_requests_cached(NO_CACHE,'GET',url,'',headers,True,True,'ALARAB-TITLES-1st')
+	#XBMCGUI_DIALOG_OK('TITLES',url)
+	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'',headers,True,True,'ALARAB-TITLES-1st')
 	html = response.content
 	#with open('S:\\00emad.html','w') as f: f.write(str(html))
 	html_blocks = re.findall('video-category(.*?)right_content',html,re.DOTALL)
@@ -86,10 +86,10 @@ def TITLES(url):
 		else: sequence = ''
 		itemsNEW.append([img,link,title,sequence])
 	itemsNEW = sorted(itemsNEW, reverse=True, key=lambda key: key[3])
-	#xbmcgui.Dialog().ok('222',url)
+	#XBMCGUI_DIALOG_OK('222',url)
 	for img,link,title,sequence in itemsNEW:
 		link = website0a + link
-		#xbmcgui.Dialog().ok(url,title)
+		#XBMCGUI_DIALOG_OK(url,title)
 		title = title.replace('مشاهدة مسلسل','مسلسل')
 		title = title.replace('مشاهدة المسلسل','المسلسل')
 		title = title.replace('مشاهدة فيلم','فيلم')
@@ -124,7 +124,7 @@ def TITLES(url):
 				#if 'مسلسل' not in title and 'الحلقة' in title: title = 'مسلسل '+title
 				addMenuItem('video',menu_name+title,link,12,img)
 				found = True
-	#xbmcgui.Dialog().ok('333',url)
+	#XBMCGUI_DIALOG_OK('333',url)
 	if found:
 		items = re.findall('tsc_3d_button red.*?href="(.*?)" title="(.*?)"',block,re.DOTALL)
 		for link,page in items:
@@ -143,13 +143,13 @@ def EPISODES(url):
 def EPISODES_OLD(url):
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'ALARAB-EPISODES_OLD-1st')
 	html_blocks = re.findall('banner-right(.*?)classic-channel',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(url,'step 2')
+	#XBMCGUI_DIALOG_OK(url,'step 2')
 	block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)".*?>(.*?)<',block,re.DOTALL)
-	#xbmcgui.Dialog().ok(url,'step 3')
+	#XBMCGUI_DIALOG_OK(url,'step 3')
 	items = sorted(items, reverse=True, key=lambda key: key[1])
 	#name = xbmc.getInfoLabel('ListItem.Label')
-	#xbmcgui.Dialog().ok(url,'step 4')
+	#XBMCGUI_DIALOG_OK(url,'step 4')
 	allTitles = []
 	for img,link,title in items:
 		if title not in allTitles:
@@ -157,12 +157,12 @@ def EPISODES_OLD(url):
 			title = title.strip(' ')
 			addMenuItem('video',menu_name+'مسلسل '+title,link,12,img)
 			allTitles.append(title)
-	#xbmcgui.Dialog().ok(url,'step 5')
+	#XBMCGUI_DIALOG_OK(url,'step 5')
 	return
 """
 
 def PLAY(url):
-	#xbmcgui.Dialog().ok(url,str(url))
+	#XBMCGUI_DIALOG_OK(url,str(url))
 	linkLIST,titleLIST,videodeliveryID = [],[],[]
 	html = openURL_cached(SHORT_CACHE,url,'',headers,True,'ALARAB-PLAY-1st')
 	if 'vid=' in html:
@@ -230,7 +230,7 @@ def PLAY(url):
 			linkLIST.append(url3)
 		"""
 		html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'ALARAB-PLAY-3rd')
-		xbmcgui.Dialog().ok(url,str(html))
+		XBMCGUI_DIALOG_OK(url,str(html))
 		items2 = re.findall('RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
 		if items2:
 			for resolution,link in items2:
@@ -243,7 +243,7 @@ def PLAY(url):
 		#	url = items[0]
 		#	linkLIST.append(url)
 		#	titleLIST.append('ملف التشغيل')
-		#xbmcgui.Dialog().ok('',str(linkLIST))
+		#XBMCGUI_DIALOG_OK('',str(linkLIST))
 		#url = website0a + '/download.php?file='+id
 		#html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'ALARAB-PLAY-4th')
 		#items = re.findall('</h2>.*?href="(.*?mp4)"',html,re.DOTALL)
@@ -253,7 +253,7 @@ def PLAY(url):
 		"""
 	if len(linkLIST)==0:
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   No video file found   URL: [ '+url+' ]')
-		xbmcgui.Dialog().ok('رسالة من المبرمج','لا يوجد ملف فيديو')
+		XBMCGUI_DIALOG_OK('رسالة من المبرمج','لا يوجد ملف فيديو')
 		return
 	elif len(linkLIST)==1:
 		selection = 0
@@ -264,11 +264,11 @@ def PLAY(url):
 			if linkLIST[i] not in new_linkLIST:
 				new_linkLIST.append(linkLIST[i])
 				new_titleLIST.append(titleLIST[i])
-		selection = xbmcgui.Dialog().select('اختر الملف المناسب:', new_titleLIST)
+		selection = XBMCGUI_DIALOG_SELECT('اختر الملف المناسب:', new_titleLIST)
 		if selection == -1 : return
 		url = new_linkLIST[selection]
 	if 'youtu' in url:
-		#xbmcgui.Dialog().ok(url,'')
+		#XBMCGUI_DIALOG_OK(url,'')
 		import RESOLVERS
 		RESOLVERS.PLAY_LINK(url,script_name,'video')
 	else: PLAY_VIDEO(url,script_name,'video')
@@ -293,7 +293,7 @@ def SEARCH(search):
 	if search=='': return
 	new_search = search.replace(' ','%20')
 	url = website0a + "/q/" + new_search
-	#xbmcgui.Dialog().ok('333',url)
+	#XBMCGUI_DIALOG_OK('333',url)
 	results = TITLES(url)
 	return
 

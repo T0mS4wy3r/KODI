@@ -2,7 +2,7 @@
 from LIBRARY import *
 
 script_name='LIVETV'
-website0a = WEBSITES['EMAD'][0]
+website0a = WEBSITES['PYTHON'][0]
 
 def MAIN(mode,url):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
@@ -35,21 +35,22 @@ def ITEMS(menu,show=True):
 	menu_name='_TV'+menu+'_'
 	client = dummyClientID(32)
 	payload = { 'id' : '' , 'user' : client , 'function' : 'list' , 'menu' : menu }
-	data = urllib.urlencode(payload)
+	#data = urllib.urlencode(payload)
 	#LOG_THIS('NOTICE',str(payload))
 	#LOG_THIS('NOTICE',str(data))
 	#response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, '', True,'','LIVETV-ITEMS-1st')
 	#html = response.content
-	html = openURL_cached(SHORT_CACHE,website0a,data,'','','LIVETV-ITEMS-1st')
+	response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'','','','LIVETV-ITEMS-1st')
+	html = response.content
 	#html = html.replace('\r','')
-	#xbmcgui.Dialog().ok(html,html)
+	#XBMCGUI_DIALOG_OK(html,html)
 	#file = open('s:/emad.html', 'w')
 	#file.write(html)
 	#file.close()
 	items = re.findall('([^;\r\n]+?);;(.*?);;(.*?);;(.*?);;(.*?);;',html,re.DOTALL)
 	if 'Not Allowed' in html:
 		if show: addMenuItem('link',menu_name+'هذه الخدمة مخصصة للمبرمج فقط','',9999)
-		#if show: xbmcgui.Dialog().ok('','هذه الخدمة مخصصة للمبرمج فقط')
+		#if show: XBMCGUI_DIALOG_OK('','هذه الخدمة مخصصة للمبرمج فقط')
 		#addMenuItem('link',menu_name+'للأسف لا توجد قنوات تلفزونية لك','',9999)
 		#addMenuItem('link',menu_name+'هذه الخدمة مخصصة للاقرباء والاصدقاء فقط','',9999)
 		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
@@ -82,24 +83,24 @@ def ITEMS(menu,show=True):
 
 def PLAY(id):
 	#BUSY_DIALOG('start')
-	#xbmcgui.Dialog().notification('جاري تشغيل القناة','')
+	#XBMCGUI_DIALOG_NOTIFICATION('جاري تشغيل القناة','')
 	source,server,id2,menu = id.split(';;')
 	url = ''
-	#xbmcgui.Dialog().ok(source,id2)
+	#XBMCGUI_DIALOG_OK(source,id2)
 	#try:
 	if source=='URL': url = id2
 	elif source=='GA':
-		#xbmcgui.Dialog().ok(url,html)
+		#XBMCGUI_DIALOG_OK(url,html)
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
 		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA1' , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			#BUSY_DIALOG('stop')
 			return
 		#proxyname,proxyurl = RANDOM_HTTPS_PROXY()
 		url = response.headers['Location']#+'||MyProxyUrl='+proxyurl
-		#xbmcgui.Dialog().ok(url,'')
+		#XBMCGUI_DIALOG_OK(url,'')
 		response = openURL_requests_cached(VERY_SHORT_CACHE,'GET',url,'','',False,'','LIVETV-PLAY-2nd')
 		cookies = response.cookies.get_dict()
 		session = cookies['ASP.NET_SessionId']
@@ -109,7 +110,7 @@ def PLAY(id):
 		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA2' , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-3rd')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			#BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location'].replace('__ID2__',id2)
@@ -126,12 +127,12 @@ def PLAY(id):
 		titleLIST = ['HD','SD1','SD2']
 		linkLIST = [url_HD,url_SD1,url_SD2]
 		selection = 0
-		#selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
+		#selection = XBMCGUI_DIALOG_SELECT('اختر الملف المناسب:', titleLIST)
 		if selection == -1:
 			#BUSY_DIALOG('stop')
 			return
 		else: url = linkLIST[selection]
-		#xbmcgui.Dialog().ok(items[0],url)
+		#XBMCGUI_DIALOG_OK(items[0],url)
 		"""
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playGA' , 'menu' : menu }
@@ -148,7 +149,7 @@ def PLAY(id):
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playNT' , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			#BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location']
@@ -162,7 +163,7 @@ def PLAY(id):
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playPL' , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-6th')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			#BUSY_DIALOG('stop')
 			return
 		response = openURL_requests_cached(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-7th')
@@ -175,19 +176,19 @@ def PLAY(id):
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'play'+source , 'menu' : menu }
 		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-8th')
 		if 'Not Allowed' in response.content:
-			xbmcgui.Dialog().ok('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
 			#BUSY_DIALOG('stop')
 			return
 		url = response.headers['Location']
 		if source=='FM':
-			#xbmcgui.Dialog().ok(url,'')
+			#XBMCGUI_DIALOG_OK(url,'')
 			response = openURL_requests_cached(NO_CACHE,'GET', url, '', '', False,'','LIVETV-PLAY-9th')
 			url = response.headers['Location']
 			url = url.replace('https','http')
 	#BUSY_DIALOG('stop')
 	result = PLAY_VIDEO(url,script_name,'live')
 	#except:
-	#	xbmcgui.Dialog().ok('هذه القناة فيها مشكلة من الموقع الاصلي',page_error)
+	#	XBMCGUI_DIALOG_OK('هذه القناة فيها مشكلة من الموقع الاصلي',page_error)
 	return
 
 

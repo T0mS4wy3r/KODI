@@ -18,6 +18,7 @@ def MAIN(mode,url,text,type):
 	elif mode==238: results = EPG_ITEMS(url,text)
 	elif mode==239: results = SEARCH(text)
 	elif mode==280: results = ADD_USERAGENT()
+	elif mode==281: results = COUNTS()
 	else: results = False
 	#LOG_THIS('NOTICE','end')
 	return results
@@ -52,6 +53,7 @@ def MENU():
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'إضافة اشتراك IPTV','',231)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'فحص اشتراك IPTV','',236)
+	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'عدد فيديوهات IPTV','',281)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'جلب ملفات IPTV','',232)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'مسح ملفات IPTV','',237)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'تغيير IPTV User-Agent','',280)
@@ -110,14 +112,14 @@ def CHECK_ACCOUNT(showDialog=True):
 					message += sep1+'Connections   ( Active / Maximum ) :  '+'[COLOR FFC89008]'+active+' / '+max+'[/COLOR]'
 					message += sep1+'Allowed Outputs:   '+'[COLOR FFC89008]'+" , ".join(dict['user_info']['allowed_output_formats'])+'[/COLOR]'
 					message += sep1+sep1+str(dict['server_info'])
-					if status=='Active': xbmcgui.Dialog().textviewer('الاشتراك يعمل بدون مشاكل',message)
-					else: xbmcgui.Dialog().textviewer('يبدو أن هناك مشكلة في الاشتراك',message)
+					if status=='Active': XBMCGUI_DIALOG_TEXTVIEWER('الاشتراك يعمل بدون مشاكل',message)
+					else: XBMCGUI_DIALOG_TEXTVIEWER('يبدو أن هناك مشكلة في الاشتراك',message)
 	if ok and status=='Active':
 		LOG_THIS('NOTICE','Checking IPTV URL   [ IPTV account is OK ]   [ '+iptvURL+' ]')
 		result = True
 	else:
 		LOG_THIS('ERROR','Checking IPTV URL   [ Does not work ]   [ '+iptvURL+' ]')
-		if iptvURL: xbmcgui.Dialog().ok('فحص اشتراك IPTV','رابط اشتراك IPTV الذي قمت انت بإضافته إلى البرنامج لا يعمل أو الرابط غير موجود في البرنامج . أذهب إلى قائمة اشتراك IPTV وقم بإعادة إدخال رابط IPTV جديد أو قم بإصلاح الرابط القديم')
+		if iptvURL: XBMCGUI_DIALOG_OK('فحص اشتراك IPTV','رابط اشتراك IPTV الذي قمت انت بإضافته إلى البرنامج لا يعمل أو الرابط غير موجود في البرنامج . أذهب إلى قائمة اشتراك IPTV وقم بإعادة إدخال رابط IPTV جديد أو قم بإصلاح الرابط القديم')
 		result = False
 	return result
 
@@ -137,7 +139,7 @@ def GROUPS(TYPE,GROUP,website=''):
 	z = sorted(z, reverse=False, key=lambda key: key[0])
 	if '__IPTVSeries__' in GROUP: MAINGROUP,SUBGROUP = GROUP.split('__IPTVSeries__')
 	else: MAINGROUP,SUBGROUP = GROUP,''
-	#xbmcgui.Dialog().ok(TYPE,GROUP)
+	#XBMCGUI_DIALOG_OK(TYPE,GROUP)
 	menu_name2 = menu_name
 	if len(z)>0:
 		for group,img in z:
@@ -169,17 +171,17 @@ def GROUPS(TYPE,GROUP,website=''):
 	return
 
 def ITEMS(TYPE,GROUP):
-	#xbmcgui.Dialog().ok(TYPE,GROUP)
+	#XBMCGUI_DIALOG_OK(TYPE,GROUP)
 	if not isIPTVFiles(True): return
 	#LOG_THIS('NOTICE','before DATABASE')
 	results = READ_FROM_SQL3('IPTV_ITEMS',[TYPE,GROUP])
 	if results: menuItemsLIST[:] = menuItemsLIST+results ; return
 	else: previous_menuItemsLIST = menuItemsLIST[:] ; menuItemsLIST[:] = []
 	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
-	#xbmcgui.Dialog().ok(TYPE+'___:'+GROUP,str(len(streams)))
+	#XBMCGUI_DIALOG_OK(TYPE+'___:'+GROUP,str(len(streams)))
 	if '__IPTVSeries__' in GROUP: MAINGROUP,SUBGROUP = GROUP.split('__IPTVSeries__')
 	else: MAINGROUP,SUBGROUP = GROUP,''
-	#xbmcgui.Dialog().ok(MAINGROUP,SUBGROUP)
+	#XBMCGUI_DIALOG_OK(MAINGROUP,SUBGROUP)
 	for dict in streams:
 		#if 'EG - ' in dict['title']: LOG_THIS('NOTICE','111111'+str(dict))
 		group = dict['group']
@@ -197,7 +199,7 @@ def ITEMS(TYPE,GROUP):
 			elif 'TIMESHIFT' in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','timeshift')
 			elif 'LIVE' in TYPE: addMenuItem('live',menu_name+title,url,235,img)
 			else: addMenuItem('video',menu_name+title,url,235,img)
-	#xbmcgui.Dialog().ok('OUT',str(menuItemsLIST))
+	#XBMCGUI_DIALOG_OK('OUT',str(menuItemsLIST))
 	WRITE_TO_SQL3('IPTV_ITEMS',[TYPE,GROUP],menuItemsLIST,PERMANENT_CACHE)
 	menuItemsLIST[:] = previous_menuItemsLIST+menuItemsLIST
 	return
@@ -217,13 +219,13 @@ def EPG_ITEMS(url,function):
 	password = settings.getSetting('iptv.password')
 	url_parts = url.split('/')
 	stream_id = url_parts[-1].replace('.ts','').replace('.m3u8','')
-	#xbmcgui.Dialog().ok(str(timediff),str(timestamp))
+	#XBMCGUI_DIALOG_OK(str(timediff),str(timestamp))
 	if function=='short_epg': url_action = 'get_short_epg'
 	else: url_action = 'get_simple_data_table'
 	epg_url = server+'/player_api.php?username='+username+'&password='+password+'&action='+url_action+'&stream_id='+stream_id
 	html = openURL_cached(NO_CACHE,epg_url,'',headers,'','IPTV-EPG_ITEMS-2nd')
 	archive_files = EVAL(html)
-	#xbmcgui.Dialog().ok('',str(archive_files))
+	#XBMCGUI_DIALOG_OK('',str(archive_files))
 	#with open('S:\\00iptv.txt','w') as f: f.write(html)
 	all_epg = archive_files['epg_listings']
 	epg_items = []
@@ -282,7 +284,7 @@ def EPG_ITEMS(url,function):
 			if function=='full_epg': addMenuItem('link',menu_name+title,timeshift_url,9999,img)
 			else: addMenuItem('video',menu_name+title,timeshift_url,235,img)
 		epg_list.append(title)
-	if function=='short_epg': selection = xbmcgui.Dialog().contextmenu(epg_list)
+	if function=='short_epg': selection = XBMCGUI_DIALOG_CONTEXTMENU(epg_list)
 	return epg_list
 
 def PLAY(url,type):
@@ -303,36 +305,36 @@ def PLAY(url,type):
 
 def ADD_USERAGENT():
 	settings = xbmcaddon.Addon(id=addon_id)
-	xbmcgui.Dialog().ok('رسالة من المبرمج','تحذير مهم وهام جدا . يرجى عدم تغييره إذا كنت لا تعرف ما هو .  وعدم تغييره إلا عند الضرورة القصوى . الحاجة لهذا التغيير هي فقط إذا طلبت منك شركة IPTV أن تعمل هذا التغيير . وفقط عندما تستخدم خدمة IPTV تحتاج User-Agent خاص')
+	XBMCGUI_DIALOG_OK('رسالة من المبرمج','تحذير مهم وهام جدا . يرجى عدم تغييره إذا كنت لا تعرف ما هو .  وعدم تغييره إلا عند الضرورة القصوى . الحاجة لهذا التغيير هي فقط إذا طلبت منك شركة IPTV أن تعمل هذا التغيير . وفقط عندما تستخدم خدمة IPTV تحتاج User-Agent خاص')
 	useragent = settings.getSetting('iptv.useragent')
-	answer = xbmcgui.Dialog().yesno(useragent,'هذا هو IPTV User-Agent المسجل في البرنامج . هل تريد تعديله أم تريد مسحه . للعلم عند المسح سوف يعود إلى الأصلي الذي يناسب جميع شركات IPTV ؟!','','','مسح القديم','تعديل القديم')
+	answer = XBMCGUI_DIALOG_YESNO(useragent,'هذا هو IPTV User-Agent المسجل في البرنامج . هل تريد تعديله أم تريد مسحه . للعلم عند المسح سوف يعود إلى الأصلي الذي يناسب جميع شركات IPTV ؟!','','','مسح القديم','تعديل القديم')
 	if answer:
 		useragent = KEYBOARD('أكتب IPTV User-Agent جديد',useragent)
 		if useragent=='': return
 	else: useragent = ''
-	answer = xbmcgui.Dialog().yesno(useragent,'هل تريد استخدام هذا IPTV User-Agent بدلا من  القديم ؟','','','كلا','نعم')
+	answer = XBMCGUI_DIALOG_YESNO(useragent,'هل تريد استخدام هذا IPTV User-Agent بدلا من  القديم ؟','','','كلا','نعم')
 	if not answer:
-		xbmcgui.Dialog().ok('رسالة من المبرمج','تم الإلغاء')
+		XBMCGUI_DIALOG_OK('رسالة من المبرمج','تم الإلغاء')
 		return
 	settings.setSetting('iptv.useragent',useragent)
-	xbmcgui.Dialog().ok(useragent,'تم تغيير IPTV User-Agent إلى هذا الجديد')
+	XBMCGUI_DIALOG_OK(useragent,'تم تغيير IPTV User-Agent إلى هذا الجديد')
 	CREATE_STREAMS(True)
 	return
 
 def ADD_ACCOUNT():
 	settings = xbmcaddon.Addon(id=addon_id)
-	answer = xbmcgui.Dialog().yesno('رسالة من المبرمج','البرنامج يحتاج اشتراك IPTV من نوع رابط التحميل m3u من أي شركة IPTV والأفضل أن يحتوي الرابط في نهايته على هذه الكلمات\n\r&type=m3u_plus\n\rهل تريد تغيير الرابط الآن ؟','','','كلا','نعم')
+	answer = XBMCGUI_DIALOG_YESNO('رسالة من المبرمج','البرنامج يحتاج اشتراك IPTV من نوع رابط التحميل m3u من أي شركة IPTV والأفضل أن يحتوي الرابط في نهايته على هذه الكلمات\n\r&type=m3u_plus\n\rهل تريد تغيير الرابط الآن ؟','','','كلا','نعم')
 	if not answer: return
 	iptvURL = settings.getSetting('iptv.url')
 	if iptvURL!='':
-		answer = xbmcgui.Dialog().yesno(iptvURL,'هذا هو رابط IPTV المسجل في البرنامج ... هل تريد تعديله أم تريد كتابة رابط جديد ؟!','','','كتابة جديد','تعديل القديم')
+		answer = XBMCGUI_DIALOG_YESNO(iptvURL,'هذا هو رابط IPTV المسجل في البرنامج ... هل تريد تعديله أم تريد كتابة رابط جديد ؟!','','','كتابة جديد','تعديل القديم')
 		if not answer: iptvURL = ''
 	iptvURL = KEYBOARD('اكتب رابط IPTV كاملا',iptvURL)
 	if iptvURL=='': return
 	else:
-		answer = xbmcgui.Dialog().yesno(iptvURL,'هل تريد استخدام هذا الرابط بدلا من الرابط القديم ؟','','','كلا','نعم')
+		answer = XBMCGUI_DIALOG_YESNO(iptvURL,'هل تريد استخدام هذا الرابط بدلا من الرابط القديم ؟','','','كلا','نعم')
 		if not answer:
-			xbmcgui.Dialog().ok('رسالة من المبرمج','تم الإلغاء')
+			XBMCGUI_DIALOG_OK('رسالة من المبرمج','تم الإلغاء')
 			return
 	settings.setSetting('iptv.url',iptvURL)
 	settings.setSetting('iptv.timestamp','')
@@ -340,20 +342,20 @@ def ADD_ACCOUNT():
 	settings.setSetting('iptv.username','')
 	settings.setSetting('iptv.password','')
 	settings.setSetting('iptv.server','')
-	xbmcgui.Dialog().ok(iptvURL,'تم تغير رابط اشتراك IPTV إلى هذا الرابط الجديد')
+	XBMCGUI_DIALOG_OK(iptvURL,'تم تغير رابط اشتراك IPTV إلى هذا الرابط الجديد')
 	CREATE_STREAMS(True)
 	return
 
 def SEARCH(search=''):
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if showdialogs:
-		#xbmcgui.Dialog().ok('','')
+		#XBMCGUI_DIALOG_OK('','')
 		if not isIPTVFiles(True): return
 		if search=='': search = KEYBOARD()
 		if search=='': return
 		searchTitle = ['الكل','قنوات','أفلام','مسلسلات','أخرى']
 		typeList = ['ALL','LIVE_GROUPED_SORTED','VOD_MOVIES_GROUPED_SORTED','VOD_SERIES_GROUPED_SORTED','VOD_UNKNOWN_GROUPED_SORTED']
-		selection = xbmcgui.Dialog().select('أختر البحث المناسب', searchTitle)
+		selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب', searchTitle)
 		if selection == -1: return
 		TYPE = typeList[selection]
 	else:
@@ -415,26 +417,26 @@ def SPLIT_NAME(title):
 	if lang=='': lang = first+title[2:].split(sep,1)[0]+sep.strip(' ')
 	return lang
 
-def CREATE_STREAMS(ask_dialog=True):
+def CREATE_STREAMS(showDialogs=True):
 	settings = xbmcaddon.Addon(id=addon_id)
 	useragent = settings.getSetting('iptv.useragent')
 	iptvURL = settings.getSetting('iptv.url')
 	headers = {'User-Agent':useragent}
 	ok = CHECK_ACCOUNT(False)
 	if not ok:
-		xbmcgui.Dialog().ok('رسالة من المبرمج','فشل بسحب ملفات IPTV . أحتمال رابط IPTV غير صحيح أو انت لم تستخدم سابقا خدمة IPTV الموجودة بالبرنامج . هذه الخدمة تحتاج اشتراك مدفوع وصحيح ويجب أن تضيفه بنفسك للبرنامج باستخدام قائمة IPTV الموجودة بهذا البرنامج')
+		XBMCGUI_DIALOG_OK('رسالة من المبرمج','فشل بسحب ملفات IPTV . أحتمال رابط IPTV غير صحيح أو انت لم تستخدم سابقا خدمة IPTV الموجودة بالبرنامج . هذه الخدمة تحتاج اشتراك مدفوع وصحيح ويجب أن تضيفه بنفسك للبرنامج باستخدام قائمة IPTV الموجودة بهذا البرنامج')
 		if iptvURL=='': LOG_THIS('ERROR',LOGGING(script_name)+'   No IPTV URL found to download IPTV files')
 		else: LOG_THIS('ERROR',LOGGING(script_name)+'   Failed to download IPTV files')
 		return
-	#xbmcgui.Dialog().notification('IPTV','جلب ملفات جديدة')
+	#XBMCGUI_DIALOG_NOTIFICATION('IPTV','جلب ملفات جديدة')
 	#BUSY_DIALOG('start')
 	#LOG_THIS('NOTICE','EMAD 111')
-	if ask_dialog:
-		answer = xbmcgui.Dialog().yesno('رسالة من المبرمج','هل تريد أن تجلب الآن ملفات IPTV جديدة ؟','','','كلا','نعم')
-		if not answer:
+	if showDialogs:
+		yes = XBMCGUI_DIALOG_YESNO('رسالة من المبرمج','هل تريد أن تجلب الآن ملفات IPTV جديدة ؟','','','كلا','نعم')
+		if not yes:
 			#BUSY_DIALOG('stop')
 			return
-	pDialog = xbmcgui.DialogProgress()
+	pDialog = XBMCGUI_DIALOGPROGRESS()
 	pDialog.create('جلب ملفات IPTV جديدة','جلب الملف الرئيسي (الملف قد يكون كبير وقد يحتاج بعض الوقت)')
 	m3u_text = ''
 	MegaByte = 1024*1024
@@ -463,7 +465,7 @@ def CREATE_STREAMS(ask_dialog=True):
 	#m3u_filename = 'iptv_'+str(int(now))+'_.m3u'
 	#iptvfile = os.path.join(addoncachefolder,m3u_filename)
 	#return
-	#xbmcgui.Dialog().ok(iptvURL,m3u_text)
+	#XBMCGUI_DIALOG_OK(iptvURL,m3u_text)
 	"""
 	response.close()
 	chunks_count = filesize/MegaByte
@@ -473,7 +475,7 @@ def CREATE_STREAMS(ask_dialog=True):
 		chunk = response.content
 		return chunk
 	chunk = get_chunk(0)
-	xbmcgui.Dialog().ok('',str(len(chunk)))
+	XBMCGUI_DIALOG_OK('',str(len(chunk)))
 	mythread = CustomThread()
 	for i in chunks_count:
 		mythread.start_new_thread(i,get_chunk,i*MegaByte)
@@ -505,7 +507,7 @@ def CREATE_STREAMS(ask_dialog=True):
 	if pDialog.iscanceled(): return
 	pDialog.update(40,'جلب الملفات الثانوية:- الملف رقم','2/3')
 	series_groups = re.findall('category_name":"(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok('','')
+	#XBMCGUI_DIALOG_OK('','')
 	for group in series_groups:
 		group = group.replace('\/','/').decode('unicode_escape').encode('utf8')
 		m3u_text = m3u_text.replace('group="'+group+'"','group="__IPTVSeries__'+group+'"')
@@ -535,13 +537,14 @@ def CREATE_STREAMS(ask_dialog=True):
 		if pDialog.iscanceled(): return
 		pDialog.update(50+int(25*i/length),'قراءة الملفات الجديدة:- الفيديو رقم',str(i)+'/'+str(length))
 		line = line.replace('\r','').replace('\n','')
+		if 'http' not in line: continue
 		line,url = line.rsplit('http',1)
 		url = 'http'+url
 		try:
 			line,title = line.rsplit('",',1)
 			line = line+'"'
 		except:
-			#xbmcgui.Dialog().ok('FAILED','FAILED')
+			#XBMCGUI_DIALOG_OK('FAILED','FAILED')
 			try: line,title = line.rsplit('1,',1)
 			except: title = ''
 		dict['url'] = url
@@ -605,12 +608,11 @@ def CREATE_STREAMS(ask_dialog=True):
 	#with open('S:\\0iptvemad.m3u','w') as f: f.write(str(streams_not_sorted).replace("},","}\n,"))
 	streams_sorted = sorted(streams_not_sorted, reverse=False, key=lambda key: key['title'].lower())
 	grouped_streams = {}
-	types = ['VOD_UNKNOWN_GROUPED','LIVE_GROUPED','VOD_SERIES_GROUPED','VOD_MOVIES_GROUPED','ALL',
-			'LIVE_ORIGINAL_GROUPED','VOD_ORIGINAL_GROUPED','LIVE_FROM_NAME_SORTED','VOD_FROM_NAME_SORTED',
-			'LIVE_GROUPED_SORTED','LIVE_UNKNOWN','VOD_MOVIES_GROUPED_SORTED','VOD_SERIES_GROUPED_SORTED',
-			'VOD_UNKNOWN_GROUPED_SORTED','DUMMY','LIVE_FROM_GROUP_SORTED','VOD_FROM_GROUP_SORTED',
+	types = ['ALL','DUMMY','VOD_UNKNOWN_GROUPED','LIVE_UNKNOWN_SORTED','LIVE_UNKNOWN','VOD_UNKNOWN_GROUPED_SORTED',
 			'LIVE_ARCHIVED_GROUPED_SORTED','LIVE_EPG_GROUPED_SORTED','LIVE_TIMESHIFT_GROUPED_SORTED',
-			'LIVE_UNKNOWN_SORTED']
+			'LIVE_ORIGINAL_GROUPED','LIVE_FROM_NAME_SORTED','LIVE_GROUPED_SORTED','LIVE_GROUPED','LIVE_FROM_GROUP_SORTED',
+			'VOD_MOVIES_GROUPED_SORTED','VOD_MOVIES_GROUPED','VOD_SERIES_GROUPED','VOD_SERIES_GROUPED_SORTED',
+			'VOD_ORIGINAL_GROUPED','VOD_FROM_NAME_SORTED','VOD_FROM_GROUP_SORTED']
 	for type in types: grouped_streams[type] = []
 	#LOG_THIS('NOTICE','EMAD 555 CREATE STREAMS START creating 1st STREAMS dictionary')
 	for dict in streams_sorted:
@@ -671,32 +673,59 @@ def CREATE_STREAMS(ask_dialog=True):
 	with open(dummyiptvfile,'w') as f: f.write('')
 	pDialog.close()
 	#BUSY_DIALOG('stop')
-	xbmcgui.Dialog().ok('رسالة من المبرمج','تم جلب ملفات IPTV جديدة')
+	countsMessage = COUNTS(False)
+	XBMCGUI_DIALOG_OK('تم جلب ملفات IPTV جديدة',countsMessage)
 	return
+
+def COUNTS(show=True):
+	#XBMCGUI_DIALOG_OK('COUNTS','0000')
+	if not isIPTVFiles(show): return ''
+	BUSY_DIALOG('start')
+	unknownLIVECount = len(READ_FROM_SQL3('IPTV_STREAMS','LIVE_UNKNOWN'))
+	knownLIVECount = len(READ_FROM_SQL3('IPTV_STREAMS','LIVE_GROUPED'))
+	liveCount = unknownLIVECount+knownLIVECount
+	moviesCount = len(READ_FROM_SQL3('IPTV_STREAMS','VOD_MOVIES_GROUPED'))
+	unknownVODCount = len(READ_FROM_SQL3('IPTV_STREAMS','VOD_UNKNOWN_GROUPED'))
+	episodes = READ_FROM_SQL3('IPTV_STREAMS','VOD_SERIES_GROUPED')
+	episodesCount = len(episodes)
+	uniqeSeriesLIST = []
+	for dict in episodes:
+		group = dict['group']
+		if '__IPTVSeries__' in group:
+			seriesName = group.split('__IPTVSeries__')[1]
+			if seriesName not in uniqeSeriesLIST: uniqeSeriesLIST.append(seriesName)
+	seriesCount = len(uniqeSeriesLIST)
+	total = liveCount+moviesCount+episodesCount+unknownVODCount
+	countsMessage = 'قنوات: '+str(liveCount)+'     أفلام: '+str(moviesCount)+'\r\n     مسلسلات: '+str(seriesCount)+'     حلقات: '+str(episodesCount)+'\r\n     فيدوهات مجهولة: '+str(unknownVODCount)+'     المجموع: '+str(total)
+	if show: XBMCGUI_DIALOG_OK('رسالة من المبرمج',countsMessage)
+	BUSY_DIALOG('stop')	
+	logMssage = countsMessage.replace('     ','  .  ').replace('\r\n','')
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Counts of IPTV videos   '+logMssage)
+	return countsMessage
 
 def DELETE_IPTV_FILES(show=True):
 	if show:
-		yes = xbmcgui.Dialog().yesno('مسح ملفات IPTV','تستطيع في أي وقت الدخول إلى قائمة IPTV وجلب ملفات IPTV جديدة .. هل تريد الآن مسح الملفات القديمة المخزنة في البرنامج ؟!','','','كلا','نعم')
+		yes = XBMCGUI_DIALOG_YESNO('مسح ملفات IPTV','تستطيع في أي وقت الدخول إلى قائمة IPTV وجلب ملفات IPTV جديدة .. هل تريد الآن مسح الملفات القديمة المخزنة في البرنامج ؟!','','','كلا','نعم')
 		if not yes: return
 	else: yes = False
 	if isIPTVFiles(False):
 		os.remove(dummyiptvfile)
-		os.remove(fulliptvfile)
+		if show: os.remove(fulliptvfile)
 	DELETE_FROM_SQL3('IPTV_ITEMS')
 	DELETE_FROM_SQL3('IPTV_GROUPS')
 	DELETE_FROM_SQL3('IPTV_STREAMS')
 	#DELETE_FROM_SQL3('IMPORT_SECTIONS','LIVE')
 	#CLEAN_KODI_CACHE_FOLDER()
-	if show: xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح جميع ملفات IPTV')
+	if show: XBMCGUI_DIALOG_OK('رسالة من المبرمج','تم مسح جميع ملفات IPTV')
 	return yes
 
-def isIPTVFiles(show_msg=True):
+def isIPTVFiles(showDialogs=True):
 	list = str(os.listdir(addoncachefolder))
 	filename = dummyiptvfile.split('/')[-1].split('\\')[-1]
 	if filename in list: return True
 	#streams = READ_FROM_SQL3('IPTV_STREAMS','DUMMY')
 	#if streams: return True
-	if show_msg: xbmcgui.Dialog().ok('رسالة من المبرمج','انت بحاجة إلى الذهاب إلى قائمة IPTV ثم . أولا اضغط على "إضافة اشتراك IPTV المدفوع" (من أي شركة IPTV) . ثم ثانيا اضغط على جلب ملفات IPTV')
+	if showDialogs: XBMCGUI_DIALOG_OK('رسالة من المبرمج','انت بحاجة إلى الذهاب إلى قائمة IPTV ثم . أولا اضغط على "إضافة اشتراك IPTV المدفوع" (من أي شركة IPTV) . ثم ثانيا اضغط على جلب ملفات IPTV')
 	return False
 
 """
@@ -715,7 +744,7 @@ def SAVE_STREAMS_TO_DISK(grouped_streams,types):
 		file.write(new_streams)
 		file.close()
 		filesLIST.append(new_filename)
-	xbmcgui.Dialog().ok('IPTV','تم جلب ملفات IPTV جديدة')
+	XBMCGUI_DIALOG_OK('IPTV','تم جلب ملفات IPTV جديدة')
 	return
 
 def GET_STREAMS_FROM_DISK(TYPE):

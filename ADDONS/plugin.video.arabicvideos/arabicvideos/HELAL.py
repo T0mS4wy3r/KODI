@@ -45,7 +45,7 @@ def MENU(website=''):
 	return html
 
 def ITEMS(url):
-	#xbmcgui.Dialog().ok(str(url),str(''))
+	#XBMCGUI_DIALOG_OK(str(url),str(''))
 	if '/search.php' in url:
 		url,search = url.split('?t=')
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
@@ -55,7 +55,7 @@ def ITEMS(url):
 	else:
 		headers = { 'User-Agent' : '' }
 		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-ITEMS-2nd')
-	#xbmcgui.Dialog().ok('',str(html))
+	#XBMCGUI_DIALOG_OK('',str(html))
 	html_blocks = re.findall('id="movies-items(.*?)class="listfoot"',html,re.DOTALL)
 	if html_blocks: block = html_blocks[0]
 	else: block = ''
@@ -111,7 +111,7 @@ def PLAY(url):
 	block = html_blocks[0]
 	items = re.findall('id="ajax-file-id.*?value="(.*?)"',block,re.DOTALL)
 	id = items[0]
-	#xbmcgui.Dialog().ok('',id)
+	#XBMCGUI_DIALOG_OK('',id)
 	items = re.findall('data-server-src="(.*?)"',block,re.DOTALL)
 	for link in items:
 		if 'http' not in link: link = 'http:' + link
@@ -125,7 +125,7 @@ def PLAY(url):
 		#linkLIST.append(link)
 		urlLIST.append(url2)
 		html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','HELAL-PLAY-3rd')
-		#xbmcgui.Dialog().ok(url2,html)
+		#XBMCGUI_DIALOG_OK(url2,html)
 	count = len(urlLIST)
 	import concurrent.futures
 	with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
@@ -148,12 +148,12 @@ def LATEST():
 	return
 
 def SEARCH(search=''):
-	#xbmcgui.Dialog().ok(str(search),str(''))
+	#XBMCGUI_DIALOG_OK(str(search),str(''))
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
-	#xbmcgui.Dialog().ok(str(search),str(''))
+	#XBMCGUI_DIALOG_OK(str(search),str(''))
 	url = website0a + '/search.php?t='+search
 	ITEMS(url)
 	return

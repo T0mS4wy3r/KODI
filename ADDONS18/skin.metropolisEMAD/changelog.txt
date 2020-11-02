@@ -1,4 +1,15 @@
 
+v18.4.0.0	2020-11-02
+Added Arabic menu
+Added ANALYTICS for first skin use
+Modified shortcuts of main menu
+Increased height and font for mobile users
+Fixed the screen of "install an addon using a zip file"
+Matched the skin with the original skin v3.70.beta
+Minor size changes
+Minor fixes & improvements
+
+
 v18.3.1.1	2020-08-13
 Modified TextViewer Dialog
 Fixed list right pageup/pagedown

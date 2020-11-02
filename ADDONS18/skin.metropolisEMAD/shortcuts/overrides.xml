@@ -30,7 +30,10 @@
 	<!-- Default widgets -->
 	<widgetdefaultnode defaultID="movies" group="mainmenu" type="movies" target="video" label="20386" path="plugin://script.skin.helper.widgets/?action=recent&amp;mediatype=movies&amp;reload=$INFO[Window(home).Property(widgetreload-movies)]">RecentMovies</widgetdefaultnode>
 	<widgetdefaultnode defaultID="tvshows" group="mainmenu" type="episodes" target="video" label="20387" path="plugin://script.skin.helper.widgets/?action=recent&amp;mediatype=episodes&amp;reload=$INFO[Window(home).Property(widgetreload-episodes)]">RecentEpisodes</widgetdefaultnode>
-	<widgetdefaultnode defaultID="music" group="mainmenu" type="albums" target="music" label="359" path="plugin://script.skin.helper.widgets/?action=recent&amp;mediatype=music&amp;reload=$INFO[Window(home).Property(widgetreload-music)]">RecentAlbums</widgetdefaultnode>
+	
+	<!-- cause error message in log file: "no module named music" -->
+	<AAAwidgetdefaultnode defaultID="music222" group="mainmenu" type="albums" target="music" label="359" path="plugin://script.skin.helper.widgets/?action=recent&amp;mediatype=music&amp;reload=$INFO[Window(home).Property(widgetreload-music)]">RecentAlbums</AAAwidgetdefaultnode>
+	
 	<widgetdefaultnode defaultID="musicvideos" group="mainmenu" type="musicvideos" target="video" label="20390" path="plugin://script.skin.helper.widgets/?action=recent&amp;mediatype=musicvideos&amp;reload=$INFO[Window(home).Property(widgetreload-musicvideos)]">RecentMusicVideos</widgetdefaultnode>
 	<widgetdefaultnode defaultID="favourites" group="mainmenu" type="movies" target="videos" label="1036" path="plugin://script.skin.helper.widgets/?action=favourites&amp;mediatype=favourites&amp;reload=$INFO[Window(Home).Property(widgetreload)]$INFO[Window(Home).Property(widgetreload2)]">Favourites</widgetdefaultnode>
 	<widgetdefault defaultID="livetv" group="mainmenu">PVRStatusWidget</widgetdefault>
@@ -71,7 +74,14 @@
 	<backgrounddefault defaultID="settings">home\settings\</backgrounddefault>
 	<background label="13005">home\shutdown\</background>
 	<backgrounddefault defaultID="shutdown">home\shutdown\</backgrounddefault>
+	<background label="addons">home\radio\</background>
+	<backgrounddefault defaultID="addons">home\radio\</backgrounddefault>
 	<backgroundBrowse>True</backgroundBrowse>
+
+	<backgrounddefault defaultID="arabic0">home\arabic\</backgrounddefault>
+	<backgrounddefault defaultID="arabic1">home\arabic\</backgrounddefault>
+	<backgrounddefault defaultID="arabic2">home\arabic\</backgrounddefault>
+
 
 	<!-- Thumbnails (Home2 icons, also specified in shortcuts/mainmenu.DATA.xml) -->
 	<thumbnail label="32032">home_icons/playdisc.png</thumbnail>
@@ -91,4 +101,6 @@
 	<thumbnail label="137">home_icons/search.png</thumbnail>
 	<thumbnail label="10004">home_icons/settings.png</thumbnail>
 	<thumbnail label="13005">home_icons/shutdown.png</thumbnail>
+	<thumbnail label="arabic">home_icons/arabic.png</thumbnail>
+	<thumbnail label="addons">home_icons/radio.png</thumbnail>
 </overrides>

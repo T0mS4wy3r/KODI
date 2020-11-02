@@ -35,7 +35,7 @@ def MAIN(mode,url,page,text):
 	return results
 
 def TERMINATED_ADBLOCKER():
-	xbmcgui.Dialog().ok('رسالة من المبرمج','سيرفر ملفات الفيديو لهذا الموقع يستخدم مانع اعلانات والمبرمج لم يستطع تجاوزه لان كودي لا يفهم لغة البرمجة جافاسكربت ولهذا سيبقى الموقع مغلق الى ما شاء الله')
+	XBMCGUI_DIALOG_OK('رسالة من المبرمج','سيرفر ملفات الفيديو لهذا الموقع يستخدم مانع اعلانات والمبرمج لم يستطع تجاوزه لان كودي لا يفهم لغة البرمجة جافاسكربت ولهذا سيبقى الموقع مغلق الى ما شاء الله')
 	return
 
 def MENU(website=''):
@@ -43,7 +43,7 @@ def MENU(website=''):
 	#addMenuItem('folder',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
 	addMenuItem('folder',menu_name+'بحث في الموقع','',129,'','','_REMEMBERRESULTS_')
 	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBEST-MENU-1st')
-	#xbmcgui.Dialog().ok(website0a, html)
+	#XBMCGUI_DIALOG_OK(website0a, html)
 	#addMenuItem('folder',website+'___'+menu_name+'الأكثر مشاهدة',website0a+'/trending/',121)
 	#addMenuItem('folder',website+'___'+menu_name+'الأفلام',website0a+'/movies/',121)
 	#addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/tv/',121)
@@ -71,7 +71,7 @@ def FILTERS_MENU(link):
 		if filter=='': filter = 'latest'
 		elif not any(value in filter for value in ['new','top','popular']): filter = 'latest-'+filter
 	filter = filter.replace('-',' + ')
-	#xbmcgui.Dialog().ok(str(link), str(filter))
+	#XBMCGUI_DIALOG_OK(str(link), str(filter))
 	if '/trending/' not in link:
 		addMenuItem('folder',menu_name+'اظهار قائمة الفيديو التي تم اختيارها',link,122,'','1')
 		addMenuItem('folder',menu_name+'[[   ' + filter + '   ]]',link,122,'','1')
@@ -111,7 +111,7 @@ def FILTERS_MENU(link):
 	return
 
 def TITLES(url,page):
-	#xbmcgui.Dialog().ok(str(url), page)
+	#XBMCGUI_DIALOG_OK(str(url), page)
 	if '/explore/' in url or '?' in url: url2 = url + '&'
 	else: url2 = url + '?'
 	url2 = url2 + 'output_format=json&output_mode=movies_list&page='+page
@@ -122,7 +122,7 @@ def TITLES(url,page):
 		name = re.findall('<h1>(.*?)<',html,re.DOTALL)
 		if name: name = escapeUNICODE(name[0]).strip(' ') + ' - '
 		else: name = xbmc.getInfoLabel( "ListItem.Label" ) + ' - '
-		#xbmcgui.Dialog().ok(name, name)
+		#XBMCGUI_DIALOG_OK(name, name)
 	items = re.findall('n<a href=\\\\"(.*?)\\\\".*?src=\\\\"(.*?)\\\\".*?title\\\\">(.*?)<',html,re.DOTALL)
 	for link,img,title in items:
 		if '/series/' in url and '/season\/' not in link: continue
@@ -131,7 +131,7 @@ def TITLES(url,page):
 		link = link.replace('\/','/')
 		img = img.replace('\/','/')
 		if 'http' not in img: img = 'http:'+img
-		#xbmcgui.Dialog().notification(img,'')
+		#XBMCGUI_DIALOG_NOTIFICATION(img,'')
 		url2 = website0a+link
 		if '/movie/' in url2 or '/episode/' in url2:
 			addMenuItem('video',menu_name+title,url2.rstrip('/'),123,img)
@@ -158,39 +158,39 @@ def TITLES(url,page):
 
 def PLAY(url):
 	global headers
-	#xbmcgui.Dialog().ok(url, url[-45:])
+	#XBMCGUI_DIALOG_OK(url, url[-45:])
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGYBEST-PLAY-1st')
 	ratingLIST = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
 	if RATING_CHECK(script_name,url,ratingLIST): return
 	"""
 	html_blocks = re.findall('tbody(.*?)tbody',html,re.DOTALL)
 	if not html_blocks:
-		xbmcgui.Dialog().notification('خطأ من الموقع الاصلي','ملف الفيديو غير متوفر')
+		XBMCGUI_DIALOG_NOTIFICATION('خطأ من الموقع الاصلي','ملف الفيديو غير متوفر')
 		return
 	block = html_blocks[0]
 	"""
 	titleLIST,linkLIST = [],[]
 	watchitem = re.findall('class="auto-size" src="(.*?)"',html,re.DOTALL)
-	#xbmcgui.Dialog().ok(url2, str(html2))
+	#XBMCGUI_DIALOG_OK(url2, str(html2))
 	# https://vidstream.top/embed/o2RbrN9bqf/?vclid=44711370a2655b3f2d23487cb74c05e5347648e8bb9571dfa7c5d5e4zlllsCGMDslElsMaYXobviuROhYfamfMOhlsEslsWQUlslElsMOcSbzMykqapaqlsEslsxMcGlslElsOGsabiZusOxySMgOpEaucSxiSVGEBOlOouQzsEslsxWdlslElsmmmlRPMMslnfpaqlsEslsCMcGlslElsOEOEEZlEMOuzslh
 	if watchitem:
 		url2 = website0a+watchitem[0]#+'||MyProxyUrl=http://79.165.242.84:4145'
 		server = SERVER(url2)
-		#xbmcgui.Dialog().ok(server,'')
+		#XBMCGUI_DIALOG_OK(server,'')
 		response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'','',True,'','EGYBEST-PLAY-2nd')
 		#html2 = response.content
 		#cookies = response.cookies.get_dict()
 		#PHPSID = cookies['PHPSID']
-		#xbmcgui.Dialog().ok(server, str(PHPSID))
+		#XBMCGUI_DIALOG_OK(server, str(PHPSID))
 		headers2 = headers
 		#headers2['Cookie'] = 'PHPSID='+PHPSID
 		response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'',headers2,False,'','EGYBEST-PLAY-3rd')
 		html2 = response.content
 		#xbmc.log(html2, level=xbmc.LOGNOTICE)
-		#xbmcgui.Dialog().ok(url2, str(html2.count('404')))
+		#XBMCGUI_DIALOG_OK(url2, str(html2.count('404')))
 		items = re.findall('source src="(.*?)"',html2,re.DOTALL)
-		#xbmcgui.Dialog().ok(url2, str(html2))
-		#xbmcgui.Dialog().ok(url2, str(items))
+		#XBMCGUI_DIALOG_OK(url2, str(html2))
+		#XBMCGUI_DIALOG_OK(url2, str(items))
 		if items:
 			url3 = server+items[0]
 			titleLIST,linkLIST = EXTRACT_M3U8(url3)
@@ -219,14 +219,14 @@ def PLAY(url):
 	headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 	response = openURL_requests_cached(SHORT_CACHE,'GET', url, '', headers, False,'','EGYBEST-PLAY-2nd')
 	html = response.content
-	#xbmcgui.Dialog().ok(url,html)
+	#XBMCGUI_DIALOG_OK(url,html)
 	items = re.findall('#EXT-X-STREAM.*?RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
 	if items:
 		for qualtiy,url in reversed(items):
 			qualityLIST.append ('m3u8   '+qualtiy)
 			datacallLIST.append (url)
 	"""
-	#selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', linkLIST)
+	#selection = XBMCGUI_DIALOG_SELECT('اختر الفيديو المناسب:', linkLIST)
 	#if selection == -1 : return
 	#url = linkLIST[selection]
 	"""
@@ -236,7 +236,7 @@ def PLAY(url):
 		headers = { 'User-Agent':'Googlebot/2.1 (+http)', 'Referer':website0a, 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 		response = openURL_requests_cached(SHORT_CACHE,'GET', url, '', headers, False,'','EGYBEST-PLAY-3rd')
 		html = response.content
-		#xbmcgui.Dialog().ok(url,html)
+		#XBMCGUI_DIALOG_OK(url,html)
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
 		items = re.findall('"url":"(.*?)"',html,re.DOTALL)
 		#link = items[0]
@@ -249,25 +249,25 @@ def PLAY(url):
 		#items = re.findall('"url":"(.*?)"',html,re.DOTALL)
 		url = items[0]
 
-		#xbmcgui.Dialog().ok(url,html)
+		#XBMCGUI_DIALOG_OK(url,html)
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
 		#items = re.findall('"url":"(.*?)"',html,re.DOTALL)
 		#url = items[0]
 	url = url.replace('\/','/')
 	#xbmc.log(url, level=xbmc.LOGNOTICE)
-	#xbmcgui.Dialog().ok(url,url[-45:])
+	#XBMCGUI_DIALOG_OK(url,url[-45:])
 	"""
 	#WARNING() ; return
 	#result = PLAY_VIDEO(url,script_name,'video')
 	#if result!='playing': WARNING()
-	#xbmcgui.Dialog().ok(url,'')
+	#XBMCGUI_DIALOG_OK(url,'')
 	import RESOLVERS
 	RESOLVERS.PLAY(linkLIST,script_name,'video')
 	return
 
 def GET_USERNAME_PASSWORD():
 	text = 'هذا الموقع يحتاج اسم دخول وكلمة السر لكي تستطيع تشغيل ملفات الفيديو. للحصول عليهم قم بفتح حساب مجاني من الموقع الاصلي'
-	xbmcgui.Dialog().ok('الموقع الاصلي  '+website0a,text)
+	XBMCGUI_DIALOG_OK('الموقع الاصلي  '+website0a,text)
 	settings = xbmcaddon.Addon(id=addon_id)
 	oldusername = settings.getSetting('egybest.user')
 	oldpassword = settings.getSetting('egybest.pass')
@@ -287,7 +287,7 @@ def GET_PLAY_TOKENS():
 	EGUSS = settings.getSetting('egybest.EGUSS')
 	username = mixARABIC(settings.getSetting('egybest.user'))
 	password = mixARABIC(settings.getSetting('egybest.pass'))
-	#xbmcgui.Dialog().ok(username,password)
+	#XBMCGUI_DIALOG_OK(username,password)
 	if username=='' or password=='':
 		settings.setSetting('egybest.EGUDI','')
 		settings.setSetting('egybest.EGUSID','')
@@ -304,7 +304,7 @@ def GET_PLAY_TOKENS():
 			settings.setSetting('egybest.EGUSID','')
 			settings.setSetting('egybest.EGUSS','')
 		else:
-			#xbmcgui.Dialog().ok('no new login needed, you were already logged in','')
+			#XBMCGUI_DIALOG_OK('no new login needed, you were already logged in','')
 			return [ EGUDI, EGUSID, EGUSS ]
 
 	char_set = string.ascii_uppercase + string.digits + string.ascii_lowercase
@@ -332,34 +332,34 @@ def GET_PLAY_TOKENS():
 	#xbmc.log(response.content, level=xbmc.LOGNOTICE)
 
 	if '"action":"captcha"' in response.content:
-		xbmcgui.Dialog().ok('مشكلة جدا مزعجة تخص جهازك فقط','موقع ايجي بيست يرفض دخولك اليهم بإستخدام كودي ... حاول فصل الانترنيت واعادة ربطها لتحصل على عنوان IP جديد ... او اعد المحاولة بعد عدة ايام او عدة اسابيع')
+		XBMCGUI_DIALOG_OK('مشكلة جدا مزعجة تخص جهازك فقط','موقع ايجي بيست يرفض دخولك اليهم بإستخدام كودي ... حاول فصل الانترنيت واعادة ربطها لتحصل على عنوان IP جديد ... او اعد المحاولة بعد عدة ايام او عدة اسابيع')
 		return ['','','']
 
 	if len(cookies)<3:
-		xbmcgui.Dialog().ok('مشكلة في تسجيل الدخول للموقع','حاول اصلاح اسم الدخول وكلمة السر لكي تتمكن من تشغيل الفيديو بصورة صحيحة')
+		XBMCGUI_DIALOG_OK('مشكلة في تسجيل الدخول للموقع','حاول اصلاح اسم الدخول وكلمة السر لكي تتمكن من تشغيل الفيديو بصورة صحيحة')
 		GET_USERNAME_PASSWORD()
 		return ['','','']
 
 	EGUDI = cookies['EGUDI']
 	EGUSID = cookies['EGUSID']
 	EGUSS = cookies['EGUSS']
-	xbmc.sleep(1000)
+	time.sleep(1)
 	url = "https://ssl.egexa.com/finish/"
 	headers = { 'Cookie':'EGUDI='+EGUDI+'; EGUSID='+EGUSID+'; EGUSS='+EGUSS }
 	response = openURL_requests_cached(SHORT_CACHE,'GET', url, '', headers, True,'','EGYBEST-GET_PLAY_TOKENS-3rd')
 	cookies = response.cookies.get_dict()
-	#xbmcgui.Dialog().ok(str(response.content),str(cookies))
+	#XBMCGUI_DIALOG_OK(str(response.content),str(cookies))
 	EGUDI = cookies['EGUDI']
 	EGUSID = cookies['EGUSID']
 	EGUSS = cookies['EGUSS']
 	settings.setSetting('egybest.EGUDI',EGUDI)
 	settings.setSetting('egybest.EGUSID',EGUSID)
 	settings.setSetting('egybest.EGUSS',EGUSS)
-	#xbmcgui.Dialog().ok('success, you just logged in now','')
+	#XBMCGUI_DIALOG_OK('success, you just logged in now','')
 	return [ EGUDI, EGUSID, EGUSS ]
 
 def WARNING():
-	xbmcgui.Dialog().ok('https://egy.best','هذا الموقع هو موقع ايجي بيست الاصلي وهو قيد الانشاء ولهذا تقريبا جميع الفيدوهات لا تعمل')
+	XBMCGUI_DIALOG_OK('https://egy.best','هذا الموقع هو موقع ايجي بيست الاصلي وهو قيد الانشاء ولهذا تقريبا جميع الفيدوهات لا تعمل')
 	return
 
 def SEARCH(search):

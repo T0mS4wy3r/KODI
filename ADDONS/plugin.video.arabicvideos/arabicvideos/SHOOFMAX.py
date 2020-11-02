@@ -49,20 +49,20 @@ def SERIES_MENU():
 	return
 
 def TITLES(url):
-	#xbmcgui.Dialog().ok(url,url)
+	#XBMCGUI_DIALOG_OK(url,url)
 	if '?' in url:
 		parts = url.split('?')
 		url = parts[0]
 		filter = '?' + urllib2.quote(parts[1],'=&:/%')
 	else: filter = ''
-	#xbmcgui.Dialog().ok(filter,'')
+	#XBMCGUI_DIALOG_OK(filter,'')
 	parts = url.split('/')
 	sort,page,type = parts[-1],parts[-2],parts[-3]
 	if sort in ['yop','review','views']:
 		if type=='movie': type1='فيلم'
 		elif type=='series': type1='مسلسل'
 		url = website0a + '/filter-programs/' + quote(type1) + '/' + page + '/' + sort + filter
-		#xbmcgui.Dialog().ok(url,page)
+		#XBMCGUI_DIALOG_OK(url,page)
 		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-TITLES-1st')
 		items = re.findall('"ref":(.*?),.*?"title":"(.*?)".+?"numep":(.*?),"res":"(.*?)"',html,re.DOTALL)
 		count_items=0
@@ -106,7 +106,7 @@ def EPISODES(url):
 		block = html_blocks[0]
 		items = re.findall('option value="(.*?)"',block,re.DOTALL)
 		episodes_count = int(items[-1])
-		#xbmcgui.Dialog().ok(episodes_count,'')
+		#XBMCGUI_DIALOG_OK(episodes_count,'')
 	#name = xbmc.getInfoLabel( "ListItem.Title" )
 	#img = xbmc.getInfoLabel( "ListItem.Thumb" )
 	for episode in range(episodes_count,0,-1):
@@ -122,7 +122,7 @@ def PLAY(url):
 		later = re.findall('(متوفر على شوف ماكس بعد).*?moment\("(.*?)"',html,re.DOTALL)
 		if later:
 			time = later[0][1].replace('T','    ')
-			xbmcgui.Dialog().ok('رسالة من الموقع الاصلي','هذا الفيديو سيكون متوفر على شوف ماكس بعد هذا الوقت'+'\n'+time)
+			XBMCGUI_DIALOG_OK('رسالة من الموقع الاصلي','هذا الفيديو سيكون متوفر على شوف ماكس بعد هذا الوقت'+'\n'+time)
 		return
 	block = html_blocks[0]
 	items_url = []
@@ -164,7 +164,7 @@ def PLAY(url):
 					filetype = titleLIST[i].split(' ')[0]
 					title = titleLIST[i].replace(filetype,'').strip(' ').replace('   ','  ')
 					items_name.append(filetype+'  '+server+'  '+title)
-	selection = xbmcgui.Dialog().select('Select Video Quality:', items_name)
+	selection = XBMCGUI_DIALOG_SELECT('Select Video Quality:', items_name)
 	if selection == -1 : return
 	url = items_url[selection]
 	#url = mixARABIC(url)
@@ -172,12 +172,12 @@ def PLAY(url):
 	return
 
 def FILTERS(url,type):
-	#xbmcgui.Dialog().ok(url,url)
+	#XBMCGUI_DIALOG_OK(url,url)
 	if 'series' in url: url2 = website0a + '/genre/مسلسل'
 	else: url2 = website0a + '/genre/فيلم'
 	url2 = quote(url2)
 	html = openURL_cached(LONG_CACHE,url2,'','','','SHOOFMAX-FILTERS-1st')
-	#xbmcgui.Dialog().ok(url,html)
+	#XBMCGUI_DIALOG_OK(url,html)
 	if type==1: html_blocks = re.findall('subgenre(.*?)div',html,re.DOTALL)
 	elif type==2: html_blocks = re.findall('country(.*?)div',html,re.DOTALL)
 	block = html_blocks[0]
@@ -195,7 +195,7 @@ def SEARCH(search=''):
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
-	#xbmcgui.Dialog().ok(search,search)
+	#XBMCGUI_DIALOG_OK(search,search)
 	new_search = search.replace(' ','%20')
 	response = openURL_requests_cached(SHORT_CACHE,'GET', website0a, '', '', True,'','SHOOFMAX-SEARCH-1st')
 	html = response.content
@@ -224,7 +224,7 @@ def SEARCH(search=''):
 				else:
 					title = '_MOD_فيلم '+title
 					addMenuItem('video',menu_name+title,url,53,img)
-	#else: xbmcgui.Dialog().ok('no results','لا توجد نتائج للبحث')
+	#else: XBMCGUI_DIALOG_OK('no results','لا توجد نتائج للبحث')
 	return
 
 

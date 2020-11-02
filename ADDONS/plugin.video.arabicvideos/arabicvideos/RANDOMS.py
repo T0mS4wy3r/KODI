@@ -63,9 +63,10 @@ def SEARCH_RANDOM_VIDEOS(options):
 	url = 'https://www.bestrandoms.com/random-arabic-words'
 	payload = { 'quantity' : '50' }
 	data = urllib.urlencode(payload)
-	#xbmcgui.Dialog().ok('',str(data))
-	html = openURL_cached(VERY_SHORT_CACHE,url,data,headers,'','RANDOMS-SEARCH_RANDOM_VIDEOS-1st')
-	html_blocks = re.findall('list-unstyled(.*?)clearfix',html,re.DOTALL)
+	#XBMCGUI_DIALOG_OK('',str(data))
+	response = openURL_requests_cached(VERY_SHORT_CACHE,'GET',url,data,headers,'','','RANDOMS-SEARCH_RANDOM_VIDEOS-1st')
+	html = response.content
+	html_blocks = re.findall('class="content"(.*?)class="clearfix"',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('<span>(.*?)</span>.*?<span>(.*?)</span>',block,re.DOTALL)
 	arbLIST,engLIST = zip(*items)
@@ -86,22 +87,22 @@ def SEARCH_RANDOM_VIDEOS(options):
 			if len(word2)>minimumChars: list2.append(word2.lower())
 			if len(word3)>minimumChars: list2.append(word3.lower())
 		elif len(word)>minimumChars: list2.append(word.lower())
-	for i in range(0,5): random.shuffle(list2)
+	for i in range(9): random.shuffle(list2)
 	#LOG_THIS('NOTICE',str(list2))
-	#selection = xbmcgui.Dialog().select(str(len(list2)),list2)
+	#selection = XBMCGUI_DIALOG_SELECT(str(len(list2)),list2)
 	"""
 	list = ['كلمات عشوائية عربية','كلمات عشوائية إنكليزية']
-	#selection = xbmcgui.Dialog().select('اختر كلمة للبحث عنها:', list2)
+	#selection = XBMCGUI_DIALOG_SELECT('اختر كلمة للبحث عنها:', list2)
 	list1 = []
 	counts = len(list2)
 	for i in range(counts*5): random.shuffle(list2)
 	for i in range(length): list1.append('كلمة عشوائية رقم '+str(i))
 	while True:
-		#selection = xbmcgui.Dialog().select('اختر اللغة:', list)
+		#selection = XBMCGUI_DIALOG_SELECT('اختر اللغة:', list)
 		#if selection == -1: return
 		#elif selection==0: list2 = arbLIST
 		#else: list2 = engLIST
-		selection = xbmcgui.Dialog().select('اختر كلمة للبحث عنها:', list1)
+		selection = XBMCGUI_DIALOG_SELECT('اختر كلمة للبحث عنها:', list1)
 		if selection != -1: break
 		elif selection == -1: return
 	search = list2[selection]
@@ -131,7 +132,7 @@ def SEARCH_RANDOM_VIDEOS(options):
 	if len(menuItemsLIST)>random_size: menuItemsLIST[:] = random.sample(menuItemsLIST,random_size)
 	menuItemsLIST[:] = previuosLIST+menuItemsLIST
 	#GLOBAL_SEARCH_MENU(search,False)
-	#xbmcgui.Dialog().ok(str(len(menuItemsLIST)),'MENUS')
+	#XBMCGUI_DIALOG_OK(str(len(menuItemsLIST)),'MENUS')
 	return
 
 def IMPORT_SITES():
@@ -140,7 +141,7 @@ def IMPORT_SITES():
 	if results: contentsDICT = results ; return
 	previousMenu = menuItemsLIST[:]
 	#LOG_THIS('NOTICE','START TIMING')
-	#xbmcgui.Dialog().ok('','start')
+	#XBMCGUI_DIALOG_OK('','start')
 	failed = 0
 	if failed<=5:
 		try: 
@@ -243,7 +244,7 @@ def IMPORT_SITES():
 	#import SERIES4WATCH	;	SERIES4WATCH.MENU('SERIES4WATCH')
 	#import YOUTUBE			;	YOUTUBE.MENU('YOUTUBE')
 	menuItemsLIST[:] = previousMenu
-	if failed>5: xbmcgui.Dialog().ok('رسالة من المبرمج','لديك مشكلة في اكثر من 5 مواقع من مواقع البرنامج ... وسببها قد يكون عدم وجود إنترنيت في جهازك')
+	if failed>5: XBMCGUI_DIALOG_OK('رسالة من المبرمج','لديك مشكلة في اكثر من 5 مواقع من مواقع البرنامج ... وسببها قد يكون عدم وجود إنترنيت في جهازك')
 	else: WRITE_TO_SQL3('IMPORT_SECTIONS','SITES',contentsDICT,PERMANENT_CACHE)
 	return
 
@@ -251,25 +252,25 @@ def IMPORT_IPTV(options):
 	message = 'للأسف لديك مشكلة في هذا الموقع . ورسالة الخطأ كان فيها تفاصيل المشكلة . أذا المشكلة ليست حجب فجرب إرسال هذه المشكلة إلى المبرمج من قائمة خدمات البرنامج'
 	import IPTV
 	if IPTV.isIPTVFiles(True):
-		#xbmcgui.Dialog().ok('',options)
+		#XBMCGUI_DIALOG_OK('',options)
 		if '_IPTV_' in options and '_LIVE_' not in options:
 			try: IPTV.GROUPS('VOD_ORIGINAL_GROUPED','',options+'_FORGETRESULTS__REMEMBERRESULTS_')
-			except: xbmcgui.Dialog().ok('موقع IPTV للفيديوهات',message)
+			except: XBMCGUI_DIALOG_OK('موقع IPTV للفيديوهات',message)
 		if '_IPTV_' in options and '_VOD_' not in options:
 			try: IPTV.GROUPS('LIVE_ORIGINAL_GROUPED','',options+'_FORGETRESULTS__REMEMBERRESULTS_')
-			except: xbmcgui.Dialog().ok('موقع IPTV للقنوات',message)
+			except: XBMCGUI_DIALOG_OK('موقع IPTV للقنوات',message)
 	else: EXIT_PROGRAM('RANDOMS-IMPORT_IPTV-1st')
 	return
 
 def CATEGORIES_MENU(options):
-	#xbmcgui.Dialog().ok('',options)
+	#XBMCGUI_DIALOG_OK('',options)
 	clean_options = options.replace('_CREATENEW_','').replace('_FORGETRESULTS_','').replace('_REMEMBERRESULTS_','')
 	addMenuItem('folder','تحديث هذه القائمة','',165,'','','_CREATENEW__FORGETRESULTS_'+clean_options)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	if '_SITES_' in options:
 		if '_CREATENEW_' in options: DELETE_FROM_SQL3('IMPORT_SECTIONS','SITES')
 		IMPORT_SITES()
-		#xbmcgui.Dialog().ok('',str(len(menuItemsLIST)))
+		#XBMCGUI_DIALOG_OK('',str(len(menuItemsLIST)))
 		for nameonly in sorted(contentsDICT.keys()):
 			addMenuItem('folder',menu_name+nameonly,nameonly,166,'','',clean_options)
 	elif '_IPTV_' in options:
@@ -281,7 +282,7 @@ def CATEGORIES_MENU(options):
 
 def RANDOM_VOD_ITEMS(nameonly,options):
 	options = options.replace('_FORGETRESULTS_','').replace('_REMEMBERRESULTS_','')
-	#xbmcgui.Dialog().ok(nameonly,options)
+	#XBMCGUI_DIALOG_OK(nameonly,options)
 	IMPORT_SITES()
 	if contentsDICT=={}: return
 	if '_RANDOM_' in options:
@@ -294,17 +295,17 @@ def RANDOM_VOD_ITEMS(nameonly,options):
 			MAIN_DISPATCHER(type,'',url,mode2,'',page,text,'')
 			menuItemsLIST[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
 			previousLIST,newLIST = menuItemsLIST[:3],menuItemsLIST[3:]
-			for i in range(0,5): random.shuffle(newLIST)
+			for i in range(9): random.shuffle(newLIST)
 			if '_RANDOM_' in options: menuItemsLIST[:] = previousLIST+newLIST[:random_size]
 			else: menuItemsLIST[:] = previousLIST+newLIST
 		elif '_SITES_' in options: addMenuItem('folder',website,url,mode2,image,page,text,favourite)
 	#LOG_THIS('NOTICE',str(contentsDICT[nameonly]))
-	#xbmcgui.Dialog().ok(str(contentsDICT[nameonly].keys()),str(contentsDICT[nameonly]))
+	#XBMCGUI_DIALOG_OK(str(contentsDICT[nameonly].keys()),str(contentsDICT[nameonly]))
 	return
 
 def RANDOM_CATEGORY(options,mode):
 	options = options.replace('_FORGETRESULTS_','').replace('_REMEMBERRESULTS_','')
-	#xbmcgui.Dialog().ok(options,str(mode))
+	#XBMCGUI_DIALOG_OK(options,str(mode))
 	name,menuItemsLIST2 = '',[]
 	addMenuItem('folder','[ [COLOR FFC89008]'+name+'[/COLOR] القسم : [ ','',mode,'','','_FORGETRESULTS__REMEMBERRESULTS_'+options)
 	addMenuItem('folder','إعادة طلب قسم عشوائي','',mode,'','','_FORGETRESULTS__REMEMBERRESULTS_'+options)
@@ -329,7 +330,7 @@ def RANDOM_CATEGORY(options,mode):
 	for i in range(0,10):
 		if i>0: LOG_THIS('NOTICE',LOGGING(script_name)+'   Random Category   name: '+name+'   url: '+url+'   mode: '+str(mode2))
 		menuItemsLIST[:] = []
-		#xbmcgui.Dialog().ok(name,'')
+		#XBMCGUI_DIALOG_OK(name,'')
 		if mode2==234 and '__IPTVSeries__' in text: mode2 = 233		
 		if mode2==144: mode2 = 291		
 		html = MAIN_DISPATCHER(type,name,url,mode2,image,page,text,favourite)
@@ -351,14 +352,14 @@ def RANDOM_CATEGORY(options,mode):
 	elif name.count('_')>1: name = name.split('_',2)[2]
 	name = name.replace('UNKNOWN: ','')#.replace(',MOVIES: ','').replace(',SERIES: ','').replace(',LIVE: ','')
 	previousLIST[0][1] = '[ [COLOR FFC89008]'+name+'[/COLOR] القسم : [ '
-	for i in range(0,5): random.shuffle(menuItemsLIST2)
+	for i in range(9): random.shuffle(menuItemsLIST2)
 	if '_RANDOM_' in options: menuItemsLIST[:] = previousLIST+menuItemsLIST2[:random_size]
 	else: menuItemsLIST[:] = previousLIST+menuItemsLIST2
 	return
 
 def RANDOM_IPTV_ITEMS(TYPE,GROUP):
 	GROUP = GROUP.replace('_FORGETRESULTS_','').replace('_REMEMBERRESULTS_','')
-	#xbmcgui.Dialog().ok(TYPE,GROUP)
+	#XBMCGUI_DIALOG_OK(TYPE,GROUP)
 	GROUP2 = GROUP
 	if '__IPTVSeries__' in GROUP:
 		GROUP2 = GROUP.split('__IPTVSeries__')[0]
@@ -374,7 +375,7 @@ def RANDOM_IPTV_ITEMS(TYPE,GROUP):
 	menuItemsLIST[:] = CLEAN_RANDOM_LIST(menuItemsLIST)
 	if len(menuItemsLIST)>(random_size+3): menuItemsLIST[:] = menuItemsLIST[:3]+random.sample(menuItemsLIST[3:],random_size)
 	#LOG_THIS('NOTICE',str(contentsDICT[nameonly]))
-	#xbmcgui.Dialog().ok(str(contentsDICT[nameonly].keys()),str(contentsDICT[nameonly]))
+	#XBMCGUI_DIALOG_OK(str(contentsDICT[nameonly].keys()),str(contentsDICT[nameonly]))
 	return
 
 def CLEAN_RANDOM_LIST(menuItemsLIST):

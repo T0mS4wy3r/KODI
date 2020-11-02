@@ -74,7 +74,7 @@ def MENU(website0):
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
 		if any(value in link for value in menu):
-			#xbmcgui.Dialog().ok(link,str(title))
+			#XBMCGUI_DIALOG_OK(link,str(title))
 			url = website0+link
 			if 'Series' in link:
 				addMenuItem('folder',website+'___'+menu_name+name1,url,22,'','100')
@@ -110,7 +110,7 @@ def TITLES(url,page):
 	type = url.split('/')[-1]
 	order = str(int(page)/100)
 	page = str(int(page)%100)
-	#xbmcgui.Dialog().ok(url, type)
+	#XBMCGUI_DIALOG_OK(url, type)
 	if type=='Series' and page=='0':
 		html = openURL_cached(REGULAR_CACHE,url,'','','','IFILM-TITLES-1st')
 		html_blocks = re.findall('serial-body(.*?)class="row',html,re.DOTALL)
@@ -129,7 +129,7 @@ def TITLES(url,page):
 	if type in ['Series','Program','Film'] and page!='0':
 		url2 = website0+'/Home/PageingItem?category='+category+'&page='+page+'&size=30&orderby='+order
 		html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-TITLES-2nd')
-		#xbmcgui.Dialog().ok(url2, html)
+		#XBMCGUI_DIALOG_OK(url2, html)
 		items = re.findall('"Id":(.*?),"Title":(.*?),.+?"ImageAddress_S":"(.*?)"',html,re.DOTALL)
 		for id,title,img in items:
 			title = escapeUNICODE(title)
@@ -169,7 +169,7 @@ def EPISODES(url,page):
 	order = str(int(page)/100)
 	page = str(int(page)%100)
 	count_items=0
-	#xbmcgui.Dialog().ok(url, type)
+	#XBMCGUI_DIALOG_OK(url, type)
 	if type=='Series':
 		html = openURL_cached(REGULAR_CACHE,url,'','','','IFILM-EPISODES-1st')
 		items = re.findall('Comment_panel_Item.*?p>(.*?)<i.+?var inter_ = (.*?);.*?src="(.*?)\'.*?data-url="(.*?)\'',html,re.DOTALL)
@@ -289,14 +289,14 @@ def SEARCH(url,search=''):
 	if url=='' and showdialogs:
 		urlLIST = [ website0a , website0b , website0c , website0d ]
 		nameLIST = [ 'عربي' , 'English' , 'فارسى' , 'فارسى 2' ]
-		selection = xbmcgui.Dialog().select('اختر اللغة المناسبة:', nameLIST)
+		selection = XBMCGUI_DIALOG_SELECT('اختر اللغة المناسبة:', nameLIST)
 		if selection == -1 : return ''
 		url = urlLIST[selection]
 	else: url = website0a
 	new_search = search.replace(' ','+')
 	lang = LANG(url)
 	url2 = url + "/Home/Search?searchstring=" + new_search
-	#xbmcgui.Dialog().ok(lang,url2)
+	#XBMCGUI_DIALOG_OK(lang,url2)
 	html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-SEARCH-1st')
 	items = re.findall('"ImageAddress_S":"(.*?)".*?"CategoryId":(.*?),"Id":(.*?),"Title":(.*?),',html,re.DOTALL)
 	if items:
@@ -320,7 +320,7 @@ def SEARCH(url,search=''):
 				link = url + '/' + type + '/Content/' + id
 				img = url + quote(img)
 				addMenuItem('folder',menu_name+title,link,23,img,'101')
-	#else: xbmcgui.Dialog().ok('رسالة من المبرمج',,لا توجد نتائج للبحث')
+	#else: XBMCGUI_DIALOG_OK('رسالة من المبرمج',,لا توجد نتائج للبحث')
 	return
 
 

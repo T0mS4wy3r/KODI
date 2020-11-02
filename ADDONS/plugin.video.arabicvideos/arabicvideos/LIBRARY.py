@@ -45,7 +45,7 @@ after_delete_count = len(after_delete)
 #print('import_count: '+str(import_count))
 #print('average time ms: '+str(totalelpased*1000/20))
 import xbmcgui
-xbmcgui.Dialog().ok('number of modules imported: '+str(import_count),'average time ms: '+str(totalelpased*1000/20))
+XBMCGUI_DIALOG_OK('number of modules imported: '+str(import_count),'average time ms: '+str(totalelpased*1000/20))
 EXIT_using_ERROR
 """
 
@@ -63,7 +63,7 @@ if 'urllib2' in after_import: list += 'urllib2 '
 if 'urllib3' in after_import: list += 'urllib3 '
 if 'requests' in after_import: list += 'requests '
 import xbmcgui
-xbmcgui.Dialog().ok('yes exists: ',list)
+XBMCGUI_DIALOG_OK('yes exists: ',list)
 """
 
 script_name = 'LIBRARY'
@@ -83,12 +83,11 @@ if menu_label=='': menu_label = 'Main Menu'
 kodi_release = xbmc.getInfoLabel("System.BuildVersion")
 kodi_version = re.findall('&&(.*?)[ -]','&&'+kodi_release,re.DOTALL)
 kodi_version = float(kodi_version[0])
-#xbmcgui.Dialog().ok(kodi_release,str(kodi_version))
-icon = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'icon.png'))
-fanart = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'fanart.jpg'))
-changelogfile = xbmc.translatePath(os.path.join('special://home/addons/'+addon_id,'changelog.txt'))
-logfile = xbmc.translatePath('special://logpath')+'kodi.log'
-oldlogfile = xbmc.translatePath('special://logpath')+'kodi.old.log'
+#XBMCGUI_DIALOG_OK(kodi_release,str(kodi_version))
+
+logfolder = xbmc.translatePath('special://logpath')
+logfile = os.path.join(logfolder,'kodi.log')
+oldlogfile = os.path.join(logfolder,'kodi.old.log')
 
 addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
 dbfile = os.path.join(addoncachefolder,"webcache_"+addon_version+".db")
@@ -97,8 +96,14 @@ lastmenufile = os.path.join(addoncachefolder,"lastmenu.lst")
 favouritesfile = os.path.join(addoncachefolder,"favourites.lst")
 dummyiptvfile = os.path.join(addoncachefolder,"dummy.iptv")
 fulliptvfile = os.path.join(addoncachefolder,"fulliptvfile.m3u")
-addonfolder = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
+messagesfile = os.path.join(addoncachefolder,"messages.txt")
 
+addonfolder = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
+iconfile = os.path.join(addonfolder,'icon.png')
+thumbfile = os.path.join(addonfolder,'thumb.png')
+fanartfile = os.path.join(addonfolder,'fanart.jpg')
+changelogfile = os.path.join(addonfolder,'changelog.txt')
+useragentfile = os.path.join(addonfolder,'resources','useragents.txt')
 
 MINUTE = 60
 HOUR = 60*MINUTE
@@ -122,7 +127,6 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'ALKAWTHAR'	:['https://www.alkawthartv.com']
 			,'ALMAAREF'		:['http://www.almaareftv.com/old','http://www.almaareftv.com']
 			,'ARABLIONZ'	:['http://arablionz.com']
-			,'EGYBESTVIP'	:['https://egybest.vip']
 			,'HELAL'		:['https://4helal.me']	#4helal.tv #4helal.cc
 			,'IFILM'		:['http://ar.ifilmtv.com','http://en.ifilmtv.com','http://fa.ifilmtv.com','http://fa2.ifilmtv.com']
 			,'PANET'		:['http://www.panet.co.il']
@@ -130,11 +134,12 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'SHOOFMAX'		:['https://shoofmax.com','https://static.shoofmax.com']
 			,'ARABSEED'		:['https://arabseed.net']
 			,'YOUTUBE'		:['https://www.youtube.com']
-			,'EMAD'			:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport','http://emadmahdi.pythonanywhere.com/sendemail']
+			,'PYTHON'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport','http://emadmahdi.pythonanywhere.com/sendemail','http://emadmahdi.pythonanywhere.com/getmessages']
 			,'IPTV'			:['https://nowhere.com']
 			,'CIMANOW'		:['https://cima-now.com']
 			,'SHIAVOICE'	:['https://shiavoice.com']
 			,'KARBALATV'	:['https://karbala-tv.net']
+			#,'EGYBESTVIP'	:['https://egybest.vip']
 			#,'EGYBEST'		:['https://egy.best']
 			#,'EGY4BEST'	:['https://egybest.vip']
 			#,'HALACIMA'	:['https://www.halacima.co']
@@ -143,38 +148,34 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			}
 
 def MAIN():
-	#xbmcgui.Dialog().ok('MAIN','MAIN')
+	#XBMCGUI_DIALOG_OK('MAIN','MAIN')
 	LOG_THIS('NOTICE','============================================================================================')
 	script_name = 'MAIN'
 	if not os.path.exists(dbfile):
 		if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
-		LOG_THIS('NOTICE','  .  New Arabic Videos version installed  .  path: [ '+addon_path+' ]')
-		xbmcgui.Dialog().ok('برنامج عماد للفيديوهات العربية','تم تحديث برنامج عماد للفيديوهات العربية إلى الإصدار الجديد . أو تم مسح الكاش الموجود في البرنامج . سيقوم البرنامج الآن ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
-		import SERVICES
-		SERVICES.CHANGELOG()
+		LOG_THIS('NOTICE','  .  Addon upgrade or Cache delete or new addon install  .  path: [ '+addon_path+' ]')
 		CLEAN_KODI_CACHE_FOLDER()
 		conn = sqlite3.connect(dbfile)
 		conn.close()
-		SERVICES.KODI_SKIN()
-		#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص اضافات adaptive + rtmp')
-		#xbmcgui.Dialog().notification('رسالة من المبرمج','فحص مخزن عماد')
-		#xbmcgui.Dialog().ok('',str(iptv))
+		import SERVICES
+		SERVICES.KODI_EMAD_WEBSITE()
+		XBMCGUI_DIALOG_OK('برنامج عماد للفيديوهات العربية','تم تثبيت أو تحديث الإصدار الجديد لبرنامج عماد للفيديوهات العربية . أو تم مسح كاش البرنامج . الآن سيقوم البرنامج ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
 		ENABLE_MPD(False)
 		ENABLE_RTMP(False)
-		SERVICES.INSTALL_REPOSITORY(True)
-		SERVICES.HTTPS_TEST()
-		#iptv = IPTV.isIPTVFiles(False)
-		#if iptv: 
-		xbmcgui.Dialog().ok('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
+		SERVICES.INSTALL_REPOSITORY(False)
+		SERVICES.HTTPS_TEST(False)
 		import IPTV
-		IPTV.CREATE_STREAMS(False)
+		if IPTV.isIPTVFiles(False):
+			XBMCGUI_DIALOG_OK('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
+			IPTV.CREATE_STREAMS(False)
 	type,name99,url99,mode,image99,page99,text,context = EXTRACT_KODI_PATH()
+	#XBMCGUI_DIALOG_OK(context,'')
 	mode0 = int(mode)
 	mode1 = int(mode0%10)
 	mode2 = int(mode0/10)
 	#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
-	#xbmcgui.Dialog().ok('['+menu_path+']','['+addon_path+']')
-	#xbmcgui.Dialog().ok('['+menu_label+']','['+menu_path+']')
+	#XBMCGUI_DIALOG_OK('['+menu_path+']','['+addon_path+']')
+	#XBMCGUI_DIALOG_OK('['+menu_label+']','['+menu_path+']')
 	if mode0==260:
 		message = '  Version: [ '+addon_version+' ]  Kodi: [ '+kodi_release+' ]'
 	else:
@@ -185,7 +186,7 @@ def MAIN():
 	if '_' in context: context1,context2 = context.split('_',1)
 	else: context1,context2 = context,''
 	if context1=='6':
-		if context2=='': xbmcgui.Dialog().notification('يرجى الانتظار','جاري فحص ملف التحميل',sound=False)
+		if context2=='': XBMCGUI_DIALOG_NOTIFICATION('يرجى الانتظار','جاري فحص ملف التحميل',sound=False)
 		results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,context)
 		xbmc.executebuiltin("Container.Refresh")
 		EXIT_PROGRAM('LIBRARY-MAIN-1st',False)
@@ -194,8 +195,10 @@ def MAIN():
 		FAVOURITES.FAVOURITES_DISPATCHER(context)
 		#"Container.Refresh" used because there is no addon_handle number to use for ending directory
 		#"Container.Update" used to open a menu list using specific addon_path
-		#xbmc.executebuiltin("Container.Update("+sys.argv[0]+addon_path.split('&context=')[0]+")")
+		#xbmc.executebuiltin("Container.Update("+sys.argv[0]+addon_path.split('&context=')[0]+'&context=0'+")")
+		#XBMCGUI_DIALOG_OK('[1111111111 '+context1+']','['+context2+']')
 		xbmc.executebuiltin("Container.Refresh")
+		#XBMCGUI_DIALOG_OK('[2222222222 '+context1+']','['+context2+']')
 		EXIT_PROGRAM('LIBRARY-MAIN-2nd',False)
 	if mode0==266:
 		import MENUS
@@ -210,9 +213,14 @@ def MAIN():
 	SEARCH_MODES = SITES_SEARCH or YOUTUBE_CHANNELS_SEARCH
 	RANDOM_MODES = mode2==16 and mode0!=160
 	if SEARCH_MODES or RANDOM_MODES:
+		name88 = name99.replace('[COLOR FFC89008]','').replace('[/COLOR]','')
+		if RANDOM_MODES: cond1 = menu_label in ['..','Main Menu']
+		elif SEARCH_MODES: cond1 = menu_label!=name88
 		#previous_path = xbmc.getInfoLabel('ListItem.FolderPath')
 		#previous_path = unquote(previous_path)
-		if '_REMEMBERRESULTS_' in text and menu_label in ['..','Main Menu'] and os.path.exists(lastmenufile):
+		#XBMCGUI_DIALOG_OK(str(menu_label),str(name))
+		#if '_REMEMBERRESULTS_' in text and (menu_label!=name or menu_label in ['..','Main Menu']) and os.path.exists(lastmenufile):
+		if '_REMEMBERRESULTS_' in text and cond1 and os.path.exists(lastmenufile):
 			LOG_THIS('NOTICE','  .  Reading last menu   Path: [ '+addon_path+' ]')
 			with open(lastmenufile,'r') as f: oldFILE = f.read()
 			menuItemsLIST[:] = eval(oldFILE)
@@ -229,22 +237,22 @@ def MAIN():
 	if '_FORGETRESULTS_' in text: updateListing = True
 	SITES_MODES = mode2 in [1,2,3,4,5,6,7,9,11,13,14,20,22,24,25,30,31,32]
 	IPTV_MODES = mode2==23 and text!=''
-	if type=='folder' and menu_label!='..' and (SITES_MODES or IPTV_MODES): ADD_TO_LAST_VIDEO_FILES()
-	if addon_handle>-1:
-		if type=='folder':
-			KodiMenuList = []
-			for menuItem in menuItemsLIST:
-				kodiMenuItem = getKodiMenuItem(menuItem)
-				KodiMenuList.append(kodiMenuItem)
-			addItems_succeeded = xbmcplugin.addDirectoryItems(addon_handle,KodiMenuList)
-		else: succeeded,updateListing,cacheToDisc = False,False,False
+	if type=='folder' and menu_label!='..' and (SITES_MODES or IPTV_MODES):
+		ADD_TO_LAST_VIDEO_FILES()
+	if type=='folder' and addon_handle>-1:
+		KodiMenuList = []
+		for menuItem in menuItemsLIST:
+			kodiMenuItem = getKodiMenuItem(menuItem)
+			KodiMenuList.append(kodiMenuItem)
+		addItems_succeeded = xbmcplugin.addDirectoryItems(addon_handle,KodiMenuList)
+		xbmcplugin.setContent(addon_handle,'tvshows')
 		xbmcplugin.endOfDirectory(addon_handle,succeeded,updateListing,cacheToDisc)
 	return
 
 def MAIN_DISPATCHER(type,name,url,mode,image,page,text,context):
 	mode = int(mode)
 	mode2 = int(mode/10)
-	#xbmcgui.Dialog().ok(str(mode),str(mode2))
+	#XBMCGUI_DIALOG_OK(str(mode),str(mode2))
 	results = None
 	if   mode2==0:  import SERVICES 	; results = SERVICES.MAIN(mode,text)
 	elif mode2==1:  import ALARAB 		; results = ALARAB.MAIN(mode,url,text)
@@ -296,8 +304,8 @@ def LOG_THIS(level,message):
 	lines = message.split('   ')
 	tabs,tab = '','      '
 	shift = tab+tab+tab+tab+'  '
-	if kodi_version>17.9: shift = shift+'           '
-	#xbmcgui.Dialog().ok(str(kodi_version),'')
+	if kodi_version>17.999: shift = shift+'           '
+	#XBMCGUI_DIALOG_OK(str(kodi_version),'')
 	#loglines = lines[0] + '\r'
 	loglines = lines[0]
 	for line in lines[1:]:
@@ -340,7 +348,7 @@ class CustomThread():
 	def start_new_thread(self,id,func,*args):
 		id = str(id)
 		self.statusDICT[id] = 'running'
-		if self.showDialogs: xbmcgui.Dialog().notification('',id,sound=False)
+		if self.showDialogs: XBMCGUI_DIALOG_NOTIFICATION('',id,sound=False)
 		thread.start_new_thread(self.run,(id,func,args))
 		#sys.stderr.write('9999: 1111:'+str(self.statusDICT.values()))
 	def run(self,id,func,args):
@@ -373,7 +381,7 @@ class CustomThread():
 def SHOW_ERRORS(source,code,reason,showDialogs):
 	if '-' in source: site = source.split('-',1)[0]
 	else: site = source
-	#if code==104: xbmcgui.Dialog().ok('لديك خطأ اسبابه كثيرة','يرجى منك التواصل مع المبرمج عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
+	#if code==104: XBMCGUI_DIALOG_OK('لديك خطأ اسبابه كثيرة','يرجى منك التواصل مع المبرمج عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
 	dns = (code in [7,10054,11001])
 	blocked1 = (code in [0,104,10061,111])
 	blocked2 = ('Blocked by Cloudflare' in reason)
@@ -389,11 +397,11 @@ def SHOW_ERRORS(source,code,reason,showDialogs):
 		else: messageARABIC = 'هذا الموقع فيه '+block_meessage
 		LOG_THIS('ERROR',LOGGING(script_name)+'   Source: [ '+source+' ]   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   messageARABIC: [ '+messageARABIC+' ]]   messageENGLISH: [ '+messageENGLISH+' ]')
 		if showDialogs:
-			yes = xbmcgui.Dialog().yesno(site+'   '+TRANSLATE(site),messageARABIC,messageENGLISH,'','كلا','نعم')
+			yes = XBMCGUI_DIALOG_YESNO(site+'   '+TRANSLATE(site),messageARABIC,messageENGLISH,'','كلا','نعم')
 			if yes==1: import SERVICES ; SERVICES.MAIN(195)
 	elif showDialogs:
 		messageARABIC2 = messageARABIC+' . هل تريد معرفة الأسباب والحلول ؟'
-		yes = xbmcgui.Dialog().yesno(site+'   '+TRANSLATE(site),messageARABIC2,messageENGLISH,'','كلا','نعم')
+		yes = XBMCGUI_DIALOG_YESNO(site+'   '+TRANSLATE(site),messageARABIC2,messageENGLISH,'','كلا','نعم')
 		if yes==1:
 			messageDETAILS = 'قد يكون هناك نوع من الحجب عندك'
 			messageDETAILS += '\n'+'أو الأنترنيت عندك مفصولة'
@@ -404,7 +412,7 @@ def SHOW_ERRORS(source,code,reason,showDialogs):
 			messageDETAILS += '\n'+'أو أرسل سجل الأخطاء والاستخدام إلى المبرمج (من قائمة خدمات البرنامج)'
 			messageDETAILS += '\n'+'أو جرب طرق رفع الحجب (مثلا VPN , Proxy , DNS)'
 			messageDETAILS += '\n'+'أو جرب طلب هذا الموقع لاحقا'
-			xbmcgui.Dialog().textviewer('فشل في سحب الصفحة من الأنترنيت',messageDETAILS)
+			XBMCGUI_DIALOG_TEXTVIEWER('فشل في سحب الصفحة من الأنترنيت',messageDETAILS)
 	return messageARABIC,messageENGLISH
 
 NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
@@ -418,7 +426,7 @@ NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
 				,'LIBRARY-openURL_KPROXYCOM-3rd'
 				,'LIBRARY-CHECK_HTTPS_PROXIES-1st'
 				,'LIBRARY-EXTRACT_M3U8-1st'
-				,'LIBRARY-PLAY_VIDEO-1st'
+				,'LIBRARY-SEND_ANALYTICS_EVENT-1st'
 				,'SERVICES-TEST_ALL_WEBSITES-1st'
 				,'SERVICES-TEST_ALL_WEBSITES-2nd'
 				,'EGYBESTVIP-PLAY-2nd'
@@ -428,6 +436,8 @@ NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
 				,'LIBRARY-HTTPS-1st'
 				,'IPTV-CHECK_ACCOUNT-1st'
 				,'IPTV-CHECK_ACCOUNT-1st'
+				,'LIBRARY-GET_PROXIES_LIST-1st'
+				,'MENUS-SHOW_MESSAGES-1st'
 				]
 """				,'AKOAM-MENU-1st'
 				,'AKWAM-MENU-1st'
@@ -460,9 +470,10 @@ def EXIT_PROGRAM(source='',showLog=True):
 	#raise SystemExit
 	return
 
-def CLEAN_KODI_CACHE_FOLDER():
-	exceptionLIST = [lastvideosfile,favouritesfile]
-	#delete = xbmcgui.Dialog().yesno('مسح ملفات الفيديو القديمة','سوف يتم ايضا مسح ملفات الفيديو القديمة التي انت انزلتها باستخدام هذا البرنامج . هل تريد مسحها ام لا ؟','','','كلا','نعم')
+def CLEAN_KODI_CACHE_FOLDER(exceptionLIST1=[]):
+	exceptionLIST2 = [lastvideosfile,favouritesfile,dummyiptvfile,fulliptvfile]
+	exceptionLIST = exceptionLIST1+exceptionLIST2
+	#delete = XBMCGUI_DIALOG_YESNO('مسح ملفات الفيديو القديمة','سوف يتم ايضا مسح ملفات الفيديو القديمة التي انت انزلتها باستخدام هذا البرنامج . هل تريد مسحها ام لا ؟','','','كلا','نعم')
 	for filename in os.listdir(addoncachefolder):
 		#if not delete and 'file_' in filename: continue
 		if 'file_' in filename: continue
@@ -519,11 +530,14 @@ def getKodiMenuItem(menuItem):
 	if context!='': path = path+'&context='+context.strip(' ')
 	if name!='': path = path+'&name='+quote(name)#.strip(' '))
 	if text2!='': path = path+'&text='+quote(text2.strip(' '))
-	if image!='': path = path+'&image='+quote(image.strip(' '))
-	else: image = icon
-	if url!='': path = path+'&url='+quote(url.strip(' '))
 	listitem = xbmcgui.ListItem(name)
-	listitem.setArt({'icon':image,'thumb':image,'fanart':image,})
+	if image!='':
+		listitem.setArt({'icon':image,'thumb':image,'fanart':'',})
+		path = path+'&image='+quote(image.strip(' '))
+	else:
+		listitem.setArt({'icon':iconfile,'thumb':thumbfile,'fanart':'',})
+	#listitem.setInfo(type="video",infoLabels={"Title":name})
+	if url!='': path = path+'&url='+quote(url.strip(' '))
 	context_menu = []
 	if mode in [235,238] and type=='live':
 		run_path = 'plugin://'+addon_id+'?mode=238&text=short_epg&url='+url
@@ -561,7 +575,7 @@ def getKodiMenuItem(menuItem):
 		xbmcplugin.setContent(addon_handle,'videos')
 	elif type=='folder':
 		isFolder = True
-		listitem.setInfo(type="video",infoLabels={"Title":name})
+	#listitem.setInfo(type="video",infoLabels={"Title":name})
 	#xbmcplugin.addDirectoryItem(handle=addon_handle,url=path,listitem=listitem,isFolder=isFolder)
 	return (path,listitem,isFolder)
 
@@ -584,19 +598,82 @@ def EXTRACT_KODI_PATH(path=''):
 	if mode=='': type = 'folder' ; mode = '260'
 	return type,name,url,mode,image,page,text,context
 
-def openURL_requests_cached(expiry,method,url,data,headers,allow_redirects,showDialogs,source):
-	if expiry==0: return openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
+def openURL_requests_cached(expiry,method,url,data,headers,allow_redirects,showDialogs,source,allow_proxy=True):
+	#response = openURL_requests_proxies(method,url,data,headers,allow_redirects,showDialogs,source)
+	if expiry==0: return openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source,allow_proxy)
 	response = READ_FROM_SQL3('OPENURL_REQUESTS',[method,url,data,headers,allow_redirects,showDialogs,source])
 	if response: return response
-	response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
-	html = response.content
-	#xbmcgui.Dialog().ok(str(type(response)),html)
-	if '___Error___' not in html:
+	response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source,allow_proxy)
+	code = response.code
+	reason = response.reason
+	if response.succeeded:
 		WRITE_TO_SQL3('OPENURL_REQUESTS',[method,url,data,headers,allow_redirects,showDialogs,source],response,expiry)
 	return response
 
+def openURL_proxy(method,url,data,headers,allow_redirects,showDialogs,source,proxy):
+	XBMCGUI_DIALOG_NOTIFICATION('فشل في جلب الصفحة . سوف استخدم ','بروكسي رقم:  '+proxy+'',sound=False,time=1000)
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   Trying proxy server   Proxy: [ '+proxy+' ]   URL: [ '+url+' ]')
+	url2 = url+'||MyProxyUrl='+proxy
+	response = openURL_requests(method,url2,data,headers,allow_redirects,showDialogs,source)
+	if url in response.content: response.succeeded = False
+	if response.succeeded: LOG_THIS('NOTICE',LOGGING(script_name)+'   Succeeded proxy server   Proxy: [ '+proxy+' ]   URL: [ '+url+' ]')
+	else: LOG_THIS('NOTICE',LOGGING(script_name)+'   Failed proxy server   Proxy: [ '+proxy+' ]   URL: [ '+url+' ]')
+	return response
+
+def GET_PROXIES_LIST(url):
+	url = url.decode('base64')
+	response = openURL_requests('GET',url,'','',True,False,'LIBRARY-GET_PROXIES_LIST-1st',False)
+	if response.succeeded:
+		html = response.content
+		proxies = html.replace('\r','').strip('\n').split('\n')
+		proxies2 = []
+		for proxy in proxies:
+			if proxy.count('.')==3: proxies2.append(proxy)
+		return proxies2
+	return []
+
+def openURL_requests_proxies(method,url,data,headers,allow_redirects,showDialogs,source):
+	settings = xbmcaddon.Addon(id=addon_id)
+	savedproxy = settings.getSetting('proxy.last')
+	if savedproxy!='':
+		response = openURL_proxy(method,url,data,headers,allow_redirects,showDialogs,source,savedproxy)
+		if response.succeeded: return response
+	proxies = READ_FROM_SQL3('SETTINGS','PROXIES')
+	#proxies = ['11.12.3.4:8969','22.2.3.4:5929']
+	if not proxies:
+		url_1 = 'aHR0cHM6Ly9hcGkucHJveHlzY3JhcGUuY29tLz9yZXF1ZXN0PWRpc3BsYXlwcm94aWVzJnByb3h5\ndHlwZT1odHRwJnRpbWVvdXQ9MTAwMDAmc3NsPXllcyZhbm9ueW1pdHk9YW5vbnltb3Vz\n'
+		url_2 = 'aHR0cDovL3B1YnByb3h5LmNvbS9hcGkvcHJveHk/dHlwZT1odHRwJnNwZWVkPTEwJmxhc3RfY2hl\nY2s9MTAmaHR0cHM9dHJ1ZSZwb3N0PXRydWUmbGltaXQ9NSZmb3JtYXQ9dHh0JmxldmVsPWFub255\nbW91cw==\n'
+		proxies_1 = GET_PROXIES_LIST(url_1)
+		proxies_2 = GET_PROXIES_LIST(url_2)
+		"""
+		if len(proxies2)<5:
+			time.sleep(1)
+			proxies_3 = GET_PROXIES_LIST(url_3)
+		else: proxies3 = []
+		proxies = proxies_1+proxies_2+proxies_3
+		"""
+		proxies = proxies_1+proxies_2
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   Got new list of proxy servers   1st list: [ '+str(len(proxies_1))+' ]   2nd list: [ '+str(len(proxies_2))+' ]')
+	#for i in range(9): random.shuffle(proxies)
+	count = len(proxies)
+	if count>=5: proxies2 = random.sample(proxies,5)
+	else: proxies2 = random.sample(proxies,count)
+	for proxy in proxies2:
+		response = openURL_proxy(method,url,data,headers,allow_redirects,showDialogs,source,proxy)
+		if response.succeeded:
+			settings.setSetting('proxy.last',proxy)
+			break
+		elif proxy in proxies: proxies.remove(proxy)
+	else:
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   All proxies failed   Failed count: [ '+str(len(proxies2))+' ]   Total count: [ '+str(count)+' ]   URL: [ '+url+' ]')
+		XBMCGUI_DIALOG_NOTIFICATION('للأسف فشلت جميع سيرفرات البروكسي','',sound=False,time=1000)
+	#XBMCGUI_DIALOG_OK('SETTINGS 111',str(proxies))
+	DELETE_FROM_SQL3('SETTINGS','PROXIES')
+	if proxies: WRITE_TO_SQL3('SETTINGS','PROXIES',proxies,SHORT_CACHE)
+	return response
+
 def openURL_cached(expiry,url,data,headers,showDialogs,source):
-	#xbmcgui.Dialog().ok('OPENURL_CACHED 111','')
+	#XBMCGUI_DIALOG_OK('OPENURL_CACHED 111','')
 	if expiry==0: return openURL(url,data,headers,showDialogs,source)
 	html = READ_FROM_SQL3('OPENURL',[url,data,headers,showDialogs,source])
 	if html: return html
@@ -606,7 +683,7 @@ def openURL_cached(expiry,url,data,headers,showDialogs,source):
 	return html
 
 def openURL(url,data,headers,showDialogs,source):
-	#xbmcgui.Dialog().ok(str(type(data)),str(data))
+	#XBMCGUI_DIALOG_OK(str(type(data)),str(data))
 	if data=='' or 'dict' in str(type(data)): method = 'GET'
 	else:
 		method = 'POST'
@@ -622,16 +699,18 @@ def openURL(url,data,headers,showDialogs,source):
 
 class dummy_object(): pass
 
-def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source):
+def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source,allow_proxy=True):
+	BUSY_DIALOG('start')
 	if data=='': data = {}
 	if headers=='': headers = {'User-Agent':None}
 	if allow_redirects=='': allow_redirects = True
 	if showDialogs=='': showDialogs = True
 	#url = url + '||MyProxyUrl=http://188.166.59.17:8118'
 	import requests
-	proxies,timeout = {},40
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
+	#dnsurl = '8.8.8.8'
 	if dnsurl!=None:
+		LOG_THIS('ERROR',LOGGING(script_name)+'   Will try using public DNS server   DNS: [ '+dnsurl+' ]   URL: [ '+url+' ]')
 		import urllib3.util.connection
 		original_create_connection = urllib3.util.connection.create_connection
 		def patched_create_connection(address,*args,**kwargs):
@@ -641,69 +720,54 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 			address = (host,port)
 			return original_create_connection(address,*args,**kwargs)
 		urllib3.util.connection.create_connection = patched_create_connection
-	BUSY_DIALOG('start')
-	if proxyurl!=None:
-		if headers=='': headers = { 'User-Agent' : '' }
-		elif 'User-Agent' not in headers: headers['User-Agent'] = ''
-		if proxyurl=='': proxyname,proxyurl = RANDOM_HTTPS_PROXY()
-		# if testing proxies then timeout=10
-		if url2=='https://www.google.com': timeout = 10
+	if sslurl!=None: verify = True
+	else: verify = False
+	settings = xbmcaddon.Addon(id=addon_id)
+	proxy_status = settings.getSetting('proxy.status')
+	if proxyurl!=None and allow_proxy and proxy_status!='DISABLED': timeout,proxies = 10,{"http":proxyurl,"https":proxyurl}
+	else: timeout,proxies = 15,{}
+	"""
 	if 'pythonanywhere' in url2:
 		try:
 			sock22 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 			result22 = sock22.connect_ex(('emadmahdi.pythonanywhere.com',80))
-			proxyurl = None
 		except:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   pythonanywhere is not accessible. Will try proxies   URL: [ '+url2+' ]')
-			#proxyurl = 'socks4://217.164.255.35:54670'	# UAE - socks4
-			#proxyurl = 'socks4://41.33.212.68:4145'	# EGYPT - socks4
-			#proxyurl = 'http://168.169.96.2:8080'		# USA - no https
-			#proxyurl = 'http://168.169.96.14:8080'		# USA - no https
-			proxy1 = 'http://95.174.67.50:18080'		# Netherlands http & https
-			proxy2 = 'http://83.97.23.90:18080'			# Germany http & https
-			proxy3 = 'http://201.149.34.167:8080'		# Mexico http & https
-			proxyLIST = [proxy1,proxy2,proxy3]
-			for i in range(0,5): random.shuffle(proxyLIST)
-			sock22 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-			for proxy in proxyLIST:
-				type,host,port = proxy.replace('//','').split(':')
-				try:
-					result22 = sock22.connect_ex((host,int(port)))
-					break
-				except: LOG_THIS('ERROR',LOGGING(script_name)+'   Proxy failed   Proxy: [ '+proxy+' ]')
-			proxyurl = type+'://'+host+':'+port
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Will use this proxy: [ '+proxyurl+' ]   URL: [ '+url2+' ]')
-	proxies={"http":proxyurl,"https":proxyurl}
-	if sslurl!=None: verify = True
-	else: verify = False
+	"""
 	try:
 		if method=='POST' and allow_redirects==True:
 			url3 = url2
 			for i in range(10):
+				#XBMCGUI_DIALOG_OK(url3,'11111')
 				response = requests.request(method,url3,data=data,headers=headers,verify=verify,allow_redirects=False,timeout=timeout,proxies=proxies)
+				#XBMCGUI_DIALOG_OK(url3,'22222')
 				if response.status_code<300 or response.status_code>399: break
 				url3 = response.headers['Location']
 		else: response = requests.request(method,url2,data=data,headers=headers,verify=verify,allow_redirects=allow_redirects,timeout=timeout,proxies=proxies)
+		#XBMCGUI_DIALOG_OK(url3,'33333')
 		code,reason = response.status_code,response.reason
-		succeded = True
+		succeeded = True
 		#response.raise_for_status()
 	except requests.exceptions.HTTPError as err:
+		#XBMCGUI_DIALOG_OK(url3,'44444')
 		# it works only if response.raise_for_status() is executed
 		# code,reason = re.findall('(\d+).*?: (.*?):',err.message)[0]
-		succeded = False
+		succeeded = False
 	except requests.exceptions.Timeout as err:
+		#XBMCGUI_DIALOG_OK(url3,'55555')
 		reason,code = str(err.message).split(': ')[1],-1
-		succeded = False
+		succeeded = False
 	except requests.exceptions.ConnectionError as err:
-		#xbmcgui.Dialog().ok(str(err.message),str(''))
+		#XBMCGUI_DIALOG_OK(url3,'66666')
+		#XBMCGUI_DIALOG_OK(str(err.message),str(''))
 		#LOG_THIS('ERROR',str(err.message))
 		if ':' in err.message[0]: reason,code = re.findall(': (.*?):.*?(\d+)',err.message[0])[0]
 		else: reason,code = err.message[0],-1
-		succeded = False
-		#xbmcgui.Dialog().ok(reason,code)
+		succeeded = False
+		#XBMCGUI_DIALOG_OK(reason,code)
 	except requests.exceptions.RequestException as err:
+		#XBMCGUI_DIALOG_OK(url3,'77777')
 		reason,code = err.message,-1
-		succeded = False
+		succeeded = False
 	except:
 		#err_class = sys.exc_info()[0]
 		#err_function = sys.exc_info()[1]
@@ -713,8 +777,14 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 		#for i in dir(err):
 		#    print i+' ===>> '+str(eval('err.'+i))
 		reason,code = 'Unknown Error',-1
-		succeded = False
-	if 'google-analytics' not in url2 and succeded==False: traceback.print_exc(file=sys.stderr)
+		succeeded = False
+	#LOG_THIS('ERROR',LOGGING(script_name)+'   4444444444444444444')
+	#XBMCGUI_DIALOG_OK('1111','')
+	if succeeded and 'pythonanywhere' in url2: response99 = SEND_ANALYTICS_EVENT('PYTHON')
+	if 'google-analytics' in url2 and succeeded==False:
+		LOG_THIS('ERROR',LOGGING(script_name)+'   Sending analytics event failed   URL: [ '+url2+' ]')
+	if 'google-analytics' not in url2 and succeeded==False and proxyurl==None:
+		traceback.print_exc(file=sys.stderr)
 	else:
 		#errortrace = traceback.format_exc()
 		#sys.stderr.write(errortrace)
@@ -723,55 +793,62 @@ def openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
 		pass
 	code = int(code)
 	response2 = dummy_object()
-	if succeded:
+	if succeeded:
 		response2.headers = response.headers
 		response2.cookies = response.cookies
 		response2.url     = response.url
 		response2.content = response.content
+		response2.code = code
+		response2.reason = reason
+		response2.succeeded = True
 	else:
 		response2.headers = {}
 		response2.cookies = {}
 		response2.url     = ''
 		response2.content = '___Error___:'+str(code)+':'+reason
+		response2.code = code
+		response2.reason = reason
+		response2.succeeded = False
 	try: response.close()
 	except: pass
-	response = response2
-	html = str(response.content)
+	html = str(response2.content)
 	htmlLower = html.lower()
-	condition1 = code!=200 and int(code/100)*100!=300
-	condition2 = 'cloudflare' in htmlLower and 'ray id: ' in htmlLower
-	#if condition2: xbmcgui.Dialog().ok('','Cloudflare')
-	condition3 = '___Error___' in htmlLower
-	condition4 = '5 sec' in htmlLower and 'browser' in htmlLower and code!=200
-	BUSY_DIALOG('stop')
-	if condition1 or condition2 or condition3 or condition4:
-		if condition2:
-			#xbmcgui.Dialog().ok('','Cloudflare')
+	response = response2
+	#condition1 = code!=200 and int(code/100)*100!=300
+	#condition2 = 'cloudflare' in htmlLower and 'ray id: ' in htmlLower
+	#condition3 = '___Error___' in htmlLower
+	#condition4 = '5 sec' in htmlLower and 'browser' in htmlLower and code!=200
+	#if condition1 or condition2 or condition3 or condition4:
+	if not response.succeeded:
+		if 'cloudflare' in htmlLower and 'ray id: ' in htmlLower:
 			reason2 = 'Blocked by Cloudflare'
 			if 'recaptcha' in htmlLower: reason2 += ' using Google reCAPTCHA'
 			reason = reason2+' ( '+reason+' )'
 			html = '___Error___:'+str(code)+':'+reason
 			response.content = html
-		elif condition4:
-			#xbmcgui.Dialog().ok('','5 seconds')
+		if '5 sec' in htmlLower and 'browser' in htmlLower and code!=200:
 			reason4 = 'Blocked by 5 seconds browser check'
 			reason = reason4+' ( '+reason+' )'
 			html = '___Error___:'+str(code)+':'+reason
 			response.content = html
-		#elif 'google-analytics' in url:
-		if code in [7,11001,10054] and dnsurl==None:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
-			url = url+'||MyDNSUrl='
-			response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
-			return response
-		elif code==8 and sslurl==None:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   SSL failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
-			url = url+'||MySSLUrl='
-			response = openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
-			return response
-		else:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
-		EXIT_IF_SOURCE(source,code,reason,showDialogs)
+		if dnsurl==None and code in [7,11001,10054] and not response.succeeded:
+			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS failed   Will try changing DNS server   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
+			url3 = url+'||MyDNSUrl='
+			response3 = openURL_requests(method,url3,data,headers,allow_redirects,showDialogs,source)
+			if response3.succeeded: response = response3
+		if sslurl==None and code==8 and not response.succeeded:
+			LOG_THIS('ERROR',LOGGING(script_name)+'   SSL failed   Will try changing SSL server   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
+			url3 = url+'||MySSLUrl='
+			response3 = openURL_requests(method,url3,data,headers,allow_redirects,showDialogs,source)
+			if response3.succeeded: response = response3
+		if proxyurl==None and allow_proxy and proxy_status!='DISABLED' and 'google-analytics' not in url and not response.succeeded:
+			LOG_THIS('ERROR',LOGGING(script_name)+'   Direct connection failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
+			response3 = openURL_requests_proxies(method,url,data,headers,allow_redirects,showDialogs,source)
+			if response3.succeeded: response = response3
+		if proxyurl==None and not response.succeeded:
+			BUSY_DIALOG('stop')
+			EXIT_IF_SOURCE(source,code,reason,showDialogs)
+	if response.succeeded: BUSY_DIALOG('stop')
 	return response
 
 def EXTRACT_URL(url):
@@ -841,7 +918,7 @@ def mixARABIC(string):
 	string = string.decode('utf8')
 	new_string = ''
 	for letter in string:
-		#xbmcgui.Dialog().ok(unicodedata.decomposition(letter),hex(ord(letter)))
+		#XBMCGUI_DIALOG_OK(unicodedata.decomposition(letter),hex(ord(letter)))
 		if ord(letter) < 256: unicode_letter = '\\u00'+hex(ord(letter)).replace('0x','')
 		elif ord(letter) < 4096: unicode_letter = '\\u0'+hex(ord(letter)).replace('0x','')
 		else: unicode_letter = '\\u'+unicodedata.decomposition(letter).split(' ')[1]
@@ -871,10 +948,10 @@ def KEYBOARD(header='لوحة المفاتيح',default=''):
 	#dialog.getControl(5).setHeight(height-180)
 	#text = dialog.getControl(312).getLabel()
 	#del dialog
-	text = xbmcgui.Dialog().input(header,default,type=xbmcgui.INPUT_ALPHANUM)
+	text = XBMCGUI_DIALOG_INPUT(header,default,type=xbmcgui.INPUT_ALPHANUM)
 	text = text.strip(' ')
 	if len(text.decode('utf8'))<1:
-		xbmcgui.Dialog().ok('رسالة من المبرمج','تم إلغاء الإدخال')
+		XBMCGUI_DIALOG_OK('رسالة من المبرمج','تم إلغاء الإدخال')
 		return ''
 	text = mixARABIC(text)
 	return text
@@ -914,8 +991,8 @@ def EXTRACT_M3U8(url,headers=''):
 	#headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36' }
 	#url = 'https://vd84.mycdn.me/video.m3u8'
 	#with open('S:\\test2.m3u8', 'r') as f: html = f.read()
-	html = openURL_cached(NO_CACHE,url,'',headers,'','LIBRARY-EXTRACT_M3U8-1st')
-	#xbmcgui.Dialog().ok('11','')
+	html = openURL_cached(SHORT_CACHE,url,'',headers,'','LIBRARY-EXTRACT_M3U8-1st')
+	#XBMCGUI_DIALOG_OK('11','')
 	if 'TYPE=AUDIO' in html: return ['-1'],[url]
 	if 'TYPE=VIDEO' in html: return ['-1'],[url]
 	#if 'TYPE=SUBTITLES' in html: return ['-1'],[url]
@@ -923,7 +1000,7 @@ def EXTRACT_M3U8(url,headers=''):
 	titleLIST,linkLIST,qualityLIST,bitrateLIST = [],[],[],[]
 	lines = re.findall('\#EXT-X-STREAM-INF:(.*?)[\n\r](.*?)[\n\r]',html+'\n\r',re.DOTALL)
 	if not lines: return ['-1'],[url]
-	#xbmcgui.Dialog().ok('22','')
+	#XBMCGUI_DIALOG_OK('22','')
 	for line,link in lines:
 		lineDICT,bitrate,quality = {},-1,-1
 		videofiletype = re.findall('(\.avi|\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',link.lower()+'&&',re.DOTALL|re.IGNORECASE)
@@ -959,9 +1036,9 @@ def EXTRACT_M3U8(url,headers=''):
 	z = sorted(z, reverse=True, key=lambda key: key[3])
 	titleLIST,linkLIST,qualityLIST,bitrateLIST = zip(*z)
 	titleLIST,linkLIST = list(titleLIST),list(linkLIST)
-	#xbmcgui.Dialog().ok('99','')
-	#selection = xbmcgui.Dialog().select('', titleLIST)
-	#selection = xbmcgui.Dialog().select('', linkLIST)
+	#XBMCGUI_DIALOG_OK('99','')
+	#selection = XBMCGUI_DIALOG_SELECT('', titleLIST)
+	#selection = XBMCGUI_DIALOG_SELECT('', linkLIST)
 	return titleLIST,linkLIST
 
 def dummyClientID(length):
@@ -985,7 +1062,7 @@ def dummyClientID(length):
 	hashComponents = node+':'+hostname+':'+os_type+':'+os_version+':'+os_bits
 	md5full = hashlib.md5(hashComponents).hexdigest()
 	md5 = md5full[0:length]
-	#xbmcgui.Dialog().ok(node,md5)
+	#XBMCGUI_DIALOG_OK(node,md5)
 	return md5
 	"""
 	#settings = xbmcaddon.Addon(id=addon_id)
@@ -1004,7 +1081,7 @@ def dummyClientID(length):
 	#import requests
 	#response = requests.request("POST", url, data=payload, headers=headers)
 	#	#html = response.content
-	#	#xbmcgui.Dialog().ok(html,html)
+	#	#XBMCGUI_DIALOG_OK(html,html)
 	#url = 'http://emadmahdi.pythonanywhere.com/saveinput'
 	#payload = { 'file' : 'savehash' , 'input' : md5full + '  ___  ' + hashComponents }
 	#data = urllib.urlencode(payload)
@@ -1071,60 +1148,63 @@ def DNS_RESOLVER(url,dnsserver=''):
 	return answer
 
 def RATING_CHECK(script_name,url,ratingLIST):
-	#xbmcgui.Dialog().ok(url,str(ratingLIST))
+	#XBMCGUI_DIALOG_OK(url,str(ratingLIST))
 	if ratingLIST:
 		blockedLIST = ['R','MA','16','17','18','كبار']
 		cond1 = any(value in ratingLIST[0] for value in blockedLIST)
 		cond2 = 'not rated' not in ratingLIST[0].lower()
 		if cond1 and cond2:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Blocked adults video   URL: [ '+url+' ]')
-			xbmcgui.Dialog().notification('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته',sound=False)
+			XBMCGUI_DIALOG_NOTIFICATION('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته',sound=False)
 			return True
 	return False
 
 """
 #inputstream.adaptive:	mpd, hls, ism
 #inputstream.rtmp:		rtmp
-#xbmc.executebuiltin('InstallAddon(inputstream.rtmp)',wait=True)import inputstreamhelper
+#xbmc.executebuiltin('InstallAddon(inputstream.rtmp)',wait=True)
+
 import inputstreamhelper
 helper = inputstreamhelper.Helper('hls')
 installed = helper.check_inputstream()
-xbmcgui.Dialog().ok('is installed',str(installed))
+XBMCGUI_DIALOG_OK('is installed',str(installed))
 if not installed:
-	yes = xbmcgui.Dialog().yesno('Addon not installed','install now ?','','','كلا','نعم')
+	yes = XBMCGUI_DIALOG_YESNO('Addon not installed','install now ?','','','كلا','نعم')
 	if yes: helper._install_inputstream()
 """
 
-def ENABLE_MPD(checkvideo_msg=False):
+def ENABLE_MPD(showDialogs=True):
+	if showDialogs=='': showDialogs = True
 	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.adaptive)')
-	if not enabled:
-		if checkvideo_msg: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذا الفيديو لا يعمل عندك . انت بحاجة إلى إضافة اسمها inputstream.adaptive لكي تستطيع تشغيل فيديوهات نوع mpd hls ism . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
-		else: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','inputstream.adaptive \n\r هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيبها وتفعيلها لكي تعمل عندك فيديوهات نوع mpd hls ism  . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+	if enabled and showDialogs: XBMCGUI_DIALOG_OK('رسالة من المبرمج','فحص اضافة inputstream.adaptive \n\r هذه ألإضافة عندك موجودة ومفعلة وجاهزة للاستخدام')
+	elif not enabled:
+		if showDialogs: yes = XBMCGUI_DIALOG_YESNO('رسالة من المبرمج','inputstream.adaptive \n\r هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيبها وتفعيلها لكي تعمل عندك فيديوهات نوع mpd hls ism  . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		else: yes = True
 		if yes:
 			xbmc.executebuiltin('InstallAddon(inputstream.adaptive)',wait=True)
 			result = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"inputstream.adaptive","enabled":true}}')
-			if 'OK' in result: xbmcgui.Dialog().ok('رسالة من المبرمج','تم التنصيب والتفعيل وهذه الإضافة inputstream.adaptive جاهزة للاستخدام')
-			else: xbmcgui.Dialog().ok('رسالة من المبرمج','فشل في التنصيب أو التفعيل . البرنامج غير قادر على تنصيب أو تفعيل هذه الإضافة . والحل هو تنصيبها وتفعيلها من خارج البرنامج')
-	elif not checkvideo_msg: xbmcgui.Dialog().ok('رسالة من المبرمج','فحص اضافة inputstream.adaptive \n\r هذه ألإضافة عندك موجودة ومفعلة وجاهزة للاستخدام')
+			if 'OK' in result: XBMCGUI_DIALOG_OK('رسالة من المبرمج','تم التنصيب والتفعيل وهذه الإضافة inputstream.adaptive جاهزة للاستخدام')
+			elif showDialogs: XBMCGUI_DIALOG_OK('رسالة من المبرمج','فشل في التنصيب أو التفعيل . البرنامج غير قادر على تنصيب أو تفعيل هذه الإضافة . والحل هو تنصيبها وتفعيلها من خارج البرنامج')
 	return
 
-def ENABLE_RTMP(checkvideo_msg=False):
+def ENABLE_RTMP(showDialogs=True):
+	if showDialogs=='': showDialogs = True
 	enabled = xbmc.getCondVisibility('System.HasAddon(inputstream.rtmp)')
-	if not enabled:
-		if checkvideo_msg: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هذا الفيديو لا يعمل عندك . انت بحاجة إلى إضافة اسمها inputstream.rtmp لكي تستطيع تشغيل فيديوهات نوع rtmp . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
-		else: yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','inputstream.rtmp \n\r هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيبها وتفعيلها لكي تعمل عندك فيديوهات نوع rtmp  . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+	if enabled and showDialogs: XBMCGUI_DIALOG_OK('رسالة من المبرمج','فحص اضافة inputstream.rtmp \n\r هذه ألإضافة عندك موجودة ومفعلة وجاهزة للاستخدام')
+	elif not enabled:
+		if showDialogs: yes = XBMCGUI_DIALOG_YESNO('رسالة من المبرمج','inputstream.rtmp \n\r هذه ألإضافة عندك غير مفعلة أو غير موجودة . يجب تنصيبها وتفعيلها لكي تعمل عندك فيديوهات نوع rtmp  . هل تريد تنصيب وتفعيل هذه الإضافة الآن ؟','','','كلا','نعم')
+		else: yes = True
 		if yes:
 			xbmc.executebuiltin('InstallAddon(inputstream.rtmp)',wait=True)
 			result = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"inputstream.rtmp","enabled":true}}')
-			if 'OK' in result: xbmcgui.Dialog().ok('رسالة من المبرمج','تم التنصيب والتفعيل وهذه الإضافة inputstream.rtmp جاهزة للاستخدام')
-			else: xbmcgui.Dialog().ok('رسالة من المبرمج','فشل في التنصيب أو التفعيل . البرنامج غير قادر على تنصيب أو تفعيل هذه الإضافة . والحل هو تنصيبها وتفعيلها من خارج البرنامج')
-	elif not checkvideo_msg: xbmcgui.Dialog().ok('رسالة من المبرمج','فحص اضافة inputstream.rtmp \n\r هذه ألإضافة عندك موجودة ومفعلة وجاهزة للاستخدام')
+			if 'OK' in result: XBMCGUI_DIALOG_OK('رسالة من المبرمج','تم التنصيب والتفعيل وهذه الإضافة inputstream.rtmp جاهزة للاستخدام')
+			elif showDialogs: XBMCGUI_DIALOG_OK('رسالة من المبرمج','فشل في التنصيب أو التفعيل . البرنامج غير قادر على تنصيب أو تفعيل هذه الإضافة . والحل هو تنصيبها وتفعيلها من خارج البرنامج')
 	return
 
 def WRITE_TO_SQL3(table,column,data,expiry):
 	if expiry==NO_CACHE: return
 	dataType = str(type(data))
-	#xbmcgui.Dialog().ok(str(data),dataType)
+	#XBMCGUI_DIALOG_OK(str(data),dataType)
 	#size = 1
 	#if   'str' in dataType: size = len(data)
 	#elif 'list' in dataType: size = len(data)
@@ -1189,21 +1269,21 @@ def DELETE_FROM_SQL3(table,column=None):
 	return
 
 def BUSY_DIALOG(job):
-	if kodi_version>17.9: dialog = 'busydialognocancel'
+	if kodi_version>17.999: dialog = 'busydialognocancel'
 	else: dialog = 'busydialog'
 	if job=='start': xbmc.executebuiltin('ActivateWindow('+dialog+')')
 	elif job=='stop': xbmc.executebuiltin('Dialog.Close('+dialog+')')
 	return
 
 def URLDECODE(url):
-	#xbmcgui.Dialog().ok(url,'URLDECODE')
+	#XBMCGUI_DIALOG_OK(url,'URLDECODE')
 	if '=' in url:
 		if '?' in url: url2,filters = url.split('?')
 		else: url2,filters = '',url
 		filters = filters.split('&')
 		data2 = {}
 		for filter in filters:
-			#xbmcgui.Dialog().ok(filter,str(filters))
+			#XBMCGUI_DIALOG_OK(filter,str(filters))
 			key,value = filter.split('=')
 			data2[key] = value
 	else: url2,data2 = url,{}
@@ -1253,7 +1333,7 @@ def TRANSLATE(text):
 	return ''
 
 def PLAY_VIDEO(url3,website='',type='video'):
-	#xbmcgui.Dialog().ok(url3,website)
+	#XBMCGUI_DIALOG_OK(url3,website)
 	#url3 = unescapeHTML(url3)
 	result,subtitlemessage,httpd = 'canceled0','',''
 	if len(url3)==3:
@@ -1271,17 +1351,17 @@ def PLAY_VIDEO(url3,website='',type='video'):
 			headers = {'User-Agent':''}
 			titleLIST,linkLIST = EXTRACT_M3U8(url,headers)
 			if len(linkLIST)>1:
-				selection = xbmcgui.Dialog().select('اختر الملف المناسب:', titleLIST)
-				#xbmcgui.Dialog().ok(str(selection),website)
+				selection = XBMCGUI_DIALOG_SELECT('اختر الملف المناسب:', titleLIST)
+				#XBMCGUI_DIALOG_OK(str(selection),website)
 				if selection == -1:
-					xbmcgui.Dialog().notification('تم إلغاء التشغيل','',sound=False)
+					XBMCGUI_DIALOG_NOTIFICATION('تم إلغاء التشغيل','',sound=False)
 					return result
 			else: selection = 0
 			url = linkLIST[selection]
 			if titleLIST[0]!='-1':
 				LOG_THIS('NOTICE',LOGGING(script_name)+'   Video Selected   Selection: [ '+titleLIST[selection]+' ]   URL: [ '+url+' ]')
 		if 'http' in url.lower() and '/dash/' not in url and 'youtube.mpd' not in url:
-			if 'https://' in url.lower():
+			if 'verifypeer=' not in url and 'https://' in url.lower():
 				if '|' not in url: url = url+'|verifypeer=false'
 				else: url = url+'&verifypeer=false'
 			if 'user-agent' not in url.lower() and website!='IPTV':
@@ -1296,7 +1376,7 @@ def PLAY_VIDEO(url3,website='',type='video'):
 		play_item.setMimeType('mime/x-type')
 		play_item.setInfo('Video', {'mediatype': 'video'})
 		#img = xbmc.getInfoLabel('ListItem.icon')
-		play_item.setArt({'icon':image,'thumb':image,'fanart':fanart})
+		play_item.setArt({'icon':image,'thumb':image,'fanart':fanartfile})
 		play_item.setInfo( "Video",{'Title':name})
 		#name = xbmc.getInfoLabel('ListItem.Label')
 		#name = name.strip(' ')
@@ -1304,9 +1384,9 @@ def PLAY_VIDEO(url3,website='',type='video'):
 			#when set to "False" it makes glarabTV fails and make WS2TV opens fast
 			play_item.setContentLookup(False)
 		#if videofiletype in ['.m3u8']: play_item.setContentLookup(False)
-		if 'rtmp' in url: enabled = ENABLE_RTMP(True)
+		if 'rtmp' in url: enabled = ENABLE_RTMP(False)
 		if videofiletype=='.mpd' or '/dash/' in url:
-			enabled = ENABLE_MPD(True)
+			enabled = ENABLE_MPD(False)
 			play_item.setProperty('inputstreamaddon','inputstream.adaptive')
 			play_item.setProperty('inputstream.adaptive.manifest_type','mpd')
 		if subtitle!='':
@@ -1332,7 +1412,7 @@ def PLAY_VIDEO(url3,website='',type='video'):
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing video file using play()   URL: [ '+url+' ]')
 		myplayer.play(url,play_item)
 		#xbmc.Player().play(url,play_item)
-		#xbmcgui.Dialog().ok(url,type)
+		#XBMCGUI_DIALOG_OK(url,type)
 	ADD_TO_LAST_VIDEO_FILES()
 	#logfilename = xbmc.translatePath('special://logpath')+'kodi.log'
 	if result!='download':
@@ -1344,33 +1424,31 @@ def PLAY_VIDEO(url3,website='',type='video'):
 			xbmc.sleep(step*1000)
 			result = myplayer.status
 			if result=='playing':
-				xbmcgui.Dialog().notification('الفيديو يعمل','',time=500,sound=False)
+				XBMCGUI_DIALOG_NOTIFICATION('الفيديو يعمل','',time=500,sound=False)
 				LOG_THIS('NOTICE',LOGGING(script_name)+'   Success: Video is playing   URL: [ '+url+' ]'+subtitlemessage)
 				break
 			elif result=='failed':
 				LOG_THIS('ERROR',LOGGING(script_name)+'   Failed playing video   URL: [ '+url+' ]'+subtitlemessage)
-				xbmcgui.Dialog().notification('الفيديو لم يعمل','',sound=False)
+				XBMCGUI_DIALOG_NOTIFICATION('الفيديو لم يعمل','',sound=False)
 				break
-			xbmcgui.Dialog().notification('جاري تشغيل الفيديو','باقي '+str(timeout-i)+' ثانية',sound=False)
+			XBMCGUI_DIALOG_NOTIFICATION('جاري تشغيل الفيديو','باقي '+str(timeout-i)+' ثانية',sound=False)
 		else:
 			result = 'timeout'
 			myplayer.stop()
-			xbmcgui.Dialog().notification('الفيديو لم يعمل','',sound=False)
+			XBMCGUI_DIALOG_NOTIFICATION('الفيديو لم يعمل','',sound=False)
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Timeout unknown problem   URL: [ '+url+' ]'+subtitlemessage)
 	cond1 = result in ['playing','play_download']
 	cond2 = result=='download' and videofiletype in ['.ts','.mkv','.mp4','.mp3','.flv','.m3u8','avi']
 	if cond1 or cond2:
 		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
-		randomNumber = str(random.randrange(111111111111,999999999999))
-		url2 = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+website+'&z='+randomNumber
-		response = openURL_requests_cached(NO_CACHE,'GET',url2,'','','',False,'LIBRARY-PLAY_VIDEO-1st')
+		response = SEND_ANALYTICS_EVENT(website)
 		#html = response.content
 	if httpd!='':
-		#xbmcgui.Dialog().ok('click ok to shutdown the http server','')
+		#XBMCGUI_DIALOG_OK('click ok to shutdown the http server','')
 		#html = openURL_cached(NO_CACHE,'http://localhost:55055/shutdown','','','','LIBRARY-PLAY_VIDEO-2nd')
 		time.sleep(1)
 		httpd.shutdown()
-		#xbmcgui.Dialog().ok('http server is down','')
+		#XBMCGUI_DIALOG_OK('http server is down','')
 	if result=='download':
 		import DOWNLOAD
 		DOWNLOAD.DOWNLOAD_VIDEO(url,videofiletype)
@@ -1379,9 +1457,17 @@ def PLAY_VIDEO(url3,website='',type='video'):
 	#if 'https://' in url and result in ['failed','timeout']:
 	#	working = HTTPS(False)
 	#	if not working:
-	#		xbmcgui.Dialog().ok('الاتصال مشفر','مشكلة ... هذا الفيديو يحتاج الى اتصال مشفر (ربط مشفر) ولكن للأسف الاتصال المشفر لا يعمل على جهازك')
+	#		XBMCGUI_DIALOG_OK('الاتصال مشفر','مشكلة ... هذا الفيديو يحتاج الى اتصال مشفر (ربط مشفر) ولكن للأسف الاتصال المشفر لا يعمل على جهازك')
 	#		return 'https'
+	#sys.exit()
 	return result
+
+def SEND_ANALYTICS_EVENT(script_name):
+	randomNumber = str(random.randrange(111111111111,999999999999))
+	url = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+script_name+'&el='+str(kodi_version)+'&z='+randomNumber
+	response = openURL_requests('GET',url,'','','',False,'LIBRARY-SEND_ANALYTICS_EVENT-1st')
+	#XBMCGUI_DIALOG_OK(url,response.content)
+	return response
 
 def SEARCH_OPTIONS(search):
 	options,showdialogs = '',True
@@ -1390,8 +1476,97 @@ def SEARCH_OPTIONS(search):
 		options = '_'+options
 		if '_NODIALOGS_' in options: showdialogs = False
 		else: showdialogs = True
-	#xbmcgui.Dialog().ok(search,options)
+	#XBMCGUI_DIALOG_OK(search,options)
 	return search,options,showdialogs
+
+def XBMCGUI_DIALOG_OK(*args,**kwargs):
+	return xbmcgui.Dialog().ok(*args,**kwargs)
+
+def XBMCGUI_DIALOG_YESNO(*args,**kwargs):
+	return xbmcgui.Dialog().yesno(*args,**kwargs)
+
+def XBMCGUI_DIALOG_SELECT(*args,**kwargs):
+	return xbmcgui.Dialog().select(*args,**kwargs)
+
+def XBMCGUI_DIALOG_NOTIFICATION(*args,**kwargs):
+	return xbmcgui.Dialog().notification(*args,**kwargs)
+
+def XBMCGUI_DIALOG_TEXTVIEWER(*args,**kwargs):
+	#return xbmcgui.Dialog().textviewer(*args,**kwargs)
+	return XBMCGUI_DIALOG_TEXTVIEWER_FULLSCREEN(args[0],args[1],'big','left')
+
+def XBMCGUI_DIALOG_CONTEXTMENU(*args,**kwargs):
+	return xbmcgui.Dialog().contextmenu(*args,**kwargs)
+
+def XBMCGUI_DIALOG_BROWSESINGLE(*args,**kwargs):
+	return xbmcgui.Dialog().browseSingle(*args,**kwargs)
+
+def XBMCGUI_DIALOG_INPUT(*args,**kwargs):
+	return xbmcgui.Dialog().input(*args,**kwargs)
+
+def XBMCGUI_DIALOGPROGRESS(*args,**kwargs):
+	return xbmcgui.DialogProgress(*args,**kwargs)
+
+def XBMCGUI_DIALOG_TEXTVIEWER_FULLSCREEN(header,text,size,direction):
+	#dialog = xbmcgui.WindowXML('Font22.xml',addonfolder)
+	#dialog.show()
+	dialog = xbmcgui.WindowXMLDialog('DialogTextViewerFullScreen.xml',addonfolder)
+	dialog.show()
+	#dialog.getControl(99991).setPosition(0,0)
+	dialog.getControl(1).setLabel(header)
+	if size=='big' and direction=='center':
+		dialog.getControl(51).setVisible(False)
+		dialog.getControl(52).setVisible(False)
+		dialog.getControl(53).setVisible(False)
+		dialog.getControl(54).setText(text)
+	elif size=='small' and direction=='left':
+		dialog.getControl(51).setVisible(False)
+		dialog.getControl(52).setVisible(False)
+		dialog.getControl(53).setText(text)
+		dialog.getControl(54).setVisible(False)
+	elif size=='big' and direction=='right':
+		dialog.getControl(51).setVisible(False)
+		dialog.getControl(52).setText(text)
+		dialog.getControl(53).setVisible(False)
+		dialog.getControl(54).setVisible(False)
+	elif size=='big' and direction=='left':
+		dialog.getControl(51).setText(text)
+		dialog.getControl(52).setVisible(False)
+		dialog.getControl(53).setVisible(False)
+		dialog.getControl(54).setVisible(False)
+	#width = xbmcgui.getScreenWidth()
+	#height = xbmcgui.getScreenHeight()
+	#resolution = (0.0+width)/height
+	#dialog.getControl(5).setWidth(width-180)
+	#dialog.getControl(5).setHeight(height-180)
+	result = dialog.doModal()
+	del dialog
+	return result
+
+def RANDOM_USERAGENT():
+	results = READ_FROM_SQL3('SETTINGS','USERAGENT')
+	#XBMCGUI_DIALOG_OK(results,'')
+	#LOG_THIS('NOTICE','EMAD ======== useragent: '+results)
+	if results: useragent = results ; return useragent
+	# Latest and most common user agents (always updated)
+	url = 'https://techblog.willshouse.com/2012/01/03/most-common-user-agents/'
+	headers = {'Referer':url}
+	response = openURL_requests_cached(VERY_LONG_CACHE,'GET',url,'',headers,'','','YOUTUBE-RANDOM_USERAGENT-1st')
+	html = response.content
+	count = html.count('Mozilla')
+	#LOG_THIS('NOTICE',html)
+	#XBMCGUI_DIALOG_OK(str(count),html)
+	if '___Error___' in html or count<200:
+		with open(useragentfile,'r') as f: text = f.read()
+	else:
+		text = re.findall('get-the-list.*?>(.*?)<',html,re.DOTALL)
+		text = text[0]
+	a = re.findall('(Mozilla.*?)\n',text,re.DOTALL)
+	b = random.sample(a,1)
+	useragent = b[0]
+	#XBMCGUI_DIALOG_OK(useragent,str(len(a)))
+	WRITE_TO_SQL3('SETTINGS','USERAGENT',useragent,SHORT_CACHE)
+	return useragent
 
 
 

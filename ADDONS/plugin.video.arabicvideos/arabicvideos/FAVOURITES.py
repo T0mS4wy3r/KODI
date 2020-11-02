@@ -22,16 +22,18 @@ def MENU(favouriteID):
 			addMenuItem(type,name,url,mode,image,page,text,context)
 	return
 
-def FAVOURITES_DISPATCHER(favourite):
-	if favourite=='': return
-	favouriteID = favourite[0]
-	if   'ADD1'		in favourite: ADD_TO_FAVOURITES(favouriteID)
-	elif 'REMOVE1'	in favourite: REMOVE_FROM_FAVOURITES(favouriteID)
-	elif 'UP1'		in favourite: MOVE_FAVOURITES(favouriteID,True,1)
-	elif 'DOWN1'	in favourite: MOVE_FAVOURITES(favouriteID,False,1)
-	elif 'UP4'		in favourite: MOVE_FAVOURITES(favouriteID,True,4)
-	elif 'DOWN4'	in favourite: MOVE_FAVOURITES(favouriteID,False,4)
-	elif '_FORGETRESULTS_'	in favourite: DELETE_FAVOURITES(favouriteID)
+def FAVOURITES_DISPATCHER(context):
+	if context=='': return
+	if '_' in context: favouriteID,context2 = context.split('_',1)
+	else: favouriteID,context2 = context,''
+	#XBMCGUI_DIALOG_OK(favouriteID,context)
+	if   context2=='UP1'	: MOVE_FAVOURITES(favouriteID,True,1)
+	elif context2=='DOWN1'	: MOVE_FAVOURITES(favouriteID,False,1)
+	elif context2=='UP4'	: MOVE_FAVOURITES(favouriteID,True,4)
+	elif context2=='DOWN4'	: MOVE_FAVOURITES(favouriteID,False,4)
+	elif context2=='ADD1'	: ADD_TO_FAVOURITES(favouriteID)
+	elif context2=='REMOVE1': REMOVE_FROM_FAVOURITES(favouriteID)
+	elif context2=='DELETELIST': DELETE_FAVOURITES(favouriteID)
 	return
 
 def MOVE_FAVOURITES(favouriteID,move_up,repeat):
@@ -85,14 +87,14 @@ def REMOVE_FROM_FAVOURITES(favouriteID):
 	return
 
 def DELETE_FAVOURITES(favouriteID):
-	yes = xbmcgui.Dialog().yesno('رسالة من المبرمج','هل تريد فعلا مسح جميع محتويات قائمة المفضلة '+favouriteID+' ؟!','','','كلا','نعم')
+	yes = XBMCGUI_DIALOG_YESNO('رسالة من المبرمج','هل تريد فعلا مسح جميع محتويات قائمة المفضلة '+favouriteID+' ؟!','','','كلا','نعم')
 	if yes!=1: return
 	favouritesDICT = GET_ALL_FAVOURITES()
 	if favouriteID in favouritesDICT.keys():
 		del favouritesDICT[favouriteID]
 		newFILE = str(favouritesDICT)
 		with open(favouritesfile,'w') as f: f.write(newFILE)
-		xbmcgui.Dialog().ok('رسالة من المبرمج','تم مسح جميع محتويات قائمة المفضلة '+favouriteID)
+		XBMCGUI_DIALOG_OK('رسالة من المبرمج','تم مسح جميع محتويات قائمة المفضلة '+favouriteID)
 	return
 
 def GET_ALL_FAVOURITES():
@@ -106,11 +108,11 @@ def GET_FAVOURITES_CONTEXT_MENU(path):
 	contextMenu = []
 	menuItem = EXTRACT_KODI_PATH(path)
 	type,name,url,mode,image,page,text,context = menuItem
-	if context not in ['','1','2','3','4','5']: context = '_'+context
+	#if context not in ['','1','2','3','4','5']: context = '_'+context
 	favouritesDICT = GET_ALL_FAVOURITES()
 	if mode=='270':
 		if context in favouritesDICT.keys() and len(favouritesDICT[context])>0:
-			contextMenu.append(('مسح قائمة مفضلة '+context,'XBMC.RunPlugin('+path+'&context='+context+'__FORGETRESULTS_'+context+')'))
+			contextMenu.append(('مسح قائمة مفضلة '+context,'XBMC.RunPlugin('+path+'&context='+context+'_DELETELIST'+')'))
 	else:
 		menuItem = menuItem[:-1]
 		menuItem = tuple(menuItem)
@@ -130,14 +132,14 @@ def GET_FAVOURITES_CONTEXT_MENU(path):
 def CREATE_ONE_CONTEXT_MENU(favouriteID,context,path,menuItem,favouritesDICT):
 	contextMenu = []
 	if favouriteID in favouritesDICT.keys() and menuItem in favouritesDICT[favouriteID]:
-		contextMenu.append(('مسح من مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_REMOVE1'+context+')'))
+		contextMenu.append(('مسح من مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_REMOVE1)'))
 		if context==favouriteID:
 			count = len(favouritesDICT[favouriteID])
-			if count>1: contextMenu.append(('تحريك 1 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP1'+context+')'))
-			if count>4: contextMenu.append(('تحريك 4 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP4'+context+')'))
-			if count>1: contextMenu.append(('تحريك 1 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN1'+context+')'))
-			if count>4: contextMenu.append(('تحريك 4 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN4'+context+')'))
-	else: contextMenu.append(('إضافة إلى مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_ADD1'+context+')'))
+			if count>1: contextMenu.append(('تحريك 1 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP1)'))
+			if count>4: contextMenu.append(('تحريك 4 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP4)'))
+			if count>1: contextMenu.append(('تحريك 1 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN1)'))
+			if count>4: contextMenu.append(('تحريك 4 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN4)'))
+	else: contextMenu.append(('إضافة إلى مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_ADD1)'))
 	return contextMenu
 
 

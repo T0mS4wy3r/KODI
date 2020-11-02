@@ -31,7 +31,7 @@ def MENU(website=''):
 	return ''
 
 def TITLES(url,category):
-	#xbmcgui.Dialog().ok('', category)
+	#XBMCGUI_DIALOG_OK('', category)
 	cat = ''
 	if category not in ['-1','-2','-3']: cat = '?cat='+category
 	url2 = website0a+'/menu_level.php'+cat
@@ -55,7 +55,7 @@ def TITLES(url,category):
 
 def EPISODES(url):
 	html = openURL_cached(REGULAR_CACHE,url,'','',True,'ALFATIMI-EPISODES-1st')
-	#xbmcgui.Dialog().ok(url , html)
+	#XBMCGUI_DIALOG_OK(url , html)
 	html_blocks = re.findall('pagination(.*?)id="footer',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('grid_view.*?src="(.*?)".*?title="(.*?)".*?<h2.*?href="(.*?)"',block,re.DOTALL)
@@ -82,7 +82,7 @@ def PLAY(url):
 	items = re.findall('playlistfile:"(.*?)"',html,re.DOTALL)
 	url = items[0]
 	if 'http' not in url: url = 'http:'+url
-	#xbmcgui.Dialog().ok(url,'')
+	#XBMCGUI_DIALOG_OK(url,'')
 	PLAY_VIDEO(url,script_name,'video')
 	return
 
@@ -103,7 +103,7 @@ def SEARCH(search):
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
-	#xbmcgui.Dialog().ok(search, website0a)
+	#XBMCGUI_DIALOG_OK(search, website0a)
 	new_search = search.replace(' ','+')
 	url = website0a + '/search_result.php?query=' + new_search # + '&page=1'
 	EPISODES(url)

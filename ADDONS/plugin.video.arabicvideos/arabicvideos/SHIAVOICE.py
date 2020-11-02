@@ -81,7 +81,7 @@ def LATEST(seq):
 	return
 
 def TITLES(url):
-	#xbmcgui.Dialog().ok(url,'')
+	#XBMCGUI_DIALOG_OK(url,'')
 	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','','','','SHIAVOICE-TITLES-1st')
 	html = response.content
 	html_blocks = re.findall('ibox-heading"(.*?)class="float-right',html,re.DOTALL)
@@ -101,7 +101,7 @@ def EPISODES(html):
 	block = html_blocks[0]
 	items = re.findall('href="(http.*?)".*?</i>(.*?)<.*?cell">(.*?)<.*?cell">(.*?)<.*?cell">(.*?)<',block,re.DOTALL)
 	for link,title,name,count,duration in items:
-		#xbmcgui.Dialog().ok('',link+','+title+','+name+','+count+','+duration)
+		#XBMCGUI_DIALOG_OK('',link+','+title+','+name+','+count+','+duration)
 		title = title.strip(' ')
 		name = name.strip(' ')
 		title = title+' ('+name+')'
@@ -139,7 +139,7 @@ def SEARCH(search):
 	typeList = ['&t=a','&t=c','&t=s']
 	if showdialogs:
 		searchTitle = ['قارئ','إصدار / مجلد','مقطع الصوتي']
-		selection = xbmcgui.Dialog().select('أختر البحث المناسب', searchTitle)
+		selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب', searchTitle)
 		if selection == -1: return
 	else: selection = 2
 	type = typeList[selection]

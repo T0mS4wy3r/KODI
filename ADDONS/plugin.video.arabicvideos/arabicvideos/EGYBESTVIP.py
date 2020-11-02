@@ -30,7 +30,7 @@ def MAIN(mode,url,page,text):
 def MENU(website=''):
 	#addMenuItem('folder',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
 	#addMenuItem('folder',menu_name+'تحذير','',226)
-	#xbmcgui.Dialog().ok(website0a, html)
+	#XBMCGUI_DIALOG_OK(website0a, html)
 	#html_blocks=re.findall('id="menu"(.*?)mainLoad',html,re.DOTALL)
 	#block = html_blocks[0]
 	#items=re.findall('href="(.*?)".*?i>(.*?)\n',block,re.DOTALL)
@@ -81,7 +81,7 @@ def FILTERS_MENU(url):
 	return
 
 def TITLES(url,page):
-	#xbmcgui.Dialog().ok(str(url), str(page))
+	#XBMCGUI_DIALOG_OK(str(url), str(page))
 	if '/search' in url or '?' in url: url2 = url + '&'
 	else: url2 = url + '?'
 	#url2 = url2 + 'output_format=json&output_mode=movies_list&page='+page
@@ -107,7 +107,7 @@ def TITLES(url,page):
 		"""
 		if '/series' in url and '/season' not in link: continue
 		if '/season' in url and '/episode' not in link: continue
-		#xbmcgui.Dialog().ok(title, str(link))
+		#XBMCGUI_DIALOG_OK(title, str(link))
 		title = name + escapeUNICODE(title).strip(' ')
 		"""
 		title = unescapeHTML(title)
@@ -116,7 +116,7 @@ def TITLES(url,page):
 		link = link.replace('\/','/')
 		img = img.replace('\/','/')
 		if 'http' not in img: img = 'http:' + img
-		#xbmcgui.Dialog().notification(img,'')
+		#XBMCGUI_DIALOG_NOTIFICATION(img,'')
 		url2 = website0a + link
 		"""
 		if '/movie/' in link or '/episode' in link:
@@ -146,7 +146,7 @@ def TITLES(url,page):
 def PLAY(url):
 	#global headers
 	titleLIST,linkLIST = [],[]
-	#xbmcgui.Dialog().ok(url, url[-45:])
+	#XBMCGUI_DIALOG_OK(url, url[-45:])
 	# https://egy4best.com/movie/فيلم-the-lion-king-2019-مترجم
 	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGYBESTVIP-PLAY-1st')
 	ratingLIST = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
@@ -161,7 +161,7 @@ def PLAY(url):
 			elif '/download/' in link: downloadURL = link
 		if watchURL!='': htmlWatch = openURL_cached(LONG_CACHE,watchURL,'',headers,'','EGYBESTVIP-PLAY-2nd')
 		if downloadURL!='': htmlDownload = openURL_cached(LONG_CACHE,downloadURL,'',headers,'','EGYBESTVIP-PLAY-3rd')
-	#xbmcgui.Dialog().ok(downloadURL,watchURL)
+	#XBMCGUI_DIALOG_OK(downloadURL,watchURL)
 	# https://uploaded.egybest.download/?id=__the_lion_king_2019
 	watchitem = re.findall('id="video".*?data-src="(.*?)"',htmlWatch,re.DOTALL)
 	if watchitem:
@@ -176,7 +176,7 @@ def PLAY(url):
 				server = url2.split('/')[2]
 				linkLIST.append(url2+'?named='+server+'__watch')
 		elif url2!='':
-			#xbmcgui.Dialog().ok(url2,str(watchitem))
+			#XBMCGUI_DIALOG_OK(url2,str(watchitem))
 			server = url2.split('/')[2]
 			linkLIST.append(url2+'?named='+server+'__watch')
 	# https://inflam.cc/VLO1NNdGuy
@@ -187,9 +187,10 @@ def PLAY(url):
 		downloadlist = re.findall('<td>.*?<td>(.*?)<.*?href="(.*?)"',downloadtable,re.DOTALL)
 		if downloadlist:
 			for quality,link in downloadlist:
-				server = link.split('/')[2]
-				linkLIST.append(link+'?named='+server+'__download__mp4__'+quality)
-	#selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', linkLIST)
+				if link.count('/')>=2:
+					server = link.split('/')[2]
+					linkLIST.append(link+'?named='+server+'__download__mp4__'+quality)
+	#selection = XBMCGUI_DIALOG_SELECT('اختر الفيديو المناسب:', linkLIST)
 	#if selection == -1 : return
 	newLIST = []
 	for link in linkLIST:
@@ -197,7 +198,7 @@ def PLAY(url):
 		if 'faselhd' in link: continue
 		if 'egybest.vip?name' in link: continue
 		newLIST.append(link)
-	if len(newLIST)==0: xbmcgui.Dialog().ok('رسالة من المبرمج','هذا الفيديو يستخدم روابط غير معروفة في هذا البرنامج والمبرمج لم يستطيع إيحاد حل لهذه المشكلة')
+	if len(newLIST)==0: XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذا الفيديو يستخدم روابط غير معروفة في هذا البرنامج والمبرمج لم يستطيع إيحاد حل لهذه المشكلة')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(newLIST,script_name,'video')
@@ -213,7 +214,7 @@ def SEARCH(search):
 	if token:
 		url = website0a+'/search?_token='+token[0]+'&q='+new_search
 		TITLES(url,'1')
-		#xbmcgui.Dialog().ok('', '')
+		#XBMCGUI_DIALOG_OK('', '')
 	return
 
 

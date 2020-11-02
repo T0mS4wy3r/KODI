@@ -1,4 +1,38 @@
 ﻿
+v7.4.0	2020-11-02
+Added automatic proxy servers
+Added MESSAGES section to send messages to users
+Added IPTV videos count
+Added YOUTUBE older page playlists
+Added functions for all kodi dialogs
+Added thumb image
+Added both inputstreams addons as required
+Added the new web address for the new KODIEMAD app to several messages
+Added new screen to show the urls of this addon
+Added ANALYTICS for pythonanywhere server
+Added ANALYTICS for kodi version
+Added version check for the backup repository website
+Added a full screen textviewer dialog with multi fonts and multi directions
+Fixed FAVOURITES search actions which asks for keyboard again
+Fixed FAVOURITES navigation actions
+Fixed random words which is used by random lists
+Fixed log files path
+Fixed DOWNLOAD Arabic Unicode files name
+Fixed DOWNLOAD unavailable file size
+Modified proxy testing
+Modified the delete of IPTV files for new installation and upgrades
+Modified kodi folders & paths
+Modified icon image
+Updated User-Agents file
+Updated YOUTUBE to process page data when it comes as a variable
+Updated YUOTUBE trending menu hidden list
+Disabled fanart image
+Changed videos type from none to tvshows
+Decreased messages for upgrades & new installs
+Removed EGYBESTVIP website
+Minor fixes & improvements
+
+
 v7.3.0	2020-10-03
 Added new search support function for all sites
 Added conditional proxy for pythonanywhere

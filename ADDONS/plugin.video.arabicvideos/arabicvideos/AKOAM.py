@@ -8,7 +8,7 @@ website0a = WEBSITES[script_name][0]
 noEpisodesLIST = ['فيلم','كليب','العرض الاسبوعي','مسرحية','مسرحيه','اغنية','اعلان','لقاء']
 
 def MAIN(mode,url,text):
-	#xbmcgui.Dialog().ok(text,str(mode))
+	#XBMCGUI_DIALOG_OK(text,str(mode))
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	if   mode==70: results = MENU(url)
 	elif mode==71: results = CATEGORIES(url)
@@ -54,7 +54,7 @@ def CATEGORIES(url):
 	return
 
 def TITLES(url,type):
-	#xbmcgui.Dialog().ok(url,type)
+	#XBMCGUI_DIALOG_OK(url,type)
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'AKOAM-TITLES-1st')
 	items = []
 	if type=='featured':
@@ -65,7 +65,7 @@ def TITLES(url,type):
 		html_blocks = re.findall('akoam_result(.*?)<script',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?background-image: url\((.*?)\).*?<h1>(.*?)</h1>',block,re.DOTALL)
-		#xbmcgui.Dialog().ok(str(len(items)),block)
+		#XBMCGUI_DIALOG_OK(str(len(items)),block)
 	elif type=='more':
 		html_blocks = re.findall('section_title more_title(.*?)footer_bottom_services',html,re.DOTALL)
 	#elif type=='news':
@@ -95,7 +95,7 @@ def RESOLVE_UNDERRUN(url):
 	return url2
 
 def SECTIONS(url):
-	#xbmcgui.Dialog().ok(url,'SECTIONS 11')
+	#XBMCGUI_DIALOG_OK(url,'SECTIONS 11')
 	notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
 	html = openURL_cached(REGULAR_CACHE,url,'',headers,True,'AKOAM-SECTIONS-1st')
 	akwam_link1 = re.findall('"(https*://akwam.net/\w+.*?)"',html,re.DOTALL)
@@ -104,7 +104,7 @@ def SECTIONS(url):
 		if akwam_link1: url3 = akwam_link1[0]
 		elif akwam_link2: url3 = RESOLVE_UNDERRUN(akwam_link2[0])
 		url3 = unquote(url3)
-		#xbmcgui.Dialog().ok(url3,'SECTIONS 22')
+		#XBMCGUI_DIALOG_OK(url3,'SECTIONS 22')
 		import AKWAM
 		if '/series/' in url3 or '/shows/' in url3: AKWAM.EPISODES(url3)
 		else: AKWAM.PLAY(url3)
@@ -112,14 +112,14 @@ def SECTIONS(url):
 	ratingLIST = re.findall('محتوى الفيلم.*?>.*?(\w*?)\W*?<',html,re.DOTALL)
 	if RATING_CHECK(script_name,url,ratingLIST): return
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
-	#xbmcgui.Dialog().ok(url,html)
+	#XBMCGUI_DIALOG_OK(url,html)
 	items = re.findall('<br />\n<a href="(.*?)".*?<span style="color:.*?">(.*?)</span>',html,re.DOTALL)
 	for link,title in items:
 		title = unescapeHTML(title)
 		addMenuItem('folder',menu_name+title,link,73)
 	html_blocks = re.findall('class="sub_title".*?<h1.*?>(.*?)</h1>.*?class="main_img".*?src="(.*?)".*?ad-300-250(.*?)ako-feedback',html,re.DOTALL)
 	if not html_blocks:
-		xbmcgui.Dialog().notification('خطأ خارجي','لا يوجد ملف فيديو')
+		XBMCGUI_DIALOG_NOTIFICATION('خطأ خارجي','لا يوجد ملف فيديو')
 		return
 	name,img,block = html_blocks[0]
 	name = name.strip(' ')
@@ -145,14 +145,14 @@ def SECTIONS(url):
 		titleLIST.append(title)
 		episodeLIST.append(count)
 		count += 1
-	#xbmcgui.Dialog().ok(str(size),str(episodeLIST))
+	#XBMCGUI_DIALOG_OK(str(size),str(episodeLIST))
 	if size>0:
 		if any(value in name for value in noEpisodesLIST):
 			if size==1:
 				selection = 0
 			else:
-				#xbmcgui.Dialog().select('',titleLIST)
-				selection = xbmcgui.Dialog().select('اختر الفيديو المناسب:', titleLIST)
+				#XBMCGUI_DIALOG_SELECT('',titleLIST)
+				selection = XBMCGUI_DIALOG_SELECT('اختر الفيديو المناسب:', titleLIST)
 				if selection == -1: return
 			PLAY(url+'?section='+str(1+episodeLIST[size-selection-1]))
 		else:
@@ -164,11 +164,11 @@ def SECTIONS(url):
 				addMenuItem('video',menu_name+title,link,74,img)
 	else:
 		addMenuItem('video',menu_name+'الرابط ليس فيديو','',9999,img)
-		#xbmcgui.Dialog().notification('خطأ خارجي','الرابط ليس فيديو')
+		#XBMCGUI_DIALOG_NOTIFICATION('خطأ خارجي','الرابط ليس فيديو')
 	return
 
 def PLAY(url):
-	#xbmcgui.Dialog().ok(url,'')
+	#XBMCGUI_DIALOG_OK(url,'')
 	url2,episode = url.split('?section=')
 	html = openURL_cached(REGULAR_CACHE,url2,'',headers,True,'AKOAM-PLAY_AKOAM-1st')
 	html_blocks = re.findall('ad-300-250.*?ad-300-250(.*?)ako-feedback',html,re.DOTALL)
@@ -191,25 +191,25 @@ def PLAY(url):
 		if serverIMG in serversDICT:
 			linkLIST.append(link+'?named='+serversDICT[serverIMG]+'________akoam')
 		else: linkLIST.append(link+'?named='+serverIMG+'________akoam')
-	#xbmcgui.Dialog().select('PLAY AKOAM',linkLIST)
+	#XBMCGUI_DIALOG_SELECT('PLAY AKOAM',linkLIST)
 	#return
 	if len(linkLIST)==0:
 		message = re.findall('sub-no-file.*?\n(.*?)\n',block,re.DOTALL)
-		if message: xbmcgui.Dialog().ok('رسالة من الموقع الاصلي',message[0])
-		else: xbmcgui.Dialog().ok('رسالة من المبرمج','لا يوجد ملف فيديو')
+		if message: XBMCGUI_DIALOG_OK('رسالة من الموقع الاصلي',message[0])
+		else: XBMCGUI_DIALOG_OK('رسالة من المبرمج','لا يوجد ملف فيديو')
 	else:
-		#xbmcgui.Dialog().select('',linkLIST)
+		#XBMCGUI_DIALOG_SELECT('',linkLIST)
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')
 	return
 
 def SEARCH(search):
-	#xbmcgui.Dialog().ok(search,'')
+	#XBMCGUI_DIALOG_OK(search,'')
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','%20')
-	#xbmcgui.Dialog().ok(str(len(search)) , str(len(new_search)) )
+	#XBMCGUI_DIALOG_OK(str(len(search)) , str(len(new_search)) )
 	url = website0a + '/search/'+new_search
 	results = TITLES(url,'search')
 	return

@@ -1,18 +1,44 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <shortcuts>
 	<shortcut>
+		<label>قائمة البرامج</label>
+		<label2>32021</label2>
+		<defaultID>arabic1</defaultID>
+		<action>AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</action>
+		<icon>home_icons/arabic.png</icon>
+	</shortcut>
+	<shortcut>
+		<label>قائمة ألإعدادات</label>
+		<label2>32021</label2>
+		<defaultID>arabic2</defaultID>
+		<action>AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</action>
+		<icon>home_icons/arabic.png</icon>
+	</shortcut>
+	<shortcut>
+		<label>الفيديوهات العربية</label>
+		<label2>32021</label2>
+		<defaultID>arabic0</defaultID>
+		<action>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</action>
+		<icon>home_icons/arabic.png</icon>
+	</shortcut>
+	<shortcut>
+		<label>Arabic Videos</label>
+		<label2>32021</label2>
+		<defaultID>arabic0</defaultID>
+		<action>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</action>
+		<icon>home_icons/arabic.png</icon>
+	</shortcut>
+	<shortcut>
 		<label>1036</label>
 		<label2>32034</label2>
 		<defaultID>favourites</defaultID>
-		<thumb>special://skin/extras/icons/favourites.png</thumb>
 		<action>ActivateWindow(favourites)</action>
 		<icon>home_icons/favourites.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>13005</label>
 		<label2>32034</label2>
-		<thumb>special://skin/extras/icons/power.png</thumb>
-		<action>ActivateWindow(shutdownmenu)</action>
+		<action>AAAAShutDown</action>
 		<defaultID>shutdown</defaultID>
 		<icon>home_icons/shutdown.png</icon>
 	</shortcut>
@@ -20,95 +46,83 @@
 		<label>10004</label>
 		<label2>32034</label2>
 		<defaultID>settings</defaultID>
-		<thumb>special://skin/extras/icons/settings.png</thumb>
-		<action>ActivateWindow(Settings)</action>
+		<action>AAAAActivateWindow(Settings)</action>
 		<icon>home_icons/settings.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>10001</label>
 		<label2>32034</label2>
-		<action>ActivateWindow(Programs)</action>
+		<action>AAAAActivateWindow(Programs,Addons,return)</action>
 		<defaultID>programs</defaultID>
-		<thumb>special://skin/extras/icons/programs.png</thumb>
 		<icon>home_icons/programs.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>24001</label>
 		<label2>32034</label2>
 		<defaultID>addons</defaultID>
-		<thumb>special://skin/extras/icons/vaddons.png</thumb>
-		<action>ActivateWindow(AddonBrowser)</action>
+		<action>AAAAActivateWindow(AddonBrowser)</action>
 		<icon />
 	</shortcut>
 	<shortcut>
 		<label>3</label>
 		<label2>32034</label2>
 		<defaultID>videos</defaultID>
-		<thumb>special://skin/extras/icons/videos.png</thumb>
-		<action>ActivateWindow(Videos,root)</action>
+		<action>AAAAActivateWindow(Videos)</action>
 		<icon>home_icons/videos.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>32032</label>
 		<label2>32034</label2>
 		<defaultID>dvd</defaultID>
-		<thumb>special://skin/extras/icons/dvd.png</thumb>
-		<action>XBMC.PlayDVD()</action>
+		<action>AAAAXBMC.PlayDVD()</action>
 		<icon>home_icons/playdisc.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>342</label>
 		<label2>32034</label2>
 		<defaultID>movies</defaultID>
-		<thumb>special://skin/extras/icons/movies.png</thumb>
-		<action>ActivateWindow(Videos,MovieTitles,return)</action>
+		<action>AAAAActivateWindow(Videos,MovieTitles,return)</action>
 		<icon>home_icons/movies.png</icon>
 	</shortcut>	
 	<shortcut>
 		<label>20343</label>
 		<label2>32034</label2>
 		<defaultID>tvshows</defaultID>
-		<thumb>special://skin/extras/icons/tvshows.png</thumb>
-		<action>ActivateWindow(Videos,TVShowTitles,return)</action>
+		<action>AAAAActivateWindow(Videos,TVShowTitles,return)</action>
 		<icon>home_icons/tvshows.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>32022</label>
 		<label2>32034</label2>
 		<defaultID>livetv</defaultID>
-		<thumb>special://skin/extras/icons/tv.png</thumb>
-		<action>ActivateWindow(TVChannels)</action>
+		<action>AAAAActivateWindow(TVChannels)</action>
 		<icon>home_icons/livetv.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>2</label>
 		<label2>32034</label2>
 		<defaultID>music</defaultID>
-		<thumb>special://skin/extras/icons/music.png</thumb>
-		<action>ActivateWindow(Music,root)</action>
+		<action>AAAAActivateWindow(Music)</action>
 		<icon>home_icons/music.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>20389</label>
 		<label2>32034</label2>
 		<defaultID>musicvideos</defaultID>
-		<thumb>special://skin/extras/icons/musicvideos.png</thumb>
-		<action>ActivateWindow(Videos,MusicVideoTitles,return)</action>
+		<action>AAAAActivateWindow(Videos,MusicVideoTitles,return)</action>
 		<icon>home_icons/musicvideos.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>10002</label>
 		<label2>32034</label2>
 		<defaultID>pictures</defaultID>
-		<thumb>special://skin/extras/icons/pictures.png</thumb>
-		<action>ActivateWindow(Pictures)</action>
+		<action>AAAAActivateWindow(Pictures)</action>
 		<icon>home_icons/pictures.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>12600</label>
 		<label2>32034</label2>
 		<defaultID>weather</defaultID>
-		<thumb>special://skin/extras/icons/weather.png</thumb>
 		<action>ActivateWindow(Weather)</action>
 		<icon>home_icons/weather.png</icon>
 	</shortcut>
@@ -116,8 +130,7 @@
 		<label>137</label>
 		<label2>32034</label2>
 		<defaultID>search</defaultID>
-		<thumb>special://skin/extras/icons/search.png</thumb>
-		<action>RunScript(script.globalsearch)</action>
+		<action>AAAARunScript(script.globalsearch)</action>
 		<icon>home_icons/search.png</icon>
 		<visible>System.HasAddon(script.globalsearch)</visible>
 	</shortcut>
@@ -132,7 +145,7 @@
 	<shortcut>
 		<label>32087</label>
 		<label2>32034</label2>
-		<action>ActivateWindow(RadioChannels)</action>
+		<action>AAAAActivateWindow(RadioChannels)</action>
 		<defaultID>radio</defaultID>
 		<icon>home_icons/radio.png</icon>
 	</shortcut>
@@ -140,7 +153,7 @@
 		<label>15016</label>
 		<label2>32034</label2>
 		<icon>home_icons/games.png</icon>
-		<action>ActivateWindow(Games,files,return)</action>
+		<action>AAAAActivateWindow(Games,files,return)</action>
 		<visible>System.GetBool(gamesgeneral.enable)</visible>
 		<defaultID>games</defaultID>
 	</shortcut>
