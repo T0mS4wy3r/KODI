@@ -1,0 +1,59 @@
+﻿
+v5.6.0	2020-11-11
+New repository for files in gitee
+
+
+v5.5.0	2020-11-09
+Added gitee
+Removed pythonanywhere
+Removed duplicates github
+
+
+v5.4.0	2020-11-02
+Removed gitee
+
+
+v5.3.0	2020-11-01
+Added KODI2 in github & gitee
+
+
+v5.2.0	2020-10-31
+Added gitee as a backup repository
+
+
+v5.1.0	2020-10-30
+Added pythonanywhere as a backup repository
+
+
+v5.0.2	2020-06-27
+Used v18.9 instead of "v19 alpha"
+
+
+v5.0.1	2020-06-27
+Fixed versions directories sequence
+
+
+v5.0.0	2020-06-27
+Added repositories for multiple kodi versions v18 & v19
+
+
+v4.4.1	2020-06-22
+Modified addon icon
+
+
+v4.4.0	2020-06-09
+Modified addon icon
+
+
+v4.3.0	2020-03-30
+Added "nkvoronov" repository for "youtube-dl" addon
+Added "hadynz" repository for more Arabic addons
+
+
+v4.2.0	2020-03-26
+Added "hmemar" repository for more Arabic addons
+
+
+v4.1.0	2020-03-26
+Added "jsergio123" repository for "resolveurl" addon
+Added "Gujal00" repository for "resolveurl" addon
