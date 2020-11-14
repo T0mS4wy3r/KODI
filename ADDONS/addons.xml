@@ -483,7 +483,7 @@
 
 
 <addon id="repository.emad.others" name="EMAD Others Repository" version="5.6.0" provider-name="EMAD MAHDI">
-	<extension point="xbmc.addon.repository" name="EMAD Devs Repository">
+	<extension point="xbmc.addon.repository" name="EMAD Others Repository">
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en">Install addons from other developers</summary>
