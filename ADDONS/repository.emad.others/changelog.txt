@@ -1,6 +1,6 @@
 ﻿
-v5.6.0	2020-11-11
-New repository for files from other developers
+v6.0.0	2020-11-23
+New repository for folders from other developers
 
 
 v5.5.0	2020-11-09
