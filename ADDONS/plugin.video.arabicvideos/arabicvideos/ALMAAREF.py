@@ -25,7 +25,7 @@ def MENU(website=''):
 	addMenuItem('live',menu_name+'البث الحي لقناة المعارف','',41)
 	addMenuItem('folder',menu_name+'بحث في الموقع','',49,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'البرامج الحالية','',46)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ALMAAREF-MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','ALMAAREF-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)">(.*?)</a></h2>',html,re.DOTALL)
 	for link,name in items:
 		addMenuItem('folder',website+'___'+menu_name+name,link,45,'','','3')
@@ -38,7 +38,7 @@ def MENU(website=''):
 
 def TITLES(url,select):
 	notvideosLIST = ['تطبيقات الاجهزة الذكية','جدول البرامج','اوقات برامجنا']
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALMAAREF-TITLES-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','ALMAAREF-TITLES-1st')
 	if select=='2':
 		html_blocks2=re.findall('recent-default(.*?)class="clear"',html,re.DOTALL)
 		if html_blocks2:
@@ -68,7 +68,7 @@ def TITLES(url,select):
 	return
 
 def EPISODES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ALMAAREF-EPISODES-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','ALMAAREF-EPISODES-1st')
 	html_blocks=re.findall('entry-title"><span itemprop="name">(.*?)<',html,re.DOTALL)
 	if html_blocks:
 		name = html_blocks[0]
@@ -101,7 +101,7 @@ def EPISODES(url):
 		html_blocks=re.findall('id="dropdown-menu-series"(.*?)</ul>',html,re.DOTALL)
 		if html_blocks:
 			block = html_blocks[0]
-			#XBMCGUI_DIALOG_OK(url, block)
+			#DIALOG_OK(url, block)
 			items=re.findall('href="(.*?)" title="(.*?)"',block,re.DOTALL)
 			for link,title in items:
 				title = unescapeHTML(title)
@@ -114,14 +114,14 @@ def PLAY(url):
 	return
 
 def PLAY_NEWWEBSITE(url):
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','ALMAAREF-PLAY_NEWWEBSITE-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','ALMAAREF-PLAY_NEWWEBSITE-1st')
 	link = re.findall('itemprop="contentURL" content="(.*?)"',html,re.DOTALL)
 	PLAY(link[0])
 	return
 
 def CATEGORIES(url,category):
-	#XBMCGUI_DIALOG_OK(type, url)
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','ALMAAREF-CATEGORIES-1st')
+	#DIALOG_OK(type, url)
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','ALMAAREF-CATEGORIES-1st')
 	html_blocks=re.findall('cat1.a\(0,(.*?)document.write',html,re.DOTALL)
 	block= html_blocks[0]
 	items=re.findall('cat1.a\((.*?),(.*?),\'(.*?)\',\'\',\'(.*?)\'',block,re.DOTALL)
@@ -142,8 +142,8 @@ def CATEGORIES(url,category):
 	return
 
 def PROGRAMS():
-	#XBMCGUI_DIALOG_OK(type, url)
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','ALMAAREF-PROGRAMS-1st')
+	#DIALOG_OK(type, url)
+	html = OPENURL_CACHED(REGULAR_CACHE,website0a,'',headers,'','ALMAAREF-PROGRAMS-1st')
 	html_blocks = re.findall('mega-menu-block(.*?)mega-menu',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
@@ -152,10 +152,10 @@ def PROGRAMS():
 	return
 
 def LIVE():
-	html = openURL_cached(LONG_CACHE,'http://live.almaaref.tv','',headers,'','ALMAAREF-LIVE-1st')
+	html = OPENURL_CACHED(LONG_CACHE,'http://live.almaaref.tv','',headers,'','ALMAAREF-LIVE-1st')
 	items = re.findall('sourceURL":"(.*?)"',html,re.DOTALL)
 	url = unquote(items[0])
-	#XBMCGUI_DIALOG_OK(url,str(html))
+	#DIALOG_OK(url,str(html))
 	PLAY_VIDEO(url,script_name,'live')
 	return
 

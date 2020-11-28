@@ -48,7 +48,7 @@ def MENU():
 	addMenuItem('folder',menu_name+'العراق خطبة المرجعية',website0a+'/playlist?list=PL4jUq6pnG36QjuXDhNnIlriuzroTFtmfr',144)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',menu_name+'اعدادات اضافة يوتيوب','',144)
-	#yes = XBMCGUI_DIALOG_YESNO('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
+	#yes = DIALOG_YESNO('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
 	#if yes:
 	#	url = 'plugin://plugin.video.youtube'
 	#	xbmc.executebuiltin('Dialog.Close(busydialog)')
@@ -59,7 +59,7 @@ def MENU():
 """
 def MAINPAGE(url):
 	html,cc = GET_PAGE_DATA(url)
-	if 'Refaat Al-Gammal' in html: XBMCGUI_DIALOG_OK(url,'yes')
+	if 'Refaat Al-Gammal' in html: DIALOG_OK(url,'yes')
 	dd = cc['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['richGridRenderer']['header']['feedFilterChipBarRenderer']['contents']
 	for i in rnage(len(dd)):
 		item = dd[i]
@@ -80,7 +80,7 @@ def PLAY(url,type):
 	#url = url+'&'
 	#items = re.findall('v=(.*?)&',url,re.DOTALL)
 	#id = items[0]
-	#XBMCGUI_DIALOG_OK(url,'')
+	#DIALOG_OK(url,'')
 	#link = 'plugin://plugin.video.youtube/play/?video_id='+id
 	#PLAY_VIDEO(link,script_name,'video')
 	linkLIST = [url]
@@ -105,7 +105,7 @@ def TRENDING_MENU(url):
 	for i in range(len(ee)):
 		item = ee[i]
 		INSERT_ITEM_TO_MENU(item)
-	#XBMCGUI_DIALOG_OK(str(url2),str(dd))
+	#DIALOG_OK(str(url2),str(dd))
 	#LOG_THIS('NOTICE','EMAD ==== '+dd)
 	key = re.findall('"innertubeApiKey":"(.*?)"',html,re.DOTALL)
 	url2 = 'https://www.youtube.com/youtubei/v1/guide?key='+key[0]
@@ -119,7 +119,7 @@ def TRENDING_MENU(url):
 	return
 
 def ITEMS(url,index='',visitor=''):
-	#XBMCGUI_DIALOG_OK(url,index)
+	#DIALOG_OK(url,index)
 	global settings
 	html,cc = GET_PAGE_DATA(url,visitor)
 	#if cc=='': CHANNEL_ITEMS_OLD(url,html) ; return
@@ -153,7 +153,7 @@ def ITEMS(url,index='',visitor=''):
 		trial.append("cc['contents']['twoColumnBrowseResultsRenderer']['tabs'][0]['tabRenderer']['content']['richGridRenderer']")
 		trial.append("cc['contents']['twoColumnWatchNextResults']['playlist']['playlist']")
 		succeeded99,ff = TRY_MULITPLE(cc,cc,trial)
-		#XBMCGUI_DIALOG_OK('0000 index= '+index,'found in '+succeeded99)
+		#DIALOG_OK('0000 index= '+index,'found in '+succeeded99)
 	if ff=='':
 		try:
 			dd = cc['contents']['twoColumnBrowseResultsRenderer']['tabs']
@@ -176,7 +176,7 @@ def ITEMS(url,index='',visitor=''):
 			ff = ee['tabRenderer']['content']['sectionListRenderer']
 		except: pass
 	if ff=='': return
-	#XBMCGUI_DIALOG_OK(url,'index='+index)
+	#DIALOG_OK(url,'index='+index)
 	trial = []
 	trial.append("ff['contents'][int(index)]['itemSectionRenderer']['contents'][0]['shelfRenderer']['content']['expandedShelfContentsRenderer']['items']")
 	trial.append("ff['contents'][int(index)]['itemSectionRenderer']['contents'][0]['shelfRenderer']['content']['horizontalMovieListRenderer']['items']")
@@ -197,9 +197,9 @@ def ITEMS(url,index='',visitor=''):
 	str3 = ARABIC_HEX(u'كل القنوات')
 	list1 = [str1,str2,str3,'All playlists','All videos','All channels']
 	succeeded88,gg = TRY_MULITPLE(ff,index,trial)
-	#XBMCGUI_DIALOG_OK('1111 index= '+index,'found in '+succeeded88)
+	#DIALOG_OK('1111 index= '+index,'found in '+succeeded88)
 	if 'list' in str(type(gg)) and any(value in str(gg[0]) for value in list1): del gg[0]
-	#XBMCGUI_DIALOG_TEXTVIEWER('',str(len(gg)))
+	#DIALOG_TEXTVIEWER('',str(len(gg)))
 	for index2 in range(len(gg)):
 		trial = []
 		trial.append("gg[index2]['itemSectionRenderer']['contents'][0]['horizontalCardListRenderer']['header']")  # shuld be 1st		#1
@@ -211,7 +211,7 @@ def ITEMS(url,index='',visitor=''):
 		trial.append("gg[index2]['gameCardRenderer']['game']")		#5
 		trial.append("gg[index2]")  # required for channels submenu & items		#8
 		succeeded99,item = TRY_MULITPLE(gg,index2,trial)
-		#XBMCGUI_DIALOG_OK('2222 index= '+index,'found in '+succeeded99)
+		#DIALOG_OK('2222 index= '+index,'found in '+succeeded99)
 		#if succeeded99 not in ['2','4','5']: INSERT_ITEM_TO_MENU(item)		# 2,4,7
 		#else: INSERT_ITEM_TO_MENU(item,url,str(index2),visitor)
 		INSERT_ITEM_TO_MENU(item,url,str(index2),visitor)
@@ -238,7 +238,7 @@ def ITEMS(url,index='',visitor=''):
 	return
 
 def TRY_MULITPLE(var1,var2,try_list):
-	#XBMCGUI_DIALOG_TEXTVIEWER('multi try',str(counter))
+	#DIALOG_TEXTVIEWER('multi try',str(counter))
 	cc,cc = var1,var2
 	gg,index2 = var1,var2
 	ff,index = var1,var2
@@ -257,7 +257,7 @@ def RENDER(item):
 	succeeded,title,link,img,count,duration,live,paid = False,'','','','','','',''
 	render = item[renderName]
 	#LOG_THIS('NOTICE',str(item))
-	#XBMCGUI_DIALOG_OK('badges','exist')
+	#DIALOG_OK('badges','exist')
 	trial = []
 	trial.append("render['unplayableText']['simpleText']")
 	trial.append("render['formattedTitle']['simpleText']")
@@ -274,7 +274,7 @@ def RENDER(item):
 	trial.append("render['endpoint']['commandMetadata']['webCommandMetadata']['url']")
 	trial.append("item['endpoint']['commandMetadata']['webCommandMetadata']['url']") # required for channels submenu
 	succeeded99,link = TRY_MULITPLE(item,render,trial)
-	#XBMCGUI_DIALOG_OK('render link:  '+link,'found in '+succeeded99)
+	#DIALOG_OK('render link:  '+link,'found in '+succeeded99)
 	trial = []
 	trial.append("render['thumbnail']['thumbnails'][0]['url']")
 	trial.append("render['thumbnails'][0]['thumbnails'][0]['url']")
@@ -314,9 +314,9 @@ def RENDER(item):
 
 def INSERT_ITEM_TO_MENU(item,url='',index='',visitor=''):
 	succeeded,title,link,img,count,duration,live,paid = RENDER(item)
-	#XBMCGUI_DIALOG_TEXTVIEWER('',str(item))
-	#XBMCGUI_DIALOG_OK(link,url)
-	#XBMCGUI_DIALOG_OK(index,visitor)
+	#DIALOG_TEXTVIEWER('',str(item))
+	#DIALOG_OK(link,url)
+	#DIALOG_OK(index,visitor)
 	#if '/feed/guide_builder' in url and index=='0':
 	#	addMenuItem('folder',menu_name+title,url,144)
 	#	return
@@ -363,8 +363,8 @@ def GET_PAGE_DATA(url,visitor='',request=''):
 		data = {}
 		data['context'] = {"client":{"hl":"ar","clientName":"WEB","clientVersion":clientversion}}
 		data = str(data)
-		response = openURL_requests_cached(NO_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
-		#XBMCGUI_DIALOG_OK(url,str(data))
+		response = OPENURL_REQUESTS_CACHED(NO_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
+		#DIALOG_OK(url,str(data))
 		html = response.content
 	elif 'key=' in url and visitor!='':
 		settings.setSetting('youtube.visitorData',visitor)
@@ -373,17 +373,17 @@ def GET_PAGE_DATA(url,visitor='',request=''):
 		data = {'continuation':token}
 		data['context'] = {"client":{"visitorData":visitor,"clientName":"WEB","clientVersion":clientversion}}
 		data = str(data)
-		response = openURL_requests_cached(SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
-		#XBMCGUI_DIALOG_OK(url,str(data))
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
+		#DIALOG_OK(url,str(data))
 		html = response.content
 	elif 'ctoken=' in url and visitor!='':
 		clientversion = settings.getSetting('youtube.clientversion')
 		headers2.update({'X-YouTube-Client-Name':'1','X-YouTube-Client-Version':clientversion})
 		headers2.update({'Cookie':'VISITOR_INFO1_LIVE='+visitor})
-		response = openURL_requests_cached(SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-2nd')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-2nd')
 		html = response.content
 	else:
-		response = openURL_requests_cached(SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-3rd')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-3rd')
 		html = response.content
 	visitorData = re.findall('"visitorData".*?"(.*?)"',html,re.DOTALL|re.I)
 	if visitorData: settings.setSetting('youtube.visitorData',visitorData[0])
@@ -399,7 +399,7 @@ def GET_PAGE_DATA(url,visitor='',request=''):
 	if 'VISITOR_INFO1_LIVE' in cookies.keys():
 		settings.setSetting('youtube.VISITOR_INFO1_LIVE',cookies['VISITOR_INFO1_LIVE'])
 	if request=='ytInitialData' and 'ytInitialData' in html:
-		#XBMCGUI_DIALOG_OK(url,html)
+		#DIALOG_OK(url,html)
 		aa = re.findall('window\["ytInitialData"\] = ({.*?});',html,re.DOTALL)
 		if not aa: aa = re.findall('var ytInitialData = ({.*?});',html,re.DOTALL)
 		bb = EVAL(aa[0])
@@ -439,7 +439,7 @@ def SEARCH(search):
 	fileterLIST_sort = ['بدون ترتيب','ترتيب حسب مدى الصلة','ترتيب حسب تاريخ التحميل','ترتيب حسب عدد المشاهدات','ترتيب حسب التقييم']
 	linkLIST_sort = ['','&sp=CAA%253D','&sp=CAI%253D','&sp=CAM%253D','&sp=CAE%253D']
 	if showdialogs:
-		selection_sort = XBMCGUI_DIALOG_SELECT('اختر الترتيب المناسب:', fileterLIST_sort)
+		selection_sort = DIALOG_SELECT('اختر الترتيب المناسب:', fileterLIST_sort)
 		if selection_sort == -1: return
 		link_sort = linkLIST_sort[selection_sort]
 	else: link_sort = ''
@@ -484,13 +484,13 @@ def SEARCH(search):
 				linkLIST_sort.append(link)
 	"""
 	if showdialogs:
-		selection_search = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', fileterLIST_search)
+		selection_search = DIALOG_SELECT('اختر الفلتر المناسب:', fileterLIST_search)
 		if selection_search == -1: return
 		link_search = linkLIST_search[selection_search]
 		if link_search!='': url3 = website0a+link_search
 		elif link_sort!='': url3 = url2+link_sort
 		else: url3 = url2
-		#XBMCGUI_DIALOG_OK(url3,'')
+		#DIALOG_OK(url3,'')
 	else: url3 = url2
 	ITEMS(url3)
 	return

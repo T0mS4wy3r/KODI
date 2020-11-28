@@ -38,19 +38,19 @@ def ITEMS(menu,show=True):
 	#data = urllib.urlencode(payload)
 	#LOG_THIS('NOTICE',str(payload))
 	#LOG_THIS('NOTICE',str(data))
-	#response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, '', True,'','LIVETV-ITEMS-1st')
+	#response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST', website0a, payload, '', True,'','LIVETV-ITEMS-1st')
 	#html = response.content
-	response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'','','','LIVETV-ITEMS-1st')
+	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',website0a,payload,'','','','LIVETV-ITEMS-1st')
 	html = response.content
 	#html = html.replace('\r','')
-	#XBMCGUI_DIALOG_OK(html,html)
+	#DIALOG_OK(html,html)
 	#file = open('s:/emad.html', 'w')
 	#file.write(html)
 	#file.close()
 	items = re.findall('([^;\r\n]+?);;(.*?);;(.*?);;(.*?);;(.*?);;',html,re.DOTALL)
 	if 'Not Allowed' in html:
 		if show: addMenuItem('link',menu_name+'هذه الخدمة مخصصة للمبرمج فقط','',9999)
-		#if show: XBMCGUI_DIALOG_OK('','هذه الخدمة مخصصة للمبرمج فقط')
+		#if show: DIALOG_OK('','هذه الخدمة مخصصة للمبرمج فقط')
 		#addMenuItem('link',menu_name+'للأسف لا توجد قنوات تلفزونية لك','',9999)
 		#addMenuItem('link',menu_name+'هذه الخدمة مخصصة للاقرباء والاصدقاء فقط','',9999)
 		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
@@ -82,40 +82,40 @@ def ITEMS(menu,show=True):
 	return
 
 def PLAY(id):
-	#BUSY_DIALOG('start')
-	#XBMCGUI_DIALOG_NOTIFICATION('جاري تشغيل القناة','')
+	#DIALOG_BUSY('start')
+	#DIALOG_NOTIFICATION('جاري تشغيل القناة','')
 	source,server,id2,menu = id.split(';;')
 	url = ''
-	#XBMCGUI_DIALOG_OK(source,id2)
+	#DIALOG_OK(source,id2)
 	#try:
 	if source=='URL': url = id2
 	elif source=='GA':
-		#XBMCGUI_DIALOG_OK(url,html)
+		#DIALOG_OK(url,html)
 		#xbmc.log(html, level=xbmc.LOGNOTICE)
 		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA1' , 'menu' : menu }
-		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-1st')
 		if 'Not Allowed' in response.content:
-			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			#BUSY_DIALOG('stop')
+			DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			#DIALOG_BUSY('stop')
 			return
 		#proxyname,proxyurl = RANDOM_HTTPS_PROXY()
 		url = response.headers['Location']#+'||MyProxyUrl='+proxyurl
-		#XBMCGUI_DIALOG_OK(url,'')
-		response = openURL_requests_cached(VERY_SHORT_CACHE,'GET',url,'','',False,'','LIVETV-PLAY-2nd')
+		#DIALOG_OK(url,'')
+		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'GET',url,'','',False,'','LIVETV-PLAY-2nd')
 		cookies = response.cookies.get_dict()
 		session = cookies['ASP.NET_SessionId']
 		#html = response.content
 		#session = re.findall('SessionID = "(.*?)"',html,re.DOTALL)
 		#session = session[0]
 		payload = { 'id' : '__ID2__' , 'user' : dummyClientID(32) , 'function' : 'playGA2' , 'menu' : menu }
-		response = openURL_requests_cached(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-3rd')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',website0a,payload,'',False,'','LIVETV-PLAY-3rd')
 		if 'Not Allowed' in response.content:
-			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			#BUSY_DIALOG('stop')
+			DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			#DIALOG_BUSY('stop')
 			return
 		url = response.headers['Location'].replace('__ID2__',id2)
 		headers = { 'Cookie' : 'ASP.NET_SessionId='+session }
-		response = openURL_requests_cached(NO_CACHE,'GET',url,'',headers,False,'','LIVETV-PLAY-4th')
+		response = OPENURL_REQUESTS_CACHED(NO_CACHE,'GET',url,'',headers,False,'','LIVETV-PLAY-4th')
 		html = response.content
 		url = re.findall('resp":"(http.*?m3u8)(.*?)"',html,re.DOTALL)
 		link = url[0][0]
@@ -127,16 +127,16 @@ def PLAY(id):
 		titleLIST = ['HD','SD1','SD2']
 		linkLIST = [url_HD,url_SD1,url_SD2]
 		selection = 0
-		#selection = XBMCGUI_DIALOG_SELECT('اختر الملف المناسب:', titleLIST)
+		#selection = DIALOG_SELECT('اختر الملف المناسب:', titleLIST)
 		if selection == -1:
-			#BUSY_DIALOG('stop')
+			#DIALOG_BUSY('stop')
 			return
 		else: url = linkLIST[selection]
-		#XBMCGUI_DIALOG_OK(items[0],url)
+		#DIALOG_OK(items[0],url)
 		"""
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playGA' , 'menu' : menu }
-		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-1st')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-1st')
 		url = response.headers['Location']
 		html = response.content
 		html = re.findall('\.(.*?)\.',html,re.DOTALL)
@@ -147,10 +147,10 @@ def PLAY(id):
 	elif source=='NT':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playNT' , 'menu' : menu }
-		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-5th')
 		if 'Not Allowed' in response.content:
-			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			#BUSY_DIALOG('stop')
+			DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			#DIALOG_BUSY('stop')
 			return
 		url = response.headers['Location']
 		url = url.replace('%20',' ')
@@ -161,12 +161,12 @@ def PLAY(id):
 	elif source=='PL':
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'playPL' , 'menu' : menu }
-		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-6th')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST', website0a, payload, headers, True,'','LIVETV-PLAY-6th')
 		if 'Not Allowed' in response.content:
-			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			#BUSY_DIALOG('stop')
+			DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			#DIALOG_BUSY('stop')
 			return
-		response = openURL_requests_cached(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-7th')
+		response = OPENURL_REQUESTS_CACHED(NO_CACHE,'POST', response.headers['Location'], '', {'Referer':response.headers['Referer']}, True,'','LIVETV-PLAY-7th')
 		html = response.content
 		items = re.findall('source src="(.*?)"',html,re.DOTALL)
 		url = items[0]
@@ -174,21 +174,21 @@ def PLAY(id):
 		if source=='TA': id2 = id
 		headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'id' : id2 , 'user' : dummyClientID(32) , 'function' : 'play'+source , 'menu' : menu }
-		response = openURL_requests_cached(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-8th')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST', website0a, payload, headers, False,'','LIVETV-PLAY-8th')
 		if 'Not Allowed' in response.content:
-			XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
-			#BUSY_DIALOG('stop')
+			DIALOG_OK('رسالة من المبرمج','هذه الخدمة مخصصة للمبرمج فقط')
+			#DIALOG_BUSY('stop')
 			return
 		url = response.headers['Location']
 		if source=='FM':
-			#XBMCGUI_DIALOG_OK(url,'')
-			response = openURL_requests_cached(NO_CACHE,'GET', url, '', '', False,'','LIVETV-PLAY-9th')
+			#DIALOG_OK(url,'')
+			response = OPENURL_REQUESTS_CACHED(NO_CACHE,'GET', url, '', '', False,'','LIVETV-PLAY-9th')
 			url = response.headers['Location']
 			url = url.replace('https','http')
-	#BUSY_DIALOG('stop')
+	#DIALOG_BUSY('stop')
 	result = PLAY_VIDEO(url,script_name,'live')
 	#except:
-	#	XBMCGUI_DIALOG_OK('هذه القناة فيها مشكلة من الموقع الاصلي',page_error)
+	#	DIALOG_OK('هذه القناة فيها مشكلة من الموقع الاصلي',page_error)
 	return
 
 

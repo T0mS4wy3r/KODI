@@ -12,9 +12,9 @@
 def THEVIDEO_PROBLEM(url):
 	# https://thevideo.me/embed-xldtqj5deiyj-780x439.html
 	url = url.replace('embed-','')
-	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-THEVIDEO-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'','','','RESOLVERS-THEVIDEO-1st')
 	items = re.findall('direct link" value="(.*?)"',html,re.DOTALL)
-	#XBMCGUI_DIALOG_OK(str(items),html)
+	#DIALOG_OK(str(items),html)
 	if items:
 		link = items[0].rstrip('/')
 		title,url = VEVIO(link)
@@ -25,9 +25,9 @@ def HELAL_PROBLEM(url):
 	# https://playr.4helal.tv/4qlqt9d3813e
 	headers = { 'User-Agent' : '' }
 	#url = url.replace('http:','https:')
-	html = openURL_cached(NO_CACHE,url,'',headers,'','RESOLVERS-VIDBOB-1st')
+	html = OPENURL_CACHED(NO_CACHE,url,'',headers,'','RESOLVERS-VIDBOB-1st')
 	items = re.findall('file:"(.*?)"',html,re.DOTALL)
-	#XBMCGUI_DIALOG_OK(items[0].rstrip('/'),'')
+	#DIALOG_OK(items[0].rstrip('/'),'')
 	if items:
 		url = items[0].replace('https:','http:')
 		return [url],[url]
@@ -37,7 +37,7 @@ def VIMPLE_PROBLEM(link):
 	id = link.split('id=')[1]
 	headers = { 'User-Agent' : '' }
 	url = 'http://player.vimple.ru/iframe/' + id
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-VIMPLE-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-VIMPLE-1st')
 	items = re.findall('true,"url":"(.*?)"',html,re.DOTALL)
 	if items:
 		url = items[0].replace('\/','/')
@@ -46,7 +46,7 @@ def VIMPLE_PROBLEM(link):
 
 def VIDSHARE_PROBLEM(url):
 	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-VIDSHARE-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-VIDSHARE-1st')
 	items = re.findall('file:"(.*?)"',html,re.DOTALL)
 	if items:
 		url = items[0]
@@ -56,7 +56,7 @@ def VIDSHARE_PROBLEM(url):
 def INTOUPLOAD_PROBLEM(url):
 	# https://intoupload.net/w2j4lomvzopd
 	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-INTOUPLOAD-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-INTOUPLOAD-1st')
 	html_blocks = re.findall('POST.*?(.*?)clearfix',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('op" value="(.*?)".*?id" value="(.*?)".*?rand" value="(.*?)".*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);.*?left:(.*?)px;.*?&#(.*?);',block,re.DOTALL)
@@ -65,18 +65,18 @@ def INTOUPLOAD_PROBLEM(url):
 	code = ''
 	for char in sorted(captcha):
 		code += captcha[char]
-	#XBMCGUI_DIALOG_OK(code,str(captcha))
+	#DIALOG_OK(code,str(captcha))
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 	payload = { 'id':id , 'op':op , 'code':code , 'rand':rand }
 	data = urllib.urlencode(payload)
-	progress = XBMCGUI_DIALOGPROGRESS()
+	progress = DIALOG_PROGRESS()
 	progress.create('Waiting 15 seconds ...')
 	for i in range(0,15):
 		progress.update(i*100/15,str(15-i))
 		xbmc.sleep(1000)
 		if progress.iscanceled(): return
 	progress.close()
-	html = openURL_cached(SHORT_CACHE,url,data,headers,'','RESOLVERS-INTOUPLOAD-2nd')
+	html = OPENURL_CACHED(SHORT_CACHE,url,data,headers,'','RESOLVERS-INTOUPLOAD-2nd')
 	items = re.findall('target_type.*?href="(.*?)"',html,re.DOTALL)
 	if items:
 		url = items[0]
@@ -85,11 +85,11 @@ def INTOUPLOAD_PROBLEM(url):
 
 def VIDBOM_PROBLEM(url):
 	# https://www.vidbom.com/embed-05ycj7325jae.html
-	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-VIDBOM-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'','','','RESOLVERS-VIDBOM-1st')
 	xbmc.sleep(1500)
 	items = re.findall('file: "(.*?)"',html,re.DOTALL)
 	slidesURL = items[0].rstrip('/')
-	html2 = openURL_cached(SHORT_CACHE,slidesURL,'','','','RESOLVERS-VIDBOM-2nd')
+	html2 = OPENURL_CACHED(SHORT_CACHE,slidesURL,'','','','RESOLVERS-VIDBOM-2nd')
 	xbmc.sleep(1500)
 	items = re.findall('file:"(.*?)"',html,re.DOTALL)
 	if items:
@@ -100,7 +100,7 @@ def VIDBOM_PROBLEM(url):
 def GOUNLIMITED_OLD(url):
 	url = url.replace('embed-','')
 	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
 	items = re.findall('data(.*?)hide.*?embed(.*?)hash',html,re.DOTALL)
 	id = items[0][0].replace('|','')
 	hash = items[0][1].split('|')
@@ -109,7 +109,7 @@ def GOUNLIMITED_OLD(url):
 		newhash += i + '-'
 	newhash = newhash.strip('-')
 	#url = 'https://gounlimited.to/dl?op=view&file_code='+id+'&hash='+newhash+'&embed=&adb=1'
-	#html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
+	#html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
 	url = "https://gounlimited.to/dl"
 	querystring = { "op":"view","file_code":"o1yo2xwdmk0l","hash":newhash,"embed":"","adb":"1" }
 	headers = {
@@ -124,7 +124,7 @@ def GOUNLIMITED_OLD(url):
 	import requests
 	response = requests.request('GET', url, headers=headers, params=querystring)
 	items = re.findall('video="" src="(.*?)"',response.content,re.DOTALL)
-	#XBMCGUI_DIALOG_OK(str(response.content),str(len(response.content)))
+	#DIALOG_OK(str(response.content),str(len(response.content)))
 	if items:
 		url = items[0]
 		return [url],[url]
@@ -136,7 +136,7 @@ def VEVIO_PROBLEM(url):
 	url = 'https://vev.io/api/serve/video/' + id
 	headers = { 'User-Agent' : '' }
 	titleLIST,linkLIST = [],[]
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-VEVIO-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-VEVIO-1st')
 	html_blocks = re.findall('qualities":\{(.*?)\}',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -151,7 +151,7 @@ def GOUNLIMITED_PROBLEM(url):
 	# http://gounlimited.to/embed-bhczqclxokgq.html
 	url = url.replace('https:','http:')
 	headers = { 'User-Agent' : '' }
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-GOUNLIMITED-1st')
 	html_blocks = re.findall('function\(p,a,c,k,e,d\)(.*?)split',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -165,7 +165,7 @@ def GOUNLIMITED_PROBLEM(url):
 
 def VIDHD_PROBLEM(url):
 	# https://vidhd.net/562ghl3hr1cw.html
-	html = openURL_cached(SHORT_CACHE,url,'','','','RESOLVERS-LIIVIDEO-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'','','','RESOLVERS-LIIVIDEO-1st')
 	items = re.findall('file:"(.*?)",label:"(.*?)"',html,re.DOTALL)
 	titleLIST,linkLIST = [],[]
 	for link,label in items:
@@ -236,7 +236,7 @@ def CHECK(url):
 	#elif 'vidbom'		in url: result = 'known'
 	else:
 		link = 'http://emadmahdi.pythonanywhere.com/check?url=' + url
-		result = openURL_cached(SHORT_CACHE,link,'','','','RESOLVERS-CHECK-1st')
+		result = OPENURL_CACHED(SHORT_CACHE,link,'','','','RESOLVERS-CHECK-1st')
 	return result
 """
 

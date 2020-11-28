@@ -5,7 +5,7 @@ def openURL_OLD(url,data='',headers='',showDialogs=True,source=''):
 	#url = url + '||MyProxyUrl=http://188.166.59.17:8118'
 	proxies,timeout = {},40
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
-	#XBMCGUI_DIALOG_OK(url2,'')
+	#DIALOG_OK(url2,'')
 	#url2 = quote(url2)
 	html,code,reason,finalURL = None,None,None,url2
 	if dnsurl!=None:
@@ -75,7 +75,7 @@ def openURL_OLD(url,data='',headers='',showDialogs=True,source=''):
 		#xbmc.log(str(url), level=xbmc.LOGNOTICE)
 		#xbmc.log(str(data), level=xbmc.LOGNOTICE)
 		#xbmc.log(str(headers), level=xbmc.LOGNOTICE)
-		#XBMCGUI_DIALOG_OK(url,'')
+		#DIALOG_OK(url,'')
 		#final_url = response.url
 		if 'google-analytics' not in url2:
 			traceback.print_exc(file=sys.stderr)
@@ -122,36 +122,36 @@ def openURL_OLD(url,data='',headers='',showDialogs=True,source=''):
 		"""
 		if 'google-analytics' in url2: send = showDialogs
 		if showDialogs=='yes':
-			XBMCGUI_DIALOG_OK('خطأ في الاتصال',html)
+			DIALOG_OK('خطأ في الاتصال',html)
 			if code==502 or code==7:
-				XBMCGUI_DIALOG_OK('Website is not available','لا يمكن الوصول الى الموقع والسبب قد يكون من جهازك او من الانترنيت الخاصة بك او من الموقع كونه مغلق للصيانة او التحديث لذا يرجى المحاولة لاحقا')
+				DIALOG_OK('Website is not available','لا يمكن الوصول الى الموقع والسبب قد يكون من جهازك او من الانترنيت الخاصة بك او من الموقع كونه مغلق للصيانة او التحديث لذا يرجى المحاولة لاحقا')
 				send = 'no'
 			elif code==404:
-				XBMCGUI_DIALOG_OK('File not found','الملف غير موجود والسبب غالبا هو من المصدر ومن الموقع الاصلي الذي يغذي هذا البرنامج')
+				DIALOG_OK('File not found','الملف غير موجود والسبب غالبا هو من المصدر ومن الموقع الاصلي الذي يغذي هذا البرنامج')
 			if send=='yes':
-				yes = XBMCGUI_DIALOG_YESNO('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
+				yes = DIALOG_YESNO('سؤال','هل تربد اضافة رسالة مع الخطأ لكي تشرح فيها كيف واين حصل الخطأ وترسل التفاصيل الى المبرمج ؟','','','كلا','نعم')
 				if yes: message = ' \\n\\n' + KEYBOARD('Write a message   اكتب رسالة')
 		if send=='yes': SEND_EMAIL('Error: From Arabic Videos',html+message,showDialogs,url,source)
 		"""
 		#if 'google-analytics' not in url:
 		#if code==502:
 		#	LOG_THIS('ERROR',LOGGING(script_name)+'   URL Quote Error   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]   Final URL: [ '+final_url+' ]')
-		#	html = openURL(final_url,data,headers,showDialogs,source)
+		#	html = OPENURL(final_url,data,headers,showDialogs,source)
 		#	return html
 		if code in [7,11001,10054] and dnsurl==None:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS Failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 			url = url+'||MyDNSUrl='
-			html = openURL(url,data,headers,showDialogs,source)
+			html = OPENURL(url,data,headers,showDialogs,source)
 			return html
 		if code==8 and sslurl==None:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   SSL Failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 			url = url+'||MySSLUrl='
-			html = openURL(url,data,headers,showDialogs,source)
+			html = OPENURL(url,data,headers,showDialogs,source)
 			return html
 		else:
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed Opening URL   Code: [ '+str(code)+' ]   Reason :[ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
 		EXIT_IF_SOURCE(source,code,reason)
-	#XBMCGUI_DIALOG_OK('',html)
+	#DIALOG_OK('',html)
 	return html
 
 def openURL_WEBPROXIES(url,data='',headers='',showDialogs=True,source=''):
@@ -168,7 +168,7 @@ def openURL_WEBPROXIES(url,data='',headers='',showDialogs=True,source=''):
 def openURL_PROXY(url,data='',headers='',showDialogs=True,source=''):
 	#html = '___Error___'
 	if source=='SERVICES-TEST_ALL_WEBSITES-2nd': html = '___Error___'
-	else: html = openURL_cached(NO_CACHE,url,data,headers,showDialogs,'LIBRARY-openURL_PROXY-1st')
+	else: html = OPENURL_CACHED(NO_CACHE,url,data,headers,showDialogs,'LIBRARY-openURL_PROXY-1st')
 	if '___Error___' in html:
 		html = openURL_HTTPSPROXIES(url,data,headers,showDialogs,'LIBRARY-openURL_PROXY-2nd')
 		if '___Error___' in html:
@@ -183,7 +183,7 @@ def openURL_PROXY(url,data='',headers='',showDialogs=True,source=''):
 def openURL_HTTPSPROXIES(url,data='',headers='',showDialogs=True,source=''):
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
 	if proxyurl==None: url = url+'||MyProxyUrl='
-	html = openURL_cached(NO_CACHE,url,data,headers,showDialogs,'LIBRARY-openURL_HTTPSPROXIES-1st')
+	html = OPENURL_CACHED(NO_CACHE,url,data,headers,showDialogs,'LIBRARY-openURL_HTTPSPROXIES-1st')
 	if '___Error___' in html: code = int(html.split(':')[1])
 	else: code = 200
 	if code!=200 and int(code/100)*100!=300:
@@ -198,7 +198,7 @@ def openURL_WEBPROXYTO(url,data='',headers='',showDialogs=True,source=''):
 	# Proxy + DNS
 	# http://webproxy.to		http://69.64.52.22
 	# cookie will expire after 30 miuntes (only if not used within these 30 minutes)
-	response = openURL_requests_cached(VERY_SHORT_CACHE,'GET', 'http://webproxy.to','','',False,False,'LIBRARY-openURL_WEBPROXYTO-1st')
+	response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'GET', 'http://webproxy.to','','',False,False,'LIBRARY-openURL_WEBPROXYTO-1st')
 	html2 = response.content
 	cookies = response.cookies.get_dict()
 	s = cookies['s']
@@ -208,7 +208,7 @@ def openURL_WEBPROXYTO(url,data='',headers='',showDialogs=True,source=''):
 	else: headers3 = headers
 	if 'Cookie' in headers3: headers3['Cookie'] += ';' + cookies2
 	else: headers3['Cookie'] = cookies2
-	html = openURL_cached(NO_CACHE,'http://webproxy.to/browse.php?u='+quote(url)+'&b=128',data,headers3,showDialogs,'LIBRARY-openURL_WEBPROXYTO-2nd')
+	html = OPENURL_CACHED(NO_CACHE,'http://webproxy.to/browse.php?u='+quote(url)+'&b=128',data,headers3,showDialogs,'LIBRARY-openURL_WEBPROXYTO-2nd')
 	html = unquote(html).replace('/browse.php?u='+url,'').replace('/browse.php?u=','').replace('&amp;b=128','')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	if '<!-- CONTENT START -->'.lower() in html.lower() or '___Error___' in html:
@@ -224,7 +224,7 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs=True,source=''):
 	# http://kproxy.com			http://37.187.147.158
 	# cookie does not expire (tested for 3 days)
 	# servers will expire after 20 miuntes (even if used within these 20 minutes)
-	response = openURL_requests_cached(LONG_CACHE,'GET', 'http://kproxy.com','','',False,False,'LIBRARY-openURL_KPROXYCOM-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET', 'http://kproxy.com','','',False,False,'LIBRARY-openURL_KPROXYCOM-1st')
 	html2 = response.content
 	cookies = response.cookies.get_dict()
 	KP_DAT2 = cookies['KP_DAT2__']
@@ -232,7 +232,7 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs=True,source=''):
 	headers2 = { 'Cookie' : cookies2 }
 	#payload = { 'page' : quote(url) }
 	#data2 = urllib.urlencode(payload)
-	html2 = openURL_cached(VERY_SHORT_CACHE,'http://kproxy.com/doproxy.jsp?page='+quote(url),'',headers2,False,'LIBRARY-openURL_KPROXYCOM-2nd')
+	html2 = OPENURL_CACHED(VERY_SHORT_CACHE,'http://kproxy.com/doproxy.jsp?page='+quote(url),'',headers2,False,'LIBRARY-openURL_KPROXYCOM-2nd')
 	proxyURL = re.findall('url=(.*?)"',html2,re.DOTALL)
 	if proxyURL:
 		proxyURL = proxyURL[0]
@@ -240,7 +240,7 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs=True,source=''):
 		else: headers3 = headers
 		if 'Cookie' in headers3: headers3['Cookie'] += ';' + cookies2
 		else: headers3['Cookie'] = cookies2
-		html = openURL_cached(NO_CACHE,proxyURL,data,headers3,showDialogs,'LIBRARY-openURL_KPROXYCOM-3rd')
+		html = OPENURL_CACHED(NO_CACHE,proxyURL,data,headers3,showDialogs,'LIBRARY-openURL_KPROXYCOM-3rd')
 	else:	#if not proxyURL:# or 'kproxy.com'.lower() not in html.lower():
 		source = 'LIBRARY-openURL_KPROXYCOM-4th'
 		reason = 'KPROXYCOM proxy failed'
@@ -249,8 +249,8 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs=True,source=''):
 		html = '___Error___:'+str(code)+':'+reason
 	return html
 
-def openURL_requests_cached_OLD(cacheperiod,method,url,data='',headers='',allow_redirects=True,showDialogs=True,source=''):
-	if cacheperiod==0: return openURL_requests(method,url,data,headers,allow_redirects,showDialogs,source)
+def OPENURL_REQUESTS_CACHED_OLD(cacheperiod,method,url,data='',headers='',allow_redirects=True,showDialogs=True,source=''):
+	if cacheperiod==0: return OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source)
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
@@ -266,7 +266,7 @@ def openURL_requests_cached_OLD(cacheperiod,method,url,data='',headers='',allow_
 		response = cPickle.loads(text)
 	else:
 		#message = 'not found in cache'
-		response = openURL_requests(method,url2,data,headers,allow_redirects,showDialogs,source)
+		response = OPENURL_REQUESTS(method,url2,data,headers,allow_redirects,showDialogs,source)
 		html = response.content
 		if '___Error___' not in html:
 			conn = sqlite3.connect(dbfile)
@@ -278,18 +278,18 @@ def openURL_requests_cached_OLD(cacheperiod,method,url,data='',headers='',allow_
 			c.execute("INSERT INTO responsecache VALUES (?,?,?,?,?,?,?)",t)
 			conn.commit()
 			conn.close()
-	#XBMCGUI_DIALOG_NOTIFICATION(message,'')
+	#DIALOG_NOTIFICATION(message,'')
 	return response
 
-def openURL_cached_OLD(cacheperiod,url,data='',headers='',showDialogs=True,source=''):
+def OPENURL_CACHED_OLD(cacheperiod,url,data='',headers='',showDialogs=True,source=''):
 	#url = url+'||MyProxyUrl=http://41.33.212.68:4145'
 	#cacheperiod = 0
 	#t1 = time.time()
-	#XBMCGUI_DIALOG_OK(unquote(url),source+'     cache(hours)='+str(cacheperiod/60/60))
+	#DIALOG_OK(unquote(url),source+'     cache(hours)='+str(cacheperiod/60/60))
 	#nowTEXT = time.ctime(now)
 	#xbmc.log(LOGGING(script_name)+'   opening url   Source:['+source+']   URL: [ '+url+' ]', level=xbmc.LOGNOTICE)
 	#xbmc.log('WWWW: 1111:', level=xbmc.LOGNOTICE)
-	if cacheperiod==0: return openURL(url,data,headers,showDialogs,source)
+	if cacheperiod==0: return OPENURL(url,data,headers,showDialogs,source)
 	#xbmc.log('WWWW: 2222:', level=xbmc.LOGNOTICE)
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
 	#xbmc.log('WWWW: 3333:', level=xbmc.LOGNOTICE)
@@ -313,7 +313,7 @@ def openURL_cached_OLD(cacheperiod,url,data='',headers='',showDialogs=True,sourc
 	else:
 		#message = 'not found in cache'
 		#xbmc.log('WWWW: AAAA:', level=xbmc.LOGNOTICE)
-		html = openURL(url2,data,headers,showDialogs,source)
+		html = OPENURL(url2,data,headers,showDialogs,source)
 		#xbmc.log('WWWW: 6666:', level=xbmc.LOGNOTICE)
 		if '___Error___' not in html:
 			#xbmc.log('WWWW: BBBB:', level=xbmc.LOGNOTICE)
@@ -330,7 +330,7 @@ def openURL_cached_OLD(cacheperiod,url,data='',headers='',showDialogs=True,sourc
 			conn.close()
 		#xbmc.log('WWWW: 7777:', level=xbmc.LOGNOTICE)
 	#t2 = time.time()
-	#XBMCGUI_DIALOG_NOTIFICATION(message,str(int(t2-t1))+' ms')
+	#DIALOG_NOTIFICATION(message,str(int(t2-t1))+' ms')
 	#xbmc.log('WWWW: 8888:', level=xbmc.LOGNOTICE)
 	return html
 
@@ -342,7 +342,7 @@ def TEST_HTTPS_PROXIES():
 	for id in PROXIES:
 		proxyname,proxyurl = PROXIES[id]
 		url = 'https://www.google.com||MyProxyUrl='+proxyurl
-		threads.start_new_thread('proxy_'+str(id),openURL_cached,NO_CACHE,url,'',headers,'','LIBRARY-CHECK_HTTPS_PROXIES-1st')
+		threads.start_new_thread('proxy_'+str(id),OPENURL_CACHED,NO_CACHE,url,'',headers,'','LIBRARY-CHECK_HTTPS_PROXIES-1st')
 	threads.wait_finishing_all_threads()
 	resultsDICT,finishedLIST =	threads.resultsDICT,threads.finishedLIST
 	elpasedtimeDICT = threads.elpasedtimeDICT
@@ -427,7 +427,7 @@ decode('windows-1256')
 """
 t1 = time.time()
 t2 = time.time()
-XBMCGUI_DIALOG_OK(str(t2-t1), '')
+DIALOG_OK(str(t2-t1), '')
 """
 
 
@@ -504,7 +504,7 @@ def CLEAN_EPSIODE_NAME(title):
 		if episode2: title2 = title2.replace(episode2[0],'')
 		else: title2 = title2.replace(episode[0][0]+' '+episode[0][1],'')
 		title2 = title2.strip(' ').replace('  ',' ').replace('  ',' ')
-	#XBMCGUI_DIALOG_OK(title,title2)
+	#DIALOG_OK(title,title2)
 	return title2
 """
 
@@ -566,7 +566,7 @@ class MyHTTPSHandler(urllib2.HTTPSHandler):
 
 
 #url = 'http://example.com/name.mp4'
-#openURL_requests('GET',url)
+#OPENURL_REQUESTS('GET',url)
 #import RESOLVERS ; RESOLVERS.URLRESOLVER(url)
 #PLAY_VIDEO(url)
 #traceback.print_exc(file=sys.stderr)

@@ -32,7 +32,7 @@ def MENU(website=''):
 	addMenuItem('folder',website+'___'+menu_name+'جديد الحلقات',website0a+'/?type=newEpisodes',91)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',website+'___'+menu_name+'جديد الموقع',website0a,91)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','HELAL-MENU-1st')
 	#upper menu
 	html_blocks = re.findall('class="mainmenu(.*?)nav',html,re.DOTALL)
 	block = html_blocks[0]
@@ -45,17 +45,17 @@ def MENU(website=''):
 	return html
 
 def ITEMS(url):
-	#XBMCGUI_DIALOG_OK(str(url),str(''))
+	#DIALOG_OK(str(url),str(''))
 	if '/search.php' in url:
 		url,search = url.split('?t=')
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 		data = { 't' : search }
-		response = openURL_requests_cached(REGULAR_CACHE,'POST',url,data,headers,'','','HELAL-ITEMS-1st')
+		response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST',url,data,headers,'','','HELAL-ITEMS-1st')
 		html = response.content
 	else:
 		headers = { 'User-Agent' : '' }
-		html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-ITEMS-2nd')
-	#XBMCGUI_DIALOG_OK('',str(html))
+		html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','HELAL-ITEMS-2nd')
+	#DIALOG_OK('',str(html))
 	html_blocks = re.findall('id="movies-items(.*?)class="listfoot"',html,re.DOTALL)
 	if html_blocks: block = html_blocks[0]
 	else: block = ''
@@ -82,7 +82,7 @@ def ITEMS(url):
 	return
 
 def EPISODES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-EPISODES-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','HELAL-EPISODES-1st')
 	html_blocks = re.findall('id="episodes-panel(.*?)div',html,re.DOTALL)
 	block = html_blocks[0]
 	img = re.findall('image":.*?"(.*?)"',html,re.DOTALL)[0]
@@ -98,7 +98,7 @@ def EPISODES(url):
 
 def PLAY(url):
 	linkLIST,urlLIST = [],[]
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HELAL-PLAY-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','HELAL-PLAY-1st')
 	ratingLIST = re.findall('text-shadow: none;">(.*?)<',html,re.DOTALL)
 	if RATING_CHECK(script_name,url,ratingLIST): return
 	html_blocks = re.findall('id="links-panel(.*?)div',html,re.DOTALL)
@@ -111,7 +111,7 @@ def PLAY(url):
 	block = html_blocks[0]
 	items = re.findall('id="ajax-file-id.*?value="(.*?)"',block,re.DOTALL)
 	id = items[0]
-	#XBMCGUI_DIALOG_OK('',id)
+	#DIALOG_OK('',id)
 	items = re.findall('data-server-src="(.*?)"',block,re.DOTALL)
 	for link in items:
 		if 'http' not in link: link = 'http:' + link
@@ -121,11 +121,11 @@ def PLAY(url):
 	items = re.findall('data-server="(.*?)"',block,re.DOTALL)
 	for link in items:
 		url2 = website0a + '/ajax.php?id='+id+'&ajax=true&server='+link
-		#link = openURL_cached(REGULAR_CACHE,url2,'',headers,'','HELAL-PLAY-2nd')
+		#link = OPENURL_CACHED(REGULAR_CACHE,url2,'',headers,'','HELAL-PLAY-2nd')
 		#linkLIST.append(link)
 		urlLIST.append(url2)
-		html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','HELAL-PLAY-3rd')
-		#XBMCGUI_DIALOG_OK(url2,html)
+		html = OPENURL_CACHED(REGULAR_CACHE,url2,'',headers,'','HELAL-PLAY-3rd')
+		#DIALOG_OK(url2,html)
 	count = len(urlLIST)
 	import concurrent.futures
 	with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
@@ -138,7 +138,7 @@ def PLAY(url):
 	return
 
 def LATEST():
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','HELAL-LATEST-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,website0a,'',headers,'','HELAL-LATEST-1st')
 	html_blocks = re.findall('id="index-last-movie(.*?)id="index-slider-movie',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('src="(.*?)".*?href="(.*?)" title="(.*?)"',block,re.DOTALL)
@@ -148,12 +148,12 @@ def LATEST():
 	return
 
 def SEARCH(search=''):
-	#XBMCGUI_DIALOG_OK(str(search),str(''))
+	#DIALOG_OK(str(search),str(''))
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
-	#XBMCGUI_DIALOG_OK(str(search),str(''))
+	#DIALOG_OK(str(search),str(''))
 	url = website0a + '/search.php?t='+search
 	ITEMS(url)
 	return

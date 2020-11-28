@@ -35,7 +35,7 @@ def MENU(website=''):
 	addMenuItem('folder',website+'___'+menu_name+'ارشيف البرامج',website0a+'/category/1279',132,'','1')
 	return ''
 	"""
-	html = openURL_cached(REGULAR_CACHE,website0a,'','',True,'ALKAWTHAR-MENU-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,website0a,'','',True,'ALKAWTHAR-MENU-1st')
 	html_blocks=re.findall('dropdown-menu(.*?)dropdown-toggle',html,re.DOTALL)
 	block = html_blocks[1]
 	items=re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
@@ -52,7 +52,7 @@ def MENU(website=''):
 """
 def TITLES(url):
 	typeLIST = ['/religious','/social','/political','/films','/series']
-	html = openURL_cached(REGULAR_CACHE,url,'','',True,'ALKAWTHAR-TITLES-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'','',True,'ALKAWTHAR-TITLES-1st')
 	html_blocks = re.findall('titlebar(.*?)titlebar',html,re.DOTALL)
 	block = html_blocks[0]
 	if any(value in url for value in typeLIST):
@@ -72,7 +72,7 @@ def TITLES(url):
 
 def CATEGORIES(url):
 	category = url.split('/')[-1]
-	html = openURL_cached(LONG_CACHE,url,'','',True,'ALKAWTHAR-CATEGORIES-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'','',True,'ALKAWTHAR-CATEGORIES-1st')
 	html_blocks = re.findall('parentcat(.*?)</div>',html,re.DOTALL)
 	if not html_blocks:
 		EPISODES(url,'1')
@@ -88,21 +88,21 @@ def CATEGORIES(url):
 	return
 
 def EPISODES(url,page):
-	#XBMCGUI_DIALOG_OK(url, page)
-	html = openURL_cached(REGULAR_CACHE,url,'','',True,'ALKAWTHAR-EPISODES-1st')
+	#DIALOG_OK(url, page)
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'','',True,'ALKAWTHAR-EPISODES-1st')
 	items = re.findall('totalpagecount=[\'"](.*?)[\'"]',html,re.DOTALL)
 	if items[0]=='':
-		XBMCGUI_DIALOG_OK('رسالة من المبرمج','لا يوجد حاليا ملفات فيديو في هذا الفرع')
+		DIALOG_OK('رسالة من المبرمج','لا يوجد حاليا ملفات فيديو في هذا الفرع')
 		return
 	totalpages = int(items[0])
 	name = re.findall('main-title.*?</a> >(.*?)<',html,re.DOTALL)
 	if name: name = name[0].strip(' ')
 	else: name = xbmc.getInfoLabel('ListItem.Label')
-	#XBMCGUI_DIALOG_OK(name, str(''))
+	#DIALOG_OK(name, str(''))
 	if '/category/' in url:
 		category = url.split('/')[-1]
 		url2 = website0a + '/category/' + category + '/' + page
-		html = openURL_cached(REGULAR_CACHE,url2,'','',True,'ALKAWTHAR-EPISODES-2nd')
+		html = OPENURL_CACHED(REGULAR_CACHE,url2,'','',True,'ALKAWTHAR-EPISODES-2nd')
 		html_blocks = re.findall('currentpagenumber(.*?)javascript',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('src="(.*?)".*?full(.*?)>.*?href="(.*?)".*?>(.*?)<',block,re.DOTALL)
@@ -139,7 +139,7 @@ def EPISODES(url,page):
 			items = re.findall('id="Categories.*?href=\'(.*?)\'',html,re.DOTALL)
 			category = items[0].split('/')[-1]
 			url2 = website0a + '/ajax/category/' + category + '/' + page
-			html = openURL_cached(REGULAR_CACHE,url2,'','',True,'ALKAWTHAR-EPISODES-3rd')
+			html = OPENURL_CACHED(REGULAR_CACHE,url2,'','',True,'ALKAWTHAR-EPISODES-3rd')
 			items = re.findall('src="(.*?)".*?href="(.*?)"> <h5>(.*?)<',html,re.DOTALL)
 			for img,link,title in items:
 				link = website0a + link
@@ -155,37 +155,37 @@ def EPISODES(url,page):
 	return
 
 def PLAY(url):
-	#XBMCGUI_DIALOG_OK(url, '')
+	#DIALOG_OK(url, '')
 	if '/news/' in url or '/episode/' in url:
-		html = openURL_cached(LONG_CACHE,url,'','',True,'ALKAWTHAR-PLAY-1st')
+		html = OPENURL_CACHED(LONG_CACHE,url,'','',True,'ALKAWTHAR-PLAY-1st')
 		items = re.findall("mobilevideopath.*?value='(.*?)'",html,re.DOTALL)
 		if items: url = items[0]
 		else:
-			XBMCGUI_DIALOG_OK('رسالة من المبرمج','لا يوجد ملف فيديو')
+			DIALOG_OK('رسالة من المبرمج','لا يوجد ملف فيديو')
 			return
 	PLAY_VIDEO(url,script_name,'video')
 	return
 
 def LIVE():
-	#BUSY_DIALOG('start')
-	#XBMCGUI_DIALOG_NOTIFICATION('جاري تشغيل القناة','')
+	#DIALOG_BUSY('start')
+	#DIALOG_NOTIFICATION('جاري تشغيل القناة','')
 	url = website0a+'/live'
-	html = openURL_cached(LONG_CACHE,url,'','',True,'ALKAWTHAR-LIVE-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'','',True,'ALKAWTHAR-LIVE-1st')
 	items = re.findall('live-container.*?src="(.*?)"',html,re.DOTALL)
 	url = items[0]
-	html = openURL_cached(NO_CACHE,url,'','',True,'ALKAWTHAR-LIVE-2nd')
+	html = OPENURL_CACHED(NO_CACHE,url,'','',True,'ALKAWTHAR-LIVE-2nd')
 	token = re.findall('csrf-token" content="(.*?)"',html,re.DOTALL)
 	token = token[0]
 	server = SERVER(url)
 	url = re.findall("playUrl = '(.*?)'",html,re.DOTALL)
 	url = server+url[0]
 	headers2 = { 'Content-Type':'application/x-www-form-urlencoded' , 'X-CSRF-TOKEN':token }
-	response = openURL_requests_cached(NO_CACHE,'POST',url,'',headers2,False,True,'ALKAWTHAR-LIVE-3rd')
+	response = OPENURL_REQUESTS_CACHED(NO_CACHE,'POST',url,'',headers2,False,True,'ALKAWTHAR-LIVE-3rd')
 	html = response.content
 	url = re.findall('"(.*?)"',html,re.DOTALL)
 	url = url[0].replace('\/','/')
-	#XBMCGUI_DIALOG_OK(url,html)
-	#BUSY_DIALOG('stop')
+	#DIALOG_OK(url,html)
+	#DIALOG_BUSY('stop')
 	PLAY_VIDEO(url,script_name,'live')
 	return
 
@@ -200,18 +200,18 @@ def SEARCH(search,url=''):
 		search = '"mp4" '+search
 		search = quote(search)
 		url = website0a+'/search?q='+search
-		html = openURL_cached(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-1st')
+		html = OPENURL_CACHED(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-1st')
 		#with open('S:\\emad1.html', 'w') as f: f.write(html)
 		cx = re.findall("var cx = '(.*?)'",html,re.DOTALL)
 		url = re.findall("gcse.src = '(.*?)'",html,re.DOTALL)
 		url = url[0]+cx[0]
-		html = openURL_cached(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-2nd')
+		html = OPENURL_CACHED(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-2nd')
 		#with open('S:\\emad2.html', 'w') as f: f.write(html)
 		cse_token = re.findall('cse_token": "(.*?)"',html,re.DOTALL)[0]
 		cselibVersion = re.findall('cselibVersion": "(.*?)"',html,re.DOTALL)[0]
 		randomAPI = str(random.randint(1111,9999))
 		url = 'https://cse.google.com/cse/element/v1?rsz=filtered_cse&num=10&hl=ar&source=gcsc&gss=.com&cselibv='+cselibVersion+'&cx='+cx+'&q='+search+'&safe=off&cse_tok='+cse_token+'&sort=&exp=csqr,cc&callback=google.search.cse.api'+randomAPI+'&start=0'
-	html = openURL_cached(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-3rd')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-3rd')
 	#with open('S:\\emad3.html', 'w') as f: f.write(html)
 	#LOG_THIS('NOTICE','EMAD  '+url)
 	items = re.findall('cacheUrl":.*?"title": "(.*?)".*?"url": "(.*?)".*?"metatags": {(.*?)}',html,re.DOTALL)

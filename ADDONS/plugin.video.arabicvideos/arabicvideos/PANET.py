@@ -34,9 +34,9 @@ def MENU(website=''):
 
 def CATEGORIES(url,select=''):
 	type = url.split('/')[3]
-	#XBMCGUI_DIALOG_OK(type, url)
+	#DIALOG_OK(type, url)
 	if type=='series':
-		html = openURL_cached(LONG_CACHE,url,'',headers,'','PANET-CATEGORIES-1st')
+		html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','PANET-CATEGORIES-1st')
 		if select=='3':
 			html_blocks=re.findall('categoriesMenu(.*?)seriesForm',html,re.DOTALL)
 			block= html_blocks[0]
@@ -54,9 +54,9 @@ def CATEGORIES(url,select=''):
 				url = website0a + link
 				title = title.strip(' ')
 				addMenuItem('folder',menu_name+title,url,32,img)
-		#XBMCGUI_DIALOG_OK(url,'')
+		#DIALOG_OK(url,'')
 	if type=='movies':
-		html = openURL_cached(LONG_CACHE,url,'',headers,'','PANET-CATEGORIES-2nd')
+		html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','PANET-CATEGORIES-2nd')
 		if select=='1':
 			html_blocks=re.findall('moviesGender(.*?)select',html,re.DOTALL)
 			block = html_blocks[0]
@@ -76,9 +76,9 @@ def CATEGORIES(url,select=''):
 	return
 
 def ITEMS(url):
-	#XBMCGUI_DIALOG_OK(url,'')
+	#DIALOG_OK(url,'')
 	type = url.split('/')[3]
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','PANET-ITEMS-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','PANET-ITEMS-1st')
 	if 'home' in url: type='episodes'
 	if type=='series':
 		html_blocks = re.findall('panet-thumbnails(.*?)panet-pagination',html,re.DOTALL)
@@ -98,7 +98,7 @@ def ITEMS(url):
 			addMenuItem('video',menu_name+name,url,33,img)
 	if type=='episodes':
 		page = url.split('/')[-1]
-		#XBMCGUI_DIALOG_OK(url,'')
+		#DIALOG_OK(url,'')
 		if page=='1':
 			html_blocks = re.findall('advBarMars(.+?)advBarMars',html,re.DOTALL)
 			block = html_blocks[0]
@@ -129,22 +129,22 @@ def ITEMS(url):
 	return
 
 def PLAY(url):
-	#XBMCGUI_DIALOG_OK(url,'')
+	#DIALOG_OK(url,'')
 	if 'series' in url:
 		url = website0a + '/series/v1/seriesLink/' + url.split('/')[-1]
-		html = openURL_cached(SHORT_CACHE,url,'',headers,'','PANET-PLAY-1st')
+		html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','PANET-PLAY-1st')
 		items = re.findall('url":"(.*?)"',html,re.DOTALL)
 		url = items[0]
 		url = url.replace('\/','/')
 	else:
-		html = openURL_cached(SHORT_CACHE,url,'',headers,'','PANET-PLAY-2nd')
+		html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','PANET-PLAY-2nd')
 		items = re.findall('contentURL" content="(.*?)"',html,re.DOTALL)
 		url = items[0]
 	PLAY_VIDEO(url,script_name,'video')
 	return
 
 def SEARCH(search,page):
-	#XBMCGUI_DIALOG_OK(search,page)
+	#DIALOG_OK(search,page)
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
@@ -154,7 +154,7 @@ def SEARCH(search,page):
 		if page=='':
 			page = '1'
 			nameLIST = [ 'بحث عن افلام' , 'بحث عن مسلسلات']
-			selection = XBMCGUI_DIALOG_SELECT('اختر النوع المناسب:', nameLIST)
+			selection = DIALOG_SELECT('اختر النوع المناسب:', nameLIST)
 			if selection == -1 : return
 			type = typeLIST[selection]
 		else: page,type = page.split('/')
@@ -162,7 +162,7 @@ def SEARCH(search,page):
 	payload = { 'query':new_search , 'searchDomain':type }
 	if page!='1': payload['from'] = page
 	data = urllib.urlencode(payload)
-	html = openURL_cached(REGULAR_CACHE,website0a+'/search',data,headers,'','PANET-SEARCH-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,website0a+'/search',data,headers,'','PANET-SEARCH-1st')
 	#xbmc.log(str(html), level=xbmc.LOGNOTICE)
 	items=re.findall('title":"(.*?)".*?link":"(.*?)"',html,re.DOTALL)
 	if items:
@@ -177,7 +177,7 @@ def SEARCH(search,page):
 			page2 = str(page2)
 			if page2!=page:
 				addMenuItem('folder','صفحة '+page2,'',39,'',page2+'/'+type,search)
-	#else: XBMCGUI_DIALOG_OK('no results','لا توجد نتائج للبحث')
+	#else: DIALOG_OK('no results','لا توجد نتائج للبحث')
 	return
 
 def LIVE():

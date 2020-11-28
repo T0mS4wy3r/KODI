@@ -57,7 +57,7 @@ if 0:
 #if NEED_BUSY_MESSAGE: succeeded = False
 
 
-#XBMCGUI_DIALOG_OK(mode,text)
+#DIALOG_OK(mode,text)
 
 
 #SKIP_VIDEO_PLAY = mode2 in [176]
@@ -97,7 +97,7 @@ menu_update1 = (int(mode) in filter_modes+[266])
 menu_update2 = (int(mode)==165 and '_FORGETRESULTS_' in text)
 allowed_empty_modes1 = (int(mode) in search_modes+website_mainmenu_modes+[265])
 allowed_empty_modes2 = (len(menuItemsLIST)>0)
-#XBMCGUI_DIALOG_OK(mode,text)
+#DIALOG_OK(mode,text)
 if menu_update1 or menu_update2: xbmcplugin.endOfDirectory(addon_handle,True,True,True)
 elif allowed_empty_modes1 or allowed_empty_modes2: xbmcplugin.endOfDirectory(addon_handle,True,False,True)
 else: xbmcplugin.endOfDirectory(addon_handle,False,False,True)
@@ -189,10 +189,10 @@ if mode3 not in [0,15,17,19] and mode2 not in NOT_FOLDER_MODES:
 #xbmc.Player().play()
 
 
-#response = openURL_requests('GET','http://example.com||MyDNSUrl=')
+#response = OPENURL_REQUESTS('GET','http://example.com||MyDNSUrl=')
 #html = response.content
-#XBMCGUI_DIALOG_OK('',str(html))
-#html = openURL('http://example.com||MyProxyUrl=http://198.50.147.158:3128')
-#XBMCGUI_DIALOG_OK('',str(html))
-#html = openURL('http://example.com||MyProxyUrl=')
-#XBMCGUI_DIALOG_OK('',str(html))
+#DIALOG_OK('',str(html))
+#html = OPENURL('http://example.com||MyProxyUrl=http://198.50.147.158:3128')
+#DIALOG_OK('',str(html))
+#html = OPENURL('http://example.com||MyProxyUrl=')
+#DIALOG_OK('',str(html))

@@ -2,10 +2,10 @@
 from LIBRARY import *
 
 script_name='ARABSEED'
-headers = { 'User-Agent' : '' }
+headers = {'User-Agent':''}
 menu_name='_ARS_'
 website0a = WEBSITES[script_name][0]
-ignoreLIST = ['الرئيسية','مصارعه','افلام','اعلن معنا &#8211; For ads']
+ignoreLIST = ['الرئيسية','مصارعه','افلام','اعلن معنا – For ads']
 
 def MAIN(mode,url,text):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
@@ -23,16 +23,16 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ARABSEED-MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,website0a+'/main','',headers,'','ARABSEED-MENU-1st')
 	html_blocks2 = re.findall('navigation-menu(.*?)</header>',html,re.DOTALL)
 	block2 = html_blocks2[0]
 	items2 = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
-	server = SERVER(items2[0][0])
+	server = SERVER(items2[0][0])+'/main'
 	addMenuItem('folder',menu_name+'بحث في الموقع','',259,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',menu_name+'فلتر محدد',server,255)
 	addMenuItem('folder',menu_name+'فلتر كامل',server,254)
 	addMenuItem('folder',menu_name+'المميزة',server,258)
-	addMenuItem('folder',menu_name+'الرئيسية',server,251)
+	#addMenuItem('folder',menu_name+'الرئيسية',server,251)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',website+'___'+menu_name+'فلتر','',254,server)
 	#html_blocks = re.findall('class="tabs-menu(.*?)</ul>',html,re.DOTALL)
@@ -54,17 +54,16 @@ def MENU(website=''):
 	return html
 
 def FEATURED(url):
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','ARABSEED-FEATURED-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','ARABSEED-FEATURED-1st')
 	items = re.findall('class="SliderItem.*?href="(.*?)".*?image: url\((.*?)\).*?<h2>(.*?)<',html,re.DOTALL)
 	for link,img,title in items:
 		addMenuItem('video',menu_name+title,link,252,img)
 	return
 
-
 def FILTERING(url):
-	#XBMCGUI_DIALOG_OK(url,'')
+	#DIALOG_OK(url,'')
 	server = SERVER(url)
-	html = openURL_cached(SHORT_CACHE,url,'',headers,'','ARABSEED-FILTERING-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','ARABSEED-FILTERING-1st')
 	term = re.findall('term: "(.*?)"',html,re.DOTALL)
 	term = term[0]
 	html_blocks = re.findall('class="tabs-menu(.*?)</ul>',html,re.DOTALL)
@@ -78,9 +77,9 @@ def FILTERING(url):
 	return
 
 def SORTING(url):
-	#XBMCGUI_DIALOG_OK(url,'')
+	#DIALOG_OK(url,'')
 	url2,data2 = URLDECODE(url)
-	response2 = openURL_requests_cached(SHORT_CACHE,'POST',url2,data2,'',True,'','ARABSEED-SORTING-1st')
+	response2 = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',url2,data2,'',True,'','ARABSEED-SORTING-1st')
 	html = response2.content
 	html_blocks = re.findall('class="time-filtering(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
@@ -95,15 +94,16 @@ def SORTING(url):
 	return
 
 def TITLES(url):
-	#XBMCGUI_DIALOG_OK(url,'TITLES')
+	#DIALOG_OK(url,'TITLES')
 	if '/ajaxCenter/' in url:
 		url2,data2 = URLDECODE(url)
-		headers2 = { 'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8' }
-		response2 = openURL_requests_cached(SHORT_CACHE,'POST',url2,data2,headers2,True,'','ARABSEED-TITLES-1st')
+		headers2 = headers
+		headers2['Content-Type'] = 'application/x-www-form-urlencoded'
+		response2 = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',url2,data2,headers2,True,'','ARABSEED-TITLES-1st')
 		html = response2.content
 		block = html
 	else:
-		html = openURL_cached(SHORT_CACHE,url,'',headers,'','ARABSEED-TITLES-2nd')
+		html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','ARABSEED-TITLES-2nd')
 		html_blocks = re.findall('class="FilteringArea(.*?)class="pagination',html,re.DOTALL)
 		if not html_blocks: return
 		block = html_blocks[0]
@@ -144,9 +144,9 @@ def TITLES(url):
 	return
 
 def EPISODES(url):
-	#XBMCGUI_DIALOG_OK(url,url)
+	#DIALOG_OK(url,url)
 	episodesCount,items,itemsNEW = -1,[],[]
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','ARABSEED-EPISODES-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','ARABSEED-EPISODES-1st')
 	items = re.findall('episode-block.*?href="(.*?)".*?<span>(.*?)</span>',html,re.DOTALL)
 	name = xbmc.getInfoLabel('ListItem.Label')
 	for link,episode in items:
@@ -179,22 +179,22 @@ def PLAY(url):
 	#LOG_THIS('NOTICE','EMAD 111')
 	linkLIST = []
 	parts = url.split('/')
-	#XBMCGUI_DIALOG_OK(url,'PLAY-1st')
+	#DIALOG_OK(url,'PLAY-1st')
 	#url = unquote(quote(url))
 	hostname = SERVER(url)
-	response = openURL_requests_cached(LONG_CACHE,'GET',url,'',headers,True,True,'ARABSEED-PLAY-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'',headers,True,True,'ARABSEED-PLAY-1st')
 	html = response.content#.encode('utf8')
 	id = re.findall('postId:"(.*?)"',html,re.DOTALL)
 	if not id: id = re.findall('post_id=(.*?)"',html,re.DOTALL)
 	if not id: id = re.findall('post-id="(.*?)"',html,re.DOTALL)
 	if id: id = id[0]
-	else: XBMCGUI_DIALOG_OK('رسالة من المبرمج','يرجى إرسال هذه المشكلة إلى المبرمج  من قائمة خدمات البرنامج')
+	else: DIALOG_OK('رسالة من المبرمج','يرجى إرسال هذه المشكلة إلى المبرمج  من قائمة خدمات البرنامج')
 	if '/post/' in url and 'seed' in url: url = hostname+'/watch/'+id
 	#LOG_THIS('NOTICE','EMAD START TIMING 111')
 	if True or '/watch/' in html:
 		#parts = url.split('/')
 		url2 = url+'watch'
-		response = openURL_requests_cached(LONG_CACHE,'GET',url2,'',headers,True,True,'ARABSEED-PLAY-2nd')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers,True,True,'ARABSEED-PLAY-2nd')
 		html2 = response.content#.encode('utf8')
 		items1 = re.findall('data-embedd="(.*?)".*?alt="(.*?)"',html2,re.DOTALL)
 		items2 = re.findall('data-embedd=".*?(http.*?)("|&quot;)',html2,re.DOTALL)
@@ -228,14 +228,15 @@ def PLAY(url):
 				link = server+'?named=__watch'+quality
 			linkLIST.append(link)
 	#LOG_THIS('NOTICE','['+quality+']    ['+title+']')
-	#selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب', linkLIST)
-	#XBMCGUI_DIALOG_OK('watch 1',	str(len(items)))
+	#selection = DIALOG_SELECT('أختر البحث المناسب', linkLIST)
+	#DIALOG_OK('watch 1',	str(len(items)))
 	if 'DownloadNow' in html:
-		headers2 = { 'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8' }
+		headers2 = headers
+		headers2['Content-Type'] = 'application/x-www-form-urlencoded'
 		url2 = url+'/download'
-		response = openURL_requests_cached(LONG_CACHE,'GET',url2,'',headers2,True,'','ARABSEED-PLAY-3rd')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers2,True,'','ARABSEED-PLAY-3rd')
 		html2 = response.content#.encode('utf8')
-		#XBMCGUI_DIALOG_OK(url2,html2)
+		#DIALOG_OK(url2,html2)
 		html_blocks = re.findall('<ul class="download-items(.*?)</ul>',html2,re.DOTALL)
 		for block in html_blocks:
 			items = re.findall('href="(http.*?)".*?<span>(.*?)<.*?<p>(.*?)<',block,re.DOTALL)
@@ -243,9 +244,10 @@ def PLAY(url):
 				link = link+'?named='+name+'__download'+'____'+quality
 				linkLIST.append(link)
 	elif '/download/' in html:
-		headers2 = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
+		headers2 = headers
+		headers2['X-Requested-With'] = 'XMLHttpRequest'
 		url2 = hostname + '/ajaxCenter?_action=getdownloadlinks&postId='+id
-		response = openURL_requests_cached(LONG_CACHE,'GET',url2,'',headers2,True,True,'ARABSEED-PLAY-4th')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers2,True,True,'ARABSEED-PLAY-4th')
 		html2 = response.content#.encode('utf8')
 		if 'download-btns' in html2:
 			items3 = re.findall('href="(.*?)"',html2,re.DOTALL)
@@ -255,7 +257,7 @@ def PLAY(url):
 					linkLIST.append(url3)
 				elif '/page/' in url3:
 					quality = ''
-					response = openURL_requests_cached(LONG_CACHE,'GET',url3,'',headers,True,True,'ARABSEED-PLAY-5th')
+					response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url3,'',headers,True,True,'ARABSEED-PLAY-5th')
 					html4 = response.content#.encode('utf8')
 					blocks = re.findall('(<strong>.*?)-----',html4,re.DOTALL)
 					for block4 in blocks:
@@ -275,7 +277,7 @@ def PLAY(url):
 						for link5 in items5:
 							link5 = link5+'?named='+server4+'__download'+quality
 							linkLIST.append(link5)
-			#XBMCGUI_DIALOG_OK('download 1',	str(len(linkLIST))	)
+			#DIALOG_OK('download 1',	str(len(linkLIST))	)
 		elif 'slow-motion' in html2:
 			html2 = html2.replace('<h6 ','==END== ==START==')+'==END=='
 			html2 = html2.replace('<h3 ','==END== ==START==')+'==END=='
@@ -285,7 +287,7 @@ def PLAY(url):
 			if all_blocks:
 				for block4 in all_blocks:
 					if 'href=' not in block4: continue
-					#XBMCGUI_DIALOG_OK('download 111',	block4	)
+					#DIALOG_OK('download 111',	block4	)
 					quality4 = ''
 					items4 = re.findall('slow-motion">(.*?)<',block4,re.DOTALL)
 					for item4 in items4:
@@ -309,9 +311,9 @@ def PLAY(url):
 					link4 = link4.strip(' ')+'?named='+server4+'__download'
 					linkLIST.append(link4)
 	#LOG_THIS('NOTICE','EMAD 222')
-	#XBMCGUI_DIALOG_OK('both: watch & download',	str(len(linkLIST))	)
-	#selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب', linkLIST)
-	if len(linkLIST)==0: XBMCGUI_DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
+	#DIALOG_OK('both: watch & download',	str(len(linkLIST))	)
+	#selection = DIALOG_SELECT('أختر البحث المناسب', linkLIST)
+	if len(linkLIST)==0: DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')
@@ -327,7 +329,8 @@ def SEARCH(search):
 	return
 
 def FILTERS_MENU(url,filter):
-	#XBMCGUI_DIALOG_OK(filter,url)
+	filter = filter.replace('_FORGETRESULTS_','')
+	#DIALOG_OK(filter,url)
 	menu_list = ['category','genre','release-year']
 	if '?' in url: url = url.split('/wp-content/themes/ArbSeed/ajaxCenter/Home/AdvFiltering.php?')[0]
 	type,filter = filter.split('___',1)
@@ -341,7 +344,7 @@ def FILTERS_MENU(url,filter):
 		new_values = filter_values+'&'+category+'=0'
 		new_filter = new_options.strip('&')+'___'+new_values.strip('&')
 		clean_filter = RECONSTRUCT_FILTER(filter_values,'all')
-		#XBMCGUI_DIALOG_OK('','')
+		#DIALOG_OK('','')
 		filter_show = RECONSTRUCT_FILTER(filter_options,'modified_values')
 		if filter_show=='': url2 = url
 		else: url2 = url+'/wp-content/themes/ArbSeed/ajaxCenter/Home/AdvFiltering.php?'+clean_filter
@@ -351,13 +354,13 @@ def FILTERS_MENU(url,filter):
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'all')
 		if filter_values=='' or filter_show=='': url2 = url
 		else: url2 = url+'/wp-content/themes/ArbSeed/ajaxCenter/Home/AdvFiltering.php?'+filter_values
-		#XBMCGUI_DIALOG_OK(url2,filter_values)
+		#DIALOG_OK(url2,filter_values)
 		addMenuItem('folder',menu_name+'أظهار قائمة الفيديو التي تم اختيارها ',url2,251)
 		addMenuItem('folder',menu_name+' [[   '+filter_show+'   ]]',url2,251)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','ARABSEED-FILTERS_MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','ARABSEED-FILTERS_MENU-1st')
 	html_blocks = re.findall('class="filteringMore">.(.*?)</ul>',html,re.DOTALL)
-	#XBMCGUI_DIALOG_OK('',str(html_blocks))
+	#DIALOG_OK('',str(html_blocks))
 	block = html_blocks[0]
 	select_blocks = re.findall('dropdown-button.*?</i>(.*?)</span>.*?data-tax="(.*?)"(.*?)</div>',block,re.DOTALL)
 	dict = {}
@@ -372,14 +375,14 @@ def FILTERS_MENU(url,filter):
 				else: FILTERS_MENU(url2,'CATEGORIES___'+new_filter)
 				return
 			else:
-				#XBMCGUI_DIALOG_OK(url,url2)
+				#DIALOG_OK(url,url2)
 				if category2==menu_list[-1]: addMenuItem('folder',menu_name+'الكل ',url2,251)
 				else: addMenuItem('folder',menu_name+'الكل ',url2,255,'','',new_filter)
 		elif type=='FILTERS':
 			new_options = filter_options+'&'+category2+'=0'
 			new_values = filter_values+'&'+category2+'=0'
 			new_filter = new_options+'___'+new_values
-			addMenuItem('folder',menu_name+'الكل :'+name,url2,254,'','',new_filter)
+			addMenuItem('folder',menu_name+'الكل :'+name,url2,254,'','',new_filter+'_FORGETRESULTS_')
 		dict[category2] = {}
 		for value,option in items:
 			if 'الكل' in option: continue
@@ -392,7 +395,7 @@ def FILTERS_MENU(url,filter):
 			new_filter2 = new_options+'___'+new_values
 			title = option+' :'#+dict[category2]['0']
 			title = option+' :'+name
-			if type=='FILTERS': addMenuItem('folder',menu_name+title,url,254,'','',new_filter2)
+			if type=='FILTERS': addMenuItem('folder',menu_name+title,url,254,'','',new_filter2+'_FORGETRESULTS_')
 			elif type=='CATEGORIES' and menu_list[-2]+'=' in filter_options:
 				clean_filter = RECONSTRUCT_FILTER(new_values,'all')
 				url3 = url+'/wp-content/themes/ArbSeed/ajaxCenter/Home/AdvFiltering.php?'+clean_filter
@@ -401,7 +404,7 @@ def FILTERS_MENU(url,filter):
 	return
 
 def RECONSTRUCT_FILTER(filters,mode):
-	#XBMCGUI_DIALOG_OK(filters,'RECONSTRUCT_FILTER 11')
+	#DIALOG_OK(filters,'RECONSTRUCT_FILTER 11')
 	# mode=='modified_values'		only non empty values
 	# mode=='modified_filters'		only non empty filters
 	# mode=='all'					all filters (includes empty filter)
@@ -423,7 +426,7 @@ def RECONSTRUCT_FILTER(filters,mode):
 	new_filters = new_filters.strip('&')
 	new_filters = new_filters.replace('=0','=')
 	new_filters = new_filters.replace('release-year','year')
-	#XBMCGUI_DIALOG_OK(new_filters,'RECONSTRUCT_FILTER 22')
+	#DIALOG_OK(new_filters,'RECONSTRUCT_FILTER 22')
 	return new_filters
 
 """
@@ -435,7 +438,7 @@ def SEARCH_OLD(search):
 	if search=='': search = KEYBOARD()
 	if search == '': return
 	search = search.replace(' ','+')
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','ARABSEED-SEARCH-1st')
+	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','ARABSEED-SEARCH-1st')
 	html_blocks = re.findall('name="category(.*?)</div>',html,re.DOTALL)
 	if category and html_blocks:
 		block = html_blocks[0]
@@ -445,7 +448,7 @@ def SEARCH_OLD(search):
 			if title in ['مصارعه']: continue
 			categoryLIST.append(category)
 			filterLIST.append(title)
-		selection = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
+		selection = DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
 		if selection == -1 : return
 		category = categoryLIST[selection]
 	else: category = ''

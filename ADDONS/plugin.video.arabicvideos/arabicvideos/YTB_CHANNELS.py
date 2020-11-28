@@ -15,7 +15,7 @@ def MENU(website=''):
 	if website=='':
 		addMenuItem('link',menu_name+'[COLOR FFC89008]إضافة وحذف مواقع من هذه القائمة[/COLOR]','',292)
 		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	#XBMCGUI_DIALOG_OK(website,str(YTB_CHANNELS))
+	#DIALOG_OK(website,str(YTB_CHANNELS))
 	for seq in range(len(YTB_CHANNELS)):
 		name = YTB_CHANNELS[seq][0]
 		if website!='': name = name.replace('مواقع','')
@@ -23,7 +23,7 @@ def MENU(website=''):
 	return
 
 def ITEMS(seq,website=''):
-	#XBMCGUI_DIALOG_OK(website,str(seq))
+	#DIALOG_OK(website,str(seq))
 	if website=='':
 		addMenuItem('link',menu_name+'[COLOR FFC89008]إضافة وحذف مواقع من هذه القائمة[/COLOR]','',292)
 		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
@@ -34,8 +34,8 @@ def ITEMS(seq,website=''):
 	return
 
 def MODIFY():
-	XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذه القائمة اختيرت عشوائيا والمبرمج لا يعرف أصحابها . للمساهمة في تغييرها . قم بمراسلة المبرمج من قائمة خدمات البرنامج . وأعلم أن للمبرمج كامل الحرية في قبول طلبك أو رفضه')
-	send = XBMCGUI_DIALOG_YESNO('رسالة من المبرمج','لإضافة أو حذف موقع أو قسم . قم بكتابة أسم ورابط الموقع أو القسم الذي تريد إضافته أو حذفه علما أن المواقع ذات الأسماء الشخصية أو ذات الفيديوهات القليلة مرفوضة . هل تريد الآن أن ترسل رسالة إلى المبرمج ؟!','','','كلا','نعم')
+	DIALOG_OK('رسالة من المبرمج','هذه القائمة اختيرت عشوائيا والمبرمج لا يعرف أصحابها . للمساهمة في تغييرها . قم بمراسلة المبرمج من قائمة خدمات البرنامج . وأعلم أن للمبرمج كامل الحرية في قبول طلبك أو رفضه')
+	send = DIALOG_YESNO('رسالة من المبرمج','لإضافة أو حذف موقع أو قسم . قم بكتابة أسم ورابط الموقع أو القسم الذي تريد إضافته أو حذفه علما أن المواقع ذات الأسماء الشخصية أو ذات الفيديوهات القليلة مرفوضة . هل تريد الآن أن ترسل رسالة إلى المبرمج ؟!','','','كلا','نعم')
 	if send:
 		import SERVICES
 		SERVICES.SEND_MESSAGE()

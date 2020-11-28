@@ -17,7 +17,7 @@ def MAIN(mode,url,text):
 def MENU(website=''):
 	addMenuItem('folder',menu_name+'بحث في الموقع','',329,'','','_REMEMBERRESULTS_')
 	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	response = openURL_requests_cached(LONG_CACHE,'GET',website0a+'/video.php','',headers,'','','KARBALATV-MENU-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a+'/video.php','',headers,'','','KARBALATV-MENU-1st')
 	html = response.content
 	html_blocks = re.findall('class="icono-plus"(.*?)</ul>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -30,8 +30,8 @@ def MENU(website=''):
 	return html
 
 def TITLES(url):
-	#XBMCGUI_DIALOG_OK(url,html)
-	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'',headers,'','','KARBALATV-TITLES-1st')
+	#DIALOG_OK(url,html)
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers,'','','KARBALATV-TITLES-1st')
 	html = response.content
 	html_blocks = re.findall('class="container"(.*?)class="footer',html,re.DOTALL)
 	block = html_blocks[0]
@@ -58,7 +58,7 @@ def TITLES(url):
 	return
 
 def PLAY(url):
-	response = openURL_requests_cached(SHORT_CACHE,'GET',url,'',headers,'','','KARBALATV-PLAY-1st')
+	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers,'','','KARBALATV-PLAY-1st')
 	html = response.content
 	#link = re.findall('<audio.*?src="(.*?)"',html,re.DOTALL)
 	#if not link: 

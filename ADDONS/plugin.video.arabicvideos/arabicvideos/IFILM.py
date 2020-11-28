@@ -66,15 +66,15 @@ def MENU(website0):
 		name5 = 'فيلم'
 	addMenuItem('live',menu_name+name4,website0,27)
 	addMenuItem('folder',menu_name+name0,website0,29,'','','_REMEMBERRESULTS_')
-	html = openURL_cached(LONG_CACHE,website0+'/home','','','','IFILM-MENU-1st')
-	#html = openURL_cached(LONG_CACHE,website0+'/home/index','','','','IFILM-MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,website0+'/home','','','','IFILM-MENU-1st')
+	#html = OPENURL_CACHED(LONG_CACHE,website0+'/home/index','','','','IFILM-MENU-1st')
 	html_blocks=re.findall('button-menu(.*?)nav',html,re.DOTALL)
 	menu = ['Series','Program','Music']#,'Film']
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
 	for link,title in items:
 		if any(value in link for value in menu):
-			#XBMCGUI_DIALOG_OK(link,str(title))
+			#DIALOG_OK(link,str(title))
 			url = website0+link
 			if 'Series' in link:
 				addMenuItem('folder',website+'___'+menu_name+name1,url,22,'','100')
@@ -93,7 +93,7 @@ def MENU(website0):
 
 def MUSIC_MENU(url):
 	website0 = SITE(url)
-	html = openURL_cached(LONG_CACHE,url,'','','','IFILM-MUSIC_MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'','','','IFILM-MUSIC_MENU-1st')
 	html_blocks = re.findall('Music-tools-header(.*?)Music-body',html,re.DOTALL)
 	block = html_blocks[0]
 	title = re.findall('<p>(.*?)</p>',block,re.DOTALL)[0]
@@ -110,9 +110,9 @@ def TITLES(url,page):
 	type = url.split('/')[-1]
 	order = str(int(page)/100)
 	page = str(int(page)%100)
-	#XBMCGUI_DIALOG_OK(url, type)
+	#DIALOG_OK(url, type)
 	if type=='Series' and page=='0':
-		html = openURL_cached(REGULAR_CACHE,url,'','','','IFILM-TITLES-1st')
+		html = OPENURL_CACHED(REGULAR_CACHE,url,'','','','IFILM-TITLES-1st')
 		html_blocks = re.findall('serial-body(.*?)class="row',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?src=(.*?)>.*?h3>(.*?)<',block,re.DOTALL)
@@ -128,8 +128,8 @@ def TITLES(url,page):
 	if type=='Program': category='7'
 	if type in ['Series','Program','Film'] and page!='0':
 		url2 = website0+'/Home/PageingItem?category='+category+'&page='+page+'&size=30&orderby='+order
-		html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-TITLES-2nd')
-		#XBMCGUI_DIALOG_OK(url2, html)
+		html = OPENURL_CACHED(REGULAR_CACHE,url2,'','','','IFILM-TITLES-2nd')
+		#DIALOG_OK(url2, html)
 		items = re.findall('"Id":(.*?),"Title":(.*?),.+?"ImageAddress_S":"(.*?)"',html,re.DOTALL)
 		for id,title,img in items:
 			title = escapeUNICODE(title)
@@ -141,7 +141,7 @@ def TITLES(url,page):
 			if type=='Film': addMenuItem('video',menu_name+title,link,24,img,order+'01')
 			else: addMenuItem('folder',menu_name+title,link,23,img,order+'01')
 	if type=='Music':
-		html = openURL_cached(REGULAR_CACHE,website0+'/Music/Index?page='+page,'','','','IFILM-TITLES-3rd')
+		html = OPENURL_CACHED(REGULAR_CACHE,website0+'/Music/Index?page='+page,'','','','IFILM-TITLES-3rd')
 		html_blocks = re.findall('pagination-demo(.*?)pagination-demo',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?src="(.*?)".*?<h3>(.*?)</h3>',block,re.DOTALL)
@@ -169,9 +169,9 @@ def EPISODES(url,page):
 	order = str(int(page)/100)
 	page = str(int(page)%100)
 	count_items=0
-	#XBMCGUI_DIALOG_OK(url, type)
+	#DIALOG_OK(url, type)
 	if type=='Series':
-		html = openURL_cached(REGULAR_CACHE,url,'','','','IFILM-EPISODES-1st')
+		html = OPENURL_CACHED(REGULAR_CACHE,url,'','','','IFILM-EPISODES-1st')
 		items = re.findall('Comment_panel_Item.*?p>(.*?)<i.+?var inter_ = (.*?);.*?src="(.*?)\'.*?data-url="(.*?)\'',html,re.DOTALL)
 		title = ' - الحلقة '
 		if lang=='en': title = ' - Episode '
@@ -190,7 +190,7 @@ def EPISODES(url,page):
 				addMenuItem('video',menu_name+name1,link1,24,img1)
 	if type=='Program':
 		url2 = website0+'/Home/PageingAttachmentItem?id='+str(id)+'&page='+page+'&size=30&orderby=1'
-		html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-EPISODES-2nd')
+		html = OPENURL_CACHED(REGULAR_CACHE,url2,'','','','IFILM-EPISODES-2nd')
 		items = re.findall('Episode":(.*?),.*?ImageAddress_S":"(.*?)".*?VideoAddress":"(.*?)".*?Discription":"(.*?)".*?Caption":"(.*?)"',html,re.DOTALL)
 		title = ' - الحلقة '
 		if lang=='en': title = ' - Episode '
@@ -206,7 +206,7 @@ def EPISODES(url,page):
 	if type=='Music':
 		if 'Content' in url and 'category' not in url:
 			url2 = website0+'/Music/GetTracksBy?id='+str(id)+'&page='+page+'&size=30&type=0'
-			html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-EPISODES-3rd')
+			html = OPENURL_CACHED(REGULAR_CACHE,url2,'','','','IFILM-EPISODES-3rd')
 			items = re.findall('ImageAddress_S":"(.*?)".*?VoiceAddress":"(.*?)".*?Caption":"(.*?)","Title":"(.*?)"',html,re.DOTALL)
 			for img,link,name,title in items:
 				count_items += 1
@@ -218,7 +218,7 @@ def EPISODES(url,page):
 				addMenuItem('video',menu_name+name1,link1,24,img1)
 		elif 'Clips' in url:
 			url2 = website0+'/Music/GetTracksBy?id=0&page='+page+'&size=30&type=15'
-			html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-EPISODES-4th')
+			html = OPENURL_CACHED(REGULAR_CACHE,url2,'','','','IFILM-EPISODES-4th')
 			items = re.findall('ImageAddress_S":"(.*?)".*?Caption":"(.*?)".*?VideoAddress":"(.*?)"',html,re.DOTALL)
 			for img,title,link in items:
 				count_items += 1
@@ -229,9 +229,9 @@ def EPISODES(url,page):
 				addMenuItem('video',menu_name+name1,link1,24,img1)
 		elif 'category' in url:
 			if 'category=6' in url:
-				html = openURL_cached(REGULAR_CACHE,website0+'/Music/GetTracksBy?id=0&page='+page+'&size=30&type=6','','','','IFILM-EPISODES-5th')
+				html = OPENURL_CACHED(REGULAR_CACHE,website0+'/Music/GetTracksBy?id=0&page='+page+'&size=30&type=6','','','','IFILM-EPISODES-5th')
 			elif 'category=4' in url:
-				html = openURL_cached(REGULAR_CACHE,website0+'/Music/GetTracksBy?id=0&page='+page+'&size=30&type=4','','','','IFILM-EPISODES-6th')
+				html = OPENURL_CACHED(REGULAR_CACHE,website0+'/Music/GetTracksBy?id=0&page='+page+'&size=30&type=4','','','','IFILM-EPISODES-6th')
 			items = re.findall('ImageAddress_S":"(.*?)".*?VoiceAddress":"(.*?)".*?Caption":"(.*?)","Title":"(.*?)"',html,re.DOTALL)
 			for img,link,name,title in items:
 				count_items += 1
@@ -276,7 +276,7 @@ def LANG(url):
 def LIVE(url):
 	lang = LANG(url)
 	url2 = url + '/Home/Live'
-	html = openURL_cached(LONG_CACHE,url2,'','','','IFILM-LIVE-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url2,'','','','IFILM-LIVE-1st')
 	items = re.findall('source src="(.*?)"',html,re.DOTALL)
 	url3 = items[0]
 	PLAY_VIDEO(url3,script_name,'live')
@@ -289,15 +289,15 @@ def SEARCH(url,search=''):
 	if url=='' and showdialogs:
 		urlLIST = [ website0a , website0b , website0c , website0d ]
 		nameLIST = [ 'عربي' , 'English' , 'فارسى' , 'فارسى 2' ]
-		selection = XBMCGUI_DIALOG_SELECT('اختر اللغة المناسبة:', nameLIST)
+		selection = DIALOG_SELECT('اختر اللغة المناسبة:', nameLIST)
 		if selection == -1 : return ''
 		url = urlLIST[selection]
 	else: url = website0a
 	new_search = search.replace(' ','+')
 	lang = LANG(url)
 	url2 = url + "/Home/Search?searchstring=" + new_search
-	#XBMCGUI_DIALOG_OK(lang,url2)
-	html = openURL_cached(REGULAR_CACHE,url2,'','','','IFILM-SEARCH-1st')
+	#DIALOG_OK(lang,url2)
+	html = OPENURL_CACHED(REGULAR_CACHE,url2,'','','','IFILM-SEARCH-1st')
 	items = re.findall('"ImageAddress_S":"(.*?)".*?"CategoryId":(.*?),"Id":(.*?),"Title":(.*?),',html,re.DOTALL)
 	if items:
 		for img,category,id,title in items:
@@ -320,7 +320,7 @@ def SEARCH(url,search=''):
 				link = url + '/' + type + '/Content/' + id
 				img = url + quote(img)
 				addMenuItem('folder',menu_name+title,link,23,img,'101')
-	#else: XBMCGUI_DIALOG_OK('رسالة من المبرمج',,لا توجد نتائج للبحث')
+	#else: DIALOG_OK('رسالة من المبرمج',,لا توجد نتائج للبحث')
 	return
 
 

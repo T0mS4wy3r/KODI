@@ -51,9 +51,9 @@
 				</control>
 				<control type="textbox" id="52">
 					<description>Text Area big right</description>
-					<posx>-310</posx>
+					<posx>-300</posx>
 					<posy>55</posy>
-					<width>1490</width>
+					<width>1480</width>
 					<height>610</height>
 					<label></label>
 					<monofont>mono30</monofont>

@@ -25,7 +25,7 @@ def MENU(website=''):
 	#addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
-	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-MENU-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-MENU-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
 	if html_blocks:
@@ -47,8 +47,8 @@ def MENU(website=''):
 	return html
 
 def TITLES(url):
-	#XBMCGUI_DIALOG_OK(url,'TITLES')
-	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'',headers,True,'','ARABLIONZ-TITLES-1st')
+	#DIALOG_OK(url,'TITLES')
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers,True,'','ARABLIONZ-TITLES-1st')
 	html = response.content#.encode('utf8')
 	if 'getposts' in url: block = html
 	else:
@@ -92,7 +92,7 @@ def TITLES(url):
 
 def EPISODES(url):
 	episodesCount,items,itemsNEW = -1,[],[]
-	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'',headers,True,'','ARABLIONZ-EPISODES-1st')
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers,True,'','ARABLIONZ-EPISODES-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('ti-list-numbered(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
@@ -131,21 +131,21 @@ def PLAY(url):
 	#LOG_THIS('NOTICE','EMAD 111')
 	linkLIST = []
 	parts = url.split('/')
-	#XBMCGUI_DIALOG_OK(url,'PLAY-1st')
+	#DIALOG_OK(url,'PLAY-1st')
 	#url = unquote(quote(url))
 	hostname = website0a
-	response = openURL_requests_cached(LONG_CACHE,'GET',url,'',headers,True,True,'ARABLIONZ-PLAY-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'',headers,True,True,'ARABLIONZ-PLAY-1st')
 	html = response.content#.encode('utf8')
 	id = re.findall('postId:"(.*?)"',html,re.DOTALL)
 	if not id: id = re.findall('post_id=(.*?)"',html,re.DOTALL)
 	if not id: id = re.findall('post-id="(.*?)"',html,re.DOTALL)
 	if id: id = id[0]
-	else: XBMCGUI_DIALOG_OK('رسالة من المبرمج','يرجى إرسال هذه المشكلة إلى المبرمج  من قائمة خدمات البرنامج')
+	else: DIALOG_OK('رسالة من المبرمج','يرجى إرسال هذه المشكلة إلى المبرمج  من قائمة خدمات البرنامج')
 	#LOG_THIS('NOTICE','EMAD START TIMING 111')
 	if True or '/watch/' in html:
 		#parts = url.split('/')
 		url2 = url.replace(parts[3],'watch')
-		response = openURL_requests_cached(LONG_CACHE,'GET',url2,'',headers,True,True,'ARABLIONZ-PLAY-2nd')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers,True,True,'ARABLIONZ-PLAY-2nd')
 		html2 = response.content#.encode('utf8')
 		items1 = re.findall('data-embedd="(.*?)".*?alt="(.*?)"',html2,re.DOTALL)
 		items2 = re.findall('data-embedd=".*?(http.*?)("|&quot;)',html2,re.DOTALL)
@@ -179,14 +179,14 @@ def PLAY(url):
 				link = server+'?named=__watch'+quality
 			linkLIST.append(link)
 	#LOG_THIS('NOTICE','['+quality+']    ['+title+']')
-	#selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب', linkLIST)
-	#XBMCGUI_DIALOG_OK('watch 1',	str(len(items)))
+	#selection = DIALOG_SELECT('أختر البحث المناسب', linkLIST)
+	#DIALOG_OK('watch 1',	str(len(items)))
 	if 'DownloadNow' in html:
 		headers2 = { 'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8' }
 		url2 = url+'/download'
-		response = openURL_requests_cached(LONG_CACHE,'GET',url2,'',headers2,True,'','ARABLIONZ-PLAY-3rd')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers2,True,'','ARABLIONZ-PLAY-3rd')
 		html2 = response.content#.encode('utf8')
-		#XBMCGUI_DIALOG_OK(url2,html2)
+		#DIALOG_OK(url2,html2)
 		html_blocks = re.findall('<ul class="download-items(.*?)</ul>',html2,re.DOTALL)
 		for block in html_blocks:
 			items = re.findall('href="(http.*?)".*?<span>(.*?)<.*?<p>(.*?)<',block,re.DOTALL)
@@ -196,7 +196,7 @@ def PLAY(url):
 	elif '/download/' in html:
 		headers2 = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 		url2 = hostname + '/ajaxCenter?_action=getdownloadlinks&postId='+id
-		response = openURL_requests_cached(LONG_CACHE,'GET',url2,'',headers2,True,True,'ARABLIONZ-PLAY-4th')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers2,True,True,'ARABLIONZ-PLAY-4th')
 		html2 = response.content#.encode('utf8')
 		if 'download-btns' in html2:
 			items3 = re.findall('href="(.*?)"',html2,re.DOTALL)
@@ -206,7 +206,7 @@ def PLAY(url):
 					linkLIST.append(url3)
 				elif '/page/' in url3:
 					quality = ''
-					response = openURL_requests_cached(LONG_CACHE,'GET',url3,'',headers,True,True,'ARABLIONZ-PLAY-5th')
+					response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url3,'',headers,True,True,'ARABLIONZ-PLAY-5th')
 					html4 = response.content#.encode('utf8')
 					blocks = re.findall('(<strong>.*?)-----',html4,re.DOTALL)
 					for block4 in blocks:
@@ -226,7 +226,7 @@ def PLAY(url):
 						for link5 in items5:
 							link5 = link5+'?named='+server4+'__download'+quality
 							linkLIST.append(link5)
-			#XBMCGUI_DIALOG_OK('download 1',	str(len(linkLIST))	)
+			#DIALOG_OK('download 1',	str(len(linkLIST))	)
 		elif 'slow-motion' in html2:
 			html2 = html2.replace('<h6 ','==END== ==START==')+'==END=='
 			html2 = html2.replace('<h3 ','==END== ==START==')+'==END=='
@@ -236,7 +236,7 @@ def PLAY(url):
 			if all_blocks:
 				for block4 in all_blocks:
 					if 'href=' not in block4: continue
-					#XBMCGUI_DIALOG_OK('download 111',	block4	)
+					#DIALOG_OK('download 111',	block4	)
 					quality4 = ''
 					items4 = re.findall('slow-motion">(.*?)<',block4,re.DOTALL)
 					for item4 in items4:
@@ -260,9 +260,9 @@ def PLAY(url):
 					link4 = link4.strip(' ')+'?named='+server4+'__download'
 					linkLIST.append(link4)
 	#LOG_THIS('NOTICE','EMAD 222')
-	#XBMCGUI_DIALOG_OK('both: watch & download',	str(len(linkLIST))	)
-	#selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب', linkLIST)
-	if len(linkLIST)==0: XBMCGUI_DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
+	#DIALOG_OK('both: watch & download',	str(len(linkLIST))	)
+	#selection = DIALOG_SELECT('أختر البحث المناسب', linkLIST)
+	if len(linkLIST)==0: DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')
@@ -273,7 +273,7 @@ def SEARCH(search):
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
-	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-SEARCH-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-SEARCH-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('chevron-select(.*?)</div>',html,re.DOTALL)
 	if showdialogs and html_blocks:
@@ -284,7 +284,7 @@ def SEARCH(search):
 			if title in ['رياضة و مصارعه']: continue
 			categoryLIST.append(category)
 			filterLIST.append(title)
-		selection = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
+		selection = DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
 		if selection == -1 : return
 		category = categoryLIST[selection]
 	else: category = ''
@@ -293,7 +293,8 @@ def SEARCH(search):
 	return
 
 def FILTERS_MENU(url,filter):
-	#XBMCGUI_DIALOG_OK(filter,url)
+	filter = filter.replace('_FORGETRESULTS_','')
+	#DIALOG_OK(filter,url)
 	menu_list = ['category','genre','release-year']
 	if '?' in url: url = url.split('/getposts?')[0]
 	type,filter = filter.split('___',1)
@@ -317,11 +318,11 @@ def FILTERS_MENU(url,filter):
 		addMenuItem('folder',menu_name+'أظهار قائمة الفيديو التي تم اختيارها ',url2,201)
 		addMenuItem('folder',menu_name+' [[   '+filter_show+'   ]]',url2,201)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','ARABLIONZ-FILTERS_MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','ARABLIONZ-FILTERS_MENU-1st')
 	html_blocks = re.findall('div class="form(.*?)class="row',html,re.DOTALL)
 	block = html_blocks[0]
 	select_blocks = re.findall('select.*?<a.*?>(.*?)</a>.*?data-tax="(.*?)"(.*?)</ul>',block,re.DOTALL)
-	#XBMCGUI_DIALOG_OK('',str(select_blocks))
+	#DIALOG_OK('',str(select_blocks))
 	dict = {}
 	for name,category2,block in select_blocks:
 		name = name.replace('--','')
@@ -340,7 +341,7 @@ def FILTERS_MENU(url,filter):
 			new_options = filter_options+'&'+category2+'=0'
 			new_values = filter_values+'&'+category2+'=0'
 			new_filter = new_options+'___'+new_values
-			addMenuItem('folder',menu_name+'الجميع :'+name,url2,204,'','',new_filter)
+			addMenuItem('folder',menu_name+'الجميع :'+name,url2,204,'','',new_filter+'_FORGETRESULTS_')
 		dict[category2] = {}
 		for value,option in items:
 			if option in ignoreLIST: continue
@@ -352,7 +353,7 @@ def FILTERS_MENU(url,filter):
 			new_filter2 = new_options+'___'+new_values
 			title = option+' :'#+dict[category2]['0']
 			title = option+' :'+name
-			if type=='FILTERS': addMenuItem('folder',menu_name+title,url,204,'','',new_filter2)
+			if type=='FILTERS': addMenuItem('folder',menu_name+title,url,204,'','',new_filter2+'_FORGETRESULTS_')
 			elif type=='CATEGORIES' and menu_list[-2]+'=' in filter_options:
 				clean_filter = RECONSTRUCT_FILTER(new_values,'modified_filters')
 				url3 = url+'/getposts?'+clean_filter
@@ -361,7 +362,7 @@ def FILTERS_MENU(url,filter):
 	return
 
 def RECONSTRUCT_FILTER(filters,mode):
-	#XBMCGUI_DIALOG_OK(filters,'RECONSTRUCT_FILTER 11')
+	#DIALOG_OK(filters,'RECONSTRUCT_FILTER 11')
 	# mode=='modified_values'		only non empty values
 	# mode=='modified_filters'		only non empty filters
 	# mode=='all'					all filters (includes empty filter)
@@ -385,6 +386,6 @@ def RECONSTRUCT_FILTER(filters,mode):
 	new_filters = new_filters.strip(' + ')
 	new_filters = new_filters.strip('&')
 	new_filters = new_filters.replace('=0','=')
-	#XBMCGUI_DIALOG_OK(filters,'RECONSTRUCT_FILTER 22')
+	#DIALOG_OK(filters,'RECONSTRUCT_FILTER 22')
 	return new_filters
 

@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
-	XBMCGUI_DIALOG_OK('رسالة من المبرمج',message)
+	DIALOG_OK('رسالة من المبرمج',message)
 	return
 
 def MENU(website=''):
@@ -30,15 +30,15 @@ def MENU(website=''):
 	addMenuItem('folder',website+'___'+menu_name+'تليفزيون موفيز لاند',website0a,181,'','','tv')
 	addMenuItem('folder',website+'___'+menu_name+'الاكثر مشاهدة',website0a,181,'','','top-views')
 	addMenuItem('folder',website+'___'+menu_name+'أقوى الافلام الحالية',website0a,181,'','','top-movies')
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','MOVIZLAND-MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','MOVIZLAND-MENU-1st')
 	items = re.findall('<h2><a href="(.*?)".*?">(.*?)<',html,re.DOTALL)
 	for link,title in items:
 		addMenuItem('folder',website+'___'+menu_name+title,link,181)
-	#XBMCGUI_DIALOG_OK(html,html)
+	#DIALOG_OK(html,html)
 	return html
 
 def TITLES(url,type=''):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','MOVIZLAND-ITEMS-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','MOVIZLAND-ITEMS-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	if type=='latest-movies': block = re.findall('class="titleSection">أحدث الأفلام</h1>(.*?)<h1',html,re.DOTALL)[0]
 	elif type=='box-office': block = re.findall('class="titleSection">بوكس اوفيس موفيز لاند</h1>(.*?)<h1',html,re.DOTALL)[0]
@@ -57,7 +57,7 @@ def TITLES(url,type=''):
 		else: img,title,link,link2 = img,var1,var2,var3
 		link = unquote(link)
 		link = link.replace('?view=true','')
-		#XBMCGUI_DIALOG_OK(link,link2)
+		#DIALOG_OK(link,link2)
 		title = unescapeHTML(title)
 		#title2 = re.findall('(.*?)(بجودة|بجوده)',title,re.DOTALL)
 		#if title2: title = title2[0][0]
@@ -88,7 +88,7 @@ def TITLES(url,type=''):
 
 def EPISODES(url):
 	url2 = url.split('?servers=')[0]
-	html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','MOVIZLAND-EPISODES-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url2,'',headers,'','MOVIZLAND-EPISODES-1st')
 	block = re.findall('<title>(.*?)</title>.*?height="([0-9]+)" src="(.*?)"',html,re.DOTALL)
 	title,dummy,img = block[0]
 	name = re.findall('(.*?) (الحلقة|الحلقه) [0-9]+',title,re.DOTALL)
@@ -97,7 +97,7 @@ def EPISODES(url):
 	items = []
 	html_blocks = re.findall('class="episodesNumbers"(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
-		#XBMCGUI_DIALOG_OK(url2,str(html_blocks))
+		#DIALOG_OK(url2,str(html_blocks))
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)"',block,re.DOTALL)
 		for link in items:
@@ -120,7 +120,7 @@ def PLAY(url):
 	urls = url.split('?servers=')
 	url2 = urls[0]
 	del urls[0]
-	html = openURL_cached(LONG_CACHE,url2,'',headers,'','MOVIZLAND-PLAY-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url2,'',headers,'','MOVIZLAND-PLAY-1st')
 	link = re.findall('font-size: 25px;" href="(.*?)"',html,re.DOTALL)[0]
 	if link not in urls: urls.append(link)
 	linkLIST = []
@@ -132,7 +132,7 @@ def PLAY(url):
 	# all_vb_links
 	for link in urls:
 		if '://vb.movizland.' in link:
-			html = openURL_cached(LONG_CACHE,link,'',headers,'','MOVIZLAND-PLAY-2nd')
+			html = OPENURL_CACHED(LONG_CACHE,link,'',headers,'','MOVIZLAND-PLAY-2nd')
 			html = html.decode('windows-1256').encode('utf8')
 			#xbmc.log(html, level=xbmc.LOGNOTICE)
 			#</a></div><br /><div align="center">(\*\*\*\*\*\*\*\*|13721411411.png|)
@@ -142,7 +142,7 @@ def PLAY(url):
 			html = html.replace('class="tborder" align="center"','src="/uploads/13721411411.png"')
 			html_blocks = re.findall('(src="/uploads/13721411411.png".*?href="http://moshahda\..*?/\w+.html".*?src="/uploads/13721411411.png")',html,re.DOTALL)
 			if html_blocks:
-				#XBMCGUI_DIALOG_OK(url,str(len(html_blocks)))
+				#DIALOG_OK(url,str(len(html_blocks)))
 				titleLIST2,linkLIST2 = [],[]
 				if len(html_blocks)==1:
 					title = ''
@@ -161,7 +161,7 @@ def PLAY(url):
 						title = title.strip(' ')
 						title = title.replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ').replace('  ',' ')
 						titleLIST2.append(title)
-					selection = XBMCGUI_DIALOG_SELECT('أختر الفيديو المطلوب:', titleLIST2)
+					selection = DIALOG_SELECT('أختر الفيديو المطلوب:', titleLIST2)
 					if selection == -1 : return
 					title = titleLIST2[selection]
 					block = html_blocks[selection]
@@ -177,7 +177,7 @@ def PLAY(url):
 				block = block.replace('روابط المشاهد','src="/uploads/13721411411.png"  \n  src="/uploads/13721411411.png"  \n  typetype="watch"  \n  ')
 				links_blocks = re.findall('(src="/uploads/13721411411.png".*?href="http://e5tsar.com/\d+".*?src="/uploads/13721411411.png")',block,re.DOTALL)
 				for link_block in links_blocks:
-					#XBMCGUI_DIALOG_OK('',str(link_block))
+					#DIALOG_OK('',str(link_block))
 					type = re.findall(' typetype="(.*?)" ',link_block)
 					if type:
 						if type[0]!='both': type = '__'+type[0]
@@ -190,7 +190,7 @@ def PLAY(url):
 						linkLIST.append(link)
 	# mobile_watch_link
 	url3 = url2.replace(website0a,website0b)
-	html = openURL_cached(LONG_CACHE,url3,'',headers,'','MOVIZLAND-PLAY-3rd')
+	html = OPENURL_CACHED(LONG_CACHE,url3,'',headers,'','MOVIZLAND-PLAY-3rd')
 	items = re.findall('" href="(.*?)"',html,re.DOTALL)
 	#id2 = re.findall('" href="(http://moshahda\..*?/embedM-(\w+)-.*?.html)',html,re.DOTALL)
 	#if id2:
@@ -204,9 +204,9 @@ def PLAY(url):
 		link2LIST.append(link2)
 		name2LIST.append(name2)
 	if len(linkLIST)==0:
-		XBMCGUI_DIALOG_OK('رسالة من المبرمج','غير قادر على ايجاد ملف الفيديو المناسب')
+		DIALOG_OK('رسالة من المبرمج','غير قادر على ايجاد ملف الفيديو المناسب')
 	else:
-		#selection = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', linkLIST)
+		#selection = DIALOG_SELECT('اختر الفلتر المناسب:', linkLIST)
 		#if selection == -1 : return
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')
@@ -217,7 +217,7 @@ def SEARCH(search):
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','MOVIZLAND-SEARCH-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,website0a,'',headers,'','MOVIZLAND-SEARCH-1st')
 	items = re.findall('<option value="(.*?)">(.*?)</option>',html,re.DOTALL)
 	categoryLIST = [ '' ]
 	filterLIST = [ 'الكل وبدون فلتر' ]
@@ -225,12 +225,12 @@ def SEARCH(search):
 		categoryLIST.append(category)
 		filterLIST.append(title)
 	if category:
-		selection = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
+		selection = DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
 		if selection == -1 : return
 		category = categoryLIST[selection]
 	else: category = ''
 	url = website0a + '/?s='+search+'&mcat='+category
-	#XBMCGUI_DIALOG_OK(url,url)
+	#DIALOG_OK(url,url)
 	TITLES(url)
 	return
 

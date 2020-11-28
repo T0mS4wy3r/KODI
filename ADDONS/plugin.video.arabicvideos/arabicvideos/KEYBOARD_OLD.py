@@ -6,7 +6,7 @@ def MAIN(mode,keyboard):
 	import unicodedata,email.charset
 	#import simplejson as json
 	#from LIBRARY import *
-	#XBMCGUI_DIALOG_OK(str(mode),text)
+	#DIALOG_OK(str(mode),text)
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
 	keyboard = text
 	if keyboard=='': return
@@ -35,42 +35,42 @@ def MAIN(mode,keyboard):
 		new2 = str(type(keyboard))+' '+keyboard+' '+ttype+' '
 		for i in range(0,len(keyboard),1):
 			new2 += hex(ord(keyboard[i])).replace('0x','')+' '
-		#XBMCGUI_DIALOG_OK(new1,new2)
+		#DIALOG_OK(new1,new2)
 
 	return
 
 	#for i in range(0,len(keyboard)-2,3):
 	#	string=hex(ord(keyboard[i+0]))+'  '+hex(ord(keyboard[i+1]))+'  '+hex(ord(keyboard[i+2]))
-	#	XBMCGUI_DIALOG_OK('',string)
+	#	DIALOG_OK('',string)
 	#return
 	#keyboard = keyboard.decode('utf8')
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 
 	#keyboard = mixARABIC(keyboard)
 	#keyboard = keyboard.decode('utf8')
 	#keyboard = unicodedata.normalize('NFKD',keyboard)
-	#XBMCGUI_DIALOG_OK('',   hex(  unicodedata.combining(keyboard[0])  )   )
-	#XBMCGUI_DIALOG_OK(keyboard,   hex(ord(  keyboard[0]  ))   )
+	#DIALOG_OK('',   hex(  unicodedata.combining(keyboard[0])  )   )
+	#DIALOG_OK(keyboard,   hex(ord(  keyboard[0]  ))   )
 
 	#new = ''
 	#for letter in keyboard:
-	#	XBMCGUI_DIALOG_OK('Mode 0',unicodedata.decomposition(letter) )
+	#	DIALOG_OK('Mode 0',unicodedata.decomposition(letter) )
 	#	new += '\u0' + hex(ord(letter)).replace('0x','')
 	#keyboard = new
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 
 	#new = ''
 	#for i in range(len(keyboard)-6,-5,-6):
-	#	#XBMCGUI_DIALOG_OK('',str(i))
+	#	#DIALOG_OK('',str(i))
 	#	new += keyboard[i] + keyboard[i+1] + keyboard[i+2] + keyboard[i+3] + keyboard[i+4] + keyboard[i+5]
 	#keyboard = new
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 
 	#keyboard = keyboard.decode('unicode_escape')
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 
 	#keyboard = keyboard.encode('utf8')
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 
 
 	#keyboard = 'emad'
@@ -80,24 +80,24 @@ def MAIN(mode,keyboard):
 	#keyboard = keyboard.encode('utf8')
 	#new = keyboard.decode('unicode_escape')
 	#keyboard = new
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 	#keyboard = mixARABIC(keyboard)
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 
 	#new = ''
 	#for i in range(len(keyboard)-2,-1,-2):
 	#	new += keyboard[i] + keyboard[i+1]
 	#keyboard = new
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 
 	#keyboard = keyboard.encode('utf8')
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 
 	#new = ''
 	#for i in range(len(keyboard)-2,-1,-2):
 	#	new += keyboard[i] + keyboard[i+1]
 	#keyboard = new
-	#XBMCGUI_DIALOG_OK('',keyboard)
+	#DIALOG_OK('',keyboard)
 
 
 
@@ -111,31 +111,31 @@ def MAIN(mode,keyboard):
 		#for i in range(len(keyboard)-2,-1,-2):
 		#	new += keyboard[i] + keyboard[i+1]
 		#keyboard = new
-		#XBMCGUI_DIALOG_OK('',keyboard)
+		#DIALOG_OK('',keyboard)
 
 
 		#keyboard = keyboard.dedcode('utf8')
-		#XBMCGUI_DIALOG_OK(str(ord(keyboard[0]))+' '+str(ord(keyboard[1]))+' '+str(ord(keyboard[2])),str(len(keyboard)))
-		#XBMCGUI_DIALOG_OK('Mode 0 Letters',keyboard)
+		#DIALOG_OK(str(ord(keyboard[0]))+' '+str(ord(keyboard[1]))+' '+str(ord(keyboard[2])),str(len(keyboard)))
+		#DIALOG_OK('Mode 0 Letters',keyboard)
 		#new = ''
 		#for i in range(len(keyboard)-2,-1,-2):
 		#	new += keyboard[i] + keyboard[i+1]
 		#keyboard = new
 		#new = keyboard.decode('utf8')
 		#new = new.decode('utf8')
-		#XBMCGUI_DIALOG_OK('Mode 0',new )
+		#DIALOG_OK('Mode 0',new )
 		#new1 = ''
 		#for letter in new:
-		#	XBMCGUI_DIALOG_OK('Mode 0',unicodedata.decomposition(letter) )
+		#	DIALOG_OK('Mode 0',unicodedata.decomposition(letter) )
 		#	new1 += '\u' + hex(ord(letter)).replace('x','')
 		#new1 = new1.decode('unicode_escape')
-		#XBMCGUI_DIALOG_OK('Mode 0',new1 )
+		#DIALOG_OK('Mode 0',new1 )
 		#new = unicodedata.decomposition(    unichr(   ord(new[1])    )   )
 		#new = unicodedata.decomposition(    unichr(   hex(ord(new[1]))    )   )
 		#new = mixARABIC(new)
 		#keyboard = new.encode('utf8')
 		#new = new.decode('utf8') #.decode('unicode_escape')
-		#XBMCGUI_DIALOG_OK('Mode 0',str(ord(new[2])) ) #unicodedata.decomposition(new.decode('utf8'))   )
+		#DIALOG_OK('Mode 0',str(ord(new[2])) ) #unicodedata.decomposition(new.decode('utf8'))   )
 		#keyboard = mixARABIC(new)
 		#keyboard = mixARABIC(keyboard)
 		#method="Input.SendText"

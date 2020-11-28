@@ -1,4 +1,38 @@
 ﻿
+v7.5.0	2020-11-28
+Added new site AKWAMFCAM
+Added errors handling and reporting
+Added DIALOG_BUSY to MAIN
+Added GITEE as a backup for GITHUB
+Added numbers to Analytics report
+Added PROXIES & DNS to all network problems
+Added FOGETRESULTS to all FILTERS_MENU sites
+Added new log messages for network connections
+Added message about KODI 19 is not supported
+Added logs and notification for SSL requests
+Fixed requests ConnectionError
+Fixed CIMANOW opening a whole series using episode url
+Fixed AKWAM listing, playing & featured menu
+Fixed errors related to network blocking
+Fixed ARABSEED main menu, listings, user-agent & resolver
+Fixed RESOLVERS search for SERVERS quality
+Fixed KODI version reading
+Fixed testing IPTV links
+Fixed adding bad IPTV links
+Fixed IPTV download time estimation
+Fixed listing of downloaded videos
+Modified DNS_RESOLVER
+Modified main menu
+Modified program exit
+Renamed all Dialog functions
+Renamed all OPENURL functions
+Splitted "EMAD Repository" to 3 repositories
+Rewrote ANALYTICS report client & server
+Removed AKWAM watching links due to google recaptcha
+Updated USERAGENTS file
+Minor fixes and improvements
+
+
 v7.4.1	2020-11-02
 Fixed bug in LIBRARY.MAIN
 

@@ -20,7 +20,7 @@ def MAIN(mode,url,text):
 def MENU(website=''):
 	addMenuItem('folder',menu_name+'بحث في الموقع','',319,'','','_REMEMBERRESULTS_')
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
-	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'','','','','SHIAVOICE-MENU-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'','','','','SHIAVOICE-MENU-1st')
 	html = response.content
 	html_blocks = re.findall('id="menulinks"(.*?)</ul>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -42,7 +42,7 @@ def MENU(website=''):
 def LATEST(seq):
 	#t1 = time.time()
 	#LOG_THIS('NOTICE','start')
-	response = openURL_requests_cached(SHORT_CACHE,'GET',website0a,'','','','','SHIAVOICE-LATEST-1st')
+	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',website0a,'','','','','SHIAVOICE-LATEST-1st')
 	html = response.content
 	#LOG_THIS('NOTICE','elpased = '+str(time.time()-t1))
 	if seq=='0':
@@ -81,8 +81,8 @@ def LATEST(seq):
 	return
 
 def TITLES(url):
-	#XBMCGUI_DIALOG_OK(url,'')
-	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','','','','SHIAVOICE-TITLES-1st')
+	#DIALOG_OK(url,'')
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','SHIAVOICE-TITLES-1st')
 	html = response.content
 	html_blocks = re.findall('ibox-heading"(.*?)class="float-right',html,re.DOTALL)
 	block = html_blocks[0]
@@ -101,7 +101,7 @@ def EPISODES(html):
 	block = html_blocks[0]
 	items = re.findall('href="(http.*?)".*?</i>(.*?)<.*?cell">(.*?)<.*?cell">(.*?)<.*?cell">(.*?)<',block,re.DOTALL)
 	for link,title,name,count,duration in items:
-		#XBMCGUI_DIALOG_OK('',link+','+title+','+name+','+count+','+duration)
+		#DIALOG_OK('',link+','+title+','+name+','+count+','+duration)
 		title = title.strip(' ')
 		name = name.strip(' ')
 		title = title+' ('+name+')'
@@ -109,7 +109,7 @@ def EPISODES(html):
 	return
 
 def SEARCH_ITEMS(url):
-	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','','','','SHIAVOICE-TITLES-1st')
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','SHIAVOICE-TITLES-1st')
 	html = response.content
 	html_blocks = re.findall('class="ibox-content p-1"(.*?)class="ibox-content"',html,re.DOTALL)
 	if not html_blocks:
@@ -123,7 +123,7 @@ def SEARCH_ITEMS(url):
 	return
 
 def PLAY(url):
-	response = openURL_requests_cached(SHORT_CACHE,'GET',url,'','','','','SHIAVOICE-PLAY-1st')
+	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'','','','','SHIAVOICE-PLAY-1st')
 	html = response.content
 	link = re.findall('<audio.*?src="(.*?)"',html,re.DOTALL)
 	if not link: link = re.findall('<video.*?src="(.*?)"',html,re.DOTALL)
@@ -139,12 +139,12 @@ def SEARCH(search):
 	typeList = ['&t=a','&t=c','&t=s']
 	if showdialogs:
 		searchTitle = ['قارئ','إصدار / مجلد','مقطع الصوتي']
-		selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب', searchTitle)
+		selection = DIALOG_SELECT('أختر البحث المناسب', searchTitle)
 		if selection == -1: return
 	else: selection = 2
 	type = typeList[selection]
 	url = website0a+'/search.php?q='+search+type
-	response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','','','','SHIAVOICE-SEARCH-1st')
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','SHIAVOICE-SEARCH-1st')
 	html = response.content
 	html_blocks = re.findall('class="ibox-content"(.*?)class="ibox-content"',html,re.DOTALL)
 	block = html_blocks[0]

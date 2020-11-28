@@ -18,7 +18,7 @@ def MAIN(mode,url,text):
 def MENU(website=''):
 	addMenuItem('folder',menu_name+'بحث في الموقع','',309,'','','_REMEMBERRESULTS_')
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
-	response = openURL_requests_cached(LONG_CACHE,'GET',website0a,'',headers,'','','SHIAVOICE-MENU-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,'','','CIMANOW-MENU-1st')
 	html = response.content
 	html_blocks = re.findall('class="filter"(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -42,27 +42,31 @@ def MENU(website=''):
 	return html
 
 def TITLES(url,key=''):
-	#XBMCGUI_DIALOG_OK(url,html)
+	#DIALOG_OK(url,html)
 	url = unquote(url)
 	if 'الحلقة' in url:
-		response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','','','','CIMANOW-TITLES-1st')
+		response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','CIMANOW-TITLES-1st')
 		html = response.content
 		html_blocks = re.findall('class="SeriesPR"(.*?)class="related"',html,re.DOTALL)
 		block = html_blocks[0]
 		links = re.findall('href="(.*?)"',block,re.DOTALL)
 		url = links[2]
 		url = unquote(url)
-		#XBMCGUI_DIALOG_OK(url,'')
+		#DIALOG_OK(url,'')
 	if 'filter.php' in url:
 		headers = {'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'}
 		data = {'key':key}
-		response = openURL_requests_cached(REGULAR_CACHE,'POST',url,data,headers,'','','CIMANOW-TITLES-2nd')
+		response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST',url,data,headers,'','','CIMANOW-TITLES-2nd')
 		block = response.content
 	else:
-		response = openURL_requests_cached(REGULAR_CACHE,'GET',url,'','','','','CIMANOW-TITLES-3rd')
+		response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','CIMANOW-TITLES-3rd')
 		html = response.content
 		html_blocks = re.findall('class="results"(.*?)class="footer-menu"',html,re.DOTALL)
-		block = html_blocks[0]
+		if html_blocks: block = html_blocks[0]
+		else:
+			new_url = re.findall('<span>[\r\n]+<a href="(.*?)"',html,re.DOTALL)
+			TITLES(new_url[2])
+			return
 	items = re.findall('href="(.*?)".*?class="backg".*?url\((.*?)\).*?class="titleBoxSing">(.*?)<',block,re.DOTALL)
 	allTitles = []
 	for link,img,title in items:
@@ -85,14 +89,14 @@ def TITLES(url,key=''):
 
 def PLAY(url):
 	linkLIST = []
-	#XBMCGUI_DIALOG_OK(url,'')
-	#response = openURL_requests_cached(SHORT_CACHE,'GET',url,'','','','','CIMANOW-PLAY-1st')
+	#DIALOG_OK(url,'')
+	#response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'','','','','CIMANOW-PLAY-1st')
 	#html = response.content
 	#url2 = re.findall('redirect=(.*?)"',html,re.DOTALL)
 	#if url2: url2 = base64.b64decode(url2[0])
 	#else: 
 	url2 = url+'watch'
-	response = openURL_requests_cached(SHORT_CACHE,'GET',url2,'','','','','CIMANOW-PLAY-2nd')
+	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url2,'','','','','CIMANOW-PLAY-2nd')
 	html2 = response.content
 	# watch links
 	html_blocks = re.findall('class="watch"(.*?)</ul>',html2,re.DOTALL)
@@ -115,10 +119,10 @@ def PLAY(url):
 		else: quality = ''
 		link2 = link2 = link+'?named='+title+'__download'+quality
 		linkLIST.append(link2)
-	#selection = XBMCGUI_DIALOG_SELECT('أختر البحث المناسب',linkLIST)
+	#selection = DIALOG_SELECT('أختر البحث المناسب',linkLIST)
 	#LOG_THIS('NOTICE',str(linkLIST))
 	if len(linkLIST)==0:
-		XBMCGUI_DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
+		DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')

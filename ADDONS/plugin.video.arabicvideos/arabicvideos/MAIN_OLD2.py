@@ -11,8 +11,8 @@ mode1 = int(mode0%10)
 mode2 = int(mode0/10)
 
 
-#XBMCGUI_DIALOG_OK('['+menu_path+']','['+mode+']')
-#XBMCGUI_DIALOG_OK('['+menu_label+']','['+menu_path+']')
+#DIALOG_OK('['+menu_path+']','['+mode+']')
+#DIALOG_OK('['+menu_label+']','['+menu_path+']')
 
 
 #message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
@@ -34,7 +34,7 @@ IPTV_MODES = mode2==23 and text!=''
 YOUTUBE_UPDATE = mode2==14 and 'UPDATE' in text
 
 
-#XBMCGUI_DIALOG_OK(addon_path,str(addon_handle))
+#DIALOG_OK(addon_path,str(addon_handle))
 
 
 if favourite not in ['','1','2','3','4','5']:
@@ -72,27 +72,27 @@ else: results = MAIN_DISPATCHER(type,name99,url99,mode,image99,page99,text,favou
 
 if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 if not os.path.exists(dbfile):
-	XBMCGUI_DIALOG_OK('رسالة من المبرمج','تم مسح الكاش الموجود في البرنامج . أو تم تحديث البرنامج إلى الإصدار الجديد . سيقوم البرنامج الآن ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
+	DIALOG_OK('رسالة من المبرمج','تم مسح الكاش الموجود في البرنامج . أو تم تحديث البرنامج إلى الإصدار الجديد . سيقوم البرنامج الآن ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
 	CLEAN_KODI_CACHE_FOLDER()
 	conn = sqlite3.connect(dbfile)
 	conn.close()
 	import SERVICES
 	SERVICES.KODI_SKIN()
-	#XBMCGUI_DIALOG_NOTIFICATION('رسالة من المبرمج','فحص اضافات adaptive + rtmp')
-	#XBMCGUI_DIALOG_NOTIFICATION('رسالة من المبرمج','فحص مخزن عماد')
-	#XBMCGUI_DIALOG_OK('',str(iptv))
+	#DIALOG_NOTIFICATION('رسالة من المبرمج','فحص اضافات adaptive + rtmp')
+	#DIALOG_NOTIFICATION('رسالة من المبرمج','فحص مخزن عماد')
+	#DIALOG_OK('',str(iptv))
 	ENABLE_MPD(False)
 	ENABLE_RTMP(False)
-	SERVICES.INSTALL_REPOSITORY(True)
+	SERVICES.CHECK_INSTALLED_REPOSITORIES(True)
 	SERVICES.HTTPS_TEST()
 	#iptv = IPTV.isIPTVFiles(False)
 	#if iptv: 
-	XBMCGUI_DIALOG_OK('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
+	DIALOG_OK('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
 	import IPTV
 	IPTV.CREATE_STREAMS(False)
 
 
-#XBMCGUI_DIALOG_OK(addon_path,str(mode0))
+#DIALOG_OK(addon_path,str(mode0))
 
 
 if addon_handle>-1:
@@ -125,9 +125,9 @@ if addon_handle>-1:
 	xbmcplugin.endOfDirectory(addon_handle,succeeded,updateListing,cacheToDisc)
 
 	#PLAY_VIDEO_MODES = mode2 in [12,24,33,43,53,63,74,82,92,105,112,123,134,143,182,202,212,223,243,252]
-	#XBMCGUI_DIALOG_OK(str(succeeded),str(updateListing),str(cacheToDisc))
-	#XBMCGUI_DIALOG_OK(addon_path,str(addon_handle))
+	#DIALOG_OK(str(succeeded),str(updateListing),str(cacheToDisc))
+	#DIALOG_OK(addon_path,str(addon_handle))
 
 
-#XBMCGUI_DIALOG_OK(str(addon_handle),addon_path)
+#DIALOG_OK(str(addon_handle),addon_path)
 

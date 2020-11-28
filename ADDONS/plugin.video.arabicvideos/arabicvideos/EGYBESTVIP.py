@@ -30,7 +30,7 @@ def MAIN(mode,url,page,text):
 def MENU(website=''):
 	#addMenuItem('folder',menu_name+'اضغط هنا لاضافة اسم دخول وكلمة السر','',125)
 	#addMenuItem('folder',menu_name+'تحذير','',226)
-	#XBMCGUI_DIALOG_OK(website0a, html)
+	#DIALOG_OK(website0a, html)
 	#html_blocks=re.findall('id="menu"(.*?)mainLoad',html,re.DOTALL)
 	#block = html_blocks[0]
 	#items=re.findall('href="(.*?)".*?i>(.*?)\n',block,re.DOTALL)
@@ -41,7 +41,7 @@ def MENU(website=''):
 	addMenuItem('folder',website+'___'+menu_name+'الافلام',website0a+'/movies',221)
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/tv',221)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','EGYBESTVIP-MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','EGYBESTVIP-MENU-1st')
 	html_blocks=re.findall('class="ba mgb(.*?)>EgyBest</a>',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
@@ -64,7 +64,7 @@ def MENU(website=''):
 	"""
 
 def FILTERS_MENU(url):
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGYBESTVIP-FILTERS_MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','EGYBESTVIP-FILTERS_MENU-1st')
 	html_blocks=re.findall('id="main"(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items=re.findall('href="(.*?)".*?</i>(.*?)[\r\n]+',block,re.DOTALL)
@@ -81,12 +81,12 @@ def FILTERS_MENU(url):
 	return
 
 def TITLES(url,page):
-	#XBMCGUI_DIALOG_OK(str(url), str(page))
+	#DIALOG_OK(str(url), str(page))
 	if '/search' in url or '?' in url: url2 = url + '&'
 	else: url2 = url + '?'
 	#url2 = url2 + 'output_format=json&output_mode=movies_list&page='+page
 	url2 = url2 + 'page=' + page
-	html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','EGYBESTVIP-TITLES-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url2,'',headers,'','EGYBESTVIP-TITLES-1st')
 	#name = ''
 	#if '/season' in url:
 	#	name = re.findall('<h1>(.*?)<',html,re.DOTALL)
@@ -107,7 +107,7 @@ def TITLES(url,page):
 		"""
 		if '/series' in url and '/season' not in link: continue
 		if '/season' in url and '/episode' not in link: continue
-		#XBMCGUI_DIALOG_OK(title, str(link))
+		#DIALOG_OK(title, str(link))
 		title = name + escapeUNICODE(title).strip(' ')
 		"""
 		title = unescapeHTML(title)
@@ -116,7 +116,7 @@ def TITLES(url,page):
 		link = link.replace('\/','/')
 		img = img.replace('\/','/')
 		if 'http' not in img: img = 'http:' + img
-		#XBMCGUI_DIALOG_NOTIFICATION(img,'')
+		#DIALOG_NOTIFICATION(img,'')
 		url2 = website0a + link
 		"""
 		if '/movie/' in link or '/episode' in link:
@@ -146,9 +146,9 @@ def TITLES(url,page):
 def PLAY(url):
 	#global headers
 	titleLIST,linkLIST = [],[]
-	#XBMCGUI_DIALOG_OK(url, url[-45:])
+	#DIALOG_OK(url, url[-45:])
 	# https://egy4best.com/movie/فيلم-the-lion-king-2019-مترجم
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','EGYBESTVIP-PLAY-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','EGYBESTVIP-PLAY-1st')
 	ratingLIST = re.findall('<td>التصنيف</td>.*?">(.*?)<',html,re.DOTALL)
 	if False and RATING_CHECK(script_name,url,ratingLIST): return
 	# https://egybest.vip/movie/فيلم-the-lion-king-2019-مترجم
@@ -159,15 +159,15 @@ def PLAY(url):
 		for link in watch_download:
 			if '/watch/' in link: watchURL = link
 			elif '/download/' in link: downloadURL = link
-		if watchURL!='': htmlWatch = openURL_cached(LONG_CACHE,watchURL,'',headers,'','EGYBESTVIP-PLAY-2nd')
-		if downloadURL!='': htmlDownload = openURL_cached(LONG_CACHE,downloadURL,'',headers,'','EGYBESTVIP-PLAY-3rd')
-	#XBMCGUI_DIALOG_OK(downloadURL,watchURL)
+		if watchURL!='': htmlWatch = OPENURL_CACHED(LONG_CACHE,watchURL,'',headers,'','EGYBESTVIP-PLAY-2nd')
+		if downloadURL!='': htmlDownload = OPENURL_CACHED(LONG_CACHE,downloadURL,'',headers,'','EGYBESTVIP-PLAY-3rd')
+	#DIALOG_OK(downloadURL,watchURL)
 	# https://uploaded.egybest.download/?id=__the_lion_king_2019
 	watchitem = re.findall('id="video".*?data-src="(.*?)"',htmlWatch,re.DOTALL)
 	if watchitem:
 		url2 = watchitem[0]#+'||MyProxyUrl=http://79.165.242.84:4145'
 		if url2!='' and 'uploaded.egybest.download' in url2 and '/?id=_' not in url2:
-			html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','EGYBESTVIP-PLAY-4th')
+			html2 = OPENURL_CACHED(LONG_CACHE,url2,'',headers,'','EGYBESTVIP-PLAY-4th')
 			watchlist = re.findall('source src="(.*?)" title="(.*?)"',html2,re.DOTALL)
 			if watchlist:
 				for link,quality in watchlist:
@@ -176,7 +176,7 @@ def PLAY(url):
 				server = url2.split('/')[2]
 				linkLIST.append(url2+'?named='+server+'__watch')
 		elif url2!='':
-			#XBMCGUI_DIALOG_OK(url2,str(watchitem))
+			#DIALOG_OK(url2,str(watchitem))
 			server = url2.split('/')[2]
 			linkLIST.append(url2+'?named='+server+'__watch')
 	# https://inflam.cc/VLO1NNdGuy
@@ -190,7 +190,7 @@ def PLAY(url):
 				if link.count('/')>=2:
 					server = link.split('/')[2]
 					linkLIST.append(link+'?named='+server+'__download__mp4__'+quality)
-	#selection = XBMCGUI_DIALOG_SELECT('اختر الفيديو المناسب:', linkLIST)
+	#selection = DIALOG_SELECT('اختر الفيديو المناسب:', linkLIST)
 	#if selection == -1 : return
 	newLIST = []
 	for link in linkLIST:
@@ -198,7 +198,7 @@ def PLAY(url):
 		if 'faselhd' in link: continue
 		if 'egybest.vip?name' in link: continue
 		newLIST.append(link)
-	if len(newLIST)==0: XBMCGUI_DIALOG_OK('رسالة من المبرمج','هذا الفيديو يستخدم روابط غير معروفة في هذا البرنامج والمبرمج لم يستطيع إيحاد حل لهذه المشكلة')
+	if len(newLIST)==0: DIALOG_OK('رسالة من المبرمج','هذا الفيديو يستخدم روابط غير معروفة في هذا البرنامج والمبرمج لم يستطيع إيحاد حل لهذه المشكلة')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(newLIST,script_name,'video')
@@ -209,12 +209,12 @@ def SEARCH(search):
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	new_search = search.replace(' ','+')
-	html = openURL_cached(SHORT_CACHE,website0a,'',headers,'','EGYBESTVIP-SEARCH-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,website0a,'',headers,'','EGYBESTVIP-SEARCH-1st')
 	token = re.findall('name="_token" value="(.*?)"',html,re.DOTALL)
 	if token:
 		url = website0a+'/search?_token='+token[0]+'&q='+new_search
 		TITLES(url,'1')
-		#XBMCGUI_DIALOG_OK('', '')
+		#DIALOG_OK('', '')
 	return
 
 

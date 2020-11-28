@@ -49,21 +49,21 @@ def SERIES_MENU():
 	return
 
 def TITLES(url):
-	#XBMCGUI_DIALOG_OK(url,url)
+	#DIALOG_OK(url,url)
 	if '?' in url:
 		parts = url.split('?')
 		url = parts[0]
 		filter = '?' + urllib2.quote(parts[1],'=&:/%')
 	else: filter = ''
-	#XBMCGUI_DIALOG_OK(filter,'')
+	#DIALOG_OK(filter,'')
 	parts = url.split('/')
 	sort,page,type = parts[-1],parts[-2],parts[-3]
 	if sort in ['yop','review','views']:
 		if type=='movie': type1='فيلم'
 		elif type=='series': type1='مسلسل'
 		url = website0a + '/filter-programs/' + quote(type1) + '/' + page + '/' + sort + filter
-		#XBMCGUI_DIALOG_OK(url,page)
-		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-TITLES-1st')
+		#DIALOG_OK(url,page)
+		html = OPENURL_CACHED(REGULAR_CACHE,url,'','','','SHOOFMAX-TITLES-1st')
 		items = re.findall('"ref":(.*?),.*?"title":"(.*?)".+?"numep":(.*?),"res":"(.*?)"',html,re.DOTALL)
 		count_items=0
 		for id,title,episodes_count,img in items:
@@ -76,7 +76,7 @@ def TITLES(url):
 		if type=='movie': type1='movies'
 		elif type=='series': type1='series'
 		url = website0b + '/json/selected/' + sort + '-' + type1 + '-WW.json'
-		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-TITLES-2nd')
+		html = OPENURL_CACHED(REGULAR_CACHE,url,'','','','SHOOFMAX-TITLES-2nd')
 		items = re.findall('"ref":(.*?),"ep":(.*?),"base":"(.*?)","title":"(.*?)"',html,re.DOTALL)
 		count_items=0
 		for id,episodes_count,img,title in items:
@@ -101,12 +101,12 @@ def EPISODES(url):
 	img = parts[3]
 	url = url.split('?')[0]
 	if episodes_count==0:
-		html = openURL_cached(REGULAR_CACHE,url,'','','','SHOOFMAX-EPISODES-1st')
+		html = OPENURL_CACHED(REGULAR_CACHE,url,'','','','SHOOFMAX-EPISODES-1st')
 		html_blocks = re.findall('<select(.*?)</select>',html,re.DOTALL)
 		block = html_blocks[0]
 		items = re.findall('option value="(.*?)"',block,re.DOTALL)
 		episodes_count = int(items[-1])
-		#XBMCGUI_DIALOG_OK(episodes_count,'')
+		#DIALOG_OK(episodes_count,'')
 	#name = xbmc.getInfoLabel( "ListItem.Title" )
 	#img = xbmc.getInfoLabel( "ListItem.Thumb" )
 	for episode in range(episodes_count,0,-1):
@@ -116,13 +116,13 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
-	html = openURL_cached(LONG_CACHE,url,'','','','SHOOFMAX-PLAY-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'','','','SHOOFMAX-PLAY-1st')
 	html_blocks = re.findall('intro_end(.*?)initialize',html,re.DOTALL)
 	if not html_blocks:
 		later = re.findall('(متوفر على شوف ماكس بعد).*?moment\("(.*?)"',html,re.DOTALL)
 		if later:
 			time = later[0][1].replace('T','    ')
-			XBMCGUI_DIALOG_OK('رسالة من الموقع الاصلي','هذا الفيديو سيكون متوفر على شوف ماكس بعد هذا الوقت'+'\n'+time)
+			DIALOG_OK('رسالة من الموقع الاصلي','هذا الفيديو سيكون متوفر على شوف ماكس بعد هذا الوقت'+'\n'+time)
 		return
 	block = html_blocks[0]
 	items_url = []
@@ -164,7 +164,7 @@ def PLAY(url):
 					filetype = titleLIST[i].split(' ')[0]
 					title = titleLIST[i].replace(filetype,'').strip(' ').replace('   ','  ')
 					items_name.append(filetype+'  '+server+'  '+title)
-	selection = XBMCGUI_DIALOG_SELECT('Select Video Quality:', items_name)
+	selection = DIALOG_SELECT('Select Video Quality:', items_name)
 	if selection == -1 : return
 	url = items_url[selection]
 	#url = mixARABIC(url)
@@ -172,12 +172,12 @@ def PLAY(url):
 	return
 
 def FILTERS(url,type):
-	#XBMCGUI_DIALOG_OK(url,url)
+	#DIALOG_OK(url,url)
 	if 'series' in url: url2 = website0a + '/genre/مسلسل'
 	else: url2 = website0a + '/genre/فيلم'
 	url2 = quote(url2)
-	html = openURL_cached(LONG_CACHE,url2,'','','','SHOOFMAX-FILTERS-1st')
-	#XBMCGUI_DIALOG_OK(url,html)
+	html = OPENURL_CACHED(LONG_CACHE,url2,'','','','SHOOFMAX-FILTERS-1st')
+	#DIALOG_OK(url,html)
 	if type==1: html_blocks = re.findall('subgenre(.*?)div',html,re.DOTALL)
 	elif type==2: html_blocks = re.findall('country(.*?)div',html,re.DOTALL)
 	block = html_blocks[0]
@@ -195,9 +195,9 @@ def SEARCH(search=''):
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
-	#XBMCGUI_DIALOG_OK(search,search)
+	#DIALOG_OK(search,search)
 	new_search = search.replace(' ','%20')
-	response = openURL_requests_cached(SHORT_CACHE,'GET', website0a, '', '', True,'','SHOOFMAX-SEARCH-1st')
+	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET', website0a, '', '', True,'','SHOOFMAX-SEARCH-1st')
 	html = response.content
 	cookies = response.cookies.get_dict()
 	cookie = cookies['session']
@@ -206,7 +206,7 @@ def SEARCH(search=''):
 	payload = '_csrf=' + csrf + '&q=' + quote(new_search)
 	headers = { 'content-type':'application/x-www-form-urlencoded' , 'cookie':'session='+cookie }
 	url = website0a + "/search"
-	response = openURL_requests_cached(REGULAR_CACHE,'POST', url, payload, headers, True,'','SHOOFMAX-SEARCH-2nd')
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST', url, payload, headers, True,'','SHOOFMAX-SEARCH-2nd')
 	html = response.content
 	html_blocks = re.findall('general-body(.*?)search-bottom-padding',html,re.DOTALL)
 	block = html_blocks[0]
@@ -224,7 +224,7 @@ def SEARCH(search=''):
 				else:
 					title = '_MOD_فيلم '+title
 					addMenuItem('video',menu_name+title,url,53,img)
-	#else: XBMCGUI_DIALOG_OK('no results','لا توجد نتائج للبحث')
+	#else: DIALOG_OK('no results','لا توجد نتائج للبحث')
 	return
 
 

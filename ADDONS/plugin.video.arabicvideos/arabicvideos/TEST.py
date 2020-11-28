@@ -3,7 +3,7 @@ from LIBRARY import *
 
 
 
-XBMCGUI_DIALOG_NOTIFICATION('TEST','TEST')
+DIALOG_NOTIFICATION('TEST','TEST')
 
 #url = 'C:\\Portable Programs\\KODI_v18_64bit\\Kodi\\portable_data\\cache\\plugin.video.arabicvideos\\file_0896_SHV_زيارة_الرسول_الأعظم_(ص)_(أباذر_الحلواجي).mp3'
 

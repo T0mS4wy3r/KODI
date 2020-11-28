@@ -43,7 +43,7 @@ def CHANNEL_MENU(url):
 def SETTINGS():
 	text1 = 'هذا الموقع يستخدم اضافة يوتيوب ولا يعمل بدونه'
 	text2 = 'لعرض فيدوهات يوتيوب تحتاج ان تتأكد ان تضبيطات واعدادت يوتويب صحيحة'
-	#XBMCGUI_DIALOG_OK(text1,text2)
+	#DIALOG_OK(text1,text2)
 	xbmc.executebuiltin('Addon.OpenSettings(plugin.video.youtube)', True)
 	return
 
@@ -55,15 +55,15 @@ def PLAYLIST_ITEMS_OLD(url,html):
 		return
 	html_blocks = []
 	if 'browse_ajax' in url:
-		#html = openURL_cached(REGULAR_CACHE,url,'',headers,'','YOUTUBE-PLAYLIST_ITEMS-1st')
+		#html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','YOUTUBE-PLAYLIST_ITEMS-1st')
 		html = CLEAN_AJAX(html)
 		html_blocks = [html]
 	elif 'list=' in url and 'index=' not in url:
 		id = url.split('list=')[1].split('&')[0]
 		url2 = website0a+'/playlist?list='+id
-		html = openURL_cached(REGULAR_CACHE,url2,'',headers,'','YOUTUBE-PLAYLIST_ITEMS-2nd')
+		html = OPENURL_CACHED(REGULAR_CACHE,url2,'',headers,'','YOUTUBE-PLAYLIST_ITEMS-2nd')
 		html_blocks = re.findall('class="pl-video-table(.*?)footer-container',html,re.DOTALL)
-	#XBMCGUI_DIALOG_OK(url2,id)
+	#DIALOG_OK(url2,id)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('data-title="(.*?)".*?href="(.*?)".*?data-thumb="(.*?)".*?video-time(.*?)</div></td></tr>',block,re.DOTALL)
@@ -102,7 +102,7 @@ def PLAYLIST_ITEMS_PLAYER_OLD(url):
 	return
 
 def CHANNEL_ITEMS_OLD(url,html):
-	#XBMCGUI_DIALOG_OK(url,str(c))
+	#DIALOG_OK(url,str(c))
 	if 'browse_ajax' in url:
 		html = CLEAN_AJAX(html)
 		html_blocks = [html]
@@ -137,7 +137,7 @@ def TITLES_OLD(url,html):
 	html_blocks = re.findall('(yt-lockup-tile.*?)footer-container',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('yt-lockup-tile.*?(src|thumb)="(.*?)"(.*?)href="(.*?)".*?title="(.*?)"(.*?)</div></div></div>(.*?)</li>',block,re.DOTALL)
-	#XBMCGUI_DIALOG_OK(str(block.count('yt-lockup-tile')),str(len(items)))
+	#DIALOG_OK(str(block.count('yt-lockup-tile')),str(len(items)))
 	#with open('S:\emad3.html', 'w') as f: f.write(block)
 	for dummy,img,count,link,title,count2,paid in items:
 		if 'Watch later' in title: continue
@@ -247,7 +247,7 @@ def TITLES(url,index='',vistor=''):
 	html,c = GET_PAGE_DATA(url,vistor)
 	#if c=='': TITLES_OLD(url,html) ; return
 	if index=='': index = '0'
-	#XBMCGUI_DIALOG_OK(url,index)
+	#DIALOG_OK(url,index)
 	#LOG_THIS('NOTICE',url)
 	#LOG_THIS('NOTICE',html)
 	#token = ''

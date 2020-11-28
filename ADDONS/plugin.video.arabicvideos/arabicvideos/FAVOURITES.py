@@ -26,7 +26,7 @@ def FAVOURITES_DISPATCHER(context):
 	if context=='': return
 	if '_' in context: favouriteID,context2 = context.split('_',1)
 	else: favouriteID,context2 = context,''
-	#XBMCGUI_DIALOG_OK(favouriteID,context)
+	#DIALOG_OK(favouriteID,context)
 	if   context2=='UP1'	: MOVE_FAVOURITES(favouriteID,True,1)
 	elif context2=='DOWN1'	: MOVE_FAVOURITES(favouriteID,False,1)
 	elif context2=='UP4'	: MOVE_FAVOURITES(favouriteID,True,4)
@@ -87,14 +87,14 @@ def REMOVE_FROM_FAVOURITES(favouriteID):
 	return
 
 def DELETE_FAVOURITES(favouriteID):
-	yes = XBMCGUI_DIALOG_YESNO('رسالة من المبرمج','هل تريد فعلا مسح جميع محتويات قائمة المفضلة '+favouriteID+' ؟!','','','كلا','نعم')
+	yes = DIALOG_YESNO('رسالة من المبرمج','هل تريد فعلا مسح جميع محتويات قائمة المفضلة '+favouriteID+' ؟!','','','كلا','نعم')
 	if yes!=1: return
 	favouritesDICT = GET_ALL_FAVOURITES()
 	if favouriteID in favouritesDICT.keys():
 		del favouritesDICT[favouriteID]
 		newFILE = str(favouritesDICT)
 		with open(favouritesfile,'w') as f: f.write(newFILE)
-		XBMCGUI_DIALOG_OK('رسالة من المبرمج','تم مسح جميع محتويات قائمة المفضلة '+favouriteID)
+		DIALOG_OK('رسالة من المبرمج','تم مسح جميع محتويات قائمة المفضلة '+favouriteID)
 	return
 
 def GET_ALL_FAVOURITES():

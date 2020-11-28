@@ -31,11 +31,11 @@ def MENU(website=''):
 	return ''
 
 def TITLES(url,category):
-	#XBMCGUI_DIALOG_OK('', category)
+	#DIALOG_OK('', category)
 	cat = ''
 	if category not in ['-1','-2','-3']: cat = '?cat='+category
 	url2 = website0a+'/menu_level.php'+cat
-	html = openURL_cached(REGULAR_CACHE,url2,'','','','ALFATIMI-TITLES-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url2,'','','','ALFATIMI-TITLES-1st')
 	items = re.findall('href=\'(.*?)\'.*?>(.*?)<.*?>(.*?)</span>',html,re.DOTALL)
 	startAdd,found = False,False
 	for link,title,count in items:
@@ -54,8 +54,8 @@ def TITLES(url,category):
 	return
 
 def EPISODES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'','',True,'ALFATIMI-EPISODES-1st')
-	#XBMCGUI_DIALOG_OK(url , html)
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'','',True,'ALFATIMI-EPISODES-1st')
+	#DIALOG_OK(url , html)
 	html_blocks = re.findall('pagination(.*?)id="footer',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('grid_view.*?src="(.*?)".*?title="(.*?)".*?<h2.*?href="(.*?)"',block,re.DOTALL)
@@ -78,11 +78,11 @@ def EPISODES(url):
 
 def PLAY(url):
 	if 'videos.php' in url: url = EPISODES(url)
-	html = openURL_cached(LONG_CACHE,url,'','',True,'ALFATIMI-PLAY-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'','',True,'ALFATIMI-PLAY-1st')
 	items = re.findall('playlistfile:"(.*?)"',html,re.DOTALL)
 	url = items[0]
 	if 'http' not in url: url = 'http:'+url
-	#XBMCGUI_DIALOG_OK(url,'')
+	#DIALOG_OK(url,'')
 	PLAY_VIDEO(url,script_name,'video')
 	return
 
@@ -91,7 +91,7 @@ def MOSTS(category):
 	url = 'http://alfatimi.tv/ajax.php'
 	headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
 	data = urllib.urlencode(payload)
-	html = openURL_cached(SHORT_CACHE,url,data,headers,True,'ALFATIMI-MOSTS-1st')
+	html = OPENURL_CACHED(SHORT_CACHE,url,data,headers,True,'ALFATIMI-MOSTS-1st')
 	items = re.findall('href="(.*?)".*?title="(.*?)".*?src="(.*?)".*?href',html,re.DOTALL)
 	for link,title,img in items:
 		title = title.strip(' ')
@@ -103,7 +103,7 @@ def SEARCH(search):
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
-	#XBMCGUI_DIALOG_OK(search, website0a)
+	#DIALOG_OK(search, website0a)
 	new_search = search.replace(' ','+')
 	url = website0a + '/search_result.php?query=' + new_search # + '&page=1'
 	EPISODES(url)

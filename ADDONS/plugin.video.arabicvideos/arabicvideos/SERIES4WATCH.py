@@ -21,7 +21,7 @@ def MAIN(mode,url,text):
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
-	XBMCGUI_DIALOG_OK('رسالة من المبرمج','الموقع تغير بالكامل',message)
+	DIALOG_OK('رسالة من المبرمج','الموقع تغير بالكامل',message)
 	return
 
 def MENU(website=''):
@@ -29,7 +29,7 @@ def MENU(website=''):
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	url = website0a+'/getpostsPin?type=one&data=pin&limit=25'
 	addMenuItem('folder',website+'___'+menu_name+'المميزة',url,211)
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','SERIES4WATCH-MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','SERIES4WATCH-MENU-1st')
 	html_blocks = re.findall('FiltersButtons(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('data-get="(.*?)".*?</i>(.*?)<',block,re.DOTALL)
@@ -49,8 +49,8 @@ def MENU(website=''):
 	return html
 
 def TITLES(url):
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-TITLES-1st')
-	#XBMCGUI_DIALOG_OK(url,html)
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-TITLES-1st')
+	#DIALOG_OK(url,html)
 	if 'getposts' in url or '/search?s=' in url: block = html
 	else:
 		html_blocks = re.findall('MediaGrid"(.*?)class="pagination"',html,re.DOTALL)
@@ -87,7 +87,7 @@ def TITLES(url):
 
 def EPISODES(url):
 	episodesCount,items,itemsNEW = -1,[],[]
-	html = openURL_cached(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-EPISODES-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','SERIES4WATCH-EPISODES-1st')
 	html_blocks = re.findall('ti-list-numbered(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		blocks = ''.join(html_blocks)
@@ -116,11 +116,11 @@ def EPISODES(url):
 def PLAY(url):
 	linkLIST = []
 	parts = url.split('/')
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','SERIES4WATCH-PLAY-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','SERIES4WATCH-PLAY-1st')
 	# watch links
 	if '/watch/' in html:
 		url2 = url.replace(parts[3],'watch')
-		html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','SERIES4WATCH-PLAY-2nd')
+		html2 = OPENURL_CACHED(LONG_CACHE,url2,'',headers,'','SERIES4WATCH-PLAY-2nd')
 		html_blocks = re.findall('class="servers-list(.*?)</div>',html2,re.DOTALL)
 		if html_blocks:
 			block = html_blocks[0]
@@ -140,13 +140,13 @@ def PLAY(url):
 	# download links
 	if '/download/' in html:
 		url2 = url.replace(parts[3],'download')
-		html2 = openURL_cached(LONG_CACHE,url2,'',headers,'','SERIES4WATCH-PLAY-3rd')
+		html2 = OPENURL_CACHED(LONG_CACHE,url2,'',headers,'','SERIES4WATCH-PLAY-3rd')
 		id = re.findall('postId:"(.*?)"',html2,re.DOTALL)
 		if id:
 			id2 = id[0]
 			headers2 = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 			url2 = website0a + '/ajaxCenter?_action=getdownloadlinks&postId='+id2
-			html2 = openURL_cached(LONG_CACHE,url2,'',headers2,'','SERIES4WATCH-PLAY-4th')
+			html2 = OPENURL_CACHED(LONG_CACHE,url2,'',headers2,'','SERIES4WATCH-PLAY-4th')
 			html_blocks = re.findall('<h3.*?(\d+)(.*?)</div>',html2,re.DOTALL)
 			if html_blocks:
 				for resolution,block in html_blocks:
@@ -176,7 +176,7 @@ def PLAY(url):
 						link = link + '?named=' + name + server + '__download'
 						linkLIST.append(link)
 	if len(linkLIST)==0:
-		XBMCGUI_DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
+		DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:
 		import RESOLVERS
 		RESOLVERS.PLAY(linkLIST,script_name,'video')
@@ -191,7 +191,7 @@ def SEARCH(search):
 	TITLES(url)
 	return
 	"""
-	html = openURL_cached(REGULAR_CACHE,website0a,'',headers,'','SERIES4WATCH-SEARCH-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,website0a,'',headers,'','SERIES4WATCH-SEARCH-1st')
 	html_blocks = re.findall('advanced-search secondary(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -200,7 +200,7 @@ def SEARCH(search):
 		for category,title in items:
 			categoryLIST.append(category)
 			filterLIST.append(title)
-		selection = XBMCGUI_DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
+		selection = DIALOG_SELECT('اختر الفلتر المناسب:', filterLIST)
 		if selection == -1 : return
 		category = categoryLIST[selection]
 		url = website0a + '/search?s='+search+'&category='+category

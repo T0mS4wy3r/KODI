@@ -21,7 +21,7 @@ def MAIN(mode,url,page,text):
 
 def TERMINATED_CHANGED():
 	message = 'هذا الموقع تغير بالكامل ... وبحاجة الى اعادة برمجة من الصفر ... والمبرمج حاليا مشغول ويعاني من وعكة صحية ... ولهذا سوف يبقى الموقع مغلق الى ما شاء الله'
-	XBMCGUI_DIALOG_OK('رسالة من المبرمج',message)
+	DIALOG_OK('رسالة من المبرمج',message)
 	return
 
 def MENU(website=''):
@@ -29,12 +29,12 @@ def MENU(website=''):
 	addMenuItem('folder',website+'___'+menu_name+'المضاف حديثا','',84,'','0')
 	addMenuItem('folder',website+'___'+menu_name+'افلام ومسلسلات مميزة','',85,'','0')
 	addMenuItem('folder',website+'___'+menu_name+'الاكثر مشاهدة','',86,'','0')
-	html = openURL_cached(LONG_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','HALACIMA-MENU-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	html_blocks = re.findall('dropdown(.*?)nav',html,re.DOTALL)
 	block = html_blocks[1]
 	items = re.findall('<a href="(.*?)".*?>(.*?)<',block,re.DOTALL)
-	#XBMCGUI_DIALOG_OK(block,str(items))
+	#DIALOG_OK(block,str(items))
 	ignoreLIST = ['مسلسلات انمي']
 	for link,title in items:
 		title = title.strip(' ')
@@ -46,7 +46,7 @@ def ITEMS(url,html='',type='',page='0'):
 	page = int(page)
 	global headers
 	if type=='':
-		if html=='': html = openURL_cached(REGULAR_CACHE,url,'',headers,'','HALACIMA-ITEMS-1st')
+		if html=='': html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','HALACIMA-ITEMS-1st')
 		html_blocks = re.findall('main-content(.*?)pagination',html,re.DOTALL)
 		if html_blocks: block = html_blocks[0]
 		else: block = ''
@@ -57,7 +57,7 @@ def ITEMS(url,html='',type='',page='0'):
 		headers2['Content-Type'] = 'application/x-www-form-urlencoded'
 		payload = { 'Ajax' : '1' , 'item' : type , 'offset' : page*50 }
 		data = urllib.urlencode(payload)
-		block = openURL_cached(REGULAR_CACHE,url2,data,headers2,'','HALACIMA-ITEMS-2nd')
+		block = OPENURL_CACHED(REGULAR_CACHE,url2,data,headers2,'','HALACIMA-ITEMS-2nd')
 	items = re.findall('<a href="(.*?)".*?data-original="(.*?)".*?class="content">(.*?)<',block,re.DOTALL)
 	allTitles,allLinks,allEpisodes,allImages = [],[],[],[]
 	for link,img,title in items:
@@ -111,7 +111,7 @@ def ITEMS(url,html='',type='',page='0'):
 def PLAY(url):
 	linkLIST = []
 	global headers
-	html = openURL_cached(LONG_CACHE,url,'',headers,'','HALACIMA-PLAY-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','HALACIMA-PLAY-1st')
 	html_blocks = re.findall('class="download(.*?)div',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)"',block,re.DOTALL)
@@ -119,7 +119,7 @@ def PLAY(url):
 		if 'http' not in link: link = 'http:' + link
 		linkLIST.append(link)
 	url2 = url.replace('/download-view-online/','/online/')
-	html = openURL_cached(LONG_CACHE,url2,'',headers,'','HALACIMA-PLAY-2nd')
+	html = OPENURL_CACHED(LONG_CACHE,url2,'',headers,'','HALACIMA-PLAY-2nd')
 	html_blocks = re.findall('artId.*?(.*?)col-sm-12',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall(' = \'(.*?)\'',block,re.DOTALL)
@@ -130,7 +130,7 @@ def PLAY(url):
 	items = re.findall('getVideoPlayer\(\'(.*?)\'',block,re.DOTALL)
 	threads = CustomThread(False)
 	def linkFUNC():
-		html = openURL_cached(LONG_CACHE,url2,data,headers2,'','HALACIMA-PLAY-3rd')
+		html = OPENURL_CACHED(LONG_CACHE,url2,data,headers2,'','HALACIMA-PLAY-3rd')
 		html = html.replace('SRC=','src=')
 		link = re.findall("src='(.*?)'",html,re.DOTALL)
 		if 'http' not in link[0]: link[0] = 'http:' + link[0]
@@ -154,11 +154,11 @@ def SEARCH(search):
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 	payload = { 'name' : search , 'search' : 'البحث' }
 	data = urllib.urlencode(payload)
-	html = openURL_cached(REGULAR_CACHE,url,data,headers,'','HALACIMA-SEARCH-1st')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,data,headers,'','HALACIMA-SEARCH-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	ITEMS('/category/',html)
 	#if 'art_list' in html: ITEMS('/category/',html)
-	#else: XBMCGUI_DIALOG_OK('no results','لا توجد نتائج للبحث')
+	#else: DIALOG_OK('no results','لا توجد نتائج للبحث')
 	return
 
 
