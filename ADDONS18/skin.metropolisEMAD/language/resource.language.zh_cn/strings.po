@@ -597,7 +597,7 @@ msgid "Visualization: Use Slim Info Overlay"
 msgstr "可视化效果：使用苗条版信息图层"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
+msgid "Show Date"
 msgstr "显示日期而非星期几"
 
 msgctxt "#31454"

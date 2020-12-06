@@ -11,8 +11,8 @@
 		<include condition="String.IsEqual(Skin.String(OSDFade),Complete) + String.IsEqual(Skin.String(OSDFadeTime),30)">Animation_FadeOSD30</include>
 		<!-- Additional Media Flags -->
 		<control type="grouplist" id="9902">
-			<posx>293</posx>
-			<posy>547</posy>
+			<posx>295</posx>
+			<posy>527</posy>
 			<width>765</width>
 			<height>56</height>
 			<align>left</align>

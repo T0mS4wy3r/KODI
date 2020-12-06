@@ -1,4 +1,13 @@
 
+v18.4.0.1	2020-12-06
+Added kodi Arabic language interface
+Modified videos OSD
+Fixed sending analytics events
+Fixed showDate settings
+Renamed ArabicVideos menu items
+Minor fixes and improvements
+
+
 v18.4.0.0	2020-11-02
 Added Arabic menu
 Added ANALYTICS for first skin use

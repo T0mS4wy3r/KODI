@@ -857,8 +857,8 @@ msgid "Visualization: Use Slim Info Overlay"
 msgstr "Visualization: Use Slim Info Overlay"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
-msgstr "Show Date instead of Day of Week"
+msgid "Show Date"
+msgstr "Show Date"
 
 msgctxt "#31454"
 msgid "Visualization: Show player position and time in Info Overlay"

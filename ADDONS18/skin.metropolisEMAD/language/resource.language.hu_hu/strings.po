@@ -689,7 +689,7 @@ msgid "Visualization: Use Slim Info Overlay"
 msgstr "Vizuálizáció: Vékonyabb Infó Felület használata"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
+msgid "Show Date"
 msgstr "Dátum mutatása a hét napja helyett"
 
 msgctxt "#31454"

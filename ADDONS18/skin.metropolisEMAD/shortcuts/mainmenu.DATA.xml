@@ -1,21 +1,22 @@
-<?xml version='1.0' encoding='UTF-8'?>
 <shortcuts>
 	<shortcut>
 		<label>قائمة البرامج</label>
 		<label2>32021</label2>
 		<defaultID>arabic1</defaultID>
-		<action>AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</AAAaction>
 		<icon>home_icons/arabic.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>قائمة ألإعدادات</label>
 		<label2>32021</label2>
 		<defaultID>arabic2</defaultID>
-		<action>AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</AAAaction>
 		<icon>home_icons/arabic.png</icon>
 	</shortcut>
 	<shortcut>
-		<label>الفيديوهات العربية</label>
+		<label>برنامج الفيديو العربي</label>
 		<label2>32021</label2>
 		<defaultID>arabic0</defaultID>
 		<action>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</action>
@@ -38,7 +39,8 @@
 	<shortcut>
 		<label>13005</label>
 		<label2>32034</label2>
-		<action>AAAAShutDown</action>
+		<action></action>
+		<AAAaction>ShutDown</AAAaction>
 		<defaultID>shutdown</defaultID>
 		<icon>home_icons/shutdown.png</icon>
 	</shortcut>
@@ -46,13 +48,15 @@
 		<label>10004</label>
 		<label2>32034</label2>
 		<defaultID>settings</defaultID>
-		<action>AAAAActivateWindow(Settings)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Settings)</AAAaction>
 		<icon>home_icons/settings.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>10001</label>
 		<label2>32034</label2>
-		<action>AAAAActivateWindow(Programs,Addons,return)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Programs,Addons,return)</AAAaction>
 		<defaultID>programs</defaultID>
 		<icon>home_icons/programs.png</icon>
 	</shortcut>
@@ -60,63 +64,72 @@
 		<label>24001</label>
 		<label2>32034</label2>
 		<defaultID>addons</defaultID>
-		<action>AAAAActivateWindow(AddonBrowser)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(AddonBrowser)</AAAaction>
 		<icon />
 	</shortcut>
 	<shortcut>
 		<label>3</label>
 		<label2>32034</label2>
 		<defaultID>videos</defaultID>
-		<action>AAAAActivateWindow(Videos)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Videos)</AAAaction>
 		<icon>home_icons/videos.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>32032</label>
 		<label2>32034</label2>
 		<defaultID>dvd</defaultID>
-		<action>AAAAXBMC.PlayDVD()</action>
+		<action></action>
+		<AAAaction>XBMC.PlayDVD()</AAAaction>
 		<icon>home_icons/playdisc.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>342</label>
 		<label2>32034</label2>
 		<defaultID>movies</defaultID>
-		<action>AAAAActivateWindow(Videos,MovieTitles,return)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Videos,MovieTitles,return)</AAAaction>
 		<icon>home_icons/movies.png</icon>
 	</shortcut>	
 	<shortcut>
 		<label>20343</label>
 		<label2>32034</label2>
 		<defaultID>tvshows</defaultID>
-		<action>AAAAActivateWindow(Videos,TVShowTitles,return)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Videos,TVShowTitles,return)</AAAaction>
 		<icon>home_icons/tvshows.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>32022</label>
 		<label2>32034</label2>
 		<defaultID>livetv</defaultID>
-		<action>AAAAActivateWindow(TVChannels)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(TVChannels)</AAAaction>
 		<icon>home_icons/livetv.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>2</label>
 		<label2>32034</label2>
 		<defaultID>music</defaultID>
-		<action>AAAAActivateWindow(Music)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Music)</AAAaction>
 		<icon>home_icons/music.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>20389</label>
 		<label2>32034</label2>
 		<defaultID>musicvideos</defaultID>
-		<action>AAAAActivateWindow(Videos,MusicVideoTitles,return)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Videos,MusicVideoTitles,return)</AAAaction>
 		<icon>home_icons/musicvideos.png</icon>
 	</shortcut>
 	<shortcut>
 		<label>10002</label>
 		<label2>32034</label2>
 		<defaultID>pictures</defaultID>
-		<action>AAAAActivateWindow(Pictures)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Pictures)</AAAaction>
 		<icon>home_icons/pictures.png</icon>
 	</shortcut>
 	<shortcut>
@@ -130,7 +143,8 @@
 		<label>137</label>
 		<label2>32034</label2>
 		<defaultID>search</defaultID>
-		<action>AAAARunScript(script.globalsearch)</action>
+		<action></action>
+		<AAAaction>RunScript(script.globalsearch)</AAAaction>
 		<icon>home_icons/search.png</icon>
 		<visible>System.HasAddon(script.globalsearch)</visible>
 	</shortcut>
@@ -145,7 +159,8 @@
 	<shortcut>
 		<label>32087</label>
 		<label2>32034</label2>
-		<action>AAAAActivateWindow(RadioChannels)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(RadioChannels)</AAAaction>
 		<defaultID>radio</defaultID>
 		<icon>home_icons/radio.png</icon>
 	</shortcut>
@@ -153,7 +168,8 @@
 		<label>15016</label>
 		<label2>32034</label2>
 		<icon>home_icons/games.png</icon>
-		<action>AAAAActivateWindow(Games,files,return)</action>
+		<action></action>
+		<AAAaction>ActivateWindow(Games,files,return)</AAAaction>
 		<visible>System.GetBool(gamesgeneral.enable)</visible>
 		<defaultID>games</defaultID>
 	</shortcut>

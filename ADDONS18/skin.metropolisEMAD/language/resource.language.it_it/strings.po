@@ -773,7 +773,7 @@ msgid "Visualization: Use Slim Info Overlay"
 msgstr "Visualizzazione: usa Info Overlay piccolo"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
+msgid "Show Date"
 msgstr "Mostra Data invece di Giorno della Settimana"
 
 msgctxt "#31454"

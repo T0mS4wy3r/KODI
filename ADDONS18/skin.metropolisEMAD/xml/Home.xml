@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
+
+	<onload condition="!Skin.HasSetting(NotFirstRun)">Skin.SetBool(ShowDate)</onload>
+	<onload condition="!Skin.HasSetting(NotFirstRun)">RunPlugin(plugin://skin.metropolisEMAD?mode=1)</onload>
+	<onload condition="!Skin.HasSetting(NotFirstRun)">Skin.SetBool(NotFirstRun)</onload>
+
 	<defaultcontrol always="true">9000</defaultcontrol>
 	<onload>RunScript(script.skinshortcuts,type=buildxml&amp;mainmenuID=9000&amp;levels=0)</onload>
 	<controls>

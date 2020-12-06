@@ -733,7 +733,7 @@ msgid "Visualization: Use Slim Info Overlay"
 msgstr "Οπτικοποίηση: Λεπτή Επιφάνεια Πληροφοριών"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
+msgid "Show Date"
 msgstr "Εμφάνιση Ημερομηνίας αντί Ημέρας της Εβδομάδας"
 
 msgctxt "#31454"

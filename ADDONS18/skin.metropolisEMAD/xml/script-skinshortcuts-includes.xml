@@ -7,14 +7,14 @@
 			<label2>$ADDON[script.skinshortcuts 32021]</label2>
 			<icon>DefaultShortcut.png</icon>
 			<thumb />
-			<property name="labelID">plugin.video.arabicvideos</property>
+			<property name="labelID">qym-lbrmj</property>
 			<property name="defaultID">arabic1</property>
 			<property name="background">home\arabic\</property>
-			<onclick>AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
-			<property name="path">AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
-			<property name="list">AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="submenuVisibility">plugin-video-arabicvideos</property>
+			<property name="submenuVisibility">qym-lbrmj</property>
 			<property name="group">mainmenu</property>
 			<property name="hasSubmenu">True</property>
 		</item>
@@ -24,31 +24,31 @@
 			<label2>$ADDON[script.skinshortcuts 32021]</label2>
 			<icon>DefaultShortcut.png</icon>
 			<thumb />
-			<property name="labelID">plugin.video.arabicvideos--0</property>
+			<property name="labelID">qym-l-ddt</property>
 			<property name="defaultID">arabic2</property>
 			<property name="background">home\arabic\</property>
-			<onclick>AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
-			<property name="path">AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
-			<property name="list">AAAAActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="submenuVisibility">plugin-video-arabicvideos-0</property>
+			<property name="submenuVisibility">qym-l-ddt</property>
 			<property name="group">mainmenu</property>
 			<property name="hasSubmenu">True</property>
 		</item>
 		<item id="3">
 			<property name="id">$NUMBER[3]</property>
-			<label>الفيديوهات العربية</label>
+			<label>برنامج الفيديو العربي</label>
 			<label2>$ADDON[script.skinshortcuts 32021]</label2>
 			<icon>DefaultShortcut.png</icon>
 			<thumb />
-			<property name="labelID">plugin.video.arabicvideos--1</property>
+			<property name="labelID">plugin.video.arabicvideos</property>
 			<property name="defaultID">arabic0</property>
 			<property name="background">home\arabic\</property>
 			<onclick>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
 			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
 			<property name="list">plugin://plugin.video.arabicvideos</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="submenuVisibility">plugin-video-arabicvideos-1</property>
+			<property name="submenuVisibility">plugin-video-arabicvideos</property>
 			<property name="group">mainmenu</property>
 			<property name="hasSubmenu">False</property>
 		</item>
@@ -58,14 +58,14 @@
 			<label2>$ADDON[script.skinshortcuts 32021]</label2>
 			<icon>DefaultShortcut.png</icon>
 			<thumb />
-			<property name="labelID">plugin.video.arabicvideos--2</property>
+			<property name="labelID">plugin.video.arabicvideos--0</property>
 			<property name="defaultID">arabic0</property>
 			<property name="background">home\arabic\</property>
 			<onclick>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
 			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
 			<property name="list">plugin://plugin.video.arabicvideos</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="submenuVisibility">plugin-video-arabicvideos-2</property>
+			<property name="submenuVisibility">plugin-video-arabicvideos-0</property>
 			<property name="group">mainmenu</property>
 			<property name="hasSubmenu">False</property>
 		</item>
@@ -90,7 +90,7 @@
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">num-1036</property>
 			<property name="group">mainmenu</property>
-			<property name="hasSubmenu">False</property>
+			<property name="hasSubmenu">True</property>
 		</item>
 		<item id="6">
 			<property name="id">$NUMBER[6]</property>
@@ -102,9 +102,9 @@
 			<property name="defaultID">shutdown</property>
 			<property name="background">home\shutdown\</property>
 			<property name="backgroundName">13005</property>
-			<onclick>AAAAShutDown</onclick>
-			<property name="path">AAAAShutDown</property>
-			<property name="list">AAAAShutDown</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">num-13005</property>
 			<property name="group">mainmenu</property>
@@ -120,9 +120,9 @@
 			<property name="defaultID">settings</property>
 			<property name="background">home\settings\</property>
 			<property name="backgroundName">10004</property>
-			<onclick>AAAAActivateWindow(Settings)</onclick>
-			<property name="path">AAAAActivateWindow(Settings)</property>
-			<property name="list">AAAAActivateWindow(Settings)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">settings</property>
 			<property name="group">mainmenu</property>
@@ -138,9 +138,9 @@
 			<property name="defaultID">programs</property>
 			<property name="background">home\programs\</property>
 			<property name="backgroundName">10001</property>
-			<onclick>AAAAActivateWindow(Programs,Addons,return)</onclick>
-			<property name="path">AAAAActivateWindow(Programs,Addons,return)</property>
-			<property name="list">AAAAActivateWindow(Programs,Addons,return)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">programs</property>
 			<property name="group">mainmenu</property>
@@ -156,9 +156,9 @@
 			<property name="defaultID">addons</property>
 			<property name="background">home\radio\</property>
 			<property name="backgroundName">32087</property>
-			<onclick>AAAAActivateWindow(AddonBrowser)</onclick>
-			<property name="path">AAAAActivateWindow(AddonBrowser)</property>
-			<property name="list">AAAAActivateWindow(AddonBrowser)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">num-24001</property>
 			<property name="group">mainmenu</property>
@@ -174,9 +174,9 @@
 			<property name="defaultID">videos</property>
 			<property name="background">home\videos\</property>
 			<property name="backgroundName">10006</property>
-			<onclick>AAAAActivateWindow(Videos)</onclick>
-			<property name="path">AAAAActivateWindow(Videos)</property>
-			<property name="list">AAAAActivateWindow(Videos)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">videos</property>
 			<property name="group">mainmenu</property>
@@ -192,9 +192,9 @@
 			<property name="defaultID">dvd</property>
 			<property name="background">home\dvd\</property>
 			<property name="backgroundName">32032</property>
-			<onclick>AAAAXBMC.PlayDVD()</onclick>
-			<property name="path">AAAAXBMC.PlayDVD()</property>
-			<property name="list">AAAAXBMC.PlayDVD()</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">dvd</property>
 			<property name="group">mainmenu</property>
@@ -215,9 +215,9 @@
 			<property name="widgetTarget">videos</property>
 			<property name="background">home\movies\</property>
 			<property name="backgroundName">342</property>
-			<onclick>AAAAActivateWindow(Videos,MovieTitles,return)</onclick>
-			<property name="path">AAAAActivateWindow(Videos,MovieTitles,return)</property>
-			<property name="list">AAAAActivateWindow(Videos,MovieTitles,return)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">movies</property>
 			<property name="group">mainmenu</property>
@@ -238,9 +238,9 @@
 			<property name="widgetTarget">videos</property>
 			<property name="background">home\tvshows\</property>
 			<property name="backgroundName">20343</property>
-			<onclick>AAAAActivateWindow(Videos,TVShowTitles,return)</onclick>
-			<property name="path">AAAAActivateWindow(Videos,TVShowTitles,return)</property>
-			<property name="list">AAAAActivateWindow(Videos,TVShowTitles,return)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">tvshows</property>
 			<property name="group">mainmenu</property>
@@ -259,9 +259,9 @@
 			<property name="widgetType">static</property>
 			<property name="background">home\livetv\</property>
 			<property name="backgroundName">32022</property>
-			<onclick>AAAAActivateWindow(TVChannels)</onclick>
-			<property name="path">AAAAActivateWindow(TVChannels)</property>
-			<property name="list">AAAAActivateWindow(TVChannels)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">livetv</property>
 			<property name="group">mainmenu</property>
@@ -277,9 +277,9 @@
 			<property name="defaultID">music</property>
 			<property name="background">home\music\</property>
 			<property name="backgroundName">10005</property>
-			<onclick>AAAAActivateWindow(Music)</onclick>
-			<property name="path">AAAAActivateWindow(Music)</property>
-			<property name="list">AAAAActivateWindow(Music)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">music</property>
 			<property name="group">mainmenu</property>
@@ -300,9 +300,9 @@
 			<property name="widgetTarget">videos</property>
 			<property name="background">home\musicvideos\</property>
 			<property name="backgroundName">20389</property>
-			<onclick>AAAAActivateWindow(Videos,MusicVideoTitles,return)</onclick>
-			<property name="path">AAAAActivateWindow(Videos,MusicVideoTitles,return)</property>
-			<property name="list">AAAAActivateWindow(Videos,MusicVideoTitles,return)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">musicvideos</property>
 			<property name="group">mainmenu</property>
@@ -318,9 +318,9 @@
 			<property name="defaultID">pictures</property>
 			<property name="background">home\pictures\</property>
 			<property name="backgroundName">10002</property>
-			<onclick>AAAAActivateWindow(Pictures)</onclick>
-			<property name="path">AAAAActivateWindow(Pictures)</property>
-			<property name="list">AAAAActivateWindow(Pictures)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">pictures</property>
 			<property name="group">mainmenu</property>
@@ -359,9 +359,9 @@
 			<property name="background">home\search\</property>
 			<property name="backgroundName">137</property>
 			<visible>System.HasAddon(script.globalsearch)</visible>
-			<onclick>AAAARunScript(script.globalsearch)</onclick>
-			<property name="path">AAAARunScript(script.globalsearch)</property>
-			<property name="list">AAAARunScript(script.globalsearch)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">num-137</property>
 			<property name="group">mainmenu</property>
@@ -396,9 +396,9 @@
 			<property name="defaultID">radio</property>
 			<property name="background">home\radio\</property>
 			<property name="backgroundName">32087</property>
-			<onclick>AAAAActivateWindow(RadioChannels)</onclick>
-			<property name="path">AAAAActivateWindow(RadioChannels)</property>
-			<property name="list">AAAAActivateWindow(RadioChannels)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">radio</property>
 			<property name="group">mainmenu</property>
@@ -415,9 +415,9 @@
 			<property name="background">home\games\</property>
 			<property name="backgroundName">15016</property>
 			<visible>System.GetBool(gamesgeneral.enable)</visible>
-			<onclick>AAAAActivateWindow(Games,files,return)</onclick>
-			<property name="path">AAAAActivateWindow(Games,files,return)</property>
-			<property name="list">AAAAActivateWindow(Games,files,return)</property>
+			<onclick>noop</onclick>
+			<property name="path">noop</property>
+			<property name="list">noop</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
 			<property name="submenuVisibility">num-15016</property>
 			<property name="group">mainmenu</property>
@@ -429,7 +429,7 @@
 		<item id="1">
 			<property name="id">$NUMBER[1]</property>
 			<property name="mainmenuid">1</property>
-			<label>الفيديوهات العربية</label>
+			<label>برنامج الفيديو العربي</label>
 			<label2>$ADDON[script.skinshortcuts 32021]</label2>
 			<icon>DefaultShortcut.png</icon>
 			<thumb />
@@ -438,8 +438,8 @@
 			<onclick>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
 			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
 			<property name="list">plugin://plugin.video.arabicvideos</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos)</visible>
-			<property name="group">plugin.video.arabicvideos</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-lbrmj)</visible>
+			<property name="group">qym-lbrmj</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="2">
@@ -454,8 +454,8 @@
 			<onclick>ActivateWindow(favourites)</onclick>
 			<property name="path">ActivateWindow(favourites)</property>
 			<property name="list">favourites</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos)</visible>
-			<property name="group">plugin.video.arabicvideos</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-lbrmj)</visible>
+			<property name="group">qym-lbrmj</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="3">
@@ -467,16 +467,32 @@
 			<thumb />
 			<property name="labelID">khrwjmnkwdy</property>
 			<property name="defaultID">khrwjmnkwdy</property>
-			<visible>[System.ShowExitButton] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos)</visible>
+			<visible>[System.ShowExitButton] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-lbrmj)</visible>
 			<onclick>Quit()</onclick>
 			<property name="path">Quit()</property>
 			<property name="list">Quit()</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos</property>
+			<property name="group">qym-lbrmj</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="1">
 			<property name="id">$NUMBER[1]</property>
+			<property name="mainmenuid">2</property>
+			<label>إعداد إضافات كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32034]</label2>
+			<icon>DefaultAddon.png</icon>
+			<thumb />
+			<property name="labelID">dddftkwdy</property>
+			<property name="defaultID">dddftkwdy</property>
+			<onclick>ActivateWindow(AddonBrowser)</onclick>
+			<property name="path">ActivateWindow(AddonBrowser)</property>
+			<property name="list">AddonBrowser</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="2">
+			<property name="id">$NUMBER[2]</property>
 			<property name="mainmenuid">2</property>
 			<label>تحديث إضافات كودي</label>
 			<label2>$ADDON[script.skinshortcuts 32054]</label2>
@@ -488,24 +504,8 @@
 			<property name="path">Notification(Update started,بدأت عملية التحديث)</property>
 			<property name="list">Notification(Update started,بدأت عملية التحديث)</property>
 			<onclick>UpdateAddonRepos</onclick>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="2">
-			<property name="id">$NUMBER[2]</property>
-			<property name="mainmenuid">2</property>
-			<label>إعداد إضافات كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32034]</label2>
-			<icon>DefaultAddon.png</icon>
-			<thumb />
-			<property name="labelID">dddftkwdy</property>
-			<property name="defaultID">dddftkwdy</property>
-			<onclick>ActivateWindow(AddonBrowser)</onclick>
-			<property name="path">ActivateWindow(AddonBrowser)</property>
-			<property name="list">AddonBrowser</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="3">
@@ -520,8 +520,8 @@
 			<onclick>ActivateWindow(InterfaceSettings)</onclick>
 			<property name="path">ActivateWindow(InterfaceSettings)</property>
 			<property name="list">InterfaceSettings</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="4">
@@ -536,8 +536,8 @@
 			<onclick>ActivateWindow(SkinSettings)</onclick>
 			<property name="path">ActivateWindow(SkinSettings)</property>
 			<property name="list">SkinSettings</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="5">
@@ -552,8 +552,8 @@
 			<onclick>ActivateWindow(Settings)</onclick>
 			<property name="path">ActivateWindow(Settings)</property>
 			<property name="list">Settings</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="6">
@@ -569,8 +569,8 @@
 			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
 			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
 			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=2)</onclick>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="7">
@@ -586,8 +586,8 @@
 			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
 			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
 			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=3)</onclick>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="8">
@@ -599,12 +599,28 @@
 			<thumb />
 			<property name="labelID">khrwjmnkwdy</property>
 			<property name="defaultID">khrwjmnkwdy</property>
-			<visible>[System.ShowExitButton] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
+			<visible>[System.ShowExitButton] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),qym-l-ddt)</visible>
 			<onclick>Quit()</onclick>
 			<property name="path">Quit()</property>
 			<property name="list">Quit()</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="1">
+			<property name="id">$NUMBER[1]</property>
+			<property name="mainmenuid">5</property>
+			<label>Arabic Videos</label>
+			<label2>$ADDON[script.skinshortcuts 32021]</label2>
+			<icon>DefaultAddonVideo.png</icon>
+			<thumb>special://home/addons/plugin.video.arabicvideos/icon.png</thumb>
+			<property name="labelID">plugin.video.arabicvideos</property>
+			<property name="defaultID">plugin.video.arabicvideos</property>
+			<onclick>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
+			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
+			<property name="list">plugin://plugin.video.arabicvideos</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Container(9000).ListItem.Property(submenuVisibility),num-1036)</visible>
+			<property name="group">1036</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="1">
@@ -2413,11 +2429,11 @@
 			<property name="isSubmenu">True</property>
 		</item>
 	</include>
-	<include name="skinshortcuts-group-plugin-video-arabicvideos">
+	<include name="skinshortcuts-group-qym-lbrmj">
 		<item id="1">
 			<property name="id">$NUMBER[1]</property>
 			<property name="mainmenuid">1</property>
-			<label>الفيديوهات العربية</label>
+			<label>برنامج الفيديو العربي</label>
 			<label2>$ADDON[script.skinshortcuts 32021]</label2>
 			<icon>DefaultShortcut.png</icon>
 			<thumb />
@@ -2427,7 +2443,7 @@
 			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
 			<property name="list">plugin://plugin.video.arabicvideos</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos</property>
+			<property name="group">qym-lbrmj</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="2">
@@ -2443,7 +2459,7 @@
 			<property name="path">ActivateWindow(favourites)</property>
 			<property name="list">favourites</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos</property>
+			<property name="group">qym-lbrmj</property>
 			<property name="isSubmenu">True</property>
 		</item>
 		<item id="3">
@@ -2460,346 +2476,376 @@
 			<property name="path">Quit()</property>
 			<property name="list">Quit()</property>
 			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos</property>
+			<property name="group">qym-lbrmj</property>
 			<property name="isSubmenu">True</property>
 		</item>
+	</include>
+	<include name="skinshortcuts-group-alt-qym-lbrmj">
+		<item id="1">
+			<property name="id">$NUMBER[1]</property>
+			<property name="mainmenuid">1</property>
+			<label>برنامج الفيديو العربي</label>
+			<label2>$ADDON[script.skinshortcuts 32021]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">plugin.video.arabicvideos</property>
+			<property name="defaultID">plugin.video.arabicvideos</property>
+			<onclick>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
+			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
+			<property name="list">plugin://plugin.video.arabicvideos</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-lbrmj)</visible>
+			<property name="group">qym-lbrmj</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="2">
+			<property name="id">$NUMBER[2]</property>
+			<property name="mainmenuid">1</property>
+			<label>قائمة مفضلة كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32021]</label2>
+			<icon>home_icons/favourites.png</icon>
+			<thumb />
+			<property name="labelID">qym-mfdl-kwdy</property>
+			<property name="defaultID">qym-mfdl-kwdy</property>
+			<onclick>ActivateWindow(favourites)</onclick>
+			<property name="path">ActivateWindow(favourites)</property>
+			<property name="list">favourites</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-lbrmj)</visible>
+			<property name="group">qym-lbrmj</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="3">
+			<property name="id">$NUMBER[3]</property>
+			<property name="mainmenuid">1</property>
+			<label>خروج من كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">khrwjmnkwdy</property>
+			<property name="defaultID">khrwjmnkwdy</property>
+			<visible>[System.ShowExitButton] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-lbrmj)</visible>
+			<onclick>Quit()</onclick>
+			<property name="path">Quit()</property>
+			<property name="list">Quit()</property>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-lbrmj</property>
+			<property name="isSubmenu">True</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-group-qym-l-ddt">
+		<item id="1">
+			<property name="id">$NUMBER[1]</property>
+			<property name="mainmenuid">2</property>
+			<label>إعداد إضافات كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32034]</label2>
+			<icon>DefaultAddon.png</icon>
+			<thumb />
+			<property name="labelID">dddftkwdy</property>
+			<property name="defaultID">dddftkwdy</property>
+			<onclick>ActivateWindow(AddonBrowser)</onclick>
+			<property name="path">ActivateWindow(AddonBrowser)</property>
+			<property name="list">AddonBrowser</property>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="2">
+			<property name="id">$NUMBER[2]</property>
+			<property name="mainmenuid">2</property>
+			<label>تحديث إضافات كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">thdythdftkwdy</property>
+			<property name="defaultID">thdythdftkwdy</property>
+			<onclick>Notification(Update started,بدأت عملية التحديث)</onclick>
+			<property name="path">Notification(Update started,بدأت عملية التحديث)</property>
+			<property name="list">Notification(Update started,بدأت عملية التحديث)</property>
+			<onclick>UpdateAddonRepos</onclick>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="3">
+			<property name="id">$NUMBER[3]</property>
+			<property name="mainmenuid">2</property>
+			<label>إعدادات واجهة كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32034]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">ddtwjh-kwdy</property>
+			<property name="defaultID">ddtwjh-kwdy</property>
+			<onclick>ActivateWindow(InterfaceSettings)</onclick>
+			<property name="path">ActivateWindow(InterfaceSettings)</property>
+			<property name="list">InterfaceSettings</property>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="4">
+			<property name="id">$NUMBER[4]</property>
+			<property name="mainmenuid">2</property>
+			<label>إعدادات جلد كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32034]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">ddtjldkwdy</property>
+			<property name="defaultID">ddtjldkwdy</property>
+			<onclick>ActivateWindow(SkinSettings)</onclick>
+			<property name="path">ActivateWindow(SkinSettings)</property>
+			<property name="list">SkinSettings</property>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="5">
+			<property name="id">$NUMBER[5]</property>
+			<property name="mainmenuid">2</property>
+			<label>جميع إعدادات كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">jmy-ddtkwdy</property>
+			<property name="defaultID">jmy-ddtkwdy</property>
+			<onclick>ActivateWindow(Settings)</onclick>
+			<property name="path">ActivateWindow(Settings)</property>
+			<property name="list">Settings</property>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="6">
+			<property name="id">$NUMBER[6]</property>
+			<property name="mainmenuid">2</property>
+			<label>كودي باللغة العربية</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">kwdybllg-l-rby</property>
+			<property name="defaultID">kwdybllg-l-rby</property>
+			<onclick>Notification(Please wait,الرجاء الانتظار)</onclick>
+			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
+			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
+			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=2)</onclick>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="7">
+			<property name="id">$NUMBER[7]</property>
+			<property name="mainmenuid">2</property>
+			<label>كودي باللغة الانجليزية</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">kwdybllg-lnjlyzy</property>
+			<property name="defaultID">kwdybllg-lnjlyzy</property>
+			<onclick>Notification(Please wait,الرجاء الانتظار)</onclick>
+			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
+			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
+			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=3)</onclick>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="8">
+			<property name="id">$NUMBER[8]</property>
+			<property name="mainmenuid">2</property>
+			<label>خروج من كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">khrwjmnkwdy</property>
+			<property name="defaultID">khrwjmnkwdy</property>
+			<visible>System.ShowExitButton</visible>
+			<onclick>Quit()</onclick>
+			<property name="path">Quit()</property>
+			<property name="list">Quit()</property>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-group-alt-qym-l-ddt">
+		<item id="1">
+			<property name="id">$NUMBER[1]</property>
+			<property name="mainmenuid">2</property>
+			<label>إعداد إضافات كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32034]</label2>
+			<icon>DefaultAddon.png</icon>
+			<thumb />
+			<property name="labelID">dddftkwdy</property>
+			<property name="defaultID">dddftkwdy</property>
+			<onclick>ActivateWindow(AddonBrowser)</onclick>
+			<property name="path">ActivateWindow(AddonBrowser)</property>
+			<property name="list">AddonBrowser</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="2">
+			<property name="id">$NUMBER[2]</property>
+			<property name="mainmenuid">2</property>
+			<label>تحديث إضافات كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">thdythdftkwdy</property>
+			<property name="defaultID">thdythdftkwdy</property>
+			<onclick>Notification(Update started,بدأت عملية التحديث)</onclick>
+			<property name="path">Notification(Update started,بدأت عملية التحديث)</property>
+			<property name="list">Notification(Update started,بدأت عملية التحديث)</property>
+			<onclick>UpdateAddonRepos</onclick>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="3">
+			<property name="id">$NUMBER[3]</property>
+			<property name="mainmenuid">2</property>
+			<label>إعدادات واجهة كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32034]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">ddtwjh-kwdy</property>
+			<property name="defaultID">ddtwjh-kwdy</property>
+			<onclick>ActivateWindow(InterfaceSettings)</onclick>
+			<property name="path">ActivateWindow(InterfaceSettings)</property>
+			<property name="list">InterfaceSettings</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="4">
+			<property name="id">$NUMBER[4]</property>
+			<property name="mainmenuid">2</property>
+			<label>إعدادات جلد كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32034]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">ddtjldkwdy</property>
+			<property name="defaultID">ddtjldkwdy</property>
+			<onclick>ActivateWindow(SkinSettings)</onclick>
+			<property name="path">ActivateWindow(SkinSettings)</property>
+			<property name="list">SkinSettings</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="5">
+			<property name="id">$NUMBER[5]</property>
+			<property name="mainmenuid">2</property>
+			<label>جميع إعدادات كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">jmy-ddtkwdy</property>
+			<property name="defaultID">jmy-ddtkwdy</property>
+			<onclick>ActivateWindow(Settings)</onclick>
+			<property name="path">ActivateWindow(Settings)</property>
+			<property name="list">Settings</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="6">
+			<property name="id">$NUMBER[6]</property>
+			<property name="mainmenuid">2</property>
+			<label>كودي باللغة العربية</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">kwdybllg-l-rby</property>
+			<property name="defaultID">kwdybllg-l-rby</property>
+			<onclick>Notification(Please wait,الرجاء الانتظار)</onclick>
+			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
+			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
+			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=2)</onclick>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="7">
+			<property name="id">$NUMBER[7]</property>
+			<property name="mainmenuid">2</property>
+			<label>كودي باللغة الانجليزية</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">kwdybllg-lnjlyzy</property>
+			<property name="defaultID">kwdybllg-lnjlyzy</property>
+			<onclick>Notification(Please wait,الرجاء الانتظار)</onclick>
+			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
+			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
+			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=3)</onclick>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-l-ddt)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+		<item id="8">
+			<property name="id">$NUMBER[8]</property>
+			<property name="mainmenuid">2</property>
+			<label>خروج من كودي</label>
+			<label2>$ADDON[script.skinshortcuts 32054]</label2>
+			<icon>DefaultShortcut.png</icon>
+			<thumb />
+			<property name="labelID">khrwjmnkwdy</property>
+			<property name="defaultID">khrwjmnkwdy</property>
+			<visible>[System.ShowExitButton] + String.IsEqual(Window(10000).Property(submenuVisibility),qym-l-ddt)</visible>
+			<onclick>Quit()</onclick>
+			<property name="path">Quit()</property>
+			<property name="list">Quit()</property>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">qym-l-ddt</property>
+			<property name="isSubmenu">True</property>
+		</item>
+	</include>
+	<include name="skinshortcuts-group-plugin-video-arabicvideos">
+		<description>No items</description>
 	</include>
 	<include name="skinshortcuts-group-alt-plugin-video-arabicvideos">
-		<item id="1">
-			<property name="id">$NUMBER[1]</property>
-			<property name="mainmenuid">1</property>
-			<label>الفيديوهات العربية</label>
-			<label2>$ADDON[script.skinshortcuts 32021]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">plugin.video.arabicvideos</property>
-			<property name="defaultID">plugin.video.arabicvideos</property>
-			<onclick>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
-			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
-			<property name="list">plugin://plugin.video.arabicvideos</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos)</visible>
-			<property name="group">plugin.video.arabicvideos</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="2">
-			<property name="id">$NUMBER[2]</property>
-			<property name="mainmenuid">1</property>
-			<label>قائمة مفضلة كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32021]</label2>
-			<icon>home_icons/favourites.png</icon>
-			<thumb />
-			<property name="labelID">qym-mfdl-kwdy</property>
-			<property name="defaultID">qym-mfdl-kwdy</property>
-			<onclick>ActivateWindow(favourites)</onclick>
-			<property name="path">ActivateWindow(favourites)</property>
-			<property name="list">favourites</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos)</visible>
-			<property name="group">plugin.video.arabicvideos</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="3">
-			<property name="id">$NUMBER[3]</property>
-			<property name="mainmenuid">1</property>
-			<label>خروج من كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">khrwjmnkwdy</property>
-			<property name="defaultID">khrwjmnkwdy</property>
-			<visible>[System.ShowExitButton] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos)</visible>
-			<onclick>Quit()</onclick>
-			<property name="path">Quit()</property>
-			<property name="list">Quit()</property>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos</property>
-			<property name="isSubmenu">True</property>
-		</item>
+		<description>No items</description>
 	</include>
 	<include name="skinshortcuts-group-plugin-video-arabicvideos-0">
-		<item id="1">
-			<property name="id">$NUMBER[1]</property>
-			<property name="mainmenuid">2</property>
-			<label>تحديث إضافات كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">thdythdftkwdy</property>
-			<property name="defaultID">thdythdftkwdy</property>
-			<onclick>Notification(Update started,بدأت عملية التحديث)</onclick>
-			<property name="path">Notification(Update started,بدأت عملية التحديث)</property>
-			<property name="list">Notification(Update started,بدأت عملية التحديث)</property>
-			<onclick>UpdateAddonRepos</onclick>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="2">
-			<property name="id">$NUMBER[2]</property>
-			<property name="mainmenuid">2</property>
-			<label>إعداد إضافات كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32034]</label2>
-			<icon>DefaultAddon.png</icon>
-			<thumb />
-			<property name="labelID">dddftkwdy</property>
-			<property name="defaultID">dddftkwdy</property>
-			<onclick>ActivateWindow(AddonBrowser)</onclick>
-			<property name="path">ActivateWindow(AddonBrowser)</property>
-			<property name="list">AddonBrowser</property>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="3">
-			<property name="id">$NUMBER[3]</property>
-			<property name="mainmenuid">2</property>
-			<label>إعدادات واجهة كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32034]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">ddtwjh-kwdy</property>
-			<property name="defaultID">ddtwjh-kwdy</property>
-			<onclick>ActivateWindow(InterfaceSettings)</onclick>
-			<property name="path">ActivateWindow(InterfaceSettings)</property>
-			<property name="list">InterfaceSettings</property>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="4">
-			<property name="id">$NUMBER[4]</property>
-			<property name="mainmenuid">2</property>
-			<label>إعدادات جلد كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32034]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">ddtjldkwdy</property>
-			<property name="defaultID">ddtjldkwdy</property>
-			<onclick>ActivateWindow(SkinSettings)</onclick>
-			<property name="path">ActivateWindow(SkinSettings)</property>
-			<property name="list">SkinSettings</property>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="5">
-			<property name="id">$NUMBER[5]</property>
-			<property name="mainmenuid">2</property>
-			<label>جميع إعدادات كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">jmy-ddtkwdy</property>
-			<property name="defaultID">jmy-ddtkwdy</property>
-			<onclick>ActivateWindow(Settings)</onclick>
-			<property name="path">ActivateWindow(Settings)</property>
-			<property name="list">Settings</property>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="6">
-			<property name="id">$NUMBER[6]</property>
-			<property name="mainmenuid">2</property>
-			<label>كودي باللغة العربية</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">kwdybllg-l-rby</property>
-			<property name="defaultID">kwdybllg-l-rby</property>
-			<onclick>Notification(Please wait,الرجاء الانتظار)</onclick>
-			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
-			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
-			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=2)</onclick>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="7">
-			<property name="id">$NUMBER[7]</property>
-			<property name="mainmenuid">2</property>
-			<label>كودي باللغة الانجليزية</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">kwdybllg-lnjlyzy</property>
-			<property name="defaultID">kwdybllg-lnjlyzy</property>
-			<onclick>Notification(Please wait,الرجاء الانتظار)</onclick>
-			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
-			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
-			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=3)</onclick>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="8">
-			<property name="id">$NUMBER[8]</property>
-			<property name="mainmenuid">2</property>
-			<label>خروج من كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">khrwjmnkwdy</property>
-			<property name="defaultID">khrwjmnkwdy</property>
-			<visible>System.ShowExitButton</visible>
-			<onclick>Quit()</onclick>
-			<property name="path">Quit()</property>
-			<property name="list">Quit()</property>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
+		<description>No items</description>
 	</include>
 	<include name="skinshortcuts-group-alt-plugin-video-arabicvideos-0">
-		<item id="1">
-			<property name="id">$NUMBER[1]</property>
-			<property name="mainmenuid">2</property>
-			<label>تحديث إضافات كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">thdythdftkwdy</property>
-			<property name="defaultID">thdythdftkwdy</property>
-			<onclick>Notification(Update started,بدأت عملية التحديث)</onclick>
-			<property name="path">Notification(Update started,بدأت عملية التحديث)</property>
-			<property name="list">Notification(Update started,بدأت عملية التحديث)</property>
-			<onclick>UpdateAddonRepos</onclick>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="2">
-			<property name="id">$NUMBER[2]</property>
-			<property name="mainmenuid">2</property>
-			<label>إعداد إضافات كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32034]</label2>
-			<icon>DefaultAddon.png</icon>
-			<thumb />
-			<property name="labelID">dddftkwdy</property>
-			<property name="defaultID">dddftkwdy</property>
-			<onclick>ActivateWindow(AddonBrowser)</onclick>
-			<property name="path">ActivateWindow(AddonBrowser)</property>
-			<property name="list">AddonBrowser</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="3">
-			<property name="id">$NUMBER[3]</property>
-			<property name="mainmenuid">2</property>
-			<label>إعدادات واجهة كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32034]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">ddtwjh-kwdy</property>
-			<property name="defaultID">ddtwjh-kwdy</property>
-			<onclick>ActivateWindow(InterfaceSettings)</onclick>
-			<property name="path">ActivateWindow(InterfaceSettings)</property>
-			<property name="list">InterfaceSettings</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="4">
-			<property name="id">$NUMBER[4]</property>
-			<property name="mainmenuid">2</property>
-			<label>إعدادات جلد كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32034]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">ddtjldkwdy</property>
-			<property name="defaultID">ddtjldkwdy</property>
-			<onclick>ActivateWindow(SkinSettings)</onclick>
-			<property name="path">ActivateWindow(SkinSettings)</property>
-			<property name="list">SkinSettings</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="5">
-			<property name="id">$NUMBER[5]</property>
-			<property name="mainmenuid">2</property>
-			<label>جميع إعدادات كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">jmy-ddtkwdy</property>
-			<property name="defaultID">jmy-ddtkwdy</property>
-			<onclick>ActivateWindow(Settings)</onclick>
-			<property name="path">ActivateWindow(Settings)</property>
-			<property name="list">Settings</property>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="6">
-			<property name="id">$NUMBER[6]</property>
-			<property name="mainmenuid">2</property>
-			<label>كودي باللغة العربية</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">kwdybllg-l-rby</property>
-			<property name="defaultID">kwdybllg-l-rby</property>
-			<onclick>Notification(Please wait,الرجاء الانتظار)</onclick>
-			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
-			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
-			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=2)</onclick>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="7">
-			<property name="id">$NUMBER[7]</property>
-			<property name="mainmenuid">2</property>
-			<label>كودي باللغة الانجليزية</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">kwdybllg-lnjlyzy</property>
-			<property name="defaultID">kwdybllg-lnjlyzy</property>
-			<onclick>Notification(Please wait,الرجاء الانتظار)</onclick>
-			<property name="path">Notification(Please wait,الرجاء الانتظار)</property>
-			<property name="list">Notification(Please wait,الرجاء الانتظار)</property>
-			<onclick>RunPlugin(plugin://skin.metropolisEMAD?mode=3)</onclick>
-			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-		<item id="8">
-			<property name="id">$NUMBER[8]</property>
-			<property name="mainmenuid">2</property>
-			<label>خروج من كودي</label>
-			<label2>$ADDON[script.skinshortcuts 32054]</label2>
-			<icon>DefaultShortcut.png</icon>
-			<thumb />
-			<property name="labelID">khrwjmnkwdy</property>
-			<property name="defaultID">khrwjmnkwdy</property>
-			<visible>[System.ShowExitButton] + String.IsEqual(Window(10000).Property(submenuVisibility),plugin-video-arabicvideos-0)</visible>
-			<onclick>Quit()</onclick>
-			<property name="path">Quit()</property>
-			<property name="list">Quit()</property>
-			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
-			<property name="group">plugin.video.arabicvideos--0</property>
-			<property name="isSubmenu">True</property>
-		</item>
-	</include>
-	<include name="skinshortcuts-group-plugin-video-arabicvideos-1">
-		<description>No items</description>
-	</include>
-	<include name="skinshortcuts-group-alt-plugin-video-arabicvideos-1">
-		<description>No items</description>
-	</include>
-	<include name="skinshortcuts-group-plugin-video-arabicvideos-2">
-		<description>No items</description>
-	</include>
-	<include name="skinshortcuts-group-alt-plugin-video-arabicvideos-2">
 		<description>No items</description>
 	</include>
 	<include name="skinshortcuts-group-num-1036">
-		<description>No items</description>
+		<item id="1">
+			<property name="id">$NUMBER[1]</property>
+			<property name="mainmenuid">5</property>
+			<label>Arabic Videos</label>
+			<label2>$ADDON[script.skinshortcuts 32021]</label2>
+			<icon>DefaultAddonVideo.png</icon>
+			<thumb>special://home/addons/plugin.video.arabicvideos/icon.png</thumb>
+			<property name="labelID">plugin.video.arabicvideos</property>
+			<property name="defaultID">plugin.video.arabicvideos</property>
+			<onclick>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
+			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
+			<property name="list">plugin://plugin.video.arabicvideos</property>
+			<visible>String.IsEqual(System.ProfileName,Master user)</visible>
+			<property name="group">1036</property>
+			<property name="isSubmenu">True</property>
+		</item>
 	</include>
 	<include name="skinshortcuts-group-alt-num-1036">
-		<description>No items</description>
+		<item id="1">
+			<property name="id">$NUMBER[1]</property>
+			<property name="mainmenuid">5</property>
+			<label>Arabic Videos</label>
+			<label2>$ADDON[script.skinshortcuts 32021]</label2>
+			<icon>DefaultAddonVideo.png</icon>
+			<thumb>special://home/addons/plugin.video.arabicvideos/icon.png</thumb>
+			<property name="labelID">plugin.video.arabicvideos</property>
+			<property name="defaultID">plugin.video.arabicvideos</property>
+			<onclick>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</onclick>
+			<property name="path">ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</property>
+			<property name="list">plugin://plugin.video.arabicvideos</property>
+			<visible>[String.IsEqual(System.ProfileName,Master user)] + String.IsEqual(Window(10000).Property(submenuVisibility),num-1036)</visible>
+			<property name="group">1036</property>
+			<property name="isSubmenu">True</property>
+		</item>
 	</include>
 	<include name="skinshortcuts-group-num-13005">
 		<item id="1">

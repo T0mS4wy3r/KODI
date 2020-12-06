@@ -729,7 +729,7 @@ msgid "Visualization: Use Slim Info Overlay"
 msgstr "Визуализации: Узкое окно информации"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
+msgid "Show Date"
 msgstr "Показывать дату вместо дня недели"
 
 msgctxt "#31454"

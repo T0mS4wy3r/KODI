@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <shortcuts>
 	<shortcut>
-		<label>الفيديوهات العربية</label>
+		<label>برنامج الفيديو العربي</label>
 		<label2>32021</label2>
 		<icon>home_icons/arabic.png</icon>
 		<action>ActivateWindow(Videos,plugin://plugin.video.arabicvideos,return)</action>

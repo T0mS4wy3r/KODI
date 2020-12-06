@@ -513,7 +513,7 @@ msgid "Recommended"
 msgstr "מומלץ"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
+msgid "Show Date"
 msgstr "הצג תאריך במקום יום בשבוע"
 
 msgctxt "#31457"

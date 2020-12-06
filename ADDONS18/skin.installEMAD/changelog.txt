@@ -1,4 +1,10 @@
 
-v18.1.0.0
-Initial release
+18.1.0.1	2020-12-06
+Fixed sending analytics events
+Added disabling of install skin
+Added install of Arabic interface
+Minor fixes and improvements
 
+
+v18.1.0.0	2020-11-02
+Initial release

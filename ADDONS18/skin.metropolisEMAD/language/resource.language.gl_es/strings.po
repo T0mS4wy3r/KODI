@@ -449,7 +449,7 @@ msgid "Recommended"
 msgstr "Recomendado"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
+msgid "Show Date"
 msgstr "Amosar a Data no canto do Día da Semana"
 
 msgctxt "#31457"

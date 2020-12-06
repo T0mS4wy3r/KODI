@@ -857,7 +857,7 @@ msgid "Visualization: Use Slim Info Overlay"
 msgstr "Visualisierung: Benutze schmale Info-Anzeige"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
+msgid "Show Date"
 msgstr "Zeige Datum anstatt Wochentag"
 
 msgctxt "#31454"

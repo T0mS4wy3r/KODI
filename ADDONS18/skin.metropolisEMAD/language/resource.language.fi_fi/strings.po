@@ -409,7 +409,7 @@ msgid "Recommended"
 msgstr "Suositellut"
 
 msgctxt "#31453"
-msgid "Show Date instead of Day of Week"
+msgid "Show Date"
 msgstr "Näytä päivämäärä viikonpäivän sijaan"
 
 msgctxt "#31457"

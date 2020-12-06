@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="skin.installEMAD" version="18.1.0.0" name="Install EMAD" provider-name="jingai, Stoli, Amra, MacGyver, EMAD">
+<addon id="skin.installEMAD" version="18.1.0.1" name="Install EMAD" provider-name="jingai, Stoli, Amra, MacGyver, EMAD">
 	<requires>
 		<import addon="xbmc.gui" version="5.14.0"/>
 	</requires>

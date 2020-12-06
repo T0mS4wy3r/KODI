@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
 
 
-#import traceback,xbmc,xbmcplugin,json
-#xbmc.log('EMAD111::   '+str(sys.argv), level=xbmc.LOGNOTICE)
-#mode = int(sys.argv[1])
-#text = sys.argv[2]
-#xbmc.log('EMAD222::   mode: ['+str(mode)+']     text: ['+text+']', level=xbmc.LOGNOTICE)
+import sys,urllib2,re,xbmcaddon,os,xbmc,platform,uuid,hashlib,random,xbmcgui,time
+import unicodedata
 
 
 try:
-	import sys,urllib2
 	args = {'mode':'','text':''}
 	line = sys.argv[2]
 	if '?' in line:
@@ -24,7 +20,6 @@ except: mode,text = '',''
 
 
 def mixARABIC(string):
-	import unicodedata
 	#if '\u' in string:
 	#	string = string.decode('unicode_escape')
 	#	unicode_strings=re.findall(r'\u[0-9A-F]',string)	
@@ -46,7 +41,6 @@ def mixARABIC(string):
 
 
 def ADDON_ID_VERSION():
-	import re,xbmcaddon,os
 	addonfolder = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
 	addonfile = os.path.join(addonfolder,'addon.xml')
 	with open(addonfile,'r') as f: xmlfile = f.read()
@@ -55,23 +49,13 @@ def ADDON_ID_VERSION():
 	return id,ver
 
 
-def BUSY_DIALOG(job):
-	import xbmc
-	# dialog = 'busydialog'				# KODI 17.9 and earlier
-	dialog = 'busydialognocancel'		# KODI 18 and later
-	if job=='start': xbmc.executebuiltin('ActivateWindow('+dialog+')')
-	elif job=='stop': xbmc.executebuiltin('Dialog.Close('+dialog+')')
-	return
-
-
 def dummyClientID(length):
-	import platform,xbmcaddon,uuid,hashlib
-	addon_id,addon_version = ADDON_ID_VERSION()
+	#addon_id,addon_version = ADDON_ID_VERSION()
 	hostname = platform.node()			# empc12/localhosting
 	os_type = platform.system()			# Windows/Linux
 	os_version = platform.release()		# 10.0/3.14.22
 	os_bits = platform.machine()		# AMD64/aarch64
-	settings = xbmcaddon.Addon(id=addon_id)
+	#settings = xbmcaddon.Addon(id=addon_id)
 	#savednode = settings.getSetting('node')
 	savednode = ''
 	if savednode=='':
@@ -84,34 +68,44 @@ def dummyClientID(length):
 	return md5
 
 
+def SEND_ANALYTICS_EVENT():
+	addon_id,addon_version = ADDON_ID_VERSION()
+	website = 'METROPOLIS'
+	kodi_release = xbmc.getInfoLabel("System.BuildVersion")
+	kodi_version = re.findall('&&(.*?)[ -]','&&'+kodi_release,re.DOTALL)
+	kodi_version = str(float(kodi_version[0]))
+	randomNumber = str(random.randrange(111111111111,999999999999))
+	try:
+		headers = {'User-Agent':''}
+		url = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+website+'&el='+kodi_version+'&z='+randomNumber
+		request = urllib2.Request(url=url,headers=headers)
+		response = urllib2.urlopen(request)
+		#html = response.read()
+		xbmc.log('skin.metropolisEMAD ========= Sent analytics',level=xbmc.LOGNOTICE)	
+	except: pass
+	return
+
+
+def BUSY_DIALOG(job):
+	# dialog = 'busydialog'				# KODI 17.9 and earlier
+	dialog = 'busydialognocancel'		# KODI 18 and later
+	if job=='start': xbmc.executebuiltin('ActivateWindow('+dialog+')')
+	elif job=='stop': xbmc.executebuiltin('Dialog.Close('+dialog+')')
+	return
+
+
 if mode==0 and text!='':
 	# searching arabic text
-	import xbmcgui
 	text = mixARABIC(text)
 	text = text.decode('utf8').encode('utf8')
 	window_id = 10103
 	window = xbmcgui.Window(window_id)
 	window.getControl(311).setLabel(text)
 
-elif mode==1:
-	# send analytics
-	import random,re,xbmc,urllib2
-	addon_id,addon_version = ADDON_ID_VERSION()
-	website = 'METROPOLIS'
-	kodi_release = xbmc.getInfoLabel("System.BuildVersion")
-	kodi_version = re.findall('&&(.*?)[ -]','&&'+kodi_release,re.DOTALL)
-	kodi_version = float(kodi_version[0])
-	randomNumber = str(random.randrange(111111111111,999999999999))
-	url = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+website+'&el='+str(kodi_version)+'&z='+randomNumber
-	try:
-		response = urllib2.urlopen(url)
-		xbmc.log('skin.metropolisEMAD ========= Sent analytics',level=xbmc.LOGNOTICE)	
-		#html = response.read()
-	except: pass
+elif mode==1: SEND_ANALYTICS_EVENT()
 
 elif mode in [2,3]:
 	# change kodi language
-	import time,xbmc
 	BUSY_DIALOG('start')
 	if mode==2: addonLANG = 'resource.language.ar_sa'
 	else: addonLANG = 'resource.language.en_gb'
