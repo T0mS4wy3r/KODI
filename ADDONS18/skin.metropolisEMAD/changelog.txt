@@ -1,4 +1,8 @@
 
+v18.4.0.2	2020-12-07
+Changed resource.images to optional="true"
+
+
 v18.4.0.1	2020-12-06
 Added kodi Arabic language interface
 Modified videos OSD

@@ -3,17 +3,17 @@
 
 
 
-<addon id="skin.metropolisEMAD" version="18.4.0.1" name="Metropolis EMAD" provider-name="jingai, Stoli, Amra, MacGyver, EMAD">
+<addon id="skin.metropolisEMAD" version="18.4.0.2" name="Metropolis EMAD" provider-name="jingai, Stoli, Amra, MacGyver, EMAD">
 	<requires>
 		<import addon="xbmc.gui" version="5.14.0" />
-		<import addon="script.skin.helper.widgets" />
-		<import addon="script.skinshortcuts" />
-		<import addon="script.image.resource.select" />
-		<import addon="resource.images.languageflags.completepack" />
-		<import addon="resource.images.recordlabels.white" />
-		<import addon="resource.images.studios.coloured" />
-		<import addon="resource.images.weatherfanart.prairie" />
-		<import addon="resource.images.weathericons.coloured" />
+		<import addon="script.skin.helper.widgets" optional="false" />
+		<import addon="script.skinshortcuts" optional="false" />
+		<import addon="script.image.resource.select" optional="false" />
+		<import addon="resource.images.languageflags.completepack" optional="true" />
+		<import addon="resource.images.recordlabels.white" optional="true" />
+		<import addon="resource.images.studios.coloured" optional="true" />
+		<import addon="resource.images.weatherfanart.prairie" optional="true" />
+		<import addon="resource.images.weathericons.coloured" optional="true" />
 	</requires>
 	<extension point="xbmc.gui.skin" debugging="false" effectslowdown="0.75">
 		<res width="1280" height="720" aspect="16:9" default="true" folder="xml"/>
