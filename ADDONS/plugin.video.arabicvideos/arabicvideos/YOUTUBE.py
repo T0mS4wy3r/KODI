@@ -428,7 +428,7 @@ def GET_PAGE_DATA(url,visitor='',request=''):
 		bb = EVAL(aa[0])
 	elif '</script>' not in html: bb = EVAL(html)
 	else: bb = ''
-	with open('S:\\00emad.json','w') as f: f.write(str(bb))
+	#with open('S:\\00emad.json','w') as f: f.write(str(bb))
 	#with open('S:\\00emad.json','r') as f: aa = f.read() ; bb = eval(aa)
 	#with open('S:\\00emad.html','w') as f: f.write(html)
 	#with open('S:\\00emad.dat','w') as f: f.write(str(aa))

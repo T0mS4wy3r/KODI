@@ -81,7 +81,7 @@ def WEBSITES_MENU():
 	addMenuItem('folder','[COLOR FFC89008]AKO  [/COLOR]'+'موقع أكوام القديم','',70)
 	#addMenuItem('folder','[COLOR FFC89008]EGV  [/COLOR]'+'موقع إيجي بيست vip','',220)    # 220
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',157)
-	addMenuItem('folder','[COLOR FFC89008]AKC  [/COLOR]'+'موقع أكوام كام','',350)
+	#addMenuItem('folder','[COLOR FFC89008]AKC  [/COLOR]'+'موقع أكوام كام','',350)
 	addMenuItem('folder','[COLOR FFC89008]ARL  [/COLOR]'+'موقع عرب ليونز','',200)
 	addMenuItem('folder','[COLOR FFC89008]SHA  [/COLOR]'+'موقع شاهد فوريو','',110)
 	addMenuItem('folder','[COLOR FFC89008]HEL  [/COLOR]'+'موقع هلال يوتيوب','',90)
