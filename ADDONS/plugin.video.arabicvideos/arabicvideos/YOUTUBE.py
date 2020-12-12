@@ -26,16 +26,16 @@ def MAIN(mode,url,text,type,page):
 	return results
 
 def MENU():
-	addMenuItem('folder',menu_name+'بحث في الموقع','',149,'','','_REMEMBERRESULTS_')
+	#addMenuItem('folder',menu_name+'TEST YOUTUBE',website0a+'/channel/UCvcrw7HMdNqSb992Xk4k1dg',144)
 	#addMenuItem('folder',menu_name+'older playlist not listing newer plyalist','https://www.youtube.com/watch?v=XFpqeYzXZfk&list=RDQM63vHjP0heTs',144)
+	#addMenuItem('folder',menu_name+'موقع فارغ',website0a+'/channel/UCtOvonj4GyopMTMBa23qUcw',144)
+	addMenuItem('folder',menu_name+'بحث في الموقع','',149,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',menu_name+'الصفحة الرئيسية',website0a,144)
 	addMenuItem('folder',menu_name+'المحتوى الرائج',website0a+'/feed/trending',146)
 	addMenuItem('folder',menu_name+'مواقع اختارها يوتيوب',website0a+'/feed/guide_builder',144)
-	#addMenuItem('folder',menu_name+'موقع فارغ',website0a+'/channel/UCtOvonj4GyopMTMBa23qUcw',144)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder','_YTC_'+'مواقع اختارها المبرمج','',290)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	#addMenuItem('folder',menu_name+'TEST_YOUTUBE','',144)
 	addMenuItem('folder',menu_name+'بحث: قنوات عربية','',147)
 	addMenuItem('folder',menu_name+'بحث: قنوات أجنبية','',148)
 	addMenuItem('folder',menu_name+'بحث: افلام عربية',website0a+'/results?search_query=فيلم',144)
@@ -85,7 +85,15 @@ def PLAY(url,type):
 	#PLAY_VIDEO(link,script_name,'video')
 	linkLIST = [url]
 	import RESOLVERS
-	RESOLVERS.PLAY(linkLIST,script_name,type)
+	result = RESOLVERS.PLAY(linkLIST,script_name,type)
+	if 'RETURN_YOUTUBE' in result:
+		link = website0a+result.split('::')[1]
+		new_path = sys.argv[0]+'?type=folder&mode=144&url='+link
+		xbmc.executebuiltin("Container.Update("+new_path+")")
+		#threads = CustomThread(False,False)
+		#threads.start_new_thread('1',xbmc.executebuiltin,"Container.Update("+new_path+")")
+		#DIALOG_OK(link,str(len(KodiMenuList)))
+		#LOG_THIS('NOTICE','EMAD EMAD 9999: '+new_path)
 	return
 
 def TRENDING_MENU(url):
@@ -122,6 +130,17 @@ def ITEMS(url,index='',visitor=''):
 	#DIALOG_OK(url,index)
 	global settings
 	html,cc = GET_PAGE_DATA(url,visitor)
+	owner = re.findall('"ownerName".*?":"(.*?)".*?"url":"(.*?)"',html,re.DOTALL)
+	if owner:
+		name = 'OWNER:  '+owner[0][0]
+		link = website0a+owner[0][1]
+		addMenuItem('folder',menu_name+name,link,144)
+	else:
+		owner = re.findall('"videoOwner".*?"text":"(.*?)".*?"url":"(.*?)"',html,re.DOTALL)
+		if owner:
+			name = 'OWNER:  '+owner[0][0]
+			link = website0a+owner[0][1]
+			addMenuItem('folder',menu_name+name,link,144)
 	#if cc=='': CHANNEL_ITEMS_OLD(url,html) ; return
 	not_entry_urls = ['/search','/videos','/channels','/playlists','/featured','ss=','ctoken=','key=','bp=','shelf_id=']
 	channels_entry_page = not any(value in url for value in not_entry_urls)
@@ -235,6 +254,7 @@ def ITEMS(url,index='',visitor=''):
 		if 'search_query' in url or 'search?key=' in url: url2 = website0a+'/youtubei/v1/search?key='+key
 		else: url2 = website0a+'/youtubei/v1/browse?key='+key
 		addMenuItem('folder',menu_name+'صفحة اخرى',url2,144,'','',visitorData)
+	#DIALOG_OK('YOUTUBE.ITEMS() size',str(len(menuItemsLIST)))
 	return
 
 def TRY_MULITPLE(var1,var2,try_list):
@@ -408,7 +428,7 @@ def GET_PAGE_DATA(url,visitor='',request=''):
 		bb = EVAL(aa[0])
 	elif '</script>' not in html: bb = EVAL(html)
 	else: bb = ''
-	#with open('S:\\00emad.json','w') as f: f.write(str(bb))
+	with open('S:\\00emad.json','w') as f: f.write(str(bb))
 	#with open('S:\\00emad.json','r') as f: aa = f.read() ; bb = eval(aa)
 	#with open('S:\\00emad.html','w') as f: f.write(html)
 	#with open('S:\\00emad.dat','w') as f: f.write(str(aa))
@@ -484,7 +504,7 @@ def SEARCH(search):
 				linkLIST_sort.append(link)
 	"""
 	if showdialogs:
-		selection_search = DIALOG_SELECT('اختر الفلتر المناسب:', fileterLIST_search)
+		selection_search = DIALOG_SELECT('اختر الفلتر المناسب:',fileterLIST_search)
 		if selection_search == -1: return
 		link_search = linkLIST_search[selection_search]
 		if link_search!='': url3 = website0a+link_search

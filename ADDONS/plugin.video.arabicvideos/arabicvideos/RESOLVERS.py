@@ -36,15 +36,16 @@ def PLAY(linkLIST,script_name,type=''):
 					result = 'unresolved'
 				else:
 					LOG_THIS('NOTICE',LOGGING(script_name)+'   Playing Selected Server   Server: [ '+title+' ]   URL: [ '+url+' ]')
-					result,errormsg = PLAY_LINK(url,script_name,type)
+					result,errormsg,linkLIST2 = PLAY_LINK(url,script_name,type)
+					#DIALOG_OK(result,errormsg)		
 			if '\n' not in errormsg: error1,error2 = errormsg,''
 			else: error1,error2 = errormsg.split('\n',1)
-			#DIALOG_OK(result,errormsg)
-			if result in ['download','playing','canceled_1st_menu'] or len(linkLIST)==1: break
+			if result in ['RETURN','download','playing','canceled_1st_menu'] or len(linkLIST)==1: break
 			elif result in ['failed','timeout','tried']: break
 			elif result not in ['canceled_2nd_menu','https']: DIALOG_OK('رسالة من المبرمج','السيرفر لم يعمل جرب سيرفر غيره',error1,error2)
 	if result=='unresolved' and len(titleLIST)>0: DIALOG_OK('رسالة من المبرمج','سيرفر هذا الفيديو لم يعمل جرب فيديو غيره',errormsg)
 	elif result in ['failed','timeout'] and errormsg!='': DIALOG_OK('رسالة من المبرمج',errormsg)
+	elif errormsg=='RETURN_YOUTUBE': result = errormsg+'::'+linkLIST2[0]
 	"""
 	elif result in ['canceled_1st_menu','canceled_2nd_menu']:
 		#LOG_THIS('NOTICE',LOGGING(script_name)+'   Test:   '+sys.argv[0]+sys.argv[2])
@@ -65,10 +66,11 @@ def PLAY(linkLIST,script_name,type=''):
 	#	addMenuItem('video',menu_name+title,link,160,'','',script_name)
 
 def PLAY_LINK(url,script_name,type=''):
-	#DIALOG_OK(url,'')
 	url = url.strip(' ').strip('&').strip('?').strip('/')
 	errormsg,titleLIST,linkLIST = RESOLVE(url)
-	if linkLIST:
+	#DIALOG_OK(url,errormsg)
+	if 'RETURN_YOUTUBE' in errormsg: result,errormsg = 'RETURN','RETURN_YOUTUBE'
+	elif linkLIST:
 		while True:
 			if len(linkLIST)==1: selection = 0
 			else: selection = DIALOG_SELECT('اختر الملف المناسب:', titleLIST)
@@ -96,7 +98,7 @@ def PLAY_LINK(url,script_name,type=''):
 		result = 'unresolved'
 		videofiletype = re.findall('(\.avi|\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url.lower()+'&&',re.DOTALL|re.IGNORECASE)
 		if videofiletype: result = PLAY_VIDEO(url,script_name,type)
-	return result,errormsg
+	return result,errormsg,linkLIST
 	#title = xbmc.getInfoLabel( "ListItem.Label" )
 	#if 'سيرفر عام مجهول' in title:
 	#	import SERVICES
@@ -957,10 +959,11 @@ def UPTOBOX(url):
 	#file.close()
 
 def YOUTUBE(url):
-	# subtitles example		url = 'https://www.youtube.com/watch?v=eDlZ5vANQUg'
+	# subtitles example			url = 'https://www.youtube.com/watch?v=eDlZ5vANQUg'
 	# mpddash .mpd example		url = 'https://www.youtube.com/watch?v=XvmSNAyeyFI'
-	# hls ts .m3u8 example			url = 'https://www.youtube.com/watch?v=Gf2-NStSsNw'
-	# signature example		url = 'https://www.youtube.com/watch?v=e_S9VvJM1PI'
+	# hls ts .m3u8 example		url = 'https://www.youtube.com/watch?v=Gf2-NStSsNw'
+	# signature example			url = 'https://www.youtube.com/watch?v=e_S9VvJM1PI'
+	# some files have unknown problem		url = 'https://www.youtube.com/watch?v=1wDRUVcSy_Q'
 	# url = 'https://youtu.be/eDlZ5vANQUg'
 	# url = 'http://y2u.be/eDlZ5vANQUg'
 	# url = 'https://www.youtube.com/embed/eDlZ5vANQUg'
@@ -1092,10 +1095,13 @@ def YOUTUBE(url):
 	#xbmc.log(str(streams_type2),level=xbmc.LOGNOTICE)
 	#xbmc.log(str(streams0),level=xbmc.LOGNOTICE)
 	if 'sp=sig' in html:
-		#DIALOG_OK('cipher','')
+		#DIALOG_OK('cipher',str(html))
 		#html_blocks = re.findall('src="(/yts/jsbin/player_.*?)"',html,re.DOTALL)
-		html_blocks = re.findall('src="(/s/player/\w*?/player_ias.vflset/en_US/base.js)"',html,re.DOTALL)
+		# /s/player/6dde7fb4/player_ias.vflset/en_US/base.js
+		# /s/player/6dde7fb4/player_ias.vflset/en_GB/base.js
+		html_blocks = re.findall('src="(/s/player/\w*?/player_ias.vflset/en_../base.js)"',html,re.DOTALL)
 		if html_blocks:
+			#DIALOG_OK('base.js',str(html_blocks))
 			jsfile = WEBSITES['YOUTUBE'][0]+html_blocks[0]
 			jshtml = OPENURL_CACHED(REGULAR_CACHE,jsfile,'','','','RESOLVERS-YOUTUBE-3rd')
 			import youtube_signature.cipher
@@ -1109,8 +1115,7 @@ def YOUTUBE(url):
 	for dict in streams0:
 		#xbmc.log(str(dict),level=xbmc.LOGNOTICE)
 		url = dict['url']
-		if 'signature=' in url or url.count('sig=')>1:
-			streams1.append(dict)
+		if 'signature=' in url or url.count('sig=')>1: streams1.append(dict)
 		elif jshtml!='' and 's' in dict.keys() and 'sp' in dict.keys():
 			json_script = eval(json_script_cached)
 			json_script_engine = youtube_signature.json_script_engine.JsonScriptEngine(json_script)
@@ -1261,6 +1266,13 @@ def YOUTUBE(url):
 	#if dashURL!='':
 	#	selectMenu.append('mpd صورة وصوت دقة اوتوماتيكية') ; choiceMenu.append('dash')
 	#	shift = 1
+	owner = re.findall('"owner":.*?"text":"(.*?)".*?"url":"(.*?)"',html,re.DOTALL)
+	if owner:
+		shift += 1
+		title = 'OWNER:  '+owner[0][0]
+		link = owner[0][1]
+		selectMenu.append(title)
+		choiceMenu.append(link)
 	for videodict,audiodict,title,bitrate in highestStreams:
 		selectMenu.append(title) ; choiceMenu.append('highest')
 	if allStreams: selectMenu.append('صورة وصوت جميع المتوفر') ; choiceMenu.append('all')
@@ -1272,6 +1284,9 @@ def YOUTUBE(url):
 	while True:
 		selection = DIALOG_SELECT('اختر النوع المناسب:', selectMenu)
 		if selection==-1: return 'تم الغاء تشغيل الفيديو',[],[]
+		if selection==0:
+			link = choiceMenu[selection]
+			return 'RETURN_YOUTUBE',[],[link]
 		choice = choiceMenu[selection]
 		logTitle = selectMenu[selection]
 		if choice=='dash':

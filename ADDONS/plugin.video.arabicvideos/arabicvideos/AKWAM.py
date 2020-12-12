@@ -137,20 +137,17 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
-	#DIALOG_OK(url,'PLAY1')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#with open('S:\\emad.html', 'w') as f: f.write(html)
 	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,True,'AKWAM-PLAY-1st')
 	ratingLIST = re.findall('class="badge.*?>.*?(\w*).*?<',html,re.DOTALL)
 	if RATING_CHECK(script_name,url,ratingLIST): return
-	#DIALOG_OK('','PLAY3')
 	buttons = re.findall('li><a href="#(.*?)".*?>(.*?)<',html,re.DOTALL)
 	#buttons = (['',''],['',''])
 	linkLIST,titleLIST,blocks,qualities = [],[],[],[]
 	if buttons:
 		filetype = 'mp4'
 		for button,quality in buttons:
-			#DIALOG_OK(quality,button)
 			html_blocks = re.findall('tab-content quality" id="'+button+'".*?</div>.\s*</div>',html,re.DOTALL)
 			block = html_blocks[0]
 			blocks.append(block)
@@ -165,12 +162,11 @@ def PLAY(url):
 			return
 		blocks.append(block)
 		qualities.append('')
-	#DIALOG_OK(str(qualities),'')
 	for i in range(len(blocks)):
 		links = re.findall('href="(.*?)".*?icon-(.*?)"',blocks[i],re.DOTALL)
-		#DIALOG_OK(str(links),'')
 		for link,icon in links:
-			if 'play' in icon or 'torrent' in icon: continue
+			if 'torrent' in icon: continue
+			#elif 'play' in icon: continue
 			elif 'download' in icon: type = 'download'
 			elif 'play' in icon: type = 'watch'
 			else: type = 'unknown'

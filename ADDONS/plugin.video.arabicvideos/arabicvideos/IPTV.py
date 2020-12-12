@@ -52,8 +52,8 @@ def MENU():
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'أرشيف القنوات للأيام الماضية','LIVE_TIMESHIFT_GROUPED_SORTED',233)
 	addMenuItem('folder','[COLOR FFC89008]IPT  [/COLOR]'+'أرشيف برامج القنوات للأيام الماضية','LIVE_ARCHIVED_GROUPED_SORTED',233)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'إضافة أو تغيير اشتراك IPTV','',231)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'عدد فيديوهات IPTV','',281)
-	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'إضافة اشتراك IPTV','',231)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'فحص اشتراك IPTV','',236)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'جلب ملفات IPTV','',232)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'مسح ملفات IPTV','',237)
@@ -81,41 +81,42 @@ def CHECK_ACCOUNT(showDialog=True):
 		url = server+'/player_api.php?username='+username+'&password='+password
 		response = OPENURL_REQUESTS_CACHED(NO_CACHE,'GET',url,'',headers,False,'','IPTV-CHECK_ACCOUNT-1st')
 		html = response.content
-		if '___Error___' not in html:
+		if response.succeeded:
+			timediff,time_now,created_at,exp_date = 0,'','',''
 			try:
 				dict = EVAL(html)
-				time_now = dict['server_info']['time_now']
 				status = dict['user_info']['status']
 				ok = True
+				time_now = dict['server_info']['time_now']
 			except: pass
-			if ok:
+			if time_now:
 				struct = time.strptime(time_now,'%Y-%m-%d %H:%M:%S')
 				timestamp = int(time.mktime(struct))
 				timediff = int(now-timestamp)
 				# normalizing to the closest half hour with 15 minutes error range
 				timediff = int((timediff+900)/1800)*1800
-				settings.setSetting('iptv.timestamp',str(now))
-				settings.setSetting('iptv.timediff',str(timediff))
-				if showDialog:
-					sep1 = '\r\n'
-					struct = time.localtime(int(dict['user_info']['created_at']))
-					created_at = time.strftime('%Y-%m-%d  %H:%M:%S',struct)
-					struct = time.localtime(int(dict['user_info']['exp_date']))
-					exp_date = time.strftime('%Y-%m-%d  %H:%M:%S',struct)
-					max = dict['user_info']['max_connections']
-					active = dict['user_info']['active_cons']
-					is_trial = dict['user_info']['is_trial']
-					parts = iptvURL.split('&',1)
-					message = parts[0]+sep1+'&'+parts[1]+sep1
-					message += sep1+'Status:  '+'[COLOR FFC89008]'+status+'[/COLOR]'
-					message += sep1+'Trial:    '+'[COLOR FFC89008]'+str(is_trial=='1')+'[/COLOR]'
-					message += sep1+'Created  At:  '+'[COLOR FFC89008]'+created_at+'[/COLOR]'
-					message += sep1+'Expiry Date:  '+'[COLOR FFC89008]'+exp_date+'[/COLOR]'
-					message += sep1+'Connections   ( Active / Maximum ) :  '+'[COLOR FFC89008]'+active+' / '+max+'[/COLOR]'
-					message += sep1+'Allowed Outputs:   '+'[COLOR FFC89008]'+" , ".join(dict['user_info']['allowed_output_formats'])+'[/COLOR]'
-					message += sep1+sep1+str(dict['server_info'])
-					if status=='Active': DIALOG_TEXTVIEWER('الاشتراك يعمل بدون مشاكل',message)
-					else: DIALOG_TEXTVIEWER('يبدو أن هناك مشكلة في الاشتراك',message)
+				struct = time.localtime(int(dict['user_info']['created_at']))
+				created_at = time.strftime('%Y-%m-%d  %H:%M:%S',struct)
+				struct = time.localtime(int(dict['user_info']['exp_date']))
+				exp_date = time.strftime('%Y-%m-%d  %H:%M:%S',struct)
+			settings.setSetting('iptv.timestamp',str(now))
+			settings.setSetting('iptv.timediff',str(timediff))
+			if ok and showDialog:
+				sep1 = '\r\n'
+				max = dict['user_info']['max_connections']
+				active = dict['user_info']['active_cons']
+				is_trial = dict['user_info']['is_trial']
+				parts = iptvURL.split('&',1)
+				message = parts[0]+sep1+'&'+parts[1]+sep1
+				message += sep1+'Status:  '+'[COLOR FFC89008]'+status+'[/COLOR]'
+				message += sep1+'Trial:    '+'[COLOR FFC89008]'+str(is_trial=='1')+'[/COLOR]'
+				message += sep1+'Created  At:  '+'[COLOR FFC89008]'+created_at+'[/COLOR]'
+				message += sep1+'Expiry Date:  '+'[COLOR FFC89008]'+exp_date+'[/COLOR]'
+				message += sep1+'Connections   ( Active / Maximum ) :  '+'[COLOR FFC89008]'+active+' / '+max+'[/COLOR]'
+				message += sep1+'Allowed Outputs:   '+'[COLOR FFC89008]'+" , ".join(dict['user_info']['allowed_output_formats'])+'[/COLOR]'
+				message += sep1+sep1+str(dict['server_info'])
+				if status=='Active': DIALOG_TEXTVIEWER('الاشتراك يعمل بدون مشاكل',message)
+				else: DIALOG_TEXTVIEWER('يبدو أن هناك مشكلة في الاشتراك',message)
 	if iptvURL and ok and status=='Active':
 		LOG_THIS('NOTICE','Checking IPTV URL   [ IPTV account is OK ]   [ '+iptvURL+' ]')
 		succeeded = True
@@ -139,34 +140,35 @@ def GROUPS(TYPE,GROUP,website=''):
 		logos.append(dict['img'])
 	z = zip(groups,logos)
 	z = sorted(z, reverse=False, key=lambda key: key[0])
-	if '__IPTVSeries__' in GROUP: MAINGROUP,SUBGROUP = GROUP.split('__IPTVSeries__')
+	if '__IPTVSERIES__' in GROUP: MAINGROUP,SUBGROUP = GROUP.split('__IPTVSERIES__')
 	else: MAINGROUP,SUBGROUP = GROUP,''
 	#DIALOG_OK(TYPE,GROUP)
 	menu_name2 = menu_name
 	if len(z)>0:
 		for group,img in z:
 			if website!='':
-				if '__IPTVSeries__' in group: menu_name2 = 'SERIES'
+				if '__IPTVSERIES__' in group: menu_name2 = 'SERIES'
 				elif '!!__UNKNOWN__!!' in group: menu_name2 = 'UNKNOWN'
 				elif 'LIVE' in TYPE: menu_name2 = 'LIVE'
 				else: menu_name2 = 'VIDEOS'
 				menu_name2 = ',[COLOR FFC89008]'+menu_name2+': [/COLOR]'
-			if '__IPTVSeries__' in group: maingroup,subgroup = group.split('__IPTVSeries__')
+			if '__IPTVSERIES__' in group: maingroup,subgroup = group.split('__IPTVSERIES__')
 			else: maingroup,subgroup = group,''
 			if GROUP=='':
 				if maingroup in unique: continue
 				unique.append(maingroup)
 				if 'RANDOM' in website: addMenuItem('folder',menu_name2+maingroup,TYPE,167,img,'',group)
-				elif '__IPTVSeries__' in group: addMenuItem('folder',menu_name2+maingroup,TYPE,233,'','',group)
+				elif '__IPTVSERIES__' in group: addMenuItem('folder',menu_name2+maingroup,TYPE,233,'','',group)
 				else: addMenuItem('folder',menu_name2+maingroup,TYPE,234,'','',group)
-			elif '__IPTVSeries__' in group and maingroup==MAINGROUP:
+			elif '__IPTVSERIES__' in group and maingroup==MAINGROUP:
 				if subgroup in unique: continue
 				unique.append(subgroup)
 				if '!!__UNKNOWN__!!' in subgroup: img = ''
 				if 'RANDOM' in website: addMenuItem('folder',menu_name2+subgroup,TYPE,167,img,'',group)
 				else: addMenuItem('folder',menu_name2+subgroup,TYPE,234,img,'',group)
 	else:
-		addMenuItem('link',menu_name2+'هذه الخدمة غير موجودة في اشتراكك','',9999)
+		addMenuItem('link',menu_name2+'هذه القائمة إما فارغة أو غير موجودة','',9999)
+		addMenuItem('link',menu_name2+'أو الخدمة غير موجودة في اشتراكك','',9999)
 		addMenuItem('link',menu_name2+'أو رابط IPTV الذي أنت أضفته غير صحيح','',9999)
 	WRITE_TO_SQL3('IPTV_GROUPS',[TYPE,GROUP,website],menuItemsLIST,PERMANENT_CACHE)
 	menuItemsLIST[:] = previous_menuItemsLIST+menuItemsLIST
@@ -181,13 +183,13 @@ def ITEMS(TYPE,GROUP):
 	else: previous_menuItemsLIST = menuItemsLIST[:] ; menuItemsLIST[:] = []
 	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
 	#DIALOG_OK(TYPE+'___:'+GROUP,str(len(streams)))
-	if '__IPTVSeries__' in GROUP: MAINGROUP,SUBGROUP = GROUP.split('__IPTVSeries__')
+	if '__IPTVSERIES__' in GROUP: MAINGROUP,SUBGROUP = GROUP.split('__IPTVSERIES__')
 	else: MAINGROUP,SUBGROUP = GROUP,''
 	#DIALOG_OK(MAINGROUP,SUBGROUP)
 	for dict in streams:
 		#if 'EG - ' in dict['title']: LOG_THIS('NOTICE','111111'+str(dict))
 		group = dict['group']
-		if '__IPTVSeries__' in group: maingroup,subgroup = group.split('__IPTVSeries__')
+		if '__IPTVSERIES__' in group: maingroup,subgroup = group.split('__IPTVSERIES__')
 		else: maingroup,subgroup = group,''
 		cond1 = ('GROUPED' in TYPE or TYPE=='ALL') and group==GROUP
 		cond2 = ('GROUPED' not in TYPE and TYPE!='ALL') and maingroup==MAINGROUP
@@ -196,10 +198,11 @@ def ITEMS(TYPE,GROUP):
 			title = dict['title']
 			url = dict['url']
 			img = dict['img']
-			if   'ARCHIVED' in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','archive')
-			elif 'EPG' in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','full_epg')
-			elif 'TIMESHIFT' in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','timeshift')
-			elif 'LIVE' in TYPE: addMenuItem('live',menu_name+title,url,235,img)
+			context = dict['context']
+			if   'ARCHIVED'  in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','ARCHIVED')
+			elif 'EPG' 		 in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','FULL_EPG')
+			elif 'TIMESHIFT' in TYPE: addMenuItem('folder',menu_name+title,url,238,img,'','TIMESHIFT')
+			elif 'LIVE' 	 in TYPE: addMenuItem('live',menu_name+title,url,235,img,'','',context)
 			else: addMenuItem('video',menu_name+title,url,235,img)
 	#DIALOG_OK('OUT',str(menuItemsLIST))
 	WRITE_TO_SQL3('IPTV_ITEMS',[TYPE,GROUP],menuItemsLIST,PERMANENT_CACHE)
@@ -222,7 +225,7 @@ def EPG_ITEMS(url,function):
 	url_parts = url.split('/')
 	stream_id = url_parts[-1].replace('.ts','').replace('.m3u8','')
 	#DIALOG_OK(str(timediff),str(timestamp))
-	if function=='short_epg': url_action = 'get_short_epg'
+	if function=='SHORT_EPG': url_action = 'get_short_epg'
 	else: url_action = 'get_simple_data_table'
 	epg_url = server+'/player_api.php?username='+username+'&password='+password+'&action='+url_action+'&stream_id='+stream_id
 	html = OPENURL_CACHED(NO_CACHE,epg_url,'',headers,'','IPTV-EPG_ITEMS-2nd')
@@ -231,14 +234,14 @@ def EPG_ITEMS(url,function):
 	#with open('S:\\00iptv.txt','w') as f: f.write(html)
 	all_epg = archive_files['epg_listings']
 	epg_items = []
-	if function in ['archive','timeshift']:
+	if function in ['ARCHIVED','TIMESHIFT']:
 		for dict in all_epg:
 			if dict['has_archive']==1:
 				epg_items.append(dict)
-				if function in ['timeshift']: break
+				if function in ['TIMESHIFT']: break
 		if not epg_items: return
 		addMenuItem('link',menu_name+'[COLOR FFC89008]الملفات الأولي بهذه القائمة قد لا تعمل[/COLOR]','',9999)
-		if function in ['timeshift']:
+		if function in ['TIMESHIFT']:
 			length_hours = 2
 			length_secs = length_hours*HOUR
 			epg_items = []
@@ -258,8 +261,8 @@ def EPG_ITEMS(url,function):
 				dict['start_timestamp'] = str(start_timestamp)
 				dict['stop_timestamp'] = str(start_timestamp+duration)
 				epg_items.append(dict)
-	elif function in ['short_epg','full_epg']: epg_items = all_epg
-	if function=='full_epg' and len(epg_items)>0: addMenuItem('link',menu_name+'[COLOR FFC89008]هذه قائمة برامج القنوات (جدول فقط)ـ[/COLOR]','',9999)
+	elif function in ['SHORT_EPG','FULL_EPG']: epg_items = all_epg
+	if function=='FULL_EPG' and len(epg_items)>0: addMenuItem('link',menu_name+'[COLOR FFC89008]هذه قائمة برامج القنوات (جدول فقط)ـ[/COLOR]','',9999)
 	#english = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed' , 'Thu', 'Fri']
 	#arabic = ['سبت', 'أحد', 'أثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة']
 	epg_list = []
@@ -278,15 +281,15 @@ def EPG_ITEMS(url,function):
 		#dayname_index = english.index(english_dayname)
 		#arabic_dayname = arabic[dayname_index]
 		#title = 'ـ '+title+'  ('+duration_minutes+'دق) '+time_string+' '+arabic_dayname
-		if function=='short_epg': title = '[COLOR FFFFFF00]'+time_string+' ـ '+title+'[/COLOR]'
-		elif function=='timeshift': title = english_dayname+' '+time_string+' ('+duration_minutes+'min)'
+		if function=='SHORT_EPG': title = '[COLOR FFFFFF00]'+time_string+' ـ '+title+'[/COLOR]'
+		elif function=='TIMESHIFT': title = english_dayname+' '+time_string+' ('+duration_minutes+'min)'
 		else: title = english_dayname+' '+time_string+' ('+duration_minutes+'min)   '+title+' ـ'
-		if function in ['archive','full_epg','timeshift']:
+		if function in ['ARCHIVED','FULL_EPG','TIMESHIFT']:
 			timeshift_url = server+'/timeshift/'+username+'/'+password+'/'+duration_minutes+'/'+start_string+'/'+stream_id+'.m3u8'
-			if function=='full_epg': addMenuItem('link',menu_name+title,timeshift_url,9999,img)
+			if function=='FULL_EPG': addMenuItem('link',menu_name+title,timeshift_url,9999,img)
 			else: addMenuItem('video',menu_name+title,timeshift_url,235,img)
 		epg_list.append(title)
-	if function=='short_epg' and epg_list: selection = DIALOG_CONTEXTMENU(epg_list)
+	if function=='SHORT_EPG' and epg_list: selection = DIALOG_CONTEXTMENU(epg_list)
 	return epg_list
 
 def PLAY(url,type):
@@ -344,6 +347,8 @@ def ADD_ACCOUNT():
 	settings.setSetting('iptv.username','')
 	settings.setSetting('iptv.password','')
 	settings.setSetting('iptv.server','')
+	useragent = settings.getSetting('iptv.useragent')
+	if useragent=='': settings.setSetting('iptv.useragent','Unknown')
 	yes = DIALOG_YESNO(iptvURL,'تم تغير رابط اشتراك IPTV إلى هذا الرابط الجديد ... هل تريد فحص هذا الرابط الآن ؟','','','كلا','نعم')
 	if yes: ok = CHECK_ACCOUNT(True)
 	CREATE_STREAMS(True)
@@ -371,7 +376,7 @@ def SEARCH(search=''):
 		title = dict['title']
 		group = dict['group']
 		img = dict['img']
-		if '__IPTVSeries__' in group: maingroup,subgroup = group.split('__IPTVSeries__')
+		if '__IPTVSERIES__' in group: maingroup,subgroup = group.split('__IPTVSERIES__')
 		else: maingroup,subgroup = group,''
 		if subgroup!='': title2 = maingroup+' || '+subgroup
 		else: title2 = maingroup
@@ -402,6 +407,7 @@ def CLEAN_NAME(title):
 	#title = title.strip(' ').strip('|').strip('-').strip(':').strip('(').strip('[')
 	return title
 
+"""
 def SPLIT_NAME(title):
 	if title=='!!__UNKNOWN__!!': return title
 	lowest,lang = 9999,''
@@ -417,8 +423,44 @@ def SPLIT_NAME(title):
 			lowest = position
 			sep = i
 	if lowest==9999: lang = '!!__UNKNOWN__!!'
-	if lang=='': lang = first+title[2:].split(sep,1)[0]+sep.strip(' ')
-	return lang
+	if lang=='':
+		name1,name2 = title[2:].split(sep,1)
+		lang = first+name1+sep.strip(' ')
+		#title = first+' '+sep.strip(' ')+' '+name2
+		#title = title.replace('  ',' ').replace('  ',' ')
+	return lang,title
+"""
+
+def SPLIT_NAME(title):
+	if len(title)<3: return title,title
+	lang,sep = '',''
+	title2 = title
+	first = title[:1]
+	rest = title[1:]
+	if   first=='(': sep = ')'
+	elif first=='[': sep = ']'
+	elif first=='<': sep = '>'
+	elif first=='|': sep = '|'
+	if (sep and sep in rest):
+		part1,part2 = rest.split(sep,1)
+		lang = part1
+		title2 = first+part1+sep+' '+part2
+	elif title.count('|')>=2:
+		part1,part2 = title.split('|',1)
+		lang = part1
+		title2 = part1+' |'+part2
+	else:
+		sep = re.findall('^\w{2}( |\:|\-|\||\]|\)|\#|\.|\,|\$|\'|\!|\@|\%|\&|\*|\^)',title,re.DOTALL)
+		if not sep: sep = re.findall('^\w{3}( |\:|\-|\||\]|\)|\#|\.|\,|\$|\'|\!|\@|\%|\&|\*|\^)',title,re.DOTALL)
+		if not sep: sep = re.findall('^\w{4}( |\:|\-|\||\]|\)|\#|\.|\,|\$|\'|\!|\@|\%|\&|\*|\^)',title,re.DOTALL)
+		if sep:
+			part1,part2 = title.split(sep[0],1)
+			lang = part1
+			title2 = part1+' '+sep[0]+' '+part2
+	title2 = title2.replace('   ',' ').replace('  ',' ')
+	lang = lang.replace('  ',' ')
+	if lang=='': lang = '!!__UNKNOWN__!!'
+	return lang,title2
 
 def CREATE_STREAMS(showDialogs=True):
 	settings = xbmcaddon.Addon(id=addon_id)
@@ -513,7 +555,7 @@ def CREATE_STREAMS(showDialogs=True):
 	#DIALOG_OK('','')
 	for group in series_groups:
 		group = group.replace('\/','/').decode('unicode_escape').encode('utf8')
-		m3u_text = m3u_text.replace('group="'+group+'"','group="__IPTVSeries__'+group+'"')
+		m3u_text = m3u_text.replace('group="'+group+'"','group="__IPTVSERIES__'+group+'"')
 	url = server+'/player_api.php?username='+username+'&password='+password+'&action=get_vod_categories'
 	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-3rd')
 	pDialog.update(45,'جلب الملفات الثانوية:- الملف رقم','3/3')
@@ -568,37 +610,39 @@ def CREATE_STREAMS(showDialogs=True):
 		else: group = '!!__UNKNOWN__!!'
 		dict['org_group'] = group
 		videofiletype = re.findall('(\.avi|\.mp4|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url.lower()+'&&',re.DOTALL|re.IGNORECASE)
-		if videofiletype or '__IPTVSeries__' in group or '__MOVIES__' in group:
+		context = ''
+		if videofiletype or '__IPTVSERIES__' in group or '__MOVIES__' in group:
 			type = 'VOD'
-			if '__IPTVSeries__' in group: type = type+'_SERIES'
+			if '__IPTVSERIES__' in group: type = type+'_SERIES'
 			elif '__MOVIES__' in group: type = type+'_MOVIES'
 			else: type = type+'_UNKNOWN'
-			group = group.replace('__IPTVSeries__','').replace('__MOVIES__','')
+			group = group.replace('__IPTVSERIES__','').replace('__MOVIES__','')
 		else:
 			type = 'LIVE'
 			if group=='': type = type+'_UNKNOWN'
-			if title in live_epg_channels: type = type+'_EPG'
-			if title in live_archived_channels: type = type+'_ARCHIVED'
+			if title in live_epg_channels: context = context+'_EPG'
+			if title in live_archived_channels: context = context+'_ARCHIVED'
+			type = type+context
 		#LOG_THIS('NOTICE','EMAD 2222  .  '+str(i*2)+'  .  '+group)
 		dict['type'] = type
-		group = group.strip(' ').replace('  ',' ').replace('  ',' ').upper()
+		dict['context'] = context
+		group = group.strip(' ').replace('  ',' ').replace('  ',' ')
 		if type=='LIVE_UNKNOWN': group = '!!__UNKNOWN__!!'
 		elif type=='VOD_UNKNOWN': group = '!!__UNKNOWN__!!'
 		elif type=='VOD_SERIES':
 			series_title = re.findall('(.*?) [Ss]\d+ +[Ee]\d+',dict['title'],re.DOTALL)
-			if series_title: group = group+'__IPTVSeries__'+series_title[0]
-			else: group = group+'__IPTVSeries__'+'!!__UNKNOWN__!!'
-		dict['group'] = group
+			if series_title: group = group+'__IPTVSERIES__'+series_title[0]
+			else: group = group+'__IPTVSERIES__'+'!!__UNKNOWN__!!'
+		#dict['group'] = group
 		if 'id' in dict.keys(): del dict['id']
 		if 'ID' in dict.keys(): del dict['ID']
 		if 'name' in dict.keys(): del dict['name']
 		title = dict['title']
 		if '\u' in title.lower(): title = title.decode('unicode_escape')
 		title = CLEAN_NAME(title)
-		try: country = SPLIT_NAME(title)
-		except: country = '!!__UNKNOWN__!!'
-		try: language = SPLIT_NAME(group)
-		except: language = '!!__UNKNOWN__!!'
+		language,group = SPLIT_NAME(group)
+		country,title = SPLIT_NAME(title)
+		dict['group'] = group.upper()
 		dict['title'] = title.upper()
 		dict['country'] = country.upper()
 		dict['language'] = language.upper()
@@ -621,14 +665,16 @@ def CREATE_STREAMS(showDialogs=True):
 	#LOG_THIS('NOTICE','EMAD 555 CREATE STREAMS START creating 1st STREAMS dictionary')
 	for dict in streams_sorted:
 		type = dict['type']
-		dict2 = {'group':dict['group'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
-		dict3 = {'group':dict['country'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
-		dict4 = {'group':dict['language'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
+		dict1 = {'group':dict['group'],'context':dict['context']+'_TIMESHIFT','title':dict['title'],'url':dict['url'],'img':dict['img']}
+		dict2 = {'group':dict['group'],'context':dict['context'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
+		dict3 = {'group':dict['country'],'context':dict['context'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
+		dict4 = {'group':dict['language'],'context':dict['context'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
 		grouped_streams['ALL'].append(dict)
 		#grouped_streams[type].append(dict2)
 		if 'LIVE' in type:
 			if 'EPG'		in type: grouped_streams['LIVE_EPG_GROUPED_SORTED'].append(dict2)
 			if 'ARCHIVED'	in type: grouped_streams['LIVE_ARCHIVED_GROUPED_SORTED'].append(dict2)
+			if 'ARCHIVED'	in type: grouped_streams['LIVE_TIMESHIFT_GROUPED_SORTED'].append(dict1)
 			if 'UNKNOWN'	in type: grouped_streams['LIVE_UNKNOWN_SORTED'].append(dict2)
 			grouped_streams['LIVE_GROUPED_SORTED'].append(dict2)
 			grouped_streams['LIVE_FROM_NAME_SORTED'].append(dict3)
@@ -644,7 +690,7 @@ def CREATE_STREAMS(showDialogs=True):
 	grouped_streams['LIVE_TIMESHIFT_GROUPED_SORTED'] = grouped_streams['LIVE_ARCHIVED_GROUPED_SORTED']
 	for dict in streams_not_sorted:
 		type = dict['type']
-		dict2 = {'group':dict['group'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
+		dict2 = {'group':dict['group'],'context':dict['context'],'title':dict['title'],'url':dict['url'],'img':dict['img']}
 		#if 'EG - ' in dict['title']: LOG_THIS('NOTICE','___:'+type+'___:  ___:'+str(dict2))
 		if 'LIVE' in type:
 			grouped_streams['LIVE_GROUPED'].append(dict2)
@@ -696,8 +742,8 @@ def COUNTS(show=True):
 	uniqeSeriesLIST = []
 	for dict in episodes:
 		group = dict['group']
-		if '__IPTVSeries__' in group:
-			seriesName = group.split('__IPTVSeries__')[1]
+		if '__IPTVSERIES__' in group:
+			seriesName = group.split('__IPTVSERIES__')[1]
 			if seriesName not in uniqeSeriesLIST: uniqeSeriesLIST.append(seriesName)
 	seriesCount = len(uniqeSeriesLIST)
 	total = liveCount+moviesCount+episodesCount+unknownVODCount

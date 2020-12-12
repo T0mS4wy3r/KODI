@@ -23,6 +23,8 @@ def MAIN(mode,url,text):
 
 def MENU(website=''):
 	addMenuItem('live',menu_name+'البث الحي لقناة المعارف','',41)
+	return
+	"""
 	addMenuItem('folder',menu_name+'بحث في الموقع','',49,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'البرامج الحالية','',46)
 	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','ALMAAREF-MENU-1st')
@@ -35,6 +37,7 @@ def MENU(website=''):
 	#name = re.findall('categories"><div class="widget-top"><h4>(.*?)</h4>',html,re.DOTALL)
 	if name: addMenuItem('folder',website+'___'+menu_name+name[0],website0a,44,'','','0')
 	return html
+	"""
 
 def TITLES(url,select):
 	notvideosLIST = ['تطبيقات الاجهزة الذكية','جدول البرامج','اوقات برامجنا']

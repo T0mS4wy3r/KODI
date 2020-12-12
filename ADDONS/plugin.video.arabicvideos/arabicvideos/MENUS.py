@@ -113,10 +113,11 @@ def SERVICES_MENU():
 	addMenuItem('link','[COLOR FFC89008]14.  [/COLOR]'+'فحص الإصدار الأخير والتحديثات','',7)
 	addMenuItem('link','[COLOR FFC89008]15.  [/COLOR]'+'فحص اتصال المواقع المشفرة','',4)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('link','[COLOR FFC89008]16.  [/COLOR]'+'إعدادات واجهة كودي','',6)
-	addMenuItem('link','[COLOR FFC89008]17.  [/COLOR]'+'إعدادات ResolveURL','',177)
-	addMenuItem('link','[COLOR FFC89008]18.  [/COLOR]'+'إعدادات Youtube-DL','',178)
-	addMenuItem('link','[COLOR FFC89008]19.  [/COLOR]'+'إعدادات Inputstream Adaptive','',5)
+	addMenuItem('link','[COLOR FFC89008]16.  [/COLOR]'+'مسح إعدادات البرنامج','',344)
+	addMenuItem('link','[COLOR FFC89008]17.  [/COLOR]'+'إعدادات واجهة كودي','',6)
+	addMenuItem('link','[COLOR FFC89008]18.  [/COLOR]'+'إعدادات ResolveURL','',177)
+	addMenuItem('link','[COLOR FFC89008]19.  [/COLOR]'+'إعدادات Youtube-DL','',178)
+	addMenuItem('link','[COLOR FFC89008]20.  [/COLOR]'+'إعدادات Inputstream Adaptive','',5)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
@@ -167,7 +168,7 @@ def GLOBAL_SEARCH_MENU(search='',show=True):
 	addMenuItem('folder','[COLOR FFC89008]KRB  [/COLOR]'+search2+' - موقع قناة كربلاء','',329,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]KWT  [/COLOR]'+search2+' - موقع قناة الكوثر','',139,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]IFL    [/COLOR]'+search2+' - موقع قناة آي فيلم','',29,'','',search+'_REMEMBERRESULTS_')
-	addMenuItem('folder','[COLOR FFC89008]MRF  [/COLOR]'+search2+' - موقع قناة المعارف','',49,'','',search+'_REMEMBERRESULTS_')
+	#addMenuItem('folder','[COLOR FFC89008]MRF  [/COLOR]'+search2+' - موقع قناة المعارف','',49,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]SHV  [/COLOR]'+search2+' - موقع صوت الشيعة','',319,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]FTM   [/COLOR]'+search2+' - موقع المنبر الفاطمي','',69,'','',search+'_REMEMBERRESULTS_')
 	#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
@@ -228,8 +229,7 @@ def SHOW_MESSAGES(showDialogs):
 	allow_proxy_fix = showDialogs
 	response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'POST',url,payload,'','',False,'MENUS-SHOW_MESSAGES-1st',allow_dns_fix,allow_proxy_fix)
 	if not response.succeeded: return color
-	html = response.content
-	newfile = html
+	newfile = response.content
 	if not newfile: newfile = '""'
 	if not showDialogs:
 		if os.path.exists(messagesfile):

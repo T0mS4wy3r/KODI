@@ -48,12 +48,27 @@ def MAIN(mode,text=''):
 	elif mode==341: KODIEMAD_WEBSITE()
 	elif mode==342: ALLOW_PROXY_SERVERS()
 	elif mode==343: ALLOW_DNS_SERVER()
+	elif mode==344: DELETE_ALL_SETTIGNS()
+	return
+
+def DELETE_ALL_SETTIGNS():
+	yes = DIALOG_YESNO('سؤال','هل أنت متأكد وتريد مسح وتصفير جميع إعدادات برنامج عماد للفيديوهات العربية . حيث تعود جميع الإعدادات إلى وضعية تثبيت وتنصيب البرنامج ؟','','','كلا','نعم')
+	if yes:
+		succedded = True
+		if os.path.exists(settingsfile):
+			try: os.remove(settingsfile)
+			except: succedded = False
+		if succedded: DIALOG_OK('','تم بنجاح مسح وتصفير ملف إعدادات برنامج عماد للفيديوهات العربية')
+		else: DIALOG_OK('','للأسف فشلت عملية مسح ملف الإعدادات')
 	return
 
 def ALLOW_DNS_SERVER():
 	settings = xbmcaddon.Addon(id=addon_id)
 	status = settings.getSetting('dns.status')
 	server = settings.getSetting('dns.server')
+	if status=='':
+		status = 'ASK'
+		settings.setSetting('dns.status',status)
 	dns = DIALOG_YESNO('سيرفر DNS الحالي هو: '+server,'اختار سيرفر ال DNS المجاني الذي تريد استخدامه !','','',DNS_SERVERS[1],DNS_SERVERS[0])
 	if dns: server = DNS_SERVERS[0]
 	else: server = DNS_SERVERS[1]
@@ -63,11 +78,11 @@ def ALLOW_DNS_SERVER():
 	message['ASK'] = 'سيرفر DNS سيعمل بعد السماح له: '+server
 	message['STOP'] = 'سيرفر DNS متوقف تماما وبالكامل'
 	oldstatus = message[status]
-	yes = DIALOG_YESNO(oldstatus,'سيرفر DNS هو جهاز في الإنترنيت يقوم بتحويل أسماء المواقع والسيرفرات إلى أرقام وعند بعض الناس يقوم بحجب ومنع وحضر بعض المواقع . هل تريد تشغيل أم إيقاف سيرفر DNS ألدائمي ؟','','','إيقاف ألدائمي','تشغيل ألدائمي')
-	if yes: newstatus = 'ALWAYS'
+	yes = DIALOG_YESNO(oldstatus,'سيرفر DNS هو جهاز في الإنترنيت يقوم بتحويل أسماء المواقع والسيرفرات إلى أرقام وعند بعض الناس يقوم بحجب ومنع وحضر بعض المواقع . هل تريد تشغيل أم إيقاف سيرفر DNS ؟','','','تشغيل DNS','إيقاف DNS')
+	if yes: newstatus = 'STOP'
 	else:
-		yes = DIALOG_YESNO('','هل تريد تشغيل سيرفر DNS فقط بعد موافقتك على تشغيله وفقط عند حدوث مشكلة أم تريد إيقاف سيرفر DNS تماما وبالكامل ؟','','','بعد الموافقة','إيقاف كامل')
-		if yes: newstatus = 'STOP'
+		yes = DIALOG_YESNO('','هل تريد تشغيل سيرفر DNS فقط بعد موافقتك وفقط عند حدوث مشكلة أم تريد تفعيل سيرفر DNS دائمي ؟','','','تشغيل بعد الموافقة','تشغيل دائمي')
+		if yes: newstatus = 'ALWAYS'
 		else: newstatus = 'ASK'
 	settings.setSetting('dns.status',newstatus)
 	newstatus = message[newstatus]
@@ -77,16 +92,19 @@ def ALLOW_DNS_SERVER():
 def ALLOW_PROXY_SERVERS():
 	settings = xbmcaddon.Addon(id=addon_id)
 	status = settings.getSetting('proxy.status')
+	if status in ['','ENABLED','DISABLED']:
+		status = 'ASK'
+		settings.setSetting('proxy.status',status)
 	message = {}
 	message['AUTO'] = 'البروكسي الأوتوماتيكي جاهز للعمل'
 	message['ASK'] = 'البروكسي سيعمل بعد السماح له'
 	message['STOP'] = 'البروكسي متوقف تماما وبالكامل'
 	oldstatus = message[status]
-	yes = DIALOG_YESNO(oldstatus,'البروكسي هو جهاز في الإنترنيت يعمل وسيط بين جهازك والإنترنيت . هو يستلم طلباتك ويقوم بسحبها بدلا منك ثم يبعثها لك . هل تريد تشغيل أم إيقاف البروكسي الأوتوماتيكي ؟','','','إيقاف الأوتوماتيكي','تشغيل الأوتوماتيكي')
-	if yes: newstatus = 'AUTO'
+	yes = DIALOG_YESNO(oldstatus,'البروكسي هو جهاز في الإنترنيت يعمل وسيط بين جهازك والإنترنيت . هو يستلم طلباتك ويقوم بسحبها بدلا منك ثم يبعثها لك . هل تريد تشغيل أم إيقاف البروكسي ؟','','','تشغيل البروكسي','إيقاف البروكسي')
+	if yes: newstatus = 'STOP'
 	else:
-		yes = DIALOG_YESNO('','هل تريد تشغيل البروكسي فقط بعد موافقتك على تشغيله وفقط عند حدوث مشكلة أم تريد إيقاف البروكسي تماما وبالكامل ؟','','','بعد الموافقة','إيقاف كامل')
-		if yes: newstatus = 'STOP'
+		yes = DIALOG_YESNO('','هل تريد تشغيل البروكسي فقط بعد موافقتك وفقط عند حدوث مشكلة أم تريد تشغيل البروكسي الأوتوماتيكي ؟','','','تشغيل بعد الموافقة','تشغيل أوتوماتيكي')
+		if yes: newstatus = 'AUTO'
 		else: newstatus = 'ASK'
 	settings.setSetting('proxy.status',newstatus)
 	newstatus = message[newstatus]
@@ -276,7 +294,7 @@ def UNKNOWN_SERVERS():
 
 def PRIVATE_PUBLIC_SERVERS():
 	message = 'السيرفرات العامة هي سيرفرات خارجية وغير جيدة لان الكثير منها ممنوع أو محذوف أو خطأ بسبب حقوق الطبع وحقوق الألفية الرقمية ولا توجد طريقة لفحصها أو إصلاحها \n\n السيرفرات الخاصة هي سيرفرات يتحكم فيها الموقع الأصلي وهي جيدة نسبيا ولا توجد طريقة لفحصها أو إصلاحها \n\n الرجاء قبل الإبلاغ عن مشكلة وقبل مراسلة المبرمج افحص نفس الفيديو وافحص نفس السيرفر على الموقع الأصلي'
-	DIALOG_TEXTVIEWER('رسالة من المبرمج',message)
+	DIALOG_TEXTVIEWER_FULLSCREEN('رسالة من المبرمج',message,'big','right')
 	return
 
 def SLOW_VIDES():
@@ -774,7 +792,7 @@ def DELETE_FAVOURITES_AND_LAST_MENUS():
 	return
 
 def USING_FAVOURITES():
-	DIALOG_TEXTVIEWER('رسالة من المبرمج','للتعامل مع المفضلة . اذهب إلى الرابط الذي تريد إضافته أو مسحه من  قائمة المفضلة ولكن لا تضغط عليه ولا تشغله . وباستخدام "الماوس" أو "الريموت" اضغط على الزر جهة اليمين . وأما باستخدام "الكيبورد" فاضغط على حرف "C" أو على زر "القائمة" الذي في جهة اليمين . ونفس الكلام والطريقة عند التعامل مع محتويات قوائم المفضلة')
+	DIALOG_TEXTVIEWER_FULLSCREEN('رسالة من المبرمج','للتعامل مع المفضلة . اذهب إلى الرابط الذي تريد إضافته أو مسحه من  قائمة المفضلة ولكن لا تضغط عليه ولا تشغله . وباستخدام "الماوس" أو "الريموت" اضغط على الزر جهة اليمين . وأما باستخدام "الكيبورد" فاضغط على حرف "C" أو على زر "القائمة" الذي في جهة اليمين . ونفس الكلام والطريقة عند التعامل مع محتويات قوائم المفضلة','big','right')
 	return
 
 

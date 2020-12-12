@@ -2,7 +2,7 @@
 
 
 
-<addon id="plugin.video.arabicvideos" name="EMAD Arabic Videos" version="7.5.0" provider-name="EMAD MAHDI">
+<addon id="plugin.video.arabicvideos" name="EMAD Arabic Videos" version="7.5.1" provider-name="EMAD MAHDI">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.requests" optional="false"/>
@@ -444,42 +444,6 @@
 		<assets>
 			<icon>resources/icon.png</icon>
 		</assets>
-	</extension>
-</addon>
-
-
-
-<addon id="repository.emad.github" name="EMAD GitHub Repository" version="5.6.0" provider-name="EMAD MAHDI">
-	<extension point="xbmc.addon.repository" name="EMAD GitHub Repository">
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Install addons from EMAD</summary>
-		<description lang="en">Download and install addons from EMAD</description>
-		<platform>all</platform>
-	</extension>
-</addon>
-
-
-
-<addon id="repository.emad.gitee" name="EMAD Gitee Repository" version="5.6.0" provider-name="EMAD MAHDI">
-	<extension point="xbmc.addon.repository" name="EMAD Gitee Repository">
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Install addons from EMAD</summary>
-		<description lang="en">Download and install addons from EMAD</description>
-		<platform>all</platform>
-	</extension>
-</addon>
-
-
-
-<addon id="repository.emad.others" name="EMAD Others Repository" version="5.6.0" provider-name="EMAD MAHDI">
-	<extension point="xbmc.addon.repository" name="EMAD Others Repository">
-	</extension>
-	<extension point="xbmc.addon.metadata">
-		<summary lang="en">Install addons from other developers</summary>
-		<description lang="en">Download and install addons from other developers</description>
-		<platform>all</platform>
 	</extension>
 </addon>
 

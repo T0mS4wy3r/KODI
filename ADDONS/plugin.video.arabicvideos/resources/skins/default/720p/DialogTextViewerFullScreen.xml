@@ -37,9 +37,9 @@
 				</control>
 				<control type="textbox" id="51">
 					<description>Text Area big left</description>
-					<posx>0</posx>
+					<posx>15</posx>
 					<posy>55</posy>
-					<width>1195</width>
+					<width>1175</width>
 					<height>610</height>
 					<label></label>
 					<monofont>mono30</monofont>
@@ -51,9 +51,9 @@
 				</control>
 				<control type="textbox" id="52">
 					<description>Text Area big right</description>
-					<posx>-300</posx>
+					<posx>-270</posx>
 					<posy>55</posy>
-					<width>1480</width>
+					<width>1450</width>
 					<height>610</height>
 					<label></label>
 					<monofont>mono30</monofont>
@@ -92,13 +92,13 @@
 					<pagecontrol>61</pagecontrol>
 				</control>
 				<control type="scrollbar" id="61">
-					<posx>1200</posx>
+					<posx>-30</posx>
 					<posy>55</posy>
-					<width>22</width>
+					<width>1250</width>
 					<height>610</height>
 					<texturesliderbackground></texturesliderbackground>
-					<textureslidernib>ScrollbarVnibFO.png</textureslidernib>
-					<textureslidernibfocus>ScrollbarVnibFO.png</textureslidernibfocus>
+					<textureslidernib>new_scrollbarvnibfo.png</textureslidernib>
+					<textureslidernibfocus>new_scrollbarvnibfo.png</textureslidernibfocus>
 					<onleft>PreviousMenu</onleft>
 					<onright>PreviousMenu</onright>
 					<ondown>61</ondown>

@@ -107,6 +107,7 @@ useragentfile = os.path.join(addonfolder,'resources','useragents.txt')
 
 homefolder = xbmc.translatePath('special://home')
 addonsfolder = os.path.join(homefolder,'addons')
+settingsfile = os.path.join(homefolder,'userdata','addon_data',addon_id,'settings.xml')
 
 MINUTE = 60
 HOUR = 60*MINUTE
@@ -160,13 +161,6 @@ def MAIN():
 	if not os.path.exists(dbfile):
 		if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 		LOG_THIS('NOTICE','  .  Addon upgrade or Cache delete or new addon install  .  path: [ '+addon_path+' ]')
-		settings = xbmcaddon.Addon(id=addon_id)
-		dns_status = settings.getSetting('dns.status')
-		if dns_status=='':
-			settings.setSetting('dns.status','ASK')
-			settings.setSetting('dns.server',DNS_SERVERS[0])
-		proxy_status = settings.getSetting('proxy.status')
-		if proxy_status=='': settings.setSetting('proxy.status','ASK')
 		CLEAN_KODI_CACHE_FOLDER()
 		conn = sqlite3.connect(dbfile)
 		conn.close()
@@ -189,8 +183,7 @@ def MAIN():
 	#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
 	#DIALOG_OK('['+menu_path+']','['+addon_path+']')
 	#DIALOG_OK('['+menu_label+']','['+menu_path+']')
-	if mode0==260:
-		message = '  Version: [ '+addon_version+' ]  Kodi: [ '+kodi_release+' ]'
+	if mode0==260: message = '  Version: [ '+addon_version+' ]  Kodi: [ '+kodi_release+' ]'
 	else:
 		menu_label2 = menu_label.replace('   ','  ').replace('   ','  ').replace('   ','  ')
 		menu_path2 = menu_path.replace('   ','  ').replace('   ','  ').replace('   ','  ')
@@ -316,12 +309,18 @@ def LOG_MENU_LABEL(script_name,label,mode,path):
 
 def LOG_THIS(level,message):
 	#xbmc.log('EMAD 111'+message+'EMAD 222', level=xbmc.LOGNOTICE)
-	if level=='ERROR': loglevel = xbmc.LOGERROR
-	else: loglevel = xbmc.LOGNOTICE
+	message = message.replace('[COLOR FFFFFF00]','').replace('[COLOR FFC89008]','')
+	message = message.replace('[/COLOR]','')
+	if level=='ERROR':
+		loglevel = xbmc.LOGERROR
+		lines = message.strip('.   ').split('   ')
+	else:
+		loglevel = xbmc.LOGNOTICE
+		lines = message.split('    ')
 	#message = message.replace('   ','\t')
-	lines = message.split('    ')
-	tabs,tab = '','      '
-	shift = tab+tab+tab+tab+'  '
+	tab = '    '
+	tabs = tab+tab+tab
+	shift = tabs+tab+'  '
 	if kodi_version>17.999: shift = shift+'           '
 	#DIALOG_OK(str(kodi_version),'')
 	#loglines = lines[0] + '\r'
@@ -394,7 +393,7 @@ class CustomThread():
 	def wait_finishing_all_threads(self):
 		while 'running' in self.statusDICT.values(): time.sleep(1.000)
 
-def SHOW_NETWORK_ERRORS(source,code,reason,showDialogs):
+def SHOW_NETWORK_ERRORS(code,reason,source,showDialogs):
 	if '-' in source: site = source.split('-',1)[0]
 	else: site = source
 	#if code==104: DIALOG_OK('لديك خطأ اسبابه كثيرة','يرجى منك التواصل مع المبرمج عن طريق هذا الرابط','https://github.com/emadmahdi/KODI/issues')
@@ -414,7 +413,7 @@ def SHOW_NETWORK_ERRORS(source,code,reason,showDialogs):
 		messageARABIC += ' . الموقع فيه حجب ضد كودي مصدره الأنترنيت الخاص بك'
 	if dns:
 		messageARABIC += ' . لديك خطأ DNS ومعناه تعذر ترجمة اسم الموقع إلى رقمه'
-	LOG_THIS('ERROR',LOGGING(script_name)+'   Source: [ '+source+' ]   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   messageARABIC: [ '+messageARABIC+' ]]   messageENGLISH: [ '+messageENGLISH+' ]')
+	LOG_THIS('ERROR',LOGGING(script_name)+'   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   messageARABIC: [ '+messageARABIC+' ]]   messageENGLISH: [ '+messageENGLISH+' ]')
 	#DIALOG_OK(proxy_status,dns_status)
 	if proxy_status=='ASK' or dns_status=='ASK':
 		trytofix = DIALOG_YESNO(site+'   '+TRANSLATE(site),messageARABIC,messageENGLISH,'','كلا','نعم')
@@ -480,7 +479,7 @@ NO_EXIT_LIST = [ 'LIBRARY-openURL_PROXY-1st'
 def EXIT_IF_SOURCE(source,code,reason,showDialogs,allow_dns_fix,allow_proxy_fix):
 	# To force exit use
 	# EXIT_IF_SOURCE('','','','')
-	if showDialogs and (allow_dns_fix or allow_proxy_fix): SHOW_NETWORK_ERRORS(source,code,reason,showDialogs)
+	if showDialogs and (allow_dns_fix or allow_proxy_fix): SHOW_NETWORK_ERRORS(code,reason,source,showDialogs)
 	if source not in NO_EXIT_LIST and code!=200:
 		LOG_THIS('ERROR',LOGGING(script_name)+'   Forced Exit   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]')
 		raise SystemError('Forced Exit')
@@ -559,8 +558,8 @@ def getKodiMenuItem(menuItem):
 	#listitem.setInfo(type="video",infoLabels={"Title":name})
 	if url!='': path = path+'&url='+quote(url.strip(' '))
 	context_menu = []
-	if mode in [235,238] and type=='live':
-		run_path = 'plugin://'+addon_id+'?mode=238&text=short_epg&url='+url
+	if mode in [235,238] and type=='live' and 'EPG' in context:
+		run_path = 'plugin://'+addon_id+'?mode=238&text=SHORT_EPG&url='+url
 		run_text = '[COLOR FFFFFF00]البرامج القادمة[/COLOR]'
 		run_item = (run_text,'XBMC.RunPlugin('+run_path+')')
 		context_menu.append(run_item)
@@ -669,7 +668,7 @@ def OPENURL_REQUESTS_PROXIES(*args):
 	response.succeeded = False
 	if proxiesLIST:
 		totla_count = len(proxiesLIST)
-		trying_count = 8
+		trying_count = len(proxiesLIST)
 		if totla_count>=trying_count: proxiesLIST2 = random.sample(proxiesLIST,trying_count)
 		else: proxiesLIST2 = random.sample(proxiesLIST,totla_count)
 		id,timeout = 0,10
@@ -794,6 +793,14 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 	dns_server = settings.getSetting('dns.server')
 	dns_status = settings.getSetting('dns.status')
 	proxy_status = settings.getSetting('proxy.status')
+	if dns_status=='':
+		dns_status = 'ASK'
+		dns_server = DNS_SERVERS[0]
+		settings.setSetting('dns.status',dns_status)
+		settings.setSetting('dns.server',dns_server)
+	if proxy_status in ['','ENABLED','DISABLED']:
+		proxy_status = 'ASK'
+		settings.setSetting('proxy.status',proxy_status)
 	if dnsurl=='': dnsurl = dns_server
 	if dnsurl==None and dns_status=='ALWAYS' and allow_dns_fix: dnsurl = dns_server
 	if 'IFILM' in source: timeout = 20
@@ -873,10 +880,9 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 	#LOG_THIS('ERROR',LOGGING(script_name)+'   4444444444444444444')
 	#DIALOG_OK('1111','')
 	if not succeeded and 'google-analytics' not in url2 and proxyurl==None:
-		traceback.print_exc(file=sys.stderr)
+		errortrace = traceback.format_exc()
+		sys.stderr.write(errortrace)
 	else:
-		#errortrace = traceback.format_exc()
-		#sys.stderr.write(errortrace)
 		#code = '-1'
 		#reason = 'System encoding bug'
 		pass
@@ -928,7 +934,7 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 		if not response2.succeeded and 'google-analytics' not in url and (allow_dns_fix or allow_proxy_fix):
 			LOG_THIS('ERROR',LOGGING(script_name)+'   Direct connection failed   Will try fixing this   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 			if proxy_status=='ASK' or dns_status=='ASK':
-				yes = SHOW_NETWORK_ERRORS(source,code,reason,True)
+				yes = SHOW_NETWORK_ERRORS(code,reason,source,True)
 			else: yes = True
 			if yes:
 				if dns_status in ['ASK','AUTO'] and allow_dns_fix:
@@ -977,10 +983,6 @@ def EXTRACT_URL(url):
 		if 'MyProxyUrl=' in item: proxyurl = item.split('=')[1]
 		elif 'MyDNSUrl=' in item: dnsurl = item.split('=')[1]
 		elif 'MySSLUrl=' in item: sslurl = item.split('=')[1]
-	settings = xbmcaddon.Addon(id=addon_id)
-	dns_status = settings.getSetting('dns.status')
-	dns_server = settings.getSetting('dns.server')
-	if dnsurl=='': dnsurl = dns_server
 	#if 'akoam.' in url2:
 	#	https = url2.split(':')[0]
 	#	proxyurl = https+'://159.203.87.130:3128'
@@ -1698,9 +1700,9 @@ def RANDOM_USERAGENT():
 
 def HANDLE_EXIT_ERRORS(error):
 	if str(error) not in ['Forced Exit']:
-		tracetext = traceback.format_exc()
-		sys.stderr.write(tracetext)
-		lines = tracetext.splitlines()
+		errortrace = traceback.format_exc()
+		sys.stderr.write(errortrace)
+		lines = errortrace.splitlines()
 		error_line = lines[-1]
 		file_line = lines[-3].replace('.py','')
 		#DIALOG_OK('',file_line))

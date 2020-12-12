@@ -1,6 +1,24 @@
 ﻿
+v7.5.1	2020-12-12
+Added video owner to YOUTUBE videos & playlists
+Added back AKWAM watch links
+Added deleting user settings file
+Added touchscreen scrolling to TEXTVIEWER_FULLSCREEN 
+Added multi-line errors logging
+Added default User-Agent to IPTV
+Added error handling for IPTV account check
+Fixed wrong status of PROXY & DNS
+Fixed IPTV titles splitting
+Modified PROXY & DNS status changing functions
+Modified messages to send same message to group of users
+Moved PROXY & DNS default settings from MAIN to OPENURL
+Removed old ALMAAREF site
+Removed context for non EPG IPTV channels
+Minor fixes and improvements
+
+
 v7.5.0	2020-11-28
-Added new site AKWAMFCAM
+Added new site AKOAMCAM
 Added errors handling and reporting
 Added DIALOG_BUSY to MAIN
 Added GITEE as a backup for GITHUB
