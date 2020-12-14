@@ -2,6 +2,8 @@
 <img src="./ADDONS/plugin.video.arabicvideos/icon.png" title="EMAD Arabic Videos">
 <br />
 <br />
+<br />
+<br />
 
 <hr />
 <hr />
