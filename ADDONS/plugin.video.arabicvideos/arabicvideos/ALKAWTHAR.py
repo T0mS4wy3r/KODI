@@ -202,7 +202,7 @@ def SEARCH(search,url=''):
 		url = website0a+'/search?q='+search
 		html = OPENURL_CACHED(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-1st')
 		#with open('S:\\emad1.html', 'w') as f: f.write(html)
-		cx = re.findall("var cx = '(.*?)'",html,re.DOTALL)
+		cx = re.findall("var cx = '(.*?)'",html,re.DOTALL)[0]
 		url = re.findall("gcse.src = '(.*?)'",html,re.DOTALL)
 		url = url[0]+cx[0]
 		html = OPENURL_CACHED(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-2nd')

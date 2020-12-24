@@ -76,11 +76,13 @@ def CHANGE_FOLDER():
 def DOWNLOAD_VIDEO(url,videofiletype):
 	DIALOG_NOTIFICATION('يرجى الانتظار','جاري فحص ملف التحميل',sound=False)
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to download the video file   URL: [ '+url+' ]')
-	#DIALOG_OK(url,videofiletype)
+	DIALOG_OK(url,videofiletype)
 	if videofiletype=='':
 		if 'mp4' in url.lower(): videofiletype = '.mp4'
 		elif 'm3u8' in url.lower(): videofiletype = '.m3u8'
-	if videofiletype not in ['.ts','.mkv','.mp4','.mp3','.flv','.m3u8','avi']:
+		elif 'webm' in url.lower(): videofiletype = '.webm'
+		else: videofiletype = 'مجهول'
+	if videofiletype not in ['.ts','.mkv','.mp4','.mp3','.flv','.m3u8','.avi','.webm']:
 		DIALOG_OK('تنزيل ملف الفيديو','الملف من نوع '+videofiletype+' والبرنامج حاليا غير جاهز لتحميل هذا النوع من الملفات')
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Video type/extension is not supported   URL: [ '+url+' ]')
 		return

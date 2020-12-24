@@ -70,6 +70,7 @@ def TITLES(url,key=''):
 	items = re.findall('href="(.*?)".*?class="backg".*?url\((.*?)\).*?class="titleBoxSing">(.*?)<',block,re.DOTALL)
 	allTitles = []
 	for link,img,title in items:
+		title = unescapeHTML(title)
 		if '/selary/' in link: addMenuItem('folder',menu_name+title,link,301,img)
 		elif '/?s=' in url and 'الحلقة' in title:
 			episode = re.findall('(.*?) الحلقة \d+',title,re.DOTALL)
@@ -106,6 +107,8 @@ def PLAY(url):
 	items = re.findall('data-server="(.*?)".*?>(.*?)<',block,re.DOTALL)
 	for serverid,title in items:
 		title = title.strip(' ')
+		if title=='Cima Now': title = 'CimaNow'
+		#DIALOG_OK(title,'')
 		link2 = link+'?postid='+postid+'&serverid='+serverid+'?named='+title+'__watch'
 		linkLIST.append(link2)
 	# download links
@@ -115,9 +118,11 @@ def PLAY(url):
 	for link,title in items:
 		title = title.strip(' ')
 		quality = re.findall('\d\d\d+',title,re.DOTALL)
-		if quality: quality = '____'+quality[0]
+		if quality:
+			quality = '____'+quality[0]
+			title = 'cimanow'
 		else: quality = ''
-		link2 = link2 = link+'?named='+title+'__download'+quality
+		link2 = link+'?named='+title+'__download'+quality
 		linkLIST.append(link2)
 	#selection = DIALOG_SELECT('أختر البحث المناسب',linkLIST)
 	#LOG_THIS('NOTICE',str(linkLIST))

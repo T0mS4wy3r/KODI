@@ -145,6 +145,11 @@ def IMPORT_SITES():
 	failed = 0
 	if failed<=5:
 		try:
+			import MYCIMA ; html = MYCIMA.MENU('MYCIMA')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
+	if failed<=5:
+		try:
 			import AKOAMCAM ; html = AKOAMCAM.MENU('AKOAMCAM')
 			if '__Error__' in html: failed += 1
 		except: failed += 1

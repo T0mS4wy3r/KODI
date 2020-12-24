@@ -33,7 +33,7 @@ def MAIN(mode,text=''):
 	elif mode==176: ANALYTICS_REPORT()
 	elif mode==177: RESOLVEURL_SETTINGS()
 	elif mode==178: YOUTUBE_DL_SETTINGS()
-	elif mode==179: TESTINGS()
+	elif mode==179: TESTING123()
 	elif mode==190: WHAT_IS_CACHE()
 	elif mode==191: WHAT_DOT_COMMA_MEANS()
 	elif mode==192: SOLVE_TEMP_PROBLEM()
@@ -688,7 +688,7 @@ def KODI_SKIN():
 	return
 
 def KODIEMAD_WEBSITE():
-	message = 'تم بعون الله عمل تطبيق خاص لبرنامج كودي مدمج معه برنامج عماد للفيديوهات العربية وجلد متروبولس عماد ومتوفر للتحميل من الموقع الرسمي لتطبيق كودي عماد'+'\n\n'+'[COLOR FFFFFF00]http://tiny.cc/kodiemad     أو     http://bit.ly/kodiemad[/COLOR]'
+	message = 'تم بعون الله عمل تطبيق خاص لبرنامج كودي مدمج معه برنامج عماد للفيديوهات العربية وجلد متروبولس عماد ومخازن عماد ومتوفر للتحميل من الموقع الرسمي لتطبيق كودي عماد'+'\n\n'+'[COLOR FFFFFF00]http://tiny.cc/kodiemad     أو     http://bit.ly/kodiemad[/COLOR]'
 	message += '\n\n\n\n'
 	message += 'الملفات القديمة وملفات البرمجة موجودة في هذه المواقع'+'\n\n'+'[COLOR FFFFFF00]https://github.com/emadmahdi/KODI\nhttps://gitee.com/emadmahdi/KODI[/COLOR]'
 	DIALOG_TEXTVIEWER_FULLSCREEN('رسالة مهمة من برنامج عماد للفيديوهات العربية',message,'big','center')
@@ -795,9 +795,13 @@ def USING_FAVOURITES():
 	DIALOG_TEXTVIEWER_FULLSCREEN('رسالة من المبرمج','للتعامل مع المفضلة . اذهب إلى الرابط الذي تريد إضافته أو مسحه من  قائمة المفضلة ولكن لا تضغط عليه ولا تشغله . وباستخدام "الماوس" أو "الريموت" اضغط على الزر جهة اليمين . وأما باستخدام "الكيبورد" فاضغط على حرف "C" أو على زر "القائمة" الذي في جهة اليمين . ونفس الكلام والطريقة عند التعامل مع محتويات قوائم المفضلة','big','right')
 	return
 
-
-
-
+def TESTING123():
+	url = 'http://uppom.live/wt0hh8ksxz4k/The.Thing.About.Harry.2020.1080p.HULU.WEB-DL.MyCima.TO.mp4.html?Key=xsdPMypmZP-XDPwenNXFBw&Expires=1607914761'
+	#url = 'http://uppom.live/wt0hh8ksxz4k/The.Thing.About.Harry.2020.1080p.HULU.WEB-DL.MyCima.TO.mp4'
+	#url = 'https://youtu.be/pNJTJrnpbjE'
+	import RESOLVERS
+	RESOLVERS.PLAY([url])
+	return
 
 """
 def LATEST_EMAD_VERSIONS(repo_name,repo_url):
@@ -825,7 +829,7 @@ def LATEST_EMAD_VERSIONS(repo_name,repo_url):
 	'''
 	return latest_repo_version,latest_addon_version
 
-def TESTINGS():
+def TESTING123():
 
 	urls = [ 'http://www.youtube.com/watch?v=BaW_jenozKc' ]
 

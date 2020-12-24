@@ -19,13 +19,14 @@ def MAIN(mode,url,text=''):
 	return results
 
 def MENU():
+	#addMenuItem('video','Testing - watched enabled','',179)
+	#addMenuItem('live','Testing - watched disabled','',179)
 	color = SHOW_MESSAGES(False)
 	if color=='yellow': addMenuItem('link','[COLOR FFC89008]  1.  [/COLOR]'+'[COLOR FFFFFF00]لديك رسالة من المبرمج[/COLOR]','',267)
 	else: addMenuItem('link','[COLOR FFC89008]  1.  [/COLOR]'+'رسائل وأخبار من المبرمج','',267)
 	addMenuItem('link','[COLOR FFC89008]  2.  [/COLOR]'+'تقرير استخدام البرنامج','',176)
-	#addMenuItem('video','Testing - watched enabled','',179)
-	#addMenuItem('live','Testing - watched disabled','',179)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	if PRIVILEGED('__BLOCK_USER__'): return
 	addMenuItem('folder','[COLOR FFC89008]  3.  [/COLOR]'+'مواقع هذا البرنامج','',261)
 	addMenuItem('folder','[COLOR FFC89008]  4.  [/COLOR]'+'مواقع يوتيوب من يوتيوب','https://www.youtube.com/feed/guide_builder',144)
 	addMenuItem('folder','[COLOR FFC89008]  5.  [/COLOR]'+'مواقع يوتيوب من البرنامج','',290)
@@ -76,12 +77,13 @@ def WEBSITES_MENU():
 	addMenuItem('folder','[COLOR FFC89008]SHV  [/COLOR]'+'موقع صوت الشيعة','',310)
 	addMenuItem('folder','[COLOR FFC89008]FTM  [/COLOR]'+'موقع المنبر الفاطمي','',60)
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',157)
+	addMenuItem('folder','[COLOR FFC89008]MCM  [/COLOR]'+'موقع ماي سيما','',360)
 	addMenuItem('folder','[COLOR FFC89008]CMN  [/COLOR]'+'موقع سيما ناو','',300)
 	addMenuItem('folder','[COLOR FFC89008]ARS  [/COLOR]'+'موقع عرب سييد','',250)
 	addMenuItem('folder','[COLOR FFC89008]AKO  [/COLOR]'+'موقع أكوام القديم','',70)
-	#addMenuItem('folder','[COLOR FFC89008]EGV  [/COLOR]'+'موقع إيجي بيست vip','',220)    # 220
+	#addMenuItem('folder','[COLOR FFC89008]EGV  [/COLOR]'+'موقع إيجي بيست vip','',220)
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',157)
-	#addMenuItem('folder','[COLOR FFC89008]AKC  [/COLOR]'+'موقع أكوام كام','',350)
+	addMenuItem('folder','[COLOR FFC89008]AKC  [/COLOR]'+'موقع أكوام كام','',350)
 	addMenuItem('folder','[COLOR FFC89008]ARL  [/COLOR]'+'موقع عرب ليونز','',200)
 	addMenuItem('folder','[COLOR FFC89008]SHA  [/COLOR]'+'موقع شاهد فوريو','',110)
 	addMenuItem('folder','[COLOR FFC89008]HEL  [/COLOR]'+'موقع هلال يوتيوب','',90)
@@ -173,6 +175,7 @@ def GLOBAL_SEARCH_MENU(search='',show=True):
 	addMenuItem('folder','[COLOR FFC89008]FTM   [/COLOR]'+search2+' - موقع المنبر الفاطمي','',69,'','',search+'_REMEMBERRESULTS_')
 	#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات خاصة وعامة - كثيرة المشاكل[/COLOR]','',157)
+	addMenuItem('folder','[COLOR FFC89008]MCM  [/COLOR]'+search2+' - موقع ماي سيما','',369,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]CMN  [/COLOR]'+search2+' - موقع سيما ناو','',309,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]ARS  [/COLOR]'+search2+' - موقع عرب سييد','',259,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]AKO  [/COLOR]'+search2+' - موقع أكوام القديم','',79,'','',search+'_REMEMBERRESULTS_')
@@ -222,7 +225,7 @@ def DELETE_LAST_VIDEOS_MENU(type):
 	return
 
 def SHOW_MESSAGES(showDialogs):
-	color = 'white'
+	color,privs = 'white',''
 	url = WEBSITES['PYTHON'][3]
 	payload = {'user':dummyClientID(32)}
 	allow_dns_fix = True
@@ -231,21 +234,27 @@ def SHOW_MESSAGES(showDialogs):
 	if not response.succeeded: return color
 	newfile = response.content
 	if not newfile: newfile = '""'
+	messages = EVAL(newfile)
+	messages = list(messages)
+	settings = xbmcaddon.Addon(id=addon_id)
+	for messageID,messageType,message in messages:
+		if messageID=='0': privs += message+'::'
+	privs = privs.strip('::')
+	settings.setSetting('user.privs',privs)
+	#DIALOG_OK('SHOW_MESSAGES',str(showDialogs))
 	if not showDialogs:
 		if os.path.exists(messagesfile):
 			with open(messagesfile,'r') as f: oldfile = f.read()
 		else: oldfile = '""'
 		if newfile!=oldfile: color = 'yellow'
-		#DIALOG_OK(color,oldfile)
 	else:
-		messages = EVAL(newfile)
-		messages = list(messages)
 		messages = sorted(messages,reverse=True,key=lambda key: key[0])
 		messageText = ''
-		for messageID,userID,message in messages:
+		for messageID,messageType,message in messages:
+			if messageID=='0': continue
 			date = message.split('\n')[0]
 			message = message.replace(date,'[COLOR FFFFFF00]'+date+'[/COLOR]')
-			if userID!='': messageText += '[COLOR FFFFFF00]رسالة خاصة لك فقط[/COLOR]\n'
+			if messageType!='': messageText += '[COLOR FFFFFF00]رسالة خاصة لك فقط[/COLOR]\n'
 			messageText += message+'\n\n==============================\n\n'
 		DIALOG_TEXTVIEWER_FULLSCREEN('رسائل من المبرمج إلى مستخدمي البرنامج',messageText,'big','right')
 		xbmc.executebuiltin("Container.Refresh")

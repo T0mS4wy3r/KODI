@@ -27,10 +27,11 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',359,'','','_REMEMBERRESULTS_')
-	if website=='': addMenuItem('folder',website+'___'+menu_name+'فلتر محدد',website0a,356)
-	if website=='': addMenuItem('folder',website+'___'+menu_name+'فلتر كامل',website0a,357)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	if website=='':
+		addMenuItem('folder',menu_name+'بحث في الموقع','',359,'','','_REMEMBERRESULTS_')
+		addMenuItem('folder',website+'___'+menu_name+'فلتر محدد',website0a,356)
+		addMenuItem('folder',website+'___'+menu_name+'فلتر كامل',website0a,357)
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',website+'___'+menu_name+'المزيد',website0a,352,'','','more')
 	#addMenuItem('folder',website+'___'+menu_name+'الاخبار',website0a,352,'','','news')
 	html = OPENURL_CACHED(REGULAR_CACHE,website0a,'',headers,'','AKOAMCAM-MENU-1st')
@@ -123,7 +124,7 @@ def TITLES(url,type=''):
 			#if 'صفحة' not in title: title = 'صفحة '+title
 			link = unescapeHTML(link)
 			title = unescapeHTML(title)
-			addMenuItem('folder',menu_name+title,link,351)
+			addMenuItem('folder',menu_name+'صفحة '+title,link,351)
 	return
 
 def SEARCH(search):

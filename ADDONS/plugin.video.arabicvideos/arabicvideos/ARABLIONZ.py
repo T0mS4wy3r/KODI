@@ -20,10 +20,11 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',209,'','','_REMEMBERRESULTS_')
-	#addMenuItem('folder',menu_name+'فلتر محدد',website0a,205)
-	#addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	if website=='':
+		addMenuItem('folder',menu_name+'بحث في الموقع','',209,'','','_REMEMBERRESULTS_')
+		#addMenuItem('folder',menu_name+'فلتر محدد',website0a,205)
+		#addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-MENU-1st')
 	html = response.content#.encode('utf8')

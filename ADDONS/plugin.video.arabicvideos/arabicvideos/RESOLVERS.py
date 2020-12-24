@@ -7,7 +7,7 @@ script_name='RESOLVERS'
 doNOTresolveMElist = []
 headers = {'User-Agent':''}
 
-def PLAY(linkLIST,script_name,type=''):
+def PLAY(linkLIST,script_name='',type=''):
 	linkLIST = list(set(linkLIST))
 	count_watch = str(linkLIST).count('__watch')
 	count_download = str(linkLIST).count('__download')
@@ -124,6 +124,7 @@ def EXTRACT_NAMED_URL(url):
 	return url2,named2,server,menuname,name,type,filetype,quality,source
 
 def RESOLVABLE(url):
+	#DIALOG_OK(url,'RESOLVABLE')
 	# private	: سيرفر خاص
 	# known		: سيرفر عام معروف
 	# external	: سيرفر عام خارجي
@@ -142,12 +143,12 @@ def RESOLVABLE(url):
 			quality = '%%%%%%%%%'+quality
 			quality = ' '+quality[-9:]
 	#if any(value in server for value in doNOTresolveMElist): return ''
-	#DIALOG_OK(server,source)
 	if   'arabseed'		in server: named	= menuname
 	elif 'akoam'		in source: named	= menuname
 	elif 'akwam'		in source: private	= 'akwam'
-	elif 'cima now'		in name:   private	= menuname
-	elif 'cimanow.net'	in url2:   private	= ' '
+	elif 'mycima'		in name:   private	= menuname
+	elif 'cimanow'		in name:   private	= menuname
+	#elif 'cimanow.net'	in url2:   private	= ' '
 	elif 'shahid4u'		in server: named	= menuname
 	elif 'youtu'	 	in server: private	= 'youtube'
 	elif 'y2u.be'	 	in server: private	= 'youtube'
@@ -234,11 +235,10 @@ def INTERNAL_RESOLVERS(url):
 	elif 'akwam'		in source: errormsg,titleLIST,linkLIST = AKWAM(url2,type,quality)
 	elif 'shahid4u'		in server: errormsg,titleLIST,linkLIST = SHAHID4U(url2)
 	elif 'cimanow'		in server: errormsg,titleLIST,linkLIST = CIMANOW(url2)
+	elif 'mycima'		in server: errormsg,titleLIST,linkLIST = MYCIMA(url2)
 	elif 'arabseed'		in server: errormsg,titleLIST,linkLIST = ARABSEED(url2)
 	elif 'arblionz'		in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
 	elif 'arablionz'	in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
-	elif 'youtu'		in server: errormsg,titleLIST,linkLIST = YOUTUBE(url2)
-	elif 'y2u.be'		in server: errormsg,titleLIST,linkLIST = YOUTUBE(url2)
 	elif 'd.egybest.d'	in server: errormsg,titleLIST,linkLIST = '',[''],[url2]
 	elif 'egy.best'		in server: errormsg,titleLIST,linkLIST = EGYBEST(url)
 	elif 'series4watch'	in server: errormsg,titleLIST,linkLIST = SERIES4WATCH(url2)
@@ -252,7 +252,9 @@ def EXTERNAL_RESOLVER_1(url):
 	server = HOSTNAME(url,False)
 	#if 'gounlimited'	in server: url2 = url2.replace('https:','http:')
 	#if any(value in server for value in doNOTresolveMElist): titleLIST,linkLIST = ['Error: RESOLVE does not resolve this server'],[]
-	if   'arabloads'	in server: errormsg,titleLIST,linkLIST = ARABLOADS(url)
+	if   'youtu'		in server: errormsg,titleLIST,linkLIST = YOUTUBE(url)
+	elif 'y2u.be'		in server: errormsg,titleLIST,linkLIST = YOUTUBE(url)
+	elif 'arabloads'	in server: errormsg,titleLIST,linkLIST = ARABLOADS(url)
 	elif 'archive'		in server: errormsg,titleLIST,linkLIST = ARCHIVE(url)
 	elif 'buzzvrl'		in server: errormsg,titleLIST,linkLIST = BUZZVRL(url)
 	elif 'e5tsar'		in server: errormsg,titleLIST,linkLIST = E5TSAR(url)
@@ -338,6 +340,7 @@ def RESOLVE(url):
 	#allerrors = allerrors.replace('\n',' ... ')
 	return allerrors,titleLIST,linkLIST
 
+"""
 def SERVERS_cached_OLD(linkLIST,script_name=''):
 	#t1 = time.time()
 	cacheperiod = LONG_CACHE
@@ -359,6 +362,7 @@ def SERVERS_cached_OLD(linkLIST,script_name=''):
 	#t2 = time.time()
 	#DIALOG_NOTIFICATION(message,str(int(t2-t1))+' ms')
 	return serversLIST,urlLIST
+"""
 
 def SERVERS_cached(linkLIST2,script_name2=''):
 	expiry = LONG_CACHE
@@ -387,6 +391,7 @@ def SERVERS_cached(linkLIST2,script_name2=''):
 	WRITE_TO_SQL3('SERVERS',[linkLIST2,script_name2],data,expiry)
 	return titleLIST,linkLIST
 
+"""
 def SERVERS_OLD(linkLIST,script_name=''):
 	serversLIST,urlLIST,unknownLIST,serversDICT = [],[],[],[]
 	#linkLIST = list(set(linkLIST))
@@ -409,6 +414,7 @@ def SERVERS_OLD(linkLIST,script_name=''):
 	#	subject = 'Unknown Resolvers = ' + str(lines)
 	#	result = SEND_EMAIL(subject,message,False,'','FROM-RESOLVERS-'+script_name)
 	return serversLIST,urlLIST
+"""
 
 def	EXTERNAL_RESOLVER_2(url):
 	#url = 'http://www.youtube.com/watch?v=BaW_jenozKc'
@@ -609,6 +615,29 @@ def SERIES4WATCH(link):
 	#return errormsg,titleLIST,linkLIST
 	return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
 
+def MYCIMA(url):
+	# https://mycima.video/run/152ecad6d1a6a57667cb09358e0524e990d682af751ffbec43c173ec2f819baed512f327529538ac2a7f0ee61034cbbb78500401c1ec8fa4e08c91b1d20ebb31c0777fa174ee0e97e8214150e54b0388567597a1655b98166909201a59d2ab16e6f116?Key=0GfHI4TukZPPkW7vi8eP8Q&Expires=1608181746
+	#LOG_THIS('NOTICE','EMAD EMAD: '+url)
+	#DIALOG_OK(url,link)
+	server = SERVER(url)
+	headers2 = {'Referer':server,'Accept-Encoding':'gzip, deflate'}
+	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers2,'','','RESOLVERS-MYCIMA-1st')
+	html = response.content
+	html_blocks = re.findall('player.qualityselector(.*?)formats:',html,re.DOTALL)
+	block = html_blocks[0]
+	items = re.findall('format: \'(\d.*?)\', src: "(.*?)"',block,re.DOTALL)
+	titleLIST,linkLIST = [],[]
+	for title,link in items:
+		titleLIST.append(title)
+		linkLIST.append(link)
+	if len(linkLIST)==1: selection = 0
+	elif len(linkLIST)>1:
+		selection = DIALOG_SELECT('أختر الملف المناسب', titleLIST)
+		if selection==-1: return '',[],[]
+	else: return 'Error: Resolver MYCIMA Failed',[],[]
+	url2 = linkLIST[selection]
+	return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
+
 def AKOAMCAM(link):
 	# https://w.akoam.cam/wp-content/themes/aflam8kkk/Inc/Ajax/Single/Server.php?postid=42869&serverid=4
 	#DIALOG_OK(url,html)
@@ -624,6 +653,7 @@ def CIMANOW(link):
 	# https://cimanow.cam/wp-content/themes/CimaNow/Interface/server.php?postid=42869&serverid=4
 	# https://watch4.cimanow.net/uploads/2020/08/14/_Cima-Now.CoM_ Project.Power.2020.WEB-DL/[Cima-Now.CoM] Project.Power.2020.WEB-DL-1080p.mp4
 	#DIALOG_OK(url,html)
+	server1 = SERVER(link)
 	if 'postid' in link:
 		parts = re.findall('(http.*?)\?postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL)
 		url,postid,serverid = parts[0]
@@ -632,20 +662,20 @@ def CIMANOW(link):
 		html = response.content
 		url2 = re.findall('iframe src="(.*?)"',html,re.DOTALL)[0]
 		if 'cimanow' in url2:
-			headers = {'Referer':'https://cima-now.com'}
+			headers = {'Referer':server1,'User-Agent':''}
 			response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url2,'',headers,'','','RESOLVERS-CIMANOW-2nd')
 			html2 = response.content
 			items = re.findall('src="(.*?)".*?size="(.*?)"',html2,re.DOTALL)
 			titleLIST,linkLIST = [],[]
-			server = SERVER(url2)
+			server2 = SERVER(url2)
 			for link,quality in reversed(items):
-				link = server+link+'|Referer=https://cima-now.com'
+				link = server2+link+'|Referer='+server2
 				titleLIST.append(quality)
 				linkLIST.append(link)
 			return '',titleLIST,linkLIST
 		else: return 'NEED_EXTERNAL_RESOLVERS',[''],[url2]
 	else:
-		link = link+'|Referer=https://cima-now.com'
+		link = link+'|Referer='+server1
 		return '',[''],[link]
 
 def ARABLIONZ(link):

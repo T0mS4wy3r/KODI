@@ -1,4 +1,17 @@
 ﻿
+v7.6.0	2020-12-24
+Added new site MYCIMA
+Added back AKOAMCAM site
+Added users privilege control
+Fixed CIMANOW resolver
+Fixed ALKAWTHAR search
+Fixed DIALOG_TEXTVIEWER_FULLSCREEN
+Fixed downloading webm files
+Modified CIMANOW play/download links
+Moved YOUTUBE resolver to external resolvers
+Minor fixes and improvements
+
+
 v7.5.2	2020-12-12
 Fixed a bug in YOUTUBE
 Removed AKOAMCAM site
