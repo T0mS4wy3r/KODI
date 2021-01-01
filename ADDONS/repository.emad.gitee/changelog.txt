@@ -1,4 +1,8 @@
 ﻿
+v6.0.1	2021-01-01
+Added 2021 to icon image
+
+
 v6.0.0	2020-11-23
 New repository for folder KODI2 in gitee
 

@@ -24,7 +24,7 @@
 
 
 
-<addon id="repository.emad" name="EMAD Repository" version="6.0.0" provider-name="EMAD MAHDI">
+<addon id="repository.emad" name="EMAD Repository" version="6.0.1" provider-name="EMAD MAHDI">
 	<extension point="xbmc.addon.repository" name="EMAD Repository">
 	</extension>
 	<extension point="xbmc.addon.metadata">
@@ -36,7 +36,7 @@
 
 
 
-<addon id="repository.emad.github" name="EMAD GitHub Repository" version="6.0.0" provider-name="EMAD MAHDI">
+<addon id="repository.emad.github" name="EMAD GitHub Repository" version="6.0.1" provider-name="EMAD MAHDI">
 	<extension point="xbmc.addon.repository" name="EMAD GitHub Repository">
 	</extension>
 	<extension point="xbmc.addon.metadata">
@@ -48,7 +48,7 @@
 
 
 
-<addon id="repository.emad.gitee" name="EMAD Gitee Repository" version="6.0.0" provider-name="EMAD MAHDI">
+<addon id="repository.emad.gitee" name="EMAD Gitee Repository" version="6.0.1" provider-name="EMAD MAHDI">
 	<extension point="xbmc.addon.repository" name="EMAD Gitee Repository">
 	</extension>
 	<extension point="xbmc.addon.metadata">
@@ -60,7 +60,7 @@
 
 
 
-<addon id="repository.emad.others" name="EMAD Others Repository" version="6.0.0" provider-name="EMAD MAHDI">
+<addon id="repository.emad.others" name="EMAD Others Repository" version="6.0.1" provider-name="EMAD MAHDI">
 	<extension point="xbmc.addon.repository" name="EMAD Others Repository">
 	</extension>
 	<extension point="xbmc.addon.metadata">
@@ -470,6 +470,31 @@
     </assets>
   </extension>
 </addon>
+
+
+
+<addon id="script.module.chardet"
+       name="chardet"
+       version="3.0.4"
+       provider-name="Dan Blanchard">
+  <requires>
+    <import addon="xbmc.python" version="2.25.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_GB">Universal encoding detector</summary>
+    <description lang="en_GB">Packed for Kodi from https://github.com/chardet/chardet</description>
+    <license>LGPL</license>
+    <platform>all</platform>
+    <language></language>
+    <forum></forum>
+    <website>https://chardet.readthedocs.io/en/latest/</website>
+    <source>https://github.com/beenje/script.module.chardet</source>
+    <email>beenje AT gmail.com</email>
+  </extension>
+</addon>
+
 
 
 </addons>
