@@ -8,8 +8,8 @@
 		<import addon="script.module.requests" optional="false"/>
 		<import addon="script.module.resolveurl" optional="false"/>
 		<import addon="script.module.youtube.dl" optional="false"/>
-		<import addon="inputstream.adaptive" optional="false"/>
-		<import addon="inputstream.rtmp" optional="false"/>
+		<import addon="inputstream.adaptive" optional="true"/>
+		<import addon="inputstream.rtmp" optional="true"/>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="arabicvideos\__init__.py">
 		<provides>video</provides>
@@ -679,6 +679,27 @@
     <assets>
       <icon>icon.png</icon>
     </assets>
+  </extension>
+</addon>
+
+
+
+<addon id="script.module.backports.functools_lru_cache"
+       name="backports.functools_lru_cache"
+       version="1.6.1"
+       provider-name="Jason R. Coombs">
+  <requires>
+    <import addon="xbmc.python" version="2.14.0"/>
+  </requires>
+  <extension point="xbmc.python.module"
+             library="lib" />
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">Backport of functools.lru_cache from Python 3.3</summary>
+    <description lang="en">Packed for Kodi from https://github.com/jaraco/backports.functools_lru_cache</description>
+    <platform>all</platform>
+    <license>MIT</license>
+    <website>https://github.com/jaraco/backports.functools_lru_cache</website>
+    <source>https://github.com/Razzeee/script.module.backports.functools_lru_cache</source>
   </extension>
 </addon>
 
