@@ -156,8 +156,9 @@ def PLAY(url):
 	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers2,'','','MYCIMA-PLAY-1st')
 	html = response.content
 	ratingLIST = re.findall('<span>التصنيف<.*?<a.*?">(.*?)<.*?">(.*?)<',html,re.DOTALL)
-	if ratingLIST: ratingLIST = [ratingLIST[0][0],ratingLIST[0][1]]
-	if RATING_CHECK(script_name,url,ratingLIST): return
+	if ratingLIST:
+		ratingLIST = [ratingLIST[0][0],ratingLIST[0][1]]
+		if RATING_CHECK(script_name,url,ratingLIST): return
 	# watch links
 	html_blocks = re.findall('class="WatchServersList"(.*?)class="WatchServersEmbed"',html,re.DOTALL)
 	if html_blocks:

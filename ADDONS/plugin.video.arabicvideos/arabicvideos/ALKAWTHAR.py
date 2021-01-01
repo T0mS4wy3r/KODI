@@ -18,7 +18,7 @@ def MAIN(mode,url,page,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('live',menu_name+'البث الحي لقناة الكوثر','',135)
+	#addMenuItem('live',menu_name+'البث الحي لقناة الكوثر','',135)
 	addMenuItem('folder',menu_name+'بحث في الموقع','',139,'','','_REMEMBERRESULTS_')
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/category/543',132,'','1')
 	addMenuItem('folder',website+'___'+menu_name+'الافلام',website0a+'/category/628',132,'','1')

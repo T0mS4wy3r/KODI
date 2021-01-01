@@ -1,4 +1,15 @@
 ﻿
+v7.7.0	2021-01-01
+Added BOKRA site
+Fixed messages sequence
+Fixed YOUTUBE playing cancel
+Fixed FAVOURITES watched status
+Fixed RESOLVERS return
+Fixed YOUTUBE live status
+Cancelled ALKAWTHAR live
+Modified 2021 icon & thumb images
+
+
 v7.6.0	2020-12-24
 Added new site MYCIMA
 Added back AKOAMCAM site

@@ -65,6 +65,7 @@ def WEBSITES_MENU():
 	#addMenuItem('folder','  2.  [COLOR FFC89008]IPT   [/COLOR]'+'اشتراك IPTV مدفوع','',230)
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات خاصة - قليلة المشاكل[/COLOR]','',157)
 	#addMenuItem('folder','[COLOR FFC89008]EGV  [/COLOR]'+'موقع إيجي بيست','',120)
+	addMenuItem('folder','[COLOR FFC89008]BKR  [/COLOR]'+'موقع بكرا','',370)
 	addMenuItem('folder','[COLOR FFC89008]PNT  [/COLOR]'+'موقع بانيت','',30)
 	addMenuItem('folder','[COLOR FFC89008]YUT  [/COLOR]'+'موقع يوتيوب','',140)
 	addMenuItem('folder','[COLOR FFC89008]KLA  [/COLOR]'+'موقع كل العرب','',10)
@@ -162,6 +163,7 @@ def GLOBAL_SEARCH_MENU(search='',show=True):
 	else: search2 = 'كلمة عشوائية'
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات خاصة - قليلة المشاكل[/COLOR]','',157)
 	addMenuItem('folder','[COLOR FFC89008]IPT    [/COLOR]'+search2+' - خدمة IPTV','',239,'','',search+'_REMEMBERRESULTS_')
+	addMenuItem('folder','[COLOR FFC89008]BKR   [/COLOR]'+search2+' - موقع بكرا','',379,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]PNT   [/COLOR]'+search2+' - موقع بانيت','',39,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]YUT   [/COLOR]'+search2+' - موقع يوتيوب','',149,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]KLA   [/COLOR]'+search2+' - موقع كل العرب','',19,'','',search+'_REMEMBERRESULTS_')
@@ -248,7 +250,7 @@ def SHOW_MESSAGES(showDialogs):
 		else: oldfile = '""'
 		if newfile!=oldfile: color = 'yellow'
 	else:
-		messages = sorted(messages,reverse=True,key=lambda key: key[0])
+		messages = sorted(messages,reverse=True,key=lambda key: int(key[0]))
 		messageText = ''
 		for messageID,messageType,message in messages:
 			if messageID=='0': continue

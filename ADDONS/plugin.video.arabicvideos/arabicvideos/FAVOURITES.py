@@ -17,9 +17,8 @@ def MENU(favouriteID):
 		#addMenuItem('folder','مسح هذه القائمة','',271,'','','',favouriteID)
 		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		menuLIST = favouritesDICT[favouriteID]
-		context = favouriteID
 		for type,name,url,mode,image,page,text in menuLIST:
-			addMenuItem(type,name,url,mode,image,page,text,context)
+			addMenuItem(type,name,url,mode,image,page,text)
 	return
 
 def FAVOURITES_DISPATCHER(context):

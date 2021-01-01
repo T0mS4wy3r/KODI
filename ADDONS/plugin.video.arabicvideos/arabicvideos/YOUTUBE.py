@@ -33,7 +33,6 @@ def MENU():
 	addMenuItem('folder',menu_name+'الصفحة الرئيسية',website0a,144)
 	addMenuItem('folder',menu_name+'المحتوى الرائج',website0a+'/feed/trending',146)
 	addMenuItem('folder',menu_name+'مواقع اختارها يوتيوب',website0a+'/feed/guide_builder',144)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder','_YTC_'+'مواقع اختارها المبرمج','',290)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder',menu_name+'بحث: قنوات عربية','',147)
@@ -86,8 +85,9 @@ def PLAY(url,type):
 	linkLIST = [url]
 	import RESOLVERS
 	result = RESOLVERS.PLAY(linkLIST,script_name,type)
-	if 'RETURN_YOUTUBE' in result:
+	if 'RETURN_TO_YOUTUBE' in result:
 		link = website0a+result.split('::')[1]
+		#DIALOG_OK(link,result)
 		new_path = sys.argv[0]+'?type=folder&mode=144&url='+link
 		xbmc.executebuiltin("Container.Update("+new_path+")")
 		#threads = CustomThread(False,False)
@@ -307,6 +307,7 @@ def RENDER(item):
 	trial = []
 	trial.append("render['lengthText']['simpleText']")
 	trial.append("render['thumbnailOverlays'][0]['thumbnailOverlayTimeStatusRenderer']['text']['simpleText']")
+	trial.append("render['thumbnailOverlays'][0]['thumbnailOverlayTimeStatusRenderer']['text']['runs'][0]['text']")
 	succeeded99,duration = TRY_MULITPLE(item,render,trial)
 	if 'LIVE' in duration: duration,live = '','LIVE:  '
 	if 'مباشر' in duration: duration,live = '','LIVE:  '
@@ -344,11 +345,13 @@ def INSERT_ITEM_TO_MENU(item,url='',index='',visitor=''):
 	elif 'continuationItemRenderer' in str(item): return	# continuation not items
 	elif 'searchPyvRenderer' in str(item): return			# ads not items
 	elif link=='' and 'search_query' in url: return			# separator horizontal list not items
-	elif link=='' and ('search_query' in url or 'horizontalMovieListRenderer' in str(item) or url==website0a):
+	elif title!='' and link=='' and ('search_query' in url or 'horizontalMovieListRenderer' in str(item) or url==website0a):
 		title = '=== '+title+' ==='
 		addMenuItem('link',menu_name+title,'',9999)
-	elif 'messageRenderer' in str(item): addMenuItem('link',menu_name+title,'',9999)
+	elif title!='' and 'messageRenderer' in str(item):
+		addMenuItem('link',menu_name+title,'',9999)
 	elif '/feed/trending' in link and 'bp=' not in link: return #addMenuItem('folder',menu_name+title,link,146)
+	elif title=='': return
 	elif live!='': addMenuItem('live',menu_name+live+title,link,143,img)
 	elif 'watch?v=' in link:
 		if 'list=' in link and 'index=' not in link:

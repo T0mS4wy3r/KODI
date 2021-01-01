@@ -66,6 +66,7 @@ def CHECK_ACCOUNT(showDialog=True):
 	ok,status = False,''
 	settings = xbmcaddon.Addon(id=addon_id)
 	useragent = settings.getSetting('iptv.useragent')
+	#DIALOG_OK('CHECK_ACCOUNT 1','['+useragent+']')
 	iptvURL = settings.getSetting('iptv.url')
 	headers = {'User-Agent':useragent}
 	username = re.findall('username=(.*?)&',iptvURL+'&',re.DOTALL)
@@ -311,19 +312,20 @@ def PLAY(url,type):
 def ADD_USERAGENT():
 	settings = xbmcaddon.Addon(id=addon_id)
 	DIALOG_OK('رسالة من المبرمج','تحذير مهم وهام جدا . يرجى عدم تغييره إذا كنت لا تعرف ما هو .  وعدم تغييره إلا عند الضرورة القصوى . الحاجة لهذا التغيير هي فقط إذا طلبت منك شركة IPTV أن تعمل هذا التغيير . وفقط عندما تستخدم خدمة IPTV تحتاج User-Agent خاص')
-	useragent = settings.getSetting('iptv.useragent')
-	answer = DIALOG_YESNO(useragent,'هذا هو IPTV User-Agent المسجل في البرنامج . هل تريد تعديله أم تريد مسحه . للعلم عند المسح سوف يعود إلى الأصلي الذي يناسب جميع شركات IPTV ؟!','','','مسح القديم','تعديل القديم')
-	if answer:
-		useragent = KEYBOARD('أكتب IPTV User-Agent جديد',useragent)
-		if useragent=='': return
-	else: useragent = ''
+	useragent = settings.getSettingString('iptv.useragent')
+	answer = DIALOG_YESNO(useragent,'هذا هو IPTV User-Agent المسجل في البرنامج . هل تريد تعديله أم تريد إعادته إلى وضعية التثبيت الأصلي والتي تقريبا تناسب جميع شركات IPTV ؟!','','','استخدام الأصلي','تعديل القديم')
+	if answer: useragent = KEYBOARD('أكتب IPTV User-Agent جديد',useragent,True)
+	else: useragent = 'Unknown'
+	if useragent==' ':
+		DIALOG_OK('رسالة من المبرمج','غير مسموح أستخدام فراغ لوحده أو عدة فراغات لوحدها ... يجب إما تركه فارغ تماما أو إضافة حرف أو أي شي آخر معها')
+		return
 	answer = DIALOG_YESNO(useragent,'هل تريد استخدام هذا IPTV User-Agent بدلا من  القديم ؟','','','كلا','نعم')
 	if not answer:
 		DIALOG_OK('رسالة من المبرمج','تم الإلغاء')
 		return
 	settings.setSetting('iptv.useragent',useragent)
-	DIALOG_OK(useragent,'تم تغيير IPTV User-Agent إلى هذا الجديد')
 	CREATE_STREAMS(True)
+	#DIALOG_OK('ADD_USERAGENT 2','['+useragent+']')
 	return
 
 def ADD_ACCOUNT():
@@ -463,8 +465,9 @@ def SPLIT_NAME(title):
 	return lang,title2
 
 def CREATE_STREAMS(showDialogs=True):
+	#DIALOG_OK('CREATE_STREAMS 1','['+useragent+']')
 	settings = xbmcaddon.Addon(id=addon_id)
-	useragent = settings.getSetting('iptv.useragent')
+	useragent = settings.getSettingString('iptv.useragent')
 	iptvURL = settings.getSetting('iptv.url')
 	headers = {'User-Agent':useragent}
 	ok = CHECK_ACCOUNT(False)

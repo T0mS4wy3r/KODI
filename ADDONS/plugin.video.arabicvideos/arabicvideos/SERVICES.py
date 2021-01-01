@@ -796,7 +796,8 @@ def USING_FAVOURITES():
 	return
 
 def TESTING123():
-	url = 'http://uppom.live/wt0hh8ksxz4k/The.Thing.About.Harry.2020.1080p.HULU.WEB-DL.MyCima.TO.mp4.html?Key=xsdPMypmZP-XDPwenNXFBw&Expires=1607914761'
+	url = 'https://video.bokracdn.com/videos/a8/11/60/116096.mp4?k=IfIkjzyOyFE644UvxiEbMQ&e=1609065872'
+	#url = 'http://uppom.live/wt0hh8ksxz4k/The.Thing.About.Harry.2020.1080p.HULU.WEB-DL.MyCima.TO.mp4.html?Key=xsdPMypmZP-XDPwenNXFBw&Expires=1607914761'
 	#url = 'http://uppom.live/wt0hh8ksxz4k/The.Thing.About.Harry.2020.1080p.HULU.WEB-DL.MyCima.TO.mp4'
 	#url = 'https://youtu.be/pNJTJrnpbjE'
 	import RESOLVERS

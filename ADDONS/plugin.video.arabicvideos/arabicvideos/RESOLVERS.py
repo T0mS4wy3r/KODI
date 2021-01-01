@@ -45,7 +45,7 @@ def PLAY(linkLIST,script_name='',type=''):
 			elif result not in ['canceled_2nd_menu','https']: DIALOG_OK('رسالة من المبرمج','السيرفر لم يعمل جرب سيرفر غيره',error1,error2)
 	if result=='unresolved' and len(titleLIST)>0: DIALOG_OK('رسالة من المبرمج','سيرفر هذا الفيديو لم يعمل جرب فيديو غيره',errormsg)
 	elif result in ['failed','timeout'] and errormsg!='': DIALOG_OK('رسالة من المبرمج',errormsg)
-	elif errormsg=='RETURN_YOUTUBE': result = errormsg+'::'+linkLIST2[0]
+	elif errormsg=='RETURN_TO_YOUTUBE': result = errormsg+'::'+linkLIST2[0]
 	"""
 	elif result in ['canceled_1st_menu','canceled_2nd_menu']:
 		#LOG_THIS('NOTICE',LOGGING(script_name)+'   Test:   '+sys.argv[0]+sys.argv[2])
@@ -69,7 +69,7 @@ def PLAY_LINK(url,script_name,type=''):
 	url = url.strip(' ').strip('&').strip('?').strip('/')
 	errormsg,titleLIST,linkLIST = RESOLVE(url)
 	#DIALOG_OK(url,errormsg)
-	if 'RETURN_YOUTUBE' in errormsg: result,errormsg = 'RETURN','RETURN_YOUTUBE'
+	if 'RETURN_TO_YOUTUBE' in errormsg: result,errormsg = 'RETURN','RETURN_TO_YOUTUBE'
 	elif linkLIST:
 		while True:
 			if len(linkLIST)==1: selection = 0
@@ -148,6 +148,7 @@ def RESOLVABLE(url):
 	elif 'akwam'		in source: private	= 'akwam'
 	elif 'mycima'		in name:   private	= menuname
 	elif 'cimanow'		in name:   private	= menuname
+	elif 'bokra'		in server: private	= menuname
 	#elif 'cimanow.net'	in url2:   private	= ' '
 	elif 'shahid4u'		in server: named	= menuname
 	elif 'youtu'	 	in server: private	= 'youtube'
@@ -236,6 +237,7 @@ def INTERNAL_RESOLVERS(url):
 	elif 'shahid4u'		in server: errormsg,titleLIST,linkLIST = SHAHID4U(url2)
 	elif 'cimanow'		in server: errormsg,titleLIST,linkLIST = CIMANOW(url2)
 	elif 'mycima'		in server: errormsg,titleLIST,linkLIST = MYCIMA(url2)
+	elif 'bokra'		in server: errormsg,titleLIST,linkLIST = BOKRA(url2)
 	elif 'arabseed'		in server: errormsg,titleLIST,linkLIST = ARABSEED(url2)
 	elif 'arblionz'		in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
 	elif 'arablionz'	in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
@@ -317,26 +319,25 @@ def RESOLVE(url):
 		resolver = 'EXTERNAL_RESOLVER_1'
 		errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVER_1(link)
 		linkLIST = CLEAN_URLS(linkLIST)
-		if errormsg!='':
+		if 'Error:' in errormsg:
 			allerrors = allerrors+'\nResolver 1: '+errormsg
 			resolver = 'EXTERNAL_RESOLVER_2'
 			errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVER_2(link)
 			linkLIST = CLEAN_URLS(linkLIST)
-			if errormsg!='':
+			if 'Error:' in errormsg:
 				allerrors = allerrors+'\nResolver 2: '+errormsg
 				resolver = 'EXTERNAL_RESOLVER_3'
 				errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVER_3(link)
 				linkLIST = CLEAN_URLS(linkLIST)
-				if errormsg!='':
+				if 'Error:' in errormsg:
 					allerrors = allerrors+'\nResolver 3: '+errormsg
 					#LOG_THIS('ERROR',LOGGING(script_name)+'   All External Resolvers Failed   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
-	elif errormsg!='':
-		allerrors = 'Resolver 0: '+errormsg
+	elif 'Error:' in errormsg: allerrors = 'Resolver 0: '+errormsg
+	if 'Error:' not in errormsg: return errormsg,titleLIST,linkLIST
 	allerrors = allerrors.strip('\n')
 	if len(linkLIST)>0:
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Resolving succeeded   Resolver: [ '+resolver+' ]   Result: [ '+str(linkLIST)+' ]   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
-	else:
-		LOG_THIS('ERROR',LOGGING(script_name)+'   Resolving failed   Resolver: [ '+resolver+' ]   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
+	else: LOG_THIS('ERROR',LOGGING(script_name)+'   Resolving failed   Resolver: [ '+resolver+' ]   Messages: [ '+allerrors+' ]   For: [ '+url+' ]   Link: [ '+link+' ]')
 	#allerrors = allerrors.replace('\n',' ... ')
 	return allerrors,titleLIST,linkLIST
 
@@ -455,6 +456,15 @@ def	EXTERNAL_RESOLVER_3(url):
 			linkLIST.append(link['url'])
 		return '',titleLIST,linkLIST
 
+def BOKRA(link):
+	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',link,'','','','','BOKRA-PLAY-3rd')
+	html = response.content
+	url = re.findall('source src="(.*?)"',html,re.DOTALL)
+	if not url: return 'Error: BOKRA Resolver Failed',[],[]
+	url = url[0]
+	if 'http:' not in url: url = 'http:'+url
+	return '',[''],[url]
+
 def MOVIZLAND(link):
 	# http://moshahda.online/hj4ihfwvu3rl.html?named=Main
 	# http://moshahda.online/dl?op=download_orig&id=hj4ihfwvu3rl&mode=o&hash=62516-107-159-1560654817-4fa63debbd8f3714289ad753ebf598ae
@@ -464,12 +474,12 @@ def MOVIZLAND(link):
 		#xbmc.log(html)
 		#DIALOG_OK(link,html)
 		items = re.findall('direct link.*?href="(.*?)"',html,re.DOTALL)
-		if items: return '',[''],[ items[0] ]
+		if items: return '',[''],[items[0]]
 		else:
 			message = re.findall('class="err">(.*?)<',html,re.DOTALL)
 			if message:
 				DIALOG_OK('رسالة من الموقع الاصلي',message[0])
-				return message[0],[],[]
+				return 'Error: '+message[0],[],[]
 	else:
 		#DIALOG_OK(link,'')
 		url,name2 = link.split('?named=')
@@ -599,7 +609,7 @@ def EGYBEST(url):
 		elif '/v/' in url3: items = re.findall('id="video".*?src="(.*?)"',html,re.DOTALL)
 		if items: return [],[''],[ items[0] ]
 		elif '<h1>404</h1>' in html:
-			return 'سيرفر الفيديو فيه حجب ضد كودي ومصدره من الانترنيت الخاصة بك',[],[]
+			return 'Error: سيرفر الفيديو فيه حجب ضد كودي ومصدره من الانترنيت الخاصة بك',[],[]
 	else: return 'Error: Resolver EGYBEST Failed',[],[]
 	#xbmc.log(html)
 
@@ -724,7 +734,7 @@ def ARABSEED(url):
 	else:
 		html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-ARABSEED-2nd')
 		links = re.findall('<source src="(.*?)"',html,re.DOTALL)
-		if links: return '',[''],[ links[0] ]
+		if links: return '',[''],[links[0]]
 		return 'Error: Resolver ARABSEED Failed',[],[]
 """
 			response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',link,'',headers2,True,'','RESOLVERS-ARABSEED-2nd')
@@ -1313,10 +1323,10 @@ def YOUTUBE(url):
 	need_mpd_server = False
 	while True:
 		selection = DIALOG_SELECT('اختر النوع المناسب:', selectMenu)
-		if selection==-1: return 'تم الغاء تشغيل الفيديو',[],[]
+		if selection==-1: return '',[],[]
 		if selection==0:
 			link = choiceMenu[selection]
-			return 'RETURN_YOUTUBE',[],[link]
+			return 'RETURN_TO_YOUTUBE',[],[link]
 		choice = choiceMenu[selection]
 		logTitle = selectMenu[selection]
 		if choice=='dash':
@@ -1465,7 +1475,7 @@ def YOUTUBE(url):
 		# http://localhost:55055/shutdown
 		finalURL = 'http://localhost:55055/youtube.mpd'
 	else: httpd = ''
-	if finalURL!='': return '',[''],[ [finalURL,subtitleURL,httpd] ]
+	if finalURL!='': return '',[''],[[finalURL,subtitleURL,httpd]]
 	return 'Error: Resolver YOUTUBE Failed',[],[]
 
 def VIDBOB(url):
@@ -1569,7 +1579,7 @@ def ZIPPYSHARE(url):
 		var1,var2,var3,var4,var5,var6 = items[0]
 		var = int(var2) % int(var3) + int(var4) % int(var5)
 		url = basename + var1 + str(var) + var6
-		return '',[''],[ url ]
+		return '',[''],[url]
 	else: return 'Error: ZIPPYSHARE Resolver Failed',[],[]
 
 def MP4UPLOAD(url):

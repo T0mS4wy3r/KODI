@@ -22,7 +22,7 @@ def MENU():
 	addMenuItem('folder','[COLOR FFC89008]YUT   [/COLOR]'+'قنوات أجنبية من يوتيوب','',148)
 	addMenuItem('folder','[COLOR FFC89008]IFL    [/COLOR]'+'قناة آي فيلم من موقعهم','',28)
 	addMenuItem('live','[COLOR FFC89008]MRF  [/COLOR]'+'قناة المعارف من موقعهم','',41)
-	addMenuItem('live','[COLOR FFC89008]KWT  [/COLOR]'+'قناة الكوثر من موقعهم','',135)
+	#addMenuItem('live','[COLOR FFC89008]KWT  [/COLOR]'+'قناة الكوثر من موقعهم','',135)
 	addMenuItem('live','[COLOR FFC89008]PNT  [/COLOR]'+'قناة هلا من موقع بانيت','',38)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder','[COLOR FFC89008]TV1  [/COLOR]'+'قنوات تلفزيونية عامة','',102)
