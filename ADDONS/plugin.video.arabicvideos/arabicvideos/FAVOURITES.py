@@ -18,7 +18,7 @@ def MENU(favouriteID):
 		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		menuLIST = favouritesDICT[favouriteID]
 		for type,name,url,mode,image,page,text in menuLIST:
-			addMenuItem(type,name,url,mode,image,page,text)
+			addMenuItem(type,name,url,mode,image,page,text,favouriteID)
 	return
 
 def FAVOURITES_DISPATCHER(context):
@@ -107,20 +107,21 @@ def GET_FAVOURITES_CONTEXT_MENU(path):
 	contextMenu = []
 	menuItem = EXTRACT_KODI_PATH(path)
 	type,name,url,mode,image,page,text,context = menuItem
-	#if context not in ['','1','2','3','4','5']: context = '_'+context
 	favouritesDICT = GET_ALL_FAVOURITES()
+	contextLIST = []
+	#for favouriteID in ['1','2','3','4','5']:
+	#	if (type,name,url,mode,image,page,text) in favouritesDICT[favouriteID]:
+	#		contextLIST.append(favouriteID)
+	#if contextLIST: context = contextLIST[0]
+	#else: context = ''
 	if mode=='270':
 		if context in favouritesDICT.keys() and len(favouritesDICT[context])>0:
 			contextMenu.append(('مسح قائمة مفضلة '+context,'XBMC.RunPlugin('+path+'&context='+context+'_DELETELIST'+')'))
 	else:
 		menuItem = menuItem[:-1]
 		menuItem = tuple(menuItem)
-		contextMenu1 = CREATE_ONE_CONTEXT_MENU('1',context,path,menuItem,favouritesDICT)
-		contextMenu2 = CREATE_ONE_CONTEXT_MENU('2',context,path,menuItem,favouritesDICT)
-		contextMenu3 = CREATE_ONE_CONTEXT_MENU('3',context,path,menuItem,favouritesDICT)
-		contextMenu4 = CREATE_ONE_CONTEXT_MENU('4',context,path,menuItem,favouritesDICT)
-		contextMenu5 = CREATE_ONE_CONTEXT_MENU('5',context,path,menuItem,favouritesDICT)
-		contextMenu = contextMenu1+contextMenu2+contextMenu3+contextMenu4+contextMenu5
+		for favouriteID in ['1','2','3','4','5']:
+			contextMenu += CREATE_ONE_CONTEXT_MENU(favouriteID,context,path,menuItem,favouritesDICT)
 	contextMenuNEW = []
 	for i1,i2 in contextMenu:
 		#i1 = '[COLOR FFFFFF00][B]'+i1+'[/B][/COLOR]'
@@ -132,6 +133,7 @@ def CREATE_ONE_CONTEXT_MENU(favouriteID,context,path,menuItem,favouritesDICT):
 	contextMenu = []
 	if favouriteID in favouritesDICT.keys() and menuItem in favouritesDICT[favouriteID]:
 		contextMenu.append(('مسح من مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_REMOVE1)'))
+		#DIALOG_OK(context,favouriteID)
 		if context==favouriteID:
 			count = len(favouritesDICT[favouriteID])
 			if count>1: contextMenu.append(('تحريك 1 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP1)'))
@@ -140,5 +142,7 @@ def CREATE_ONE_CONTEXT_MENU(favouriteID,context,path,menuItem,favouritesDICT):
 			if count>4: contextMenu.append(('تحريك 4 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN4)'))
 	else: contextMenu.append(('إضافة إلى مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_ADD1)'))
 	return contextMenu
+
+
 
 

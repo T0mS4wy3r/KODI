@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from LIBRARY import *
 
-script_name='ARABLIONZ'
+script_name='ARBLIONZ'
 headers = { 'User-Agent' : '' }
 menu_name='_ARL_'
 website0a = WEBSITES[script_name][0]
@@ -26,7 +26,7 @@ def MENU(website=''):
 		#addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-MENU-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARBLIONZ-MENU-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
 	if html_blocks:
@@ -36,6 +36,7 @@ def MENU(website=''):
 			link = website0a+'/getposts?type=one&data='+url
 			addMenuItem('folder',website+'___'+menu_name+title,link,201)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	#WRITE_FILE(html)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
@@ -49,7 +50,7 @@ def MENU(website=''):
 
 def TITLES(url):
 	#DIALOG_OK(url,'TITLES')
-	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers,True,'','ARABLIONZ-TITLES-1st')
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers,True,'','ARBLIONZ-TITLES-1st')
 	html = response.content#.encode('utf8')
 	if 'getposts' in url: block = html
 	else:
@@ -93,7 +94,7 @@ def TITLES(url):
 
 def EPISODES(url):
 	episodesCount,items,itemsNEW = -1,[],[]
-	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers,True,'','ARABLIONZ-EPISODES-1st')
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers,True,'','ARBLIONZ-EPISODES-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('ti-list-numbered(.*?)</div>',html,re.DOTALL)
 	if html_blocks:
@@ -135,7 +136,7 @@ def PLAY(url):
 	#DIALOG_OK(url,'PLAY-1st')
 	#url = unquote(quote(url))
 	hostname = website0a
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'',headers,True,True,'ARABLIONZ-PLAY-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'',headers,True,True,'ARBLIONZ-PLAY-1st')
 	html = response.content#.encode('utf8')
 	id = re.findall('postId:"(.*?)"',html,re.DOTALL)
 	if not id: id = re.findall('post_id=(.*?)"',html,re.DOTALL)
@@ -143,10 +144,10 @@ def PLAY(url):
 	if id: id = id[0]
 	else: DIALOG_OK('رسالة من المبرمج','يرجى إرسال هذه المشكلة إلى المبرمج  من قائمة خدمات البرنامج')
 	#LOG_THIS('NOTICE','EMAD START TIMING 111')
-	if True or '/watch/' in html:
+	if '/watch/' in html:
 		#parts = url.split('/')
 		url2 = url.replace(parts[3],'watch')
-		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers,True,True,'ARABLIONZ-PLAY-2nd')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers,True,True,'ARBLIONZ-PLAY-2nd')
 		html2 = response.content#.encode('utf8')
 		items1 = re.findall('data-embedd="(.*?)".*?alt="(.*?)"',html2,re.DOTALL)
 		items2 = re.findall('data-embedd=".*?(http.*?)("|&quot;)',html2,re.DOTALL)
@@ -185,7 +186,7 @@ def PLAY(url):
 	if 'DownloadNow' in html:
 		headers2 = { 'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8' }
 		url2 = url+'/download'
-		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers2,True,'','ARABLIONZ-PLAY-3rd')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers2,True,'','ARBLIONZ-PLAY-3rd')
 		html2 = response.content#.encode('utf8')
 		#DIALOG_OK(url2,html2)
 		html_blocks = re.findall('<ul class="download-items(.*?)</ul>',html2,re.DOTALL)
@@ -197,7 +198,7 @@ def PLAY(url):
 	elif '/download/' in html:
 		headers2 = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
 		url2 = hostname + '/ajaxCenter?_action=getdownloadlinks&postId='+id
-		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers2,True,True,'ARABLIONZ-PLAY-4th')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers2,True,True,'ARBLIONZ-PLAY-4th')
 		html2 = response.content#.encode('utf8')
 		if 'download-btns' in html2:
 			items3 = re.findall('href="(.*?)"',html2,re.DOTALL)
@@ -207,7 +208,7 @@ def PLAY(url):
 					linkLIST.append(url3)
 				elif '/page/' in url3:
 					quality = ''
-					response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url3,'',headers,True,True,'ARABLIONZ-PLAY-5th')
+					response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url3,'',headers,True,True,'ARBLIONZ-PLAY-5th')
 					html4 = response.content#.encode('utf8')
 					blocks = re.findall('(<strong>.*?)-----',html4,re.DOTALL)
 					for block4 in blocks:
@@ -274,7 +275,7 @@ def SEARCH(search):
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARABLIONZ-SEARCH-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARBLIONZ-SEARCH-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('chevron-select(.*?)</div>',html,re.DOTALL)
 	if showdialogs and html_blocks:
@@ -319,7 +320,7 @@ def FILTERS_MENU(url,filter):
 		addMenuItem('folder',menu_name+'أظهار قائمة الفيديو التي تم اختيارها ',url2,201)
 		addMenuItem('folder',menu_name+' [[   '+filter_show+'   ]]',url2,201)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','ARABLIONZ-FILTERS_MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','ARBLIONZ-FILTERS_MENU-1st')
 	html_blocks = re.findall('div class="form(.*?)class="row',html,re.DOTALL)
 	block = html_blocks[0]
 	select_blocks = re.findall('select.*?<a.*?>(.*?)</a>.*?data-tax="(.*?)"(.*?)</ul>',block,re.DOTALL)

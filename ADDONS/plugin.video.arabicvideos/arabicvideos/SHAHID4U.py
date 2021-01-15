@@ -141,7 +141,7 @@ def PLAY(url):
 	if True or '/watch/' in html:
 		#parts = url.split('/')
 		url2 = url.replace(parts[3],'watch')
-		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers,True,True,'ARABLIONZ-PLAY-2nd')
+		response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url2,'',headers,True,True,'ARBLIONZ-PLAY-2nd')
 		html2 = response.content#.encode('utf8')
 		items1 = re.findall('data-embedd="(.*?)".*?alt="(.*?)"',html2,re.DOTALL)
 		items2 = re.findall('data-embedd=".*?(http.*?)("|&quot;)',html2,re.DOTALL)

@@ -96,7 +96,7 @@ def RESOLVE_UNDERRUN(url):
 
 def SECTIONS(url):
 	#DIALOG_OK(url,'SECTIONS 11')
-	notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
+	#notvideosLIST = ['zip','rar','txt','pdf','htm','tar','iso','html']
 	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,True,'AKOAM-SECTIONS-1st')
 	akwam_link1 = re.findall('"(https*://akwam.net/\w+.*?)"',html,re.DOTALL)
 	akwam_link2 = re.findall('"(https*://underurl.com/\w+.*?)"',html,re.DOTALL)

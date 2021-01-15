@@ -80,7 +80,7 @@ def CHECK_ACCOUNT(showDialog=True):
 		settings.setSetting('iptv.password',password)
 		settings.setSetting('iptv.server',server)
 		url = server+'/player_api.php?username='+username+'&password='+password
-		response = OPENURL_REQUESTS_CACHED(NO_CACHE,'GET',url,'',headers,False,'','IPTV-CHECK_ACCOUNT-1st')
+		response = OPENURL_REQUESTS_CACHED(NO_CACHE,'GET',url,'',headers,False,False,'IPTV-CHECK_ACCOUNT-1st')
 		html = response.content
 		if response.succeeded:
 			timediff,time_now,created_at,exp_date = 0,'','',''

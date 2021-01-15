@@ -121,6 +121,7 @@ def EXTRACT_NAMED_URL(url):
 	if name!='': menuname = name
 	elif source!='': menuname = source
 	else: menuname = server
+	menuname = HOSTNAME(menuname,False)
 	return url2,named2,server,menuname,name,type,filetype,quality,source
 
 def RESOLVABLE(url):
@@ -239,8 +240,7 @@ def INTERNAL_RESOLVERS(url):
 	elif 'mycima'		in server: errormsg,titleLIST,linkLIST = MYCIMA(url2)
 	elif 'bokra'		in server: errormsg,titleLIST,linkLIST = BOKRA(url2)
 	elif 'arabseed'		in server: errormsg,titleLIST,linkLIST = ARABSEED(url2)
-	elif 'arblionz'		in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
-	elif 'arablionz'	in server: errormsg,titleLIST,linkLIST = ARABLIONZ(url2)
+	elif 'arblionz'		in server: errormsg,titleLIST,linkLIST = ARBLIONZ(url2)
 	elif 'd.egybest.d'	in server: errormsg,titleLIST,linkLIST = '',[''],[url2]
 	elif 'egy.best'		in server: errormsg,titleLIST,linkLIST = EGYBEST(url)
 	elif 'series4watch'	in server: errormsg,titleLIST,linkLIST = SERIES4WATCH(url2)
@@ -688,14 +688,14 @@ def CIMANOW(link):
 		link = link+'|Referer='+server1
 		return '',[''],[link]
 
-def ARABLIONZ(link):
-	# http://arablionz.tv/?postid=159485&serverid=0
+def ARBLIONZ(link):
+	# http://arblionz.tv/?postid=159485&serverid=0
 	if 'postid' in link:
 		parts = re.findall('postid=(.*?)&serverid=(.*?)&&',link+'&&',re.DOTALL|re.IGNORECASE)
 		postid,serverid = parts[0]
 		url = 'https://arblionz.tv/ajaxCenter?_action=getserver&_post_id='+postid+'&serverid='+serverid
 		headers = { 'User-Agent':'' , 'X-Requested-With':'XMLHttpRequest' }
-		url2 = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-ARABLIONZ-1st')
+		url2 = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-ARBLIONZ-1st')
 		url2 = url2.replace('\n','').replace('\r','')
 		#DIALOG_OK(url,url2)
 		#errormsg,titleLIST,linkLIST = EXTERNAL_RESOLVERS(url2)
@@ -704,12 +704,12 @@ def ARABLIONZ(link):
 	elif '/redirect/' in link:
 		counts = 0
 		while '/redirect/' in link and counts<5:
-			response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',link,'','',False,'','RESOLVERS-ARABLIONZ-2nd')
+			response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',link,'','',False,'','RESOLVERS-ARBLIONZ-2nd')
 			if 'Location' in response.headers.keys():
 				link = response.headers['Location']
 			counts += 1
 		return '',[''],[link]
-	else: return 'Error: Resolver ARABLIONZ Failed',[],[]
+	else: return 'Error: Resolver ARBLIONZ Failed',[],[]
 
 def ARABSEED(url):
 	headers = {'User-Agent':''}

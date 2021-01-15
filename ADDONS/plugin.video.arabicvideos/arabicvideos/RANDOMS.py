@@ -225,7 +225,7 @@ def IMPORT_SITES():
 		except: failed += 1
 	if failed<=7:
 		try:
-			import ARABLIONZ ; html = ARABLIONZ.MENU('ARABLIONZ')
+			import ARBLIONZ ; html = ARBLIONZ.MENU('ARBLIONZ')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
 	if failed<=7:

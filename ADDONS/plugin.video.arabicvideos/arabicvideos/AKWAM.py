@@ -21,15 +21,23 @@ def MAIN(mode,url,text):
 	elif mode==245: results = FILTERS_MENU(url,'CATEGORIES___'+text)
 	elif mode==246: results = FILTERS_DEFINED(url)
 	elif mode==247: results = FILTERS_FULL(url)
+	elif mode==248: results = BLOCK_MESSAGE()
 	elif mode==249: results = SEARCH(text)
 	else: results = False
 	return results
 
+def BLOCK_MESSAGE():
+	DIALOG_OK('رسالة من المبرمج','هذا الموقع في بعض الأحيان فيه مشكلة في تشغيل الفيديوهات ... هذه المشكلة سببها من الموقع الأصلي وهي تظهر وتختفي بصورة عشوائية')
+	return
+
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',249,'','','_REMEMBERRESULTS_')
-	if website=='': addMenuItem('folder',website+'___'+menu_name+'فلتر محدد',website0a,246)
-	if website=='': addMenuItem('folder',website+'___'+menu_name+'فلتر كامل',website0a,247)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	if website=='':
+		addMenuItem('link',website+'___'+menu_name+'[COLOR FFFFFF00]'+'معلومة مهمة جدا'+'[/COLOR]','',248)
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+		addMenuItem('folder',menu_name+'بحث في الموقع','',249,'','','_REMEMBERRESULTS_')
+		addMenuItem('folder',website+'___'+menu_name+'فلتر محدد',website0a,246)
+		addMenuItem('folder',website+'___'+menu_name+'فلتر كامل',website0a,247)
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',website+'___'+menu_name+'المزيد',website0a,242,'','','more')
 	#addMenuItem('folder',website+'___'+menu_name+'الاخبار',website0a,242,'','','news')
 	html = OPENURL_CACHED(REGULAR_CACHE,website0a,'',headers,'','AKWAM-MENU-1st')

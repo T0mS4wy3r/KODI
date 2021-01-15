@@ -620,7 +620,7 @@ def ANALYTICS_REPORT():
 	except:
 		DIALOG_OK('رسالة من المبرمج','فشل في جلب محتويات تقرير الاستخدام')
 		return
-	countriesLIST,sitesLIST = resultsLIST
+	countriesLIST,sitesLIST,usersTotal = resultsLIST
 	countsDICT = {}
 	for site,usage,countries in sitesLIST:
 		site = site.encode('utf8')
@@ -662,9 +662,9 @@ def ANALYTICS_REPORT():
 	#message7 += '\nLowUsage : [ '+message2+' ]'
 	#message7 += '\nNoUsage  : [ '+message3+' ]'
 	#LOG_THIS('NOTICE',LOGGING(script_name)+message7)
-	message5  = 'مواقع شغل منها البرنامج مؤخراً فيديوهات بدون مشاكل'+'\n'+'وهذا معناه إذا لديك مشكلة فهي ليست من البرنامج'+'\n'
+	message5  = 'مواقع شغل منها البرنامج يوم البارحة فيديوهات بدون مشاكل'+'\n'+'وهذا معناه إذا لديك مشكلة فهي ليست من البرنامج'+'\n'
 	message5 += '[COLOR FFC89008]'+message6+'[/COLOR]\n\n\n\n'
-	message5 += 'مواقع لم يشغل البرنامج منها مؤخراً أي فيديوهات'+'\n'+'وهذا معناه احتمال كبير وجود مشكلة في البرنامج'+'\n'
+	message5 += 'مواقع لم يشغل البرنامج منها يوم البارحة أي فيديوهات'+'\n'+'وهذا معناه احتمال كبير وجود مشكلة في البرنامج'+'\n'
 	message5 += '[COLOR FFC89008]'+message3+'[/COLOR]\n\n.'
 	python,install,metropolis = 0,0,0
 	all = countsDICT['ALL']
@@ -672,15 +672,16 @@ def ANALYTICS_REPORT():
 	if 'INSTALL' in countsDICT.keys(): install = countsDICT['INSTALL']
 	if 'METROPOLIS' in countsDICT.keys(): metropolis = countsDICT['METROPOLIS']
 	videos_count = all-python-install-metropolis
-	message8 = '[COLOR FFFFFF00]'+str(videos_count)+'[/COLOR]'+'فيديوهات اشتغلت : '
-	message8 += '\n[COLOR FFFFFF00]'+str(python)+'[/COLOR]'+'تشغيل البرنامج : '
+	message8 = '[COLOR FFFFFF00]'+str(usersTotal)+'[/COLOR]'+'أجهزة اشتغلت : '
+	message8 += '\n[COLOR FFFFFF00]'+str(videos_count)+'[/COLOR]'+'فيديوهات اشتغلت : '
+	#message8 += '\n[COLOR FFFFFF00]'+str(python)+'[/COLOR]'+'البرنامج اشتغل : '
 	message8 += '\n[COLOR FFFFFF00]'+str(install)+'[/COLOR]'+'تثبيت تطبيق كودي عماد : '
 	message8 += '\n[COLOR FFFFFF00]'+str(metropolis)+'[/COLOR]'+'تثبيت جلد متروبولس عماد : '
 	message8 += '\n[COLOR FFFFFF00]'+str(len(countriesLIST))+'[/COLOR]'+'دول شغلت فيديوهات : '
-	message8 += '\n\n[COLOR FFFFFF00]'+'عدد الفيديوهات التي اشتغلت في العالم يوم أمس (البارحة)'+'[/COLOR]\n'+message9.encode('utf8')
-	DIALOG_TEXTVIEWER_FULLSCREEN('جميع هذه الأرقام تخص فقط يوم أمس (البارحة)',message8,'big','center')
-	DIALOG_TEXTVIEWER_FULLSCREEN('مواقع اشتغلت مؤخراً في جميع دول العالم',message5,'big','center')
-	DIALOG_TEXTVIEWER_FULLSCREEN('أعلى الدول التي مؤخراً استخدمت البرنامج',message4,'big','left')
+	message8 += '\n\n[COLOR FFFFFF00]'+'عدد الفيديوهات التي شغلها هذا البرنامج بالعالم يوم أمس (البارحة)'+'[/COLOR]\n'+message9.encode('utf8')
+	DIALOG_TEXTVIEWER_FULLSCREEN('جميع هذه الأرقام تخص أستخدام هذا البرنامج  فقط يوم أمس (البارحة)',message8,'big','center')
+	DIALOG_TEXTVIEWER_FULLSCREEN('مواقع اشتغلت يوم البارحة في جميع دول العالم',message5,'big','center')
+	DIALOG_TEXTVIEWER_FULLSCREEN('أعلى الدول التي يوم البارحة استخدمت البرنامج',message4,'big','left')
 	return
 
 def KODI_SKIN():
@@ -726,7 +727,8 @@ def INSTALL_ADDON(repo_url,addon_ver,addon_id):
 	if is_installed and not is_enabled:
 		result = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"'+addon_id+'","enabled":true}}')
 		if 'OK' in result: succedded = True
-	else:
+	elif not is_installed:
+		#DIALOG_OK(addon_id,str(is_installed)+'   '+str(is_enabled))
 		zipfile_url = repo_url.replace('addons.xml',addon_id+'/'+addon_id+'-'+addon_ver+'.zip')
 		zipfile_html = OPENURL_CACHED(LONG_CACHE,zipfile_url,'','','','SERVICES-INSTALL_ADDON-1st')
 		import zipfile,StringIO
@@ -738,6 +740,7 @@ def INSTALL_ADDON(repo_url,addon_ver,addon_id):
 		time.sleep(1)
 		result = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"'+addon_id+'","enabled":true}}')
 		if 'OK' in result: succedded = True
+	else: succedded = True
 	return succedded
 
 def INSTALL_ALL_REPOSITORIES(repos='',highest_latest_repo_version='999999'):
@@ -745,8 +748,8 @@ def INSTALL_ALL_REPOSITORIES(repos='',highest_latest_repo_version='999999'):
 	if repos=='': repos = GET_LATEST_VERSION_NUMBERS()
 	for addon_ver,repo_ver,repo_id,repo_url in repos:
 		installed_repo_version = xbmc.getInfoLabel('System.AddonVersion('+repo_id+')')
-		if installed_repo_version<highest_latest_repo_version:
-			#DIALOG_OK(str(highest_latest_repo_version),str(installed_repo_version))
+		#DIALOG_OK(repo_id,str(highest_latest_repo_version)+'   '+str(installed_repo_version))
+		if installed_repo_version<=highest_latest_repo_version:
 			succedded = INSTALL_ADDON(repo_url,repo_ver,repo_id)
 			result = result and succedded
 	return result

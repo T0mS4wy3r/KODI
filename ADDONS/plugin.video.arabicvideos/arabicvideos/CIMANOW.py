@@ -16,7 +16,7 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',309,'','','_REMEMBERRESULTS_')
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',309,'','','_REMEMBERRESULTS_')
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
 	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,'','','CIMANOW-MENU-1st')
 	html = response.content

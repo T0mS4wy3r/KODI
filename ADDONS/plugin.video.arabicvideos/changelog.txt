@@ -1,4 +1,27 @@
 ﻿
+v7.8.0	2021-01-15
+Added ARABSEED new design
+Added 'ALL' to BOKRA sub-menus
+Added reCAPTCHA as blocking error
+Added reuse of last successful proxy
+Added total users to analytics report
+Fixed FAVOURITES listing and moving
+Fixed enabling EMAD repositories
+Fixed SITES_MODES in MAIN
+Fixed proxy success exit
+Fixed threads success for openurl functions
+Fixed openurl DNS fixing
+Renamed ARABLIONZ to ARBLIONZ
+Changed ARBLIONZ hostname
+Automated installing of MPD & RTMP inputstreams
+Limited asking for proxy/dns to once only
+Modified https proxies list
+Disabled showing IPTV check account network errors
+Used CloudFlare DNS as primary DNS
+Cleaned RESOLVERS servers name
+Minor fixes and improvements
+
+
 v7.7.0	2021-01-01
 Added BOKRA site
 Fixed messages sequence
@@ -196,7 +219,7 @@ v7.0.4	2020-08-22
 Minimized PLAY_VIDEO code for live IPTV
 Fixed OPENURL Arabic payload
 Fixed HELAL video items
-Fixed ARABLIONZ main menu
+Fixed ARBLIONZ main menu
 Changed HELAL website name
 Updated YOUTUBE cipher file
 Changed RANDOM_USERAGENT source
@@ -225,7 +248,7 @@ Enhanced searching IPTV
 Added sort for servers in RESOLVERS
 Fixed LIBRARY rating check
 Fixed SHAHID4U download links
-Matched the player of SHAHID4U,ARABSEED & ARABLIONZ
+Matched the player of SHAHID4U,ARABSEED & ARBLIONZ
 Fixed YOUTUBE "client.version"
 Added YOUTUBE trending
 Added YOUTUBE new channel style
@@ -335,8 +358,8 @@ Minor fixes & improvements
 
 
 v6.5.1	2020-05-05
-Changed filters exit in ARABSEED, ARABLIONZ & SHAHID4U
-Fixed ARABLIONZ url quote problem
+Changed filters exit in ARABSEED, ARBLIONZ & SHAHID4U
+Fixed ARBLIONZ url quote problem
 Updated all categories section
 Updated AKOAM forwarding to AKWAM
 Fixed IFILM Arabic problem in some countries
@@ -345,7 +368,7 @@ Fixed IPTV messages
 Modified some menus
 Enhanced random video section
 Fixed AKWAM search, titles & play
-Fixed play in ARABSEED, ARABLIONZ & SHAHID4U
+Fixed play in ARABSEED, ARBLIONZ & SHAHID4U
 Fixed YOUTUBE duration
 Added last videos menu
 Minor fixes & improvements
@@ -376,7 +399,7 @@ Minor fixes & improvements
 
 
 v6.4.3	2020-04-14
-Modified cache period for ARABLIONZ, ARABSEED & SHAHID4U
+Modified cache period for ARBLIONZ, ARABSEED & SHAHID4U
 Renamed EGY4BEST to EGYBESTVIP
 Fixed ARABSEED filter
 Added ARABSEED internal resolver
@@ -388,9 +411,9 @@ Minor fixes & improvements
 
 
 v6.4.2	2020-04-11
-Fixed ARABLIONZ download page urls
-Fixed ARABLIONZ resolver
-Fixed ARABLIONZ playing function
+Fixed ARBLIONZ download page urls
+Fixed ARBLIONZ resolver
+Fixed ARBLIONZ playing function
 Fixed ARABSEED playing function
 Fixed SHAHID4U playing function
 Minor fixes & improvements
@@ -402,22 +425,22 @@ Fixed dependency on "requests" addon
 
 v6.4.0	2020-04-09
 Added ARABSEED website
-Rewrote ARABLIONZ play, search & filters
+Rewrote ARBLIONZ play, search & filters
 Rewrote SHAHID4U play & search & filters
 Enhanced AKWAM Filters & Categories
 Fixed AKWAM play
-Fixed ARABLIONZ foreign movies menu
+Fixed ARBLIONZ foreign movies menu
 Fixed AKOAM play using AKWAM
 Fixed HELAL age restriction
 Fixed AKOAM pagination
 
 
 v6.3.3	2020-04-03
-Fixed ARABLIONZ seasons url quote
+Fixed ARBLIONZ seasons url quote
 
 
 v6.3.2	2020-04-03
-Fixed ARABLIONZ url quote
+Fixed ARBLIONZ url quote
 Fixed EGY4BEST menu
 Banned more adults videos
 Fixed AKWAM playing
@@ -450,7 +473,7 @@ Minimized AKWAM categories menu
 
 
 v6.2.1	2020-03-24
-Fixed ARABLIONZ menu
+Fixed ARBLIONZ menu
 Fixed AKWAM filter menu
 Added AKWAM categories menu
 Added miscellaneous to AKWAM menu
@@ -555,7 +578,7 @@ Added EGYBEST resolver
 Added EGY4BEST playing
 Fixed M3U8 extractor
 Fixed YOUTUBE resolver
-Fixed ARABLIONZ resolving
+Fixed ARBLIONZ resolving
 
 
 v5.7.3	2019-08-04
@@ -590,11 +613,11 @@ Added webproxyto & httpsproxy
 Added all websites testing
 Changed all requests to cached
 Fixed YOUTUBE mpd server
-Fixed SHHID4U,ARABLIONZ & SERIES4WATCH items listing
+Fixed SHHID4U,ARBLIONZ & SERIES4WATCH items listing
 
 
 v5.6.0	2019-07-16
-Added ARABLIONZ website
+Added ARBLIONZ website
 Added SERIES4WATCH website
 Replaced EGYBEST website with the new egybest
 Added services menu
