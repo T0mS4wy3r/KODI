@@ -23,6 +23,7 @@ def MAIN(mode,url,text):
 
 def MENU(website=''):
 	addMenuItem('folder',menu_name+'بحث في الموقع','',99,'','','_REMEMBERRESULTS_')
+	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder',website+'___'+menu_name+'المضاف حديثا','',94)
 	addMenuItem('folder',website+'___'+menu_name+'الأحدث',website0a+'/?type=latest',91)
 	addMenuItem('folder',website+'___'+menu_name+'الأعلى تقيماً',website0a+'/?type=imdb',91)

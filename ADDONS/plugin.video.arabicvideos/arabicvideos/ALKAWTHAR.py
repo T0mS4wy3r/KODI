@@ -18,8 +18,10 @@ def MAIN(mode,url,page,text):
 	return results
 
 def MENU(website=''):
-	#addMenuItem('live',menu_name+'البث الحي لقناة الكوثر','',135)
-	addMenuItem('folder',menu_name+'بحث في الموقع','',139,'','','_REMEMBERRESULTS_')
+	if website=='':
+		#addMenuItem('live',menu_name+'البث الحي لقناة الكوثر','',135)
+		addMenuItem('folder',menu_name+'بحث في الموقع','',139,'','','_REMEMBERRESULTS_')
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder',website+'___'+menu_name+'المسلسلات',website0a+'/category/543',132,'','1')
 	addMenuItem('folder',website+'___'+menu_name+'الافلام',website0a+'/category/628',132,'','1')
 	addMenuItem('folder',website+'___'+menu_name+'برامج الصغار والشباب',website0a+'/category/517',132,'','1')
@@ -203,15 +205,18 @@ def SEARCH(search,url=''):
 		html = OPENURL_CACHED(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-1st')
 		#with open('S:\\emad1.html', 'w') as f: f.write(html)
 		cx = re.findall("var cx = '(.*?)'",html,re.DOTALL)[0]
-		url = re.findall("gcse.src = '(.*?)'",html,re.DOTALL)
-		url = url[0]+cx[0]
+		url = re.findall("gcse.src = '(.*?)'",html,re.DOTALL)[0]
+		url = url+cx
+		#DIALOG_OK(url,cx)
 		html = OPENURL_CACHED(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-2nd')
 		#with open('S:\\emad2.html', 'w') as f: f.write(html)
 		cse_token = re.findall('cse_token": "(.*?)"',html,re.DOTALL)[0]
 		cselibVersion = re.findall('cselibVersion": "(.*?)"',html,re.DOTALL)[0]
 		randomAPI = str(random.randint(1111,9999))
 		url = 'https://cse.google.com/cse/element/v1?rsz=filtered_cse&num=10&hl=ar&source=gcsc&gss=.com&cselibv='+cselibVersion+'&cx='+cx+'&q='+search+'&safe=off&cse_tok='+cse_token+'&sort=&exp=csqr,cc&callback=google.search.cse.api'+randomAPI+'&start=0'
-	html = OPENURL_CACHED(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-3rd')
+	useragent = RANDOM_USERAGENT()
+	headers = {'User-Agent':useragent}
+	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,True,'ALKAWTHAR-SEARCH-3rd')
 	#with open('S:\\emad3.html', 'w') as f: f.write(html)
 	#LOG_THIS('NOTICE','EMAD  '+url)
 	items = re.findall('cacheUrl":.*?"title": "(.*?)".*?"url": "(.*?)".*?"metatags": {(.*?)}',html,re.DOTALL)

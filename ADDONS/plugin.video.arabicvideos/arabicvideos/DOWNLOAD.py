@@ -84,7 +84,7 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 		else: videofiletype = 'مجهول'
 	if videofiletype not in ['.ts','.mkv','.mp4','.mp3','.flv','.m3u8','.avi','.webm']:
 		DIALOG_OK('تنزيل ملف الفيديو','الملف من نوع '+videofiletype+' والبرنامج حاليا غير جاهز لتحميل هذا النوع من الملفات')
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Video type/extension is not supported   URL: [ '+url+' ]')
+		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Video type/extension is not supported   URL: [ '+url+' ]')
 		return
 	#DIALOG_OK('free space',str(freediskspace_MB))
 	settings = xbmcaddon.Addon(id=addon_id)
@@ -124,7 +124,7 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 		except: pass
 		if freediskspace_MB==0:
 			DIALOG_TEXTVIEWER_FULLSCREEN('مساحة التخزين مجهولة','للأسف البرنامج غير قادر أن يحدد مقدار مساحة التخزين الفارغة في جهازك وعليه فان تحميل الفيديوهات لن يعمل عندك إلى أن يقوم مبرمجي برنامج كودي بحل هذه المشكلة لان تحميل الفيديوهات قد يسبب امتلاء جهازك بالملفات وهذا فيه خطورة على عمل جهازك بصورة صحيحة ولهذا السبب قام المبرمج مؤقتا بمنع البرنامج من تحميل الفيديوهات','big','right')
-			LOG_THIS('NOTICE',LOGGING(script_name)+'   Unable to determine the disk free space')
+			LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Unable to determine the disk free space')
 			return
 	import requests
 	headers['Accept-Encoding'] = ''
@@ -135,7 +135,7 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 		linkLIST = []
 		links = re.findall('\#EXTINF:.*?[\n\r](.*?)[\n\r]',m3u8+'\n\r',re.DOTALL)
 		if not links:
-			LOG_THIS('NOTICE',LOGGING(script_name)+'   The m3u8 file did not have the required links   URL: [ '+url2+' ]')
+			LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   The m3u8 file did not have the required links   URL: [ '+url2+' ]')
 			return
 		try: file = open(windowsfilenamepath,'wb')
 		except: file = open(windowsfilenamepath.encode('utf8'),'wb')
@@ -157,13 +157,13 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 			except: file = open(windowsfilenamepath.encode('utf8'),'wb')
 	filesize_MB = int(1+filesize/MegaByte)
 	if filesize<=102400:
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Video file is too small and/or something wrong   URL: [ '+url2+' ]   Video file size: [ '+str(filesize_MB)+' MB ]   Available size: [ '+str(freediskspace_MB)+' MB ]   File: [ '+filenamepath+' ]')
+		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Video file is too small and/or something wrong   URL: [ '+url2+' ]   Video file size: [ '+str(filesize_MB)+' MB ]   Available size: [ '+str(freediskspace_MB)+' MB ]   File: [ '+filenamepath+' ]')
 		DIALOG_OK('رسالة من المبرمج','فشل في معرفة حجم ملف الفيديو ولهذا لا يمكن للبرنامج تحميل هذا الملف')
 		if videofiletype=='.m3u8': file.close()
 		return
 	freeafterdownload_MB = freediskspace_MB-filesize_MB
 	if freeafterdownload_MB<500:
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Not enough disk space to download the video file   URL: [ '+url2+' ]   Video file size: [ '+str(filesize_MB)+' MB ]   Available size: [ '+str(freediskspace_MB)+' MB ]   File: [ '+filenamepath+' ]')
+		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Not enough disk space to download the video file   URL: [ '+url2+' ]   Video file size: [ '+str(filesize_MB)+' MB ]   Available size: [ '+str(freediskspace_MB)+' MB ]   File: [ '+filenamepath+' ]')
 		DIALOG_OK('لا يوجد مساحة كافية للتحميل','الملف المطلوب تحميله حجمه '+str(filesize_MB)+' ميغابايت وجهازك فيه مساحة فارغة '+str(freediskspace_MB)+' ميغابايت وللمحافظة على عمل جهازك بدون مشاكل يجب ابقاء 500 ميغابايت فارغة دائما وهذا معناه جهازك لا توجد فيه مساحة كافية لتحميل ملف الفيديو المطلوب')
 		file.close()
 		return

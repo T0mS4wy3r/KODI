@@ -25,7 +25,9 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	addMenuItem('folder',menu_name+'بحث في الموقع','',19,'','','_REMEMBERRESULTS_')
+	if website=='':
+		addMenuItem('folder',menu_name+'بحث في الموقع','',19,'','','_REMEMBERRESULTS_')
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder',website+'___'+menu_name+'اخر الاضافات','',14)
 	addMenuItem('folder',website+'___'+menu_name+'مسلسلات رمضان','',15)
 	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','ALARAB-MENU-1st')
@@ -36,7 +38,7 @@ def MENU(website=''):
 		link = website0a+link
 		title = title.strip(' ')
 		addMenuItem('folder',website+'___'+menu_name+title,link,11)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('id="navbar"(.*?)</div>',html,re.DOTALL)
 	block2 = html_blocks[0]
 	items = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
@@ -252,7 +254,7 @@ def PLAY(url):
 		#	titleLIST.append('ملف التحميل')
 		"""
 	if len(linkLIST)==0:
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   No video file found   URL: [ '+url+' ]')
+		#LOG_THIS('NOTICE',LOGGING(script_name)+'   No video file found   URL: [ '+url+' ]')
 		DIALOG_OK('رسالة من المبرمج','لا يوجد ملف فيديو')
 		return
 	elif len(linkLIST)==1:

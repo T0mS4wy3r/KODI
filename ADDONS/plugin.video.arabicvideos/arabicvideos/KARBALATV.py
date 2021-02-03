@@ -26,7 +26,6 @@ def MENU(website=''):
 		if title=='المكتبة المرئية': continue
 		link = website0a+link
 		addMenuItem('folder',website+'___'+menu_name+title,link,321)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def TITLES(url):

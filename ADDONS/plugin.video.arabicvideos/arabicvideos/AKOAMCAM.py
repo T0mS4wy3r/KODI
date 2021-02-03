@@ -57,7 +57,6 @@ def MENU(website=''):
 		for link,title in items:
 			link = unescapeHTML(link)
 			if title not in ignoreLIST: addMenuItem('folder',menu_name+title,link,351)
-		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def FILTERS_DEFINED(website=''):

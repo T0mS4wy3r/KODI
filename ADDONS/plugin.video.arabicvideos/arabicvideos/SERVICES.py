@@ -66,24 +66,24 @@ def ALLOW_DNS_SERVER():
 	settings = xbmcaddon.Addon(id=addon_id)
 	status = settings.getSetting('dns.status')
 	server = settings.getSetting('dns.server')
-	if status=='':
-		status = 'ASK'
+	if status in ['','ALWAYS','ASK']:
+		status = 'AUTO'
 		settings.setSetting('dns.status',status)
 	dns = DIALOG_YESNO('سيرفر DNS الحالي هو: '+server,'اختار سيرفر ال DNS المجاني الذي تريد استخدامه !','','',DNS_SERVERS[1],DNS_SERVERS[0])
 	if dns: server = DNS_SERVERS[0]
 	else: server = DNS_SERVERS[1]
 	settings.setSetting('dns.server',server)
 	message = {}
-	message['ALWAYS'] = 'سيرفر DNS ألدائمي يعمل: '+server
-	message['ASK'] = 'سيرفر DNS سيعمل بعد السماح له: '+server
+	message['AUTO'] = 'سيرفر DNS الأوتوماتيكي يعمل: '+server
+	message['ASKING'] = 'سيرفر DNS سيعمل بعد السماح له: '+server
 	message['STOP'] = 'سيرفر DNS متوقف تماما وبالكامل'
 	oldstatus = message[status]
 	yes = DIALOG_YESNO(oldstatus,'سيرفر DNS هو جهاز في الإنترنيت يقوم بتحويل أسماء المواقع والسيرفرات إلى أرقام وعند بعض الناس يقوم بحجب ومنع وحضر بعض المواقع . هل تريد تشغيل أم إيقاف سيرفر DNS ؟','','','تشغيل DNS','إيقاف DNS')
 	if yes: newstatus = 'STOP'
 	else:
-		yes = DIALOG_YESNO('','هل تريد تشغيل سيرفر DNS فقط بعد موافقتك وفقط عند حدوث مشكلة أم تريد تفعيل سيرفر DNS دائمي ؟','','','تشغيل بعد الموافقة','تشغيل دائمي')
-		if yes: newstatus = 'ALWAYS'
-		else: newstatus = 'ASK'
+		yes = DIALOG_YESNO('','هل تريد تشغيل DNS فقط بعد موافقتك وفقط عند حدوث مشكلة أم تريد تشغيل DNS الأوتوماتيكي ؟','','','تشغيل بعد الموافقة','تشغيل أوتوماتيكي')
+		if yes: newstatus = 'AUTO'
+		else: newstatus = 'ASKING'
 	settings.setSetting('dns.status',newstatus)
 	newstatus = message[newstatus]
 	DIALOG_OK('',newstatus)
@@ -92,12 +92,12 @@ def ALLOW_DNS_SERVER():
 def ALLOW_PROXY_SERVERS():
 	settings = xbmcaddon.Addon(id=addon_id)
 	status = settings.getSetting('proxy.status')
-	if status in ['','ENABLED','DISABLED']:
-		status = 'ASK'
+	if status in ['','ENABLED','DISABLED','ASK']:
+		status = 'AUTO'
 		settings.setSetting('proxy.status',status)
 	message = {}
 	message['AUTO'] = 'البروكسي الأوتوماتيكي جاهز للعمل'
-	message['ASK'] = 'البروكسي سيعمل بعد السماح له'
+	message['ASKING'] = 'البروكسي سيعمل بعد السماح له'
 	message['STOP'] = 'البروكسي متوقف تماما وبالكامل'
 	oldstatus = message[status]
 	yes = DIALOG_YESNO(oldstatus,'البروكسي هو جهاز في الإنترنيت يعمل وسيط بين جهازك والإنترنيت . هو يستلم طلباتك ويقوم بسحبها بدلا منك ثم يبعثها لك . هل تريد تشغيل أم إيقاف البروكسي ؟','','','تشغيل البروكسي','إيقاف البروكسي')
@@ -105,7 +105,7 @@ def ALLOW_PROXY_SERVERS():
 	else:
 		yes = DIALOG_YESNO('','هل تريد تشغيل البروكسي فقط بعد موافقتك وفقط عند حدوث مشكلة أم تريد تشغيل البروكسي الأوتوماتيكي ؟','','','تشغيل بعد الموافقة','تشغيل أوتوماتيكي')
 		if yes: newstatus = 'AUTO'
-		else: newstatus = 'ASK'
+		else: newstatus = 'ASKING'
 	settings.setSetting('proxy.status',newstatus)
 	newstatus = message[newstatus]
 	DIALOG_OK('',newstatus)
@@ -203,6 +203,21 @@ def KODI_REMOTE_CONTROL():
 	DIALOG_TEXTVIEWER_FULLSCREEN('رسالة من المبرمج',message,'big','right')
 	return
 
+def GET_IPLOCATION(ip=''):
+	# url = 'https://iplocation.com'
+	url = 'https://ipwhois.app/json/'+ip
+	response = OPENURL_REQUESTS('GET',url,'','','',False,'LIBRARY-GET_IPLOCATION-1st')
+	html = response.content
+	locationDICT = EVAL(html)
+	location = ''
+	if 'continent' in locationDICT.keys(): location += '+'+locationDICT['continent']
+	if 'country' in locationDICT.keys(): location += '+'+locationDICT['country']
+	if 'region' in locationDICT.keys(): location += '+'+locationDICT['region']
+	if 'city' in locationDICT.keys(): location += '+'+locationDICT['city']
+	if 'timezone_gmt' in locationDICT.keys(): location += '+'+locationDICT['timezone_gmt']
+	location = location.strip('+').replace('++','+').replace('+',', ')
+	return location
+
 def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
 	if '_PROBLEM_' in text: problem = True
 	else: problem = False
@@ -215,15 +230,19 @@ def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
 	if sendit==1:
 		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 		kodiName = xbmc.getInfoLabel( "System.FriendlyName" )
-		message = message+' \\n\\n==== ==== ==== \\nAddon Version: '+addon_version+' :\\nEmail Sender: '+dummyClientID(32)+' :\\nKodi Version: '+kodi_release+' :\\nKodi Name: '+kodiName
+		message += ' \\n\\n==== ==== ==== \\nAddon Version: '+addon_version+' :\\n'
+		message += 'Email Sender: '+dummyClientID(32)+' :\\nKodi Version: '+kodi_release+' :\\n'
+		message += 'Kodi Name: '+kodiName
 		#xbmc.sleep(4000)
 		#playerTitle = xbmc.getInfoLabel( "Player.Title" )
 		#playerPath = xbmc.getInfoLabel( "Player.Filenameandpath" )
 		#if playerTitle != '': message += ' :\\nPlayer Title: '+playerTitle
 		#if playerPath != '': message += ' :\\nPlayer Path: '+playerPath
 		#DIALOG_OK(playerTitle,playerPath)
-		if url != '': message += ' :\\nURL: ' + url
-		if source != '': message += ' :\\nSource: ' + source
+		location = GET_IPLOCATION()
+		if location!='': message += ' :\\nLocation: '+location
+		if url!='': message += ' :\\nURL: '+url
+		if source!='': message += ' :\\nSource: '+source
 		message += ' :\\n'
 		if showDialogs: DIALOG_NOTIFICATION('جاري ألإرسال','الرجاء الانتظار')
 		logfileNEW = ''
@@ -378,7 +397,7 @@ def HTTPS_TEST(showDialogs=True):
 	html = OPENURL_CACHED(NO_CACHE,'https://example.com','','',False,'LIBRARY-HTTPS-1st')
 	if '___Error___' in html:
 		worked = False
-		LOG_THIS('ERROR',LOGGING(script_name)+'   HTTPS Failed   Label:['+menu_label+']   Path:['+menu_path+']')
+		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   HTTPS Failed   Label:['+menu_label+']   Path:['+menu_path+']')
 		if showDialogs: DIALOG_OK('رسالة من المبرمج','فحص الاتصال المشفر ... مشكلة ... الاتصال المشفر (الربط المشفر) لا يعمل عندك على كودي ... وعندك كودي غير قادر على استخدام المواقع المشفرة')
 	else:
 		worked = True
@@ -663,9 +682,9 @@ def ANALYTICS_REPORT():
 	#message7 += '\nNoUsage  : [ '+message3+' ]'
 	#LOG_THIS('NOTICE',LOGGING(script_name)+message7)
 	message5  = 'مواقع شغل منها البرنامج يوم البارحة فيديوهات بدون مشاكل'+'\n'+'وهذا معناه إذا لديك مشكلة فهي ليست من البرنامج'+'\n'
-	message5 += '[COLOR FFC89008]'+message6+'[/COLOR]\n\n\n\n'
+	message5 += '[COLOR FFC89008]'+message6+'[/COLOR]\n\n\n'
 	message5 += 'مواقع لم يشغل البرنامج منها يوم البارحة أي فيديوهات'+'\n'+'وهذا معناه احتمال كبير وجود مشكلة في البرنامج'+'\n'
-	message5 += '[COLOR FFC89008]'+message3+'[/COLOR]\n\n.'
+	message5 += '[COLOR FFC89008]'+message3+'[/COLOR]\n.'
 	python,install,metropolis = 0,0,0
 	all = countsDICT['ALL']
 	if 'PYTHON' in countsDICT.keys(): python = countsDICT['PYTHON']
@@ -713,10 +732,10 @@ def INPUTSTREAM_ADAPTIVE_SETTINGS():
 	return
 
 def CHECK_FOR_ADDONS_UPDATES():
-	yes = DIALOG_YESNO('رسالة من المبرمج','كودي يقوم بعملية تحديث جميع الإضافات أوتوماتيكيا كل 24 ساعة ولكن ممكن إجراءها الآن . هل تريد تحديث جميع إضافات كودي الآن ؟','','','كلا','نعم')
+	yes = DIALOG_YESNO('رسالة من المبرمج','برنامج كودي يقوم بعملية تحديث جميع الإضافات أوتوماتيكيا كل 24 ساعة ولكن ممكن إجراءها الآن . هل تريد تحديث جميع إضافات كودي الآن ؟','','','كلا','نعم')
 	if yes==1:
 		xbmc.executebuiltin('UpdateAddonRepos')
-		DIALOG_OK('رسالة من المبرمج','تم إرسال طلب إلى كودي لكي يقوم بتحديث جميع إضافات كودي . بما فيها تحديث هذا البرنامج وتحديث مخازن عماد . يرجى إعطاء كودي 5 دقائق لكي ينهي عملية التحديثات')
+		DIALOG_OK('رسالة من المبرمج','تم إرسال طلب إلى برنامج كودي الذي في جهازك لكي يقوم بتحديث جميع إضافات كودي . بما فيها تحديث هذا البرنامج وتحديث مخازن عماد . يرجى إعطاء كودي 5 دقائق أو أكثر لكي ينهي عملية التحديث')
 	return
 
 def INSTALL_ADDON(repo_url,addon_ver,addon_id):
@@ -799,10 +818,7 @@ def USING_FAVOURITES():
 	return
 
 def TESTING123():
-	url = 'https://video.bokracdn.com/videos/a8/11/60/116096.mp4?k=IfIkjzyOyFE644UvxiEbMQ&e=1609065872'
-	#url = 'http://uppom.live/wt0hh8ksxz4k/The.Thing.About.Harry.2020.1080p.HULU.WEB-DL.MyCima.TO.mp4.html?Key=xsdPMypmZP-XDPwenNXFBw&Expires=1607914761'
-	#url = 'http://uppom.live/wt0hh8ksxz4k/The.Thing.About.Harry.2020.1080p.HULU.WEB-DL.MyCima.TO.mp4'
-	#url = 'https://youtu.be/pNJTJrnpbjE'
+	url = 'https://www.dailymotion.com/video/x24t931'
 	import RESOLVERS
 	RESOLVERS.PLAY([url])
 	return

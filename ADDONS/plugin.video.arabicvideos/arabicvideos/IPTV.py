@@ -58,7 +58,6 @@ def MENU():
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'جلب ملفات IPTV','',232)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'مسح ملفات IPTV','',237)
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'تغيير IPTV User-Agent','',280)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
 def CHECK_ACCOUNT(showDialog=True):
@@ -119,10 +118,10 @@ def CHECK_ACCOUNT(showDialog=True):
 				if status=='Active': DIALOG_TEXTVIEWER('الاشتراك يعمل بدون مشاكل',message)
 				else: DIALOG_TEXTVIEWER('يبدو أن هناك مشكلة في الاشتراك',message)
 	if iptvURL and ok and status=='Active':
-		LOG_THIS('NOTICE','Checking IPTV URL   [ IPTV account is OK ]   [ '+iptvURL+' ]')
+		LOG_THIS('NOTICE','.   Checking IPTV URL   [ IPTV account is OK ]   [ '+iptvURL+' ]')
 		succeeded = True
 	else:
-		LOG_THIS('ERROR','Checking IPTV URL   [ Does not work ]   [ '+iptvURL+' ]')
+		LOG_THIS('ERROR_LINES','Checking IPTV URL   [ Does not work ]   [ '+iptvURL+' ]')
 		if showDialog: DIALOG_OK('فحص اشتراك IPTV','رابط اشتراك IPTV الذي قمت انت بإضافته إلى البرنامج لا يعمل أو الرابط غير موجود في البرنامج . أذهب إلى قائمة اشتراك IPTV وقم بإضافة رابط IPTV جديد أو قم بإصلاح الرابط القديم')
 		succeeded = False
 	return succeeded
@@ -473,14 +472,14 @@ def CREATE_STREAMS(showDialogs=True):
 	ok = CHECK_ACCOUNT(False)
 	if not ok:
 		DIALOG_OK('رسالة من المبرمج','فشل بسحب ملفات IPTV . أحتمال رابط IPTV غير صحيح أو انت لم تستخدم سابقا خدمة IPTV الموجودة بالبرنامج . هذه الخدمة تحتاج اشتراك مدفوع وصحيح ويجب أن تضيفه بنفسك للبرنامج باستخدام قائمة IPTV الموجودة بهذا البرنامج')
-		if iptvURL=='': LOG_THIS('ERROR',LOGGING(script_name)+'   No IPTV URL found to download IPTV files')
-		else: LOG_THIS('ERROR',LOGGING(script_name)+'   Failed to download IPTV files')
+		if iptvURL=='': LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   No IPTV URL found to download IPTV files')
+		else: LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed to download IPTV files')
 		return
 	#DIALOG_NOTIFICATION('IPTV','جلب ملفات جديدة')
 	#DIALOG_BUSY('start')
 	#LOG_THIS('NOTICE','EMAD 111')
 	if showDialogs:
-		yes = DIALOG_YESNO('رسالة من المبرمج','هل تريد أن تجلب الآن ملفات IPTV جديدة ؟','','','كلا','نعم')
+		yes = DIALOG_YESNO('رسالة من المبرمج','عملية جلب ملفات IPTV جديدة قد تحتاج عدة دقائق . هل تريد أن تجلب الملفات الآن ؟','','','كلا','نعم')
 		if not yes:
 			#DIALOG_BUSY('stop')
 			return

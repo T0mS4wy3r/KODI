@@ -135,21 +135,21 @@ def openURL_OLD(url,data='',headers='',showDialogs=True,source=''):
 		"""
 		#if 'google-analytics' not in url:
 		#if code==502:
-		#	LOG_THIS('ERROR',LOGGING(script_name)+'   URL Quote Error   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]   Final URL: [ '+final_url+' ]')
+		#	LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   URL Quote Error   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]   Final URL: [ '+final_url+' ]')
 		#	html = OPENURL(final_url,data,headers,showDialogs,source)
 		#	return html
 		if code in [7,11001,10054] and dnsurl==None:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   DNS Failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
+			LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   DNS Failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 			url = url+'||MyDNSUrl='
 			html = OPENURL(url,data,headers,showDialogs,source)
 			return html
 		if code==8 and sslurl==None:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   SSL Failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
+			LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   SSL Failed   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 			url = url+'||MySSLUrl='
 			html = OPENURL(url,data,headers,showDialogs,source)
 			return html
 		else:
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed Opening URL   Code: [ '+str(code)+' ]   Reason :[ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
+			LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed Opening URL   Code: [ '+str(code)+' ]   Reason :[ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
 		EXIT_IF_SOURCE(source,code,reason)
 	#DIALOG_OK('',html)
 	return html
@@ -161,7 +161,7 @@ def openURL_WEBPROXIES(url,data='',headers='',showDialogs=True,source=''):
 		if '___Error___' in html:
 			reason = 'Web Proxy failed'
 			code = -1
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
+			LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
 			EXIT_IF_SOURCE(source,code,reason)
 	return html
 
@@ -176,7 +176,7 @@ def openURL_PROXY(url,data='',headers='',showDialogs=True,source=''):
 			if '___Error___' in html:
 				reason = 'Proxy failed'
 				code = -1
-				LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
+				LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
 				EXIT_IF_SOURCE(source,code,reason)
 	return html
 
@@ -190,7 +190,7 @@ def openURL_HTTPSPROXIES(url,data='',headers='',showDialogs=True,source=''):
 		source = 'LIBRARY-openURL_WEBPROXYTO-2nd'
 		reason = 'HTTPS proxy failed'
 		code = -1
-		LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
+		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 		html = '___Error___:'+str(code)+':'+reason
 	return html
 
@@ -215,7 +215,7 @@ def openURL_WEBPROXYTO(url,data='',headers='',showDialogs=True,source=''):
 		source = 'LIBRARY-openURL_WEBPROXYTO-4th'
 		reason = 'WEBPROXYTO proxy failed'
 		code = -1
-		LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
+		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
 		html = '___Error___:'+str(code)+':'+reason
 	return html
 
@@ -245,7 +245,7 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs=True,source=''):
 		source = 'LIBRARY-openURL_KPROXYCOM-4th'
 		reason = 'KPROXYCOM proxy failed'
 		code = -1
-		LOG_THIS('ERROR',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
+		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed opening url   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]'+'   URL: [ '+url+' ]')
 		html = '___Error___:'+str(code)+':'+reason
 	return html
 
@@ -358,7 +358,7 @@ def TEST_HTTPS_PROXIES():
 			name,url = PROXIES[id]
 			if html.count(':')>=2:
 				dummy,code,reason = html.split(':')
-			LOG_THIS('ERROR',LOGGING(script_name)+'   Failed testing proxy   Name: [ '+name+' ]   id: [ '+str(id)+' ]   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   URL: [ '+url+' ]')
+			LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed testing proxy   Name: [ '+name+' ]   id: [ '+str(id)+' ]   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   URL: [ '+url+' ]')
 	if testedLIST:
 		z = zip(testedLIST,timingLIST)
 		z = sorted(z, reverse=False, key=lambda key: key[1])

@@ -15,6 +15,7 @@ def MAIN(mode,url,text):
 	elif mode==253: results = EPISODES(url)
 	elif mode==254: results = FILTERS_MENU(url,'CATEGORIES___'+text)
 	elif mode==255: results = FILTERS_MENU(url,'FILTERS___'+text)
+	elif mode==256: results = SUBMENU(url,text)
 	elif mode==259: results = SEARCH(text)	
 	else: results = False
 	return results
@@ -27,26 +28,47 @@ def MENU(website=''):
 	items2 = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	if website=='':
 		addMenuItem('folder',menu_name+'بحث في الموقع','',259,'','','_REMEMBERRESULTS_')
-		addMenuItem('folder',menu_name+'فلتر محدد',website0a+'/category/اخرى/',254)
-		addMenuItem('folder',menu_name+'فلتر كامل',website0a+'/category/اخرى/',255)
+		addMenuItem('folder',menu_name+'فلتر محدد',website0a+'/category/اخرى',254)
+		addMenuItem('folder',menu_name+'فلتر كامل',website0a+'/category/اخرى',255)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('folder',menu_name+'المضاف حديثاً',website0a+'/lastest',251,'','','lastest')
+	addMenuItem('folder',menu_name+'جديد الافلام',website0a+'/main',256,'','','new_movies')
+	addMenuItem('folder',menu_name+'جديد الحلقات',website0a+'/main',256,'','','new_episodes')
 	for link,title in items2:
+		title = unescapeHTML(title)
 		if title not in ignoreLIST:
-			addMenuItem('folder',website+'___'+menu_name+title,link,251)
+			addMenuItem('folder',website+'___'+menu_name+title,link,256)
 	return html
 
-def TITLES(url,type=''):
+def SUBMENU(url,type):
 	#DIALOG_OK(url,type)
 	#WRITE_THIS(html)
-	if type=='' and 'page=' not in url:
-		addMenuItem('folder',menu_name+'المميزة',url,251,'','','featured')
-		addMenuItem('folder',menu_name+'الاكثر مشاهدة',url,251,'','','most')
-		addMenuItem('folder',menu_name+'الاحدث',url,251,'','','newest')
-		addMenuItem('folder',menu_name+'الاشهر',url+'/?key=fire',251,'','','fire')
-		addMenuItem('folder',menu_name+'الافضل',url+'/?key=best',251,'','','best')
-		return
-	elif type=='filters':
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','ARABSEED-SUBMENU-1st')
+	html = response.content
+	if 'class="MainSlides' in html: addMenuItem('folder',menu_name+'المميزة',url,251,'','','featured')
+	if 'class="SliderInSection' in html: addMenuItem('folder',menu_name+'الاكثر مشاهدة',url,251,'','','most')
+	if 'class="LinksList' in html:
+		html_blocks = re.findall('class="LinksList(.*?)</ul>',html,re.DOTALL)
+		if html_blocks:
+			block = html_blocks[0]
+			if len(html_blocks)>1 and type=='new_episodes': block = html_blocks[1]
+			items = re.findall('href="(.*?)"(.*?)</a>',block,re.DOTALL)
+			#DIALOG_OK(str(len(items)),'')
+			for link,title in items:
+				title2 = re.findall('</i>.*?<span>(.*?)<',title,re.DOTALL)
+				if '<strong>' in title: title2 = re.findall('</i>(.*?)<',title,re.DOTALL)
+				if not title2: title2 = re.findall('alt="(.*?)"',title,re.DOTALL)
+				if title2:
+					title2 = title2[0]
+					if 'key=' in link: type = link.split('key=')[1]
+					else: type = 'newest'
+					addMenuItem('folder',menu_name+title2,link,251,'','',type)
+	return
+
+def TITLES(url,type):
+	#DIALOG_OK(url,type)
+	#WRITE_THIS(html)
+	if type=='filters':
 		if '?' in url:
 			url2,data = url.split('?')
 			data2 = {}
@@ -59,19 +81,20 @@ def TITLES(url,type=''):
 	else: response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','ARABSEED-TITLES-2nd')
 	html = response.content
 	if type=='featured':
-		html_blocks = re.findall('class="MainSlides(.*?)class="LinksList"',html,re.DOTALL)
+		html_blocks = re.findall('class="MainSlides(.*?)class="LinksList',html,re.DOTALL)
 		block = html_blocks[0]
-		z = re.findall('href="(.*?)" title="(.*?)".*?src="(.*?)"',block,re.DOTALL)
+		z = re.findall('href="(.*?)" title="(.*?)".*?(src|data-image)="(.*?)"',block,re.DOTALL)
 		if z:
-			linkLIST,titleLIST,imgLIST = zip(*z)
+			linkLIST,titleLIST,dummyLIST,imgLIST = zip(*z)
 			items = zip(linkLIST,imgLIST,titleLIST)
 		else: items = []
 	else:
 		if type=='filters': html_blocks = [html]
-		elif type=='most': html_blocks = re.findall('class="SliderInSection(.*?)class="LinksList"',html,re.DOTALL)
+		elif type=='most': html_blocks = re.findall('class="SliderInSection(.*?)class="LinksList',html,re.DOTALL)
 		else: html_blocks = re.findall('class="Blocks-UL"(.*?)class="AboElSeed"',html,re.DOTALL)
 		block = html_blocks[0]
-		items = re.findall('href="(.*?)".*?data-image="(.*?)" alt="(.*?)"',block,re.DOTALL)
+		#items = re.findall('href="(.*?)".*?data-image="(.*?)" alt="(.*?)"',block,re.DOTALL)
+		items = re.findall('href="(.*?)".*?src="(.*?)" alt="(.*?)"',block,re.DOTALL)
 	allTitles = []
 	for link,img,title in items:
 		#DIALOG_OK(title,'')
@@ -99,18 +122,22 @@ def TITLES(url,type=''):
 def EPISODES(url):
 	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','ARABSEED-EPISODES-1st')
 	html = response.content
+	name = re.findall('class="Title">(.*?)<',html,re.DOTALL)
+	if 'الحلقة' in name[0]: name = name[0].split('الحلقة')[0].strip(' ')
+	elif 'حلقة' in name[0]: name = name[0].split('حلقة')[0].strip(' ')
+	else: name = name[0]
 	html_blocks = re.findall('class="EpisodesArea"(.*?)style="clear: both;"',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?<em>(.*?)<',block,re.DOTALL)
 		for link,episode in reversed(items):
-			title = 'الحلقة رقم '+episode
+			title = name+' - الحلقة رقم '+episode
 			addMenuItem('video',menu_name+title,link,252)
 	else: addMenuItem('video',menu_name+'ملف التشغيل',url,252)
 	return
 
 def PLAY(url):
-	watchURL = url+'/watch'
+	watchURL = url+'watch/'
 	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',watchURL,'','','','','ARABSEED-PLAY-1st')
 	html = response.content
 	linkLIST = []
@@ -129,10 +156,10 @@ def PLAY(url):
 					title = title.replace('- ','').strip(' ')
 				quality = '____'+quality
 			else: quality = ''
-			#title = ''
+			title = CLEAN_STREAM_NAME(title,link)
 			link = link+'?named='+title+'__watch'+quality
 			linkLIST.append(link)
-	downloadURL = url+'/download'
+	downloadURL = url+'download/'
 	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',downloadURL,'','','','','ARABSEED-PLAY-2nd')
 	html = response.content
 	html_blocks = re.findall('class="DownloadArea"(.*?)class="LinksList"',html,re.DOTALL)
@@ -141,11 +168,12 @@ def PLAY(url):
 		items = re.findall('href="(.*?)".*?<span>(.*?)<.*?<p>(.*?)<',block,re.DOTALL)
 		for link,title,quality in items:
 			link = unquote(link)
+			title = CLEAN_STREAM_NAME(title,link)
 			link = link+'?named='+title+'__download____'+quality
 			linkLIST.append(link)
 	#selection = DIALOG_SELECT('أختر البحث المناسب', linkLIST)
 	linksTEXT = str(linkLIST)
-	LOG_THIS('',linksTEXT)
+	#LOG_THIS('',linksTEXT)
 	notvideosLIST = ['.zip?','.rar?','.txt?','.pdf?','.tar?','.iso?','.zip.','.rar.','.txt.','.pdf.','.tar.','.iso.']
 	if len(linkLIST)==0 or any(value in linksTEXT for value in notvideosLIST):
 		DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
@@ -206,7 +234,7 @@ def FILTERS_MENU(url,filter):
 		if not items:
 			items2 = re.findall('data-rate="(.*?)".*?<em>(.*?)</em>',block,re.DOTALL)
 			items = []
-			for datarate,em in items2: items.append([em,'rate',datarate])
+			for option,value in items2: items.append([option,'',value])
 			category2 = 'rate'
 			name = 'التقييم'
 		else: category2 = items[0][1]
@@ -250,14 +278,15 @@ def FILTERS_MENU(url,filter):
 	return
 
 all_categories_list = ['category','country','release-year']
-all_filters_list = ['category','country','genre','release-year','language','quality']
+all_filters_list = ['category','country','genre','release-year','language','quality','rate']
 
 def PREPARE_FILTER_FINAL_URL(url):
-	url = url.replace('/category/اخرى/','')
-	url = url.replace('release-year','year')
 	ajaxlink = '/wp-content/themes/Elshaikh2021/Ajaxat/Home/FilteringHome.php'
-	if '//getposts??' in url: url = url.replace('//getposts??',ajaxlink+'?')
-	else: url = url+ajaxlink
+	url = url.replace('//getposts',ajaxlink)
+	url = url.replace('/category/اخرى','')
+	if ajaxlink not in url: url = url+ajaxlink
+	url = url.replace('release-year','year')
+	url = url.replace('??','?')
 	url = url.replace('&&','&')
 	url = url.replace('==','=')
 	#DIALOG_OK('','PREPARE_FILTER_FINAL_URL')

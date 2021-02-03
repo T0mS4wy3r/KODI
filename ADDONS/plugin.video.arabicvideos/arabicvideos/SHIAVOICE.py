@@ -36,7 +36,6 @@ def MENU(website=''):
 		#title = title.strip(' ')
 		#url = website0a+'/wp-content/themes/CimaNow/Interface/filter.php'
 		addMenuItem('folder',website+'___'+menu_name+title,link,311)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def LATEST(seq):

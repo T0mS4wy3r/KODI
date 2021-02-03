@@ -32,7 +32,6 @@ def MENU():
 	addMenuItem('folder','[COLOR FFC89008]  9.  [/COLOR]'+'فيديوهات IPTV عشوائية','',163,'','','_IPTV__VOD__RANDOM__REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'فيديوهات IPTV بحث عشوائي','',164,'','','_IPTV__RANDOM__REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008]11.  [/COLOR]'+'فيديوهات IPTV عشوائية من قسم','',165,'','','_IPTV__RANDOM__REMEMBERRESULTS_')
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
 def RANDOM_LIVETV(options):
@@ -143,112 +142,127 @@ def IMPORT_SITES():
 	#LOG_THIS('NOTICE','START TIMING')
 	#DIALOG_OK('','start')
 	failed = 0
-	if failed<=7:
+	if failed<=5:
 		try:
 			import BOKRA ; html = BOKRA.MENU('BOKRA')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
+		try:
+			import MOVS4U ; html = MOVS4U.MENU('CIMACLUB')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
+	if failed<=5:
+		try:
+			import DAILYMOTION ; html = DAILYMOTION.MENU('CIMACLUB')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
+	if failed<=5:
+		try:
+			import FAJERSHOW ; html = FAJERSHOW.MENU('CIMACLUB')
+			if '__Error__' in html: failed += 1
+		except: failed += 1
+	if failed<=5:
 		try:
 			import MYCIMA ; html = MYCIMA.MENU('MYCIMA')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import AKOAMCAM ; html = AKOAMCAM.MENU('AKOAMCAM')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import AKOAM ; html = AKOAM.MENU('AKOAM')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import AKWAM ; html = AKWAM.MENU('AKWAM')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import HELAL ; html = HELAL.MENU('HELAL')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import PANET ; html = PANET.MENU('PANET')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import ALARAB ; html = ALARAB.MENU('ALARAB')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import IFILM ; html = IFILM.MENU('IFILM_ARABIC')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import IFILM ; html = IFILM.MENU('IFILM_ENGLISH')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import ALFATIMI ; html = ALFATIMI.MENU('ALFATIMI')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import ALMAAREF ; html = ALMAAREF.MENU('ALMAAREF')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import ARABSEED ; html = ARABSEED.MENU('ARABSEED')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import SHOOFMAX ; html = SHOOFMAX.MENU('SHOOFMAX')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import SHAHID4U ; html = SHAHID4U.MENU('SHAHID4U')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import ALKAWTHAR ; html = ALKAWTHAR.MENU('ALKAWTHAR')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import ARBLIONZ ; html = ARBLIONZ.MENU('ARBLIONZ')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import EGYBESTVIP ; html = EGYBESTVIP.MENU('EGYBESTVIP')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import CIMANOW ; html = CIMANOW.MENU('CIMANOW')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import SHIAVOICE ; html = SHIAVOICE.MENU('SHIAVOICE')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import KARBALATV ; html = KARBALATV.MENU('KARBALATV')
 			if '__Error__' in html: failed += 1
 		except: failed += 1
-	if failed<=7:
+	if failed<=5:
 		try:
 			import YTB_CHANNELS ; html = YTB_CHANNELS.MENU('YTB_CHANNELS')
 			if '__Error__' in html: failed += 1

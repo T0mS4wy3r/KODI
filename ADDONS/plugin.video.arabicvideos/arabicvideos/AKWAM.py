@@ -27,11 +27,12 @@ def MAIN(mode,url,text):
 	return results
 
 def BLOCK_MESSAGE():
-	DIALOG_OK('رسالة من المبرمج','هذا الموقع في بعض الأحيان فيه مشكلة في تشغيل الفيديوهات ... هذه المشكلة سببها من الموقع الأصلي وهي تظهر وتختفي بصورة عشوائية')
+	DIALOG_OK('رسالة من المبرمج','هذا الموقع "أكوام الجديد" في بعض الأحيان فيه نوع من الحجب ضد البرامج . وهذا يسبب مشكلة في تشغيل الفيديوهات . هذه المشكلة سببها من الموقع الأصلي وهي تظهر وتختفي بصورة عشوائية')
 	return
 
 def MENU(website=''):
 	if website=='':
+		BLOCK_MESSAGE()
 		addMenuItem('link',website+'___'+menu_name+'[COLOR FFFFFF00]'+'معلومة مهمة جدا'+'[/COLOR]','',248)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		addMenuItem('folder',menu_name+'بحث في الموقع','',249,'','','_REMEMBERRESULTS_')
@@ -63,7 +64,6 @@ def MENU(website=''):
 		for link,title in items:
 			link = unescapeHTML(link)
 			if title not in ignoreLIST: addMenuItem('folder',menu_name+title,link,241)
-		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def FILTERS_DEFINED(website=''):
@@ -145,6 +145,7 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
+	BLOCK_MESSAGE()
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#with open('S:\\emad.html', 'w') as f: f.write(html)
 	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,True,'AKWAM-PLAY-1st')

@@ -45,7 +45,6 @@ def MENU():
 	addMenuItem('folder',menu_name+'بحث: مسلسلات كارتون',website0a+'/results?search_query=كارتون&sp=EgIQAw==',144)
 	addMenuItem('folder',menu_name+'بحث: خطبة المرجعية',website0a+'/results?search_query=قناة+كربلاء+الفضائية+خطبة+الجمعة&sp=CAISAhAB',144)
 	addMenuItem('folder',menu_name+'العراق خطبة المرجعية',website0a+'/playlist?list=PL4jUq6pnG36QjuXDhNnIlriuzroTFtmfr',144)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',menu_name+'اعدادات اضافة يوتيوب','',144)
 	#yes = DIALOG_YESNO('هل تريد الاستمرار ؟','هذا الاختيار سوف يخرجك من البرنامج','لأنه سوف يقوم بتشغيل برنامج يوتيوب')
 	#if yes:
@@ -130,37 +129,41 @@ def ITEMS(url,index='',visitor=''):
 	#DIALOG_OK(url,index)
 	global settings
 	html,cc = GET_PAGE_DATA(url,visitor)
+	ownerNAME,ff = '',''
+	#if 'owner' in html.lower(): DIALOG_OK('owner exist','in html')
 	owner = re.findall('"ownerName".*?":"(.*?)".*?"url":"(.*?)"',html,re.DOTALL)
+	if not owner: owner = re.findall('"videoOwner".*?"text":"(.*?)".*?"url":"(.*?)"',html,re.DOTALL)
+	if not owner: owner = re.findall('"channelMetadataRenderer":\{"title":"(.*?)".*?"ownerUrls":\["(.*?)"',html,re.DOTALL)
 	if owner:
-		name = 'OWNER:  '+owner[0][0]
-		link = website0a+owner[0][1]
-		addMenuItem('folder',menu_name+name,link,144)
-	else:
-		owner = re.findall('"videoOwner".*?"text":"(.*?)".*?"url":"(.*?)"',html,re.DOTALL)
-		if owner:
-			name = 'OWNER:  '+owner[0][0]
-			link = website0a+owner[0][1]
+		ownerNAME = '[COLOR FFC89008]'+owner[0][0]+'[/COLOR]'
+		link = owner[0][1]
+		if 'http' not in link: link = website0a+link
+		#if '/playlists' in url and '/channel/' not in url and '/c/' not in url and '/user/' not in url:
+		if 'list=' in url:
 			addMenuItem('folder',menu_name+name,link,144)
 	#if cc=='': CHANNEL_ITEMS_OLD(url,html) ; return
 	not_entry_urls = ['/search','/videos','/channels','/playlists','/featured','ss=','ctoken=','key=','bp=','shelf_id=']
 	channels_entry_page = not any(value in url for value in not_entry_urls)
 	if channels_entry_page:
 		if '"title":"بحث"' in html: addMenuItem('folder',menu_name+'بحث في هذا الموقع',url,145,'','','_REMEMBERRESULTS_')
-		if '"title":"قوائم التشغيل"' in html: addMenuItem('folder',menu_name+'القوائم',url+'/playlists',144)
-		if '"title":"الفيديوهات"' in html: addMenuItem('folder',menu_name+'الفيديوهات',url+'/videos',144)
-		if '"title":"القنوات"' in html: addMenuItem('folder',menu_name+'القنوات',url+'/channels',144)
+		if '"title":"قوائم التشغيل"' in html: addMenuItem('folder',menu_name+' - قوائم'+ownerNAME,url+'/playlists',144)
+		if '"title":"الفيديوهات"' in html: addMenuItem('folder',menu_name+' - فيديوهات'+ownerNAME,url+'/videos',144)
+		if '"title":"القنوات"' in html: addMenuItem('folder',menu_name+' - قنوات'+ownerNAME,url+'/channels',144)
 		if '"title":"Search"' in html: addMenuItem('folder',menu_name+'بحث في هذا الموقع',url,145,'','','_REMEMBERRESULTS_')
-		if '"title":"Playlists"' in html: addMenuItem('folder',menu_name+'القوائم',url+'/playlists',144)
-		if '"title":"Videos"' in html: addMenuItem('folder',menu_name+'الفيديوهات',url+'/videos',144)
-		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+'القنوات',url+'/channels',144)
-	ff = ''
+		if '"title":"Playlists"' in html: addMenuItem('folder',menu_name+' - قوائم'+ownerNAME,url+'/playlists',144)
+		if '"title":"Videos"' in html: addMenuItem('folder',menu_name+' - فيديوهات'+ownerNAME,url+'/videos',144)
+		if '"title":"Channels"' in html: addMenuItem('folder',menu_name+' - قنوات'+ownerNAME,url+'/channels',144)
 	if 'search_query' in url:
 		dd = cc['contents']['twoColumnSearchResultsRenderer']['primaryContents']['sectionListRenderer']['contents']
+		biggest = 0
 		for i in range(len(dd)):
-			try:
-				ff = dd[i]['itemSectionRenderer']
-				break
-			except: return
+			if 'itemSectionRenderer' in dd[i].keys():
+				fff = dd[i]['itemSectionRenderer']
+				length = len(str(fff))
+				if length>biggest:
+					biggest = length
+					ff = fff
+		if biggest==0: return
 	elif '&list=' in url or '/search?key=' in url or '/browse?key=' in url or 'ctoken=' in url or '/search' in url or url==website0a:
 		trial = []
 		trial.append("cc['onResponseReceivedCommands'][0]['appendContinuationItemsAction']['continuationItems'][0]['itemSectionRenderer']")
@@ -216,9 +219,10 @@ def ITEMS(url,index='',visitor=''):
 	str3 = ARABIC_HEX(u'كل القنوات')
 	list1 = [str1,str2,str3,'All playlists','All videos','All channels']
 	succeeded88,gg = TRY_MULITPLE(ff,index,trial)
-	#DIALOG_OK('1111 index= '+index,'found in '+succeeded88)
+	#DIALOG_OK('1111 index= '+index+'   found in '+succeeded88,str(len(gg)))
+	#DIALOG_TEXTVIEWER('',str(gg))
+	#DIALOG_OK('',str(len(gg)))
 	if 'list' in str(type(gg)) and any(value in str(gg[0]) for value in list1): del gg[0]
-	#DIALOG_TEXTVIEWER('',str(len(gg)))
 	for index2 in range(len(gg)):
 		trial = []
 		trial.append("gg[index2]['itemSectionRenderer']['contents'][0]['horizontalCardListRenderer']['header']")  # shuld be 1st		#1

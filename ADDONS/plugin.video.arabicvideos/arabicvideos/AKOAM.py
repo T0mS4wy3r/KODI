@@ -37,7 +37,6 @@ def MENU(website=''):
 		for link,title in items:
 			if title not in ignoreLIST:
 				addMenuItem('folder',website+'___'+menu_name+title,link,71)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def CATEGORIES(url):

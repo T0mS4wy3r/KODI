@@ -7,7 +7,8 @@ website0a = WEBSITES[script_name][0]
 website0b = WEBSITES[script_name][1]
 website0c = WEBSITES[script_name][2]
 website0d = WEBSITES[script_name][3]
-website1  = 'http://93.190.24.122'
+#website1  = 'http://93.190.24.122'
+website1  = 'http://ar.ifilmtv.com'
 
 def MAIN(mode,url,page,text):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
@@ -68,10 +69,11 @@ def MENU(website0):
 	addMenuItem('folder',menu_name+name0,website0,29,'','','_REMEMBERRESULTS_')
 	html = OPENURL_CACHED(LONG_CACHE,website0+'/home','','','','IFILM-MENU-1st')
 	#html = OPENURL_CACHED(LONG_CACHE,website0+'/home/index','','','','IFILM-MENU-1st')
-	html_blocks=re.findall('button-menu(.*?)nav',html,re.DOTALL)
+	html_blocks=re.findall('button-menu(.*?)/Contact',html,re.DOTALL)
 	menu = ['Series','Program','Music']#,'Film']
 	block = html_blocks[0]
 	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
+	#DIALOG_OK(str(len(items)),str(items))
 	for link,title in items:
 		if any(value in link for value in menu):
 			#DIALOG_OK(link,str(title))

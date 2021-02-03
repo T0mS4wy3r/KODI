@@ -3,12 +3,78 @@
 
 
 
-
+"""
 #####################################################
 #         FAILED
 #	NOT WORKING ANYMORE
 #####################################################
-"""
+
+def UPTO(url):
+	#DIALOG_OK(url,'')
+	errormsg1,titleLIST1,linkLIST1 = '',[],[]
+	errormsg2,titleLIST2,linkLIST2 = '',[],[]
+	titleLIST = ['uptostream','uptobox (delay 30sec)','both']
+	selection = DIALOG_SELECT('اختر السيرفر:', titleLIST)
+	if selection == -1: return 'Error: UPTO Resolver failed',[],[]
+	if selection==0 or selection==2:
+		url2 = url.replace('://uptobox.','://uptostream.')
+		errormsg1,titleLIST1,linkLIST1 = UPTOSTREAM(url2)
+	if selection==1 or selection==2:
+		url2 = url.replace('://uptostream','://uptobox.')
+		errormsg2,titleLIST2,linkLIST2 = UPTOBOX(url2)
+	errormsg = errormsg1+'\n'+errormsg2
+	titleLIST = titleLIST1 + titleLIST2
+	linkLIST = linkLIST1 + linkLIST2
+	errormsg = errormsg.strip('\n')
+	if len(linkLIST)==0: return 'Error: Resolver UPTO Failed',[],[]
+	else: return errormsg,titleLIST,linkLIST
+
+def UPTOSTREAM(url):
+	#DIALOG_OK(url,'')
+	headers = { 'User-Agent' : '' }
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','RESOLVERS-UPTOSTREAM-1st')
+	items = re.findall('src":"(.*?)".*?label":"(.*?)"',html,re.DOTALL)
+	titleLIST,linkLIST = [],[]
+	if items:
+		for link,title in items:
+			link = link.replace('\/','/')
+			titleLIST.append(title)
+			linkLIST.append(link)
+		return '',titleLIST,linkLIST
+	else: return 'Error: Resolver UPTOSTREAM Failed',[],[]
+
+def UPTOBOX(url):
+	#DIALOG_OK(url,'')
+	headers = { 'User-Agent' : '' }
+	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','RESOLVERS-UPTOBOX-1st')
+	titleLIST,linkLIST = [],[]
+	if 'waitingToken' in html:
+		token = re.findall('waitingToken\' value=\'(.*?)\'',html,re.DOTALL)
+		token = token[0]
+		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
+		payload = { 'waitingToken' : token }
+		data = urllib.urlencode(payload)
+		progress = DIALOG_PROGRESS()
+		progress.create('Waiting 35 seconds ...')
+		for i in range(0,35):
+			progress.update(i*100/35,str(35-i)+' seconds left')
+			xbmc.sleep(1000)
+			if progress.iscanceled(): break
+		progress.close()
+		html = OPENURL_CACHED(SHORT_CACHE,url,data,headers,'','RESOLVERS-UPTOBOX-2nd')
+	items = re.findall('class=\'file-title\'>(.*?)<.*?comparison-table.*?href="(.*?)"',html,re.DOTALL)
+	if items:
+		title,url = items[0]
+		return '',[title],[url]
+	else: return 'Error: Resolver UPTOBOX Failed',[],[]
+	#DIALOG_OK(str(html),html)
+	#file = open('S:\emad3.html', 'w')
+	#file.write(token)
+	#file.write('\n\n\n')
+	#file.write(html)
+	#file.close()
+	return
+
 def THEVIDEO_PROBLEM(url):
 	# https://thevideo.me/embed-xldtqj5deiyj-780x439.html
 	url = url.replace('embed-','')

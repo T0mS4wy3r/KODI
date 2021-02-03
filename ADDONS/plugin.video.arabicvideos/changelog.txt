@@ -1,4 +1,40 @@
 ﻿
+v8.0.0	2021-02-03
+Added MOVS4U site
+Added FAJERSHOW site
+Added DAILYMOTION site
+Added ARABSEED submenus
+Added ARABSEED new movies & episodes
+Added proxy/dns to analytics events
+Added location to send messages
+Added MYCIMA series name to episodes & seasons lists
+Added and modified AKWAM blocked message
+Added hostname to ARABSEED play links
+Added ARABSEED series name to episodes lists
+Added ARBLIONZ filters
+Fixed ARBLIONZ resolver
+Fixed ARABSEED filters
+Fixed PROXY/DNS ASK status
+Fixed and modified MYCIMA filters
+Fixed YOUTUBE empty search results
+Fixed IFILM Arabic main menu
+Fixed IFILM watch server ip
+Fixed ALKAWTHAR search
+Fixed EXTERNAL_RESOLVER_3
+Fixed M3U8 extractor
+Enabled quality select in external resolvers
+Modified logging of multi lines errors/notices
+Modified adult rating
+Modified main & sites menus
+Modified YOUTUBE owner listing
+Changed default PROXY/DNS to AUTO
+Changed DNS to AUTO instead of ALWAYS
+Changed network fix to try PROXY then DNS
+Removed old OPENURL
+Removed uptostream/uptobox resolver
+Minor fixes and improvements
+
+
 v7.8.0	2021-01-15
 Added ARABSEED new design
 Added 'ALL' to BOKRA sub-menus

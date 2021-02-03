@@ -38,7 +38,6 @@ def MENU(website=''):
 		#if any(value in title for value in keepLIST):
 		if not any(value in title for value in ignoreLIST):
 			addMenuItem('folder',website+'___'+menu_name+title,link,301)
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def TITLES(url,key=''):

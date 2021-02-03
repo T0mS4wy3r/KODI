@@ -44,7 +44,6 @@ def MENU(website=''):
 	last_items = menuItemsLIST[2:8]
 	del menuItemsLIST[2:8]
 	menuItemsLIST[:] = menuItemsLIST+last_items
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def TITLES(url,type=''):

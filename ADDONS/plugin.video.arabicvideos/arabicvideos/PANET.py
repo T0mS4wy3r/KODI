@@ -140,6 +140,7 @@ def PLAY(url):
 		html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','PANET-PLAY-2nd')
 		items = re.findall('contentURL" content="(.*?)"',html,re.DOTALL)
 		url = items[0]
+	#DIALOG_OK(url,'')
 	PLAY_VIDEO(url,script_name,'video')
 	return
 

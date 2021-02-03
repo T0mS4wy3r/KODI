@@ -59,7 +59,6 @@ def MENU(website=''):
 	for link,title in items:
 		#if title not in ignoreLIST: addMenuItem('folder',website+'___'+menu_name+title,link,122,'','1')
 		if not link.endswith('/'): addMenuItem('folder',website+'___'+menu_name+title,link,122,'','1')
-	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return html
 
 def FILTERS_MENU(link):

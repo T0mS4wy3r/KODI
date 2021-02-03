@@ -28,7 +28,6 @@ def MENU():
 	addMenuItem('folder','[COLOR FFC89008]TV1  [/COLOR]'+'قنوات تلفزيونية عامة','',102)
 	addMenuItem('folder','[COLOR FFC89008]TV2  [/COLOR]'+'قنوات تلفزيونية خاصة','',103)
 	addMenuItem('folder','[COLOR FFC89008]TV3  [/COLOR]'+'قنوات تلفزيونية للفحص','',104)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	return
 
 def ITEMS(menu,show=True):
