@@ -1,4 +1,10 @@
 ﻿
+
+v8.0.2	2021-02-06
+Fixed create/check cache folder
+Minor fixes and improvements
+
+
 v8.0.1	2021-02-06
 Added addon files update
 Fixed YOUTUBE lists & next page

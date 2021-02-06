@@ -168,7 +168,22 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 def MAIN():
 	#DIALOG_OK('MAIN','MAIN')
 	script_name = 'MAIN'
+	type,name,url99,mode,image99,page99,text,context = EXTRACT_KODI_PATH()
+	#DIALOG_OK(context,'')
+	mode0 = int(mode)
+	mode1 = int(mode0%10)
+	mode2 = int(mode0/10)
+	#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
+	#DIALOG_OK('['+menu_path+']','['+addon_path+']')
+	#DIALOG_OK('['+menu_label+']','['+menu_path+']')
+	if mode0==260: message = '   Version: [ '+addon_version+' ]   Kodi: [ '+kodi_release+' ]'
+	else:
+		menu_label2 = menu_label.replace('   ','  ').replace('   ','  ').replace('   ','  ')
+		menu_path2 = menu_path.replace('   ','  ').replace('   ','  ').replace('   ','  ')
+		message = '   Label: [ '+menu_label2+' ]   Mode: [ '+mode+' ]   Path: [ '+menu_path2+' ]'
+	LOG_THIS('NOTICE',LOGGING(script_name)+message)
 	if not os.path.exists(versionfile):
+		if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 		CLEAN_KODI_CACHE_FOLDER([dbfile])
 		with open(versionfile,'w') as f: f.write('')
 		if os.path.exists(dbfile):
@@ -208,20 +223,6 @@ def MAIN():
 					settings2 = xbmcaddon.Addon(id='inputstream.adaptive')
 					settings2.setSetting('STREAMSELECTION','2')
 			except: pass
-	type,name,url99,mode,image99,page99,text,context = EXTRACT_KODI_PATH()
-	#DIALOG_OK(context,'')
-	mode0 = int(mode)
-	mode1 = int(mode0%10)
-	mode2 = int(mode0/10)
-	#message += '\n'+'Label:['+menu_label+']   Path:['+menu_path+']'
-	#DIALOG_OK('['+menu_path+']','['+addon_path+']')
-	#DIALOG_OK('['+menu_label+']','['+menu_path+']')
-	if mode0==260: message = '   Version: [ '+addon_version+' ]   Kodi: [ '+kodi_release+' ]'
-	else:
-		menu_label2 = menu_label.replace('   ','  ').replace('   ','  ').replace('   ','  ')
-		menu_path2 = menu_path.replace('   ','  ').replace('   ','  ').replace('   ','  ')
-		message = '   Label: [ '+menu_label2+' ]   Mode: [ '+mode+' ]   Path: [ '+menu_path2+' ]'
-	LOG_THIS('NOTICE',LOGGING(script_name)+message)
 	if '_' in context: context1,context2 = context.split('_',1)
 	else: context1,context2 = context,''
 	if context1=='6':
