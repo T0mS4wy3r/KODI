@@ -1,4 +1,14 @@
 ﻿
+v8.0.1	2021-02-06
+Added addon files update
+Fixed YOUTUBE lists & next page
+Changed "settings" to be global object
+Increase OPENURL timeout to 7 seconds
+Removed AKWAM main menu blocking message
+Disabled sound of all notification dialogs
+Minor fixes and improvements
+
+
 v8.0.0	2021-02-03
 Added MOVS4U site
 Added FAJERSHOW site

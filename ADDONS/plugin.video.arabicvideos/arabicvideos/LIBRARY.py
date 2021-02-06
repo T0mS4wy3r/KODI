@@ -9,7 +9,6 @@ import urllib		# 160ms
 import urllib2		# 354ms (contains urllib)
 import sqlite3		# 50ms (with threading 71ms)
 
-
 #import requests   	# 986ms (contains urllib,urllib2,urllib3)
 #import threading	# 54ms (with sqlite3 71ms)
 #import urllib3		# 621ms (contains urllib)
@@ -76,6 +75,10 @@ addon_path = sys.argv[2]				# ?mode=12&url=http://test.com
 #addon_path = xbmc.getInfoLabel( "ListItem.FolderPath" )
 addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 
+#addon_version = '8.1.4'
+
+settings = xbmcaddon.Addon(id=addon_id)
+
 menu_path = urllib2.unquote(addon_path).replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
 menu_label = xbmc.getInfoLabel('ListItem.Label').replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
 if menu_label=='': menu_label = 'Main Menu'
@@ -83,14 +86,17 @@ if menu_label=='': menu_label = 'Main Menu'
 kodi_release = xbmc.getInfoLabel("System.BuildVersion")
 kodi_version = re.findall('&&(.*?)[ -]','&&'+kodi_release,re.DOTALL)
 kodi_version = float(kodi_version[0])
-#DIALOG_OK(kodi_release,str(kodi_version))
 
 logfolder = xbmc.translatePath('special://logpath')
 logfile = os.path.join(logfolder,'kodi.log')
 oldlogfile = os.path.join(logfolder,'kodi.old.log')
 
+db_version = re.findall('\d+\.\d+',addon_version,re.DOTALL)[0]
+if db_version=='8.0': db_version = '8.0.0'
+
 addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
-dbfile = os.path.join(addoncachefolder,"webcache_"+addon_version+".db")
+versionfile = os.path.join(addoncachefolder,"version_"+addon_version+".tmp")
+dbfile = os.path.join(addoncachefolder,"webcache_"+db_version+".db")
 lastvideosfile = os.path.join(addoncachefolder,"lastvideos.lst")
 lastmenufile = os.path.join(addoncachefolder,"lastmenu.lst")
 favouritesfile = os.path.join(addoncachefolder,"favourites.lst")
@@ -162,41 +168,46 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 def MAIN():
 	#DIALOG_OK('MAIN','MAIN')
 	script_name = 'MAIN'
-	if not os.path.exists(dbfile):
-		if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
-		LOG_THIS('NOTICE','.   Arabic Videos Upgraded/Installed or Cache deleted   Path: [ '+addon_path+' ]')
-		CLEAN_KODI_CACHE_FOLDER()
-		conn = sqlite3.connect(dbfile)
-		conn.close()
-		import SERVICES
-		SERVICES.KODIEMAD_WEBSITE()
-		DIALOG_OK('برنامج عماد للفيديوهات العربية','تم تثبيت أو تحديث الإصدار الجديد لبرنامج عماد للفيديوهات العربية . أو تم مسح كاش البرنامج . الآن سيقوم البرنامج ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
-		ENABLE_MPD(False)
-		ENABLE_RTMP(False)
-		SERVICES.CHECK_INSTALLED_REPOSITORIES(False)
-		SERVICES.HTTPS_TEST(False)
-		import IPTV
-		if IPTV.isIPTVFiles(False):
-			DIALOG_OK('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
-			IPTV.CREATE_STREAMS(False)
-		try:
-			settingsfile2 = os.path.join(homefolder,'userdata','addon_data','script.module.resolveurl','settings.xml')
-			if not os.path.exists(settingsfile2):
-				settings2 = xbmcaddon.Addon(id='script.module.resolveurl')
-				settings2.setSetting('auto_pick','false')
-		except: pass
-		try:
-			settingsfile2 = os.path.join(homefolder,'userdata','addon_data','script.module.youtube.dl','settings.xml')
-			if not os.path.exists(settingsfile2):
-				settings2 = xbmcaddon.Addon(id='script.module.youtube.dl')
-				settings2.setSetting('video_quality','3')
-		except: pass
-		try:
-			settingsfile2 = os.path.join(homefolder,'userdata','addon_data','inputstream.adaptive','settings.xml')
-			if not os.path.exists(settingsfile2):
-				settings2 = xbmcaddon.Addon(id='inputstream.adaptive')
-				settings2.setSetting('STREAMSELECTION','2')
-		except: pass
+	if not os.path.exists(versionfile):
+		CLEAN_KODI_CACHE_FOLDER([dbfile])
+		with open(versionfile,'w') as f: f.write('')
+		if os.path.exists(dbfile):
+			DIALOG_NOTIFICATION('تم تحديث برنامج عماد','إلى الإصدار رقم '+addon_version)
+			LOG_THIS('NOTICE','.   ArabicVideos:  Files updated successfully   Path: [ '+addon_path+' ]')
+		else:
+			CLEAN_KODI_CACHE_FOLDER([versionfile])
+			LOG_THIS('NOTICE','.   ArabicVideos:  Fully updated, Newly installed, or Cache deleted   Path: [ '+addon_path+' ]')
+			conn = sqlite3.connect(dbfile)
+			conn.close()
+			import SERVICES
+			SERVICES.KODIEMAD_WEBSITE()
+			DIALOG_OK('برنامج عماد للفيديوهات العربية','تم تثبيت أو تحديث الإصدار الجديد لبرنامج عماد للفيديوهات العربية . أو تم مسح كاش البرنامج . الآن سيقوم البرنامج ببعض الفحوصات لضمان عمل البرنامج بصورة صحيحة ومتكاملة')
+			ENABLE_MPD(False)
+			ENABLE_RTMP(False)
+			SERVICES.CHECK_INSTALLED_REPOSITORIES(False)
+			SERVICES.HTTPS_TEST(False)
+			import IPTV
+			if IPTV.isIPTVFiles(False):
+				DIALOG_OK('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
+				IPTV.CREATE_STREAMS(False)
+			try:
+				settingsfile2 = os.path.join(homefolder,'userdata','addon_data','script.module.resolveurl','settings.xml')
+				if not os.path.exists(settingsfile2):
+					settings2 = xbmcaddon.Addon(id='script.module.resolveurl')
+					settings2.setSetting('auto_pick','false')
+			except: pass
+			try:
+				settingsfile2 = os.path.join(homefolder,'userdata','addon_data','script.module.youtube.dl','settings.xml')
+				if not os.path.exists(settingsfile2):
+					settings2 = xbmcaddon.Addon(id='script.module.youtube.dl')
+					settings2.setSetting('video_quality','3')
+			except: pass
+			try:
+				settingsfile2 = os.path.join(homefolder,'userdata','addon_data','inputstream.adaptive','settings.xml')
+				if not os.path.exists(settingsfile2):
+					settings2 = xbmcaddon.Addon(id='inputstream.adaptive')
+					settings2.setSetting('STREAMSELECTION','2')
+			except: pass
 	type,name,url99,mode,image99,page99,text,context = EXTRACT_KODI_PATH()
 	#DIALOG_OK(context,'')
 	mode0 = int(mode)
@@ -214,7 +225,7 @@ def MAIN():
 	if '_' in context: context1,context2 = context.split('_',1)
 	else: context1,context2 = context,''
 	if context1=='6':
-		if context2=='': DIALOG_NOTIFICATION('يرجى الانتظار','جاري فحص ملف التحميل',sound=False)
+		if context2=='': DIALOG_NOTIFICATION('يرجى الانتظار','جاري فحص ملف التحميل')
 		results = MAIN_DISPATCHER(type,name,url99,mode,image99,page99,text,context)
 		xbmc.executebuiltin("Container.Refresh")
 		#EXIT_PROGRAM('LIBRARY-MAIN-1st')
@@ -282,7 +293,6 @@ def MAIN():
 		xbmcplugin.setContent(addon_handle,'tvshows')
 		#succeeded,updateListing,cacheToDisc = True,False,True
 		xbmcplugin.endOfDirectory(addon_handle,succeeded,updateListing,cacheToDisc)
-	settings = xbmcaddon.Addon(id=addon_id)
 	dns_status = settings.getSetting('dns.status')
 	proxy_status = settings.getSetting('proxy.status')
 	if dns_status in ['ACCEPTED','REJECTED']: settings.setSetting('dns.status','ASKING')
@@ -410,7 +420,7 @@ class CustomThread():
 	def start_new_thread(self,id,func,*args):
 		id = str(id)
 		self.statusDICT[id] = 'running'
-		if self.showDialogs: DIALOG_NOTIFICATION('',id,sound=False)
+		if self.showDialogs: DIALOG_NOTIFICATION('',id)
 		thread.start_new_thread(self.run,(id,func,args))
 	def run(self,id,func,args):
 		id = str(id)
@@ -446,7 +456,6 @@ def SHOW_NETWORK_ERRORS(code,reason,source,showDialogs):
 	blocked2 = ('Blocked by Cloudflare' in reason)
 	blocked3 = ('Blocked by 5 seconds browser check' in reason)
 	blocked4 = ('Blocked by Google reCAPTCHA' in reason)
-	settings = xbmcaddon.Addon(id=addon_id)
 	proxy_status = settings.getSetting('proxy.status')
 	dns_status = settings.getSetting('dns.status')
 	if proxy_status=='ASKING' or dns_status=='ASKING':
@@ -541,7 +550,7 @@ def CLEAN_KODI_CACHE_FOLDER(exceptionLIST1=[]):
 	#delete = DIALOG_YESNO('مسح ملفات الفيديو القديمة','سوف يتم ايضا مسح ملفات الفيديو القديمة التي انت انزلتها باستخدام هذا البرنامج . هل تريد مسحها ام لا ؟','','','كلا','نعم')
 	for filename in os.listdir(addoncachefolder):
 		#if not delete and 'file_' in filename: continue
-		if 'file_' in filename: continue
+		#if 'file_' in filename: continue
 		filename_full = os.path.join(addoncachefolder,filename)
 		if filename_full not in exceptionLIST:
 			try: os.remove(filename_full)
@@ -680,7 +689,7 @@ def OPENURL_REQUESTS_CACHED(expiry,method,url,data,headers,allow_redirects,showD
 
 def PROXY_TEST(proxy,method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix=True,allow_proxy_fix=True):
 	proxy_host,proxy_port = proxy.split(':')
-	#DIALOG_NOTIFICATION('مشكلة إنترنيت . سأحاول إصلاحها','سأجرب '+name,sound=False,time=2000)
+	#DIALOG_NOTIFICATION('مشكلة إنترنيت . سأحاول إصلاحها','سأجرب '+name,time=2000)
 	#LOG_THIS('NOTICE',LOGGING(script_name)+'   Trying '+name+' server   Proxy: [ '+proxy+' ]   URL: [ '+url+' ]')
 	url = url+'||MyProxyUrl='+proxy
 	response = OPENURL_REQUESTS_CACHED(NO_CACHE,method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix,allow_proxy_fix)
@@ -711,7 +720,6 @@ def OPENURL_REQUESTS_PROXIES(*args):
 	proxies2 = GET_PROXIES_LIST(proxyscrape)
 	proxiesLIST = proxies1+proxies2
 	LOG_THIS('NOTICE_LINES',LOGGING(script_name)+'   Got proxies list   1st+2nd: [ '+str(len(proxies1))+'+'+str(len(proxies2))+' ]')
-	settings = xbmcaddon.Addon(id=addon_id)
 	proxy = settings.getSetting('proxy.last')
 	response = dummy_object()
 	response.succeeded = False
@@ -821,7 +829,6 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 	#url = url + '||MyProxyUrl=http://188.166.59.17:8118'
 	import requests
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
-	settings = xbmcaddon.Addon(id=addon_id)
 	dns_server = settings.getSetting('dns.server')
 	dns_status = settings.getSetting('dns.status')
 	proxy_status = settings.getSetting('proxy.status')
@@ -844,17 +851,17 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 	if dnsurl==None and dns_status=='ALWAYS' and allow_dns_fix: dnsurl = dns_server
 	if 'IFILM' in source: timeout = 20
 	elif proxyurl!=None: timeout = 10
-	else: timeout = 5
+	else: timeout = 7
 	if proxyurl!=None:
 		proxies = {"http":proxyurl,"https":proxyurl}
 		proxy_server = proxyurl
 	else: proxies,proxy_server = {},''
 	#LOG_THIS('NOTICE',LOGGING(script_name)+'   Proxy:[ '+proxy_status+'='+proxy_server+' ]   DNS:[ '+dns_status+'='+dns_server+' ]   SSL:[ '+str(sslurl!=None)+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
-	#if sslurl!=None and showDialogs: DIALOG_NOTIFICATION('تفعيل تشفير SSL','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)
+	#if sslurl!=None and showDialogs: DIALOG_NOTIFICATION('تفعيل تشفير SSL','لإصلاح مشكلة الإنترنيت',time=2000)
 	if dnsurl!=None and dns_status!='STOP':
 		import urllib3.util.connection as connection
 		original_create_connection = USE_DNS_SERVER(connection,dns_server)
-		#if showDialogs: DIALOG_NOTIFICATION('تفعيل DNS رقم: '+dnsurl,'لإصلاح مشكلة الإنترنيت',sound=False,time=2000)
+		#if showDialogs: DIALOG_NOTIFICATION('تفعيل DNS رقم: '+dnsurl,'لإصلاح مشكلة الإنترنيت',time=2000)
 		#DIALOG_OK(str(type(dns_server)),str(dns_server))
 	if sslurl!=None: verify = True
 	else: verify = False
@@ -976,41 +983,41 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 		if yes:
 			allow_ssl_fix = True
 			if code==8 and 'https' in url2 and allow_ssl_fix:
-				if showDialogs: DIALOG_NOTIFICATION('تفعيل فحص شهادة التشفير SSL','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)
+				if showDialogs: DIALOG_NOTIFICATION('تفعيل فحص شهادة التشفير SSL','لإصلاح مشكلة الإنترنيت',time=2000)
 				url3 = url2+'||MySSLUrl='
 				response3 = OPENURL_REQUESTS(method,url3,data,headers,allow_redirects,showDialogs,source)
 				if response3.succeeded:
 					response2 = response3
 					LOG_THIS('NOTICE_LINES',LOGGING(script_name)+'   Succeeded using SSL:   Source: [ '+source+' ]   URL: [ '+url+' ]')
-					if showDialogs: DIALOG_NOTIFICATION('نجاح باستخدام SSL','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)					
+					if showDialogs: DIALOG_NOTIFICATION('نجاح باستخدام SSL','لإصلاح مشكلة الإنترنيت',time=2000)
 				else:
 					LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed using SSL:   Source: [ '+source+' ]   URL: [ '+url+' ]')
-					if showDialogs: DIALOG_NOTIFICATION('فشل باستخدام SSL','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)
+					if showDialogs: DIALOG_NOTIFICATION('فشل باستخدام SSL','لإصلاح مشكلة الإنترنيت',time=2000)
 			if not response2.succeeded and proxy_status in ['ACCEPTED','AUTO'] and allow_proxy_fix:
-				if showDialogs: DIALOG_NOTIFICATION('تفعيل سيرفرات بروكسي','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)
+				if showDialogs: DIALOG_NOTIFICATION('تفعيل سيرفرات بروكسي','لإصلاح مشكلة الإنترنيت',time=2000)
 				response3 = OPENURL_REQUESTS_PROXIES(method,url2,data,headers,allow_redirects,showDialogs,source)
 				if response3.succeeded:
 					response2 = response3
 					LOG_THIS('NOTICE_LINES',LOGGING(script_name)+'   Proxies succeeded:   Source: [ '+source+' ]   URL: [ '+url+' ]')
-					if showDialogs: DIALOG_NOTIFICATION('نجاح سبرفرات بروكسي','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)					
+					if showDialogs: DIALOG_NOTIFICATION('نجاح سبرفرات بروكسي','لإصلاح مشكلة الإنترنيت',time=2000)
 				else:
 					LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Proxies failed:   Source: [ '+source+' ]   URL: [ '+url+' ]')
-					if showDialogs: DIALOG_NOTIFICATION('فشل سبرفرات بروكسي','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)
+					if showDialogs: DIALOG_NOTIFICATION('فشل سبرفرات بروكسي','لإصلاح مشكلة الإنترنيت',time=2000)
 			if not response2.succeeded and dns_status in ['ACCEPTED','AUTO'] and allow_dns_fix:
-				if showDialogs: DIALOG_NOTIFICATION('تفعيل سيرفر DNS','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)
+				if showDialogs: DIALOG_NOTIFICATION('تفعيل سيرفر DNS','لإصلاح مشكلة الإنترنيت',time=2000)
 				url3 = url2+'||MyDNSUrl='
 				response3 = OPENURL_REQUESTS(method,url3,data,headers,allow_redirects,showDialogs,source)
 				if response3.succeeded:
 					response2 = response3
 					LOG_THIS('NOTICE_LINES',LOGGING(script_name)+'   DNS succeeded:   DNS: [ '+dns_server+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
-					if showDialogs: DIALOG_NOTIFICATION('نجاح سبرفر DNS','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)					
+					if showDialogs: DIALOG_NOTIFICATION('نجاح سبرفر DNS','لإصلاح مشكلة الإنترنيت',time=2000)					
 				else:
 					LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   DNS failed:   DNS: [ '+dns_server+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
-					if showDialogs: DIALOG_NOTIFICATION('فشل سيرفر DNS','لإصلاح مشكلة الإنترنيت',sound=False,time=2000)
+					if showDialogs: DIALOG_NOTIFICATION('فشل سيرفر DNS','لإصلاح مشكلة الإنترنيت',time=2000)
 			"""
 			if code in [-1,7,11001,11002,10054]:
 				LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   DNS failed   Will use this DNS server "'+dns_server+'" to fix this   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]   URL: [ '+url+' ]')
-				DIALOG_NOTIFICATION('مشكلة إنترنيت . سأحاول إصلاحها','سأجرب DNS رقم  '+dns_server,sound=False,time=2000)
+				DIALOG_NOTIFICATION('مشكلة إنترنيت . سأحاول إصلاحها','سأجرب DNS رقم  '+dns_server,time=2000)
 				url3 = url+'||MyDNSUrl='
 				response3 = OPENURL_REQUESTS(method,url3,data,headers,allow_redirects,showDialogs,source)
 				if response3.succeeded: response2 = response3
@@ -1270,7 +1277,6 @@ def dummyClientID(length):
 	os_version = platform.release()		# 10.0/3.14.22
 	os_bits = platform.machine()		# AMD64/aarch64
 	#processor = platform.processor()	# Intel64 Family 9 Model 68 Stepping 16, GenuineIntel/''
-	settings = xbmcaddon.Addon(id=addon_id)
 	savednode = settings.getSetting('node')
 	if savednode=='':
 		import uuid
@@ -1284,7 +1290,6 @@ def dummyClientID(length):
 	#DIALOG_OK(node,md5)
 	return md5
 	"""
-	#settings = xbmcaddon.Addon(id=addon_id)
 	#settings.setSetting('user.hash','')
 	#settings.setSetting('user.hash2','')
 	#settings.setSetting('user.hash3','')
@@ -1381,7 +1386,7 @@ def RATING_CHECK(script_name,url,ratingLIST,showDialog=True):
 			if 'غير مصنف' in rating: continue
 			if rating=='r' or any(value in rating for value in blockedLIST):
 				LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Blocked adults video   URL: [ '+url+' ]')
-				if showDialog: DIALOG_NOTIFICATION('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته',sound=False)
+				if showDialog: DIALOG_NOTIFICATION('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
 				return True
 	return False
 	"""
@@ -1397,7 +1402,7 @@ def RATING_CHECK(script_name,url,ratingLIST,showDialog=True):
 			if found: break
 	if found:
 		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Blocked adults video   URL: [ '+url+' ]')
-		DIALOG_NOTIFICATION('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته',sound=False)
+		DIALOG_NOTIFICATION('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
 		return True
 	return False
 	"""
@@ -1608,7 +1613,7 @@ def PLAY_VIDEO(url3,website='',type=''):
 				selection = DIALOG_SELECT('اختر الملف المناسب: ('+str(count)+' ملف)', titleLIST)
 				#DIALOG_OK(str(selection),website)
 				if selection == -1:
-					DIALOG_NOTIFICATION('تم إلغاء التشغيل','',sound=False)
+					DIALOG_NOTIFICATION('تم إلغاء التشغيل','')
 					return result
 			else: selection = 0
 			url = linkLIST[selection]
@@ -1683,18 +1688,18 @@ def PLAY_VIDEO(url3,website='',type=''):
 			xbmc.sleep(step*1000)
 			result = myplayer.status
 			if result=='playing':
-				DIALOG_NOTIFICATION('الفيديو يعمل','',time=1000,sound=False)
+				DIALOG_NOTIFICATION('الفيديو يعمل','',time=1000)
 				LOG_THIS('NOTICE_LINES',LOGGING(script_name)+'   Success: video is playing   URL: [ '+url+' ]'+subtitlemessage)
 				break
 			elif result=='failed':
 				LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed playing video   URL: [ '+url+' ]'+subtitlemessage)
-				DIALOG_NOTIFICATION('الفيديو لم يعمل','',time=1000,sound=False)
+				DIALOG_NOTIFICATION('الفيديو لم يعمل','',time=1000)
 				break
-			DIALOG_NOTIFICATION('جاري تشغيل الفيديو','باقي '+str(timeout-i)+' ثانية',sound=False)
+			DIALOG_NOTIFICATION('جاري تشغيل الفيديو','باقي '+str(timeout-i)+' ثانية')
 		else:
 			result = 'timeout'
 			myplayer.stop()
-			DIALOG_NOTIFICATION('الفيديو لم يعمل','',sound=False)
+			DIALOG_NOTIFICATION('الفيديو لم يعمل','')
 			LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Timeout unknown problem   URL: [ '+url+' ]'+subtitlemessage)
 	cond1 = result in ['playing','play_download']
 	cond2 = result=='download' and videofiletype in ['.ts','.mkv','.mp4','.mp3','.flv','.m3u8','avi']
@@ -1748,7 +1753,7 @@ def DIALOG_SELECT(*args,**kwargs):
 	return xbmcgui.Dialog().select(*args,**kwargs)
 
 def DIALOG_NOTIFICATION(*args,**kwargs):
-	return xbmcgui.Dialog().notification(*args,**kwargs)
+	return xbmcgui.Dialog().notification(sound=False,*args,**kwargs)
 
 def DIALOG_TEXTVIEWER(*args,**kwargs):
 	#return xbmcgui.Dialog().textviewer(*args,**kwargs)
@@ -1852,7 +1857,6 @@ def HANDLE_EXIT_ERRORS(error):
 	return
 
 def PRIVILEGED(priv):
-	settings = xbmcaddon.Addon(id=addon_id)
 	privs = settings.getSetting('user.privs')
 	priv = priv.encode('base64').replace('\n','')
 	user = dummyClientID(32)

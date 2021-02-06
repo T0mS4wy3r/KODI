@@ -63,7 +63,6 @@ def MENU():
 def CHECK_ACCOUNT(showDialog=True):
 	#if not isIPTVFiles(True): return
 	ok,status = False,''
-	settings = xbmcaddon.Addon(id=addon_id)
 	useragent = settings.getSetting('iptv.useragent')
 	#DIALOG_OK('CHECK_ACCOUNT 1','['+useragent+']')
 	iptvURL = settings.getSetting('iptv.url')
@@ -210,7 +209,6 @@ def ITEMS(TYPE,GROUP):
 	return
 
 def EPG_ITEMS(url,function):
-	settings = xbmcaddon.Addon(id=addon_id)
 	useragent = settings.getSetting('iptv.useragent')
 	headers = {'User-Agent':useragent}
 	if not isIPTVFiles(True): return
@@ -293,7 +291,6 @@ def EPG_ITEMS(url,function):
 	return epg_list
 
 def PLAY(url,type):
-	settings = xbmcaddon.Addon(id=addon_id)
 	useragent = settings.getSetting('iptv.useragent')
 	if useragent!='': url = url+'|User-Agent='+useragent
 	"""
@@ -309,7 +306,6 @@ def PLAY(url,type):
 	return
 
 def ADD_USERAGENT():
-	settings = xbmcaddon.Addon(id=addon_id)
 	DIALOG_OK('رسالة من المبرمج','تحذير مهم وهام جدا . يرجى عدم تغييره إذا كنت لا تعرف ما هو .  وعدم تغييره إلا عند الضرورة القصوى . الحاجة لهذا التغيير هي فقط إذا طلبت منك شركة IPTV أن تعمل هذا التغيير . وفقط عندما تستخدم خدمة IPTV تحتاج User-Agent خاص')
 	useragent = settings.getSettingString('iptv.useragent')
 	answer = DIALOG_YESNO(useragent,'هذا هو IPTV User-Agent المسجل في البرنامج . هل تريد تعديله أم تريد إعادته إلى وضعية التثبيت الأصلي والتي تقريبا تناسب جميع شركات IPTV ؟!','','','استخدام الأصلي','تعديل القديم')
@@ -328,7 +324,6 @@ def ADD_USERAGENT():
 	return
 
 def ADD_ACCOUNT():
-	settings = xbmcaddon.Addon(id=addon_id)
 	answer = DIALOG_YESNO('رسالة من المبرمج','البرنامج يحتاج اشتراك IPTV من نوع رابط التحميل m3u من أي شركة IPTV والأفضل أن يحتوي الرابط في نهايته على هذه الكلمات\n\r&type=m3u_plus\n\rهل تريد تغيير الرابط الآن ؟','','','كلا','نعم')
 	if not answer: return
 	iptvURL = settings.getSetting('iptv.url')
@@ -465,7 +460,6 @@ def SPLIT_NAME(title):
 
 def CREATE_STREAMS(showDialogs=True):
 	#DIALOG_OK('CREATE_STREAMS 1','['+useragent+']')
-	settings = xbmcaddon.Addon(id=addon_id)
 	useragent = settings.getSettingString('iptv.useragent')
 	iptvURL = settings.getSetting('iptv.url')
 	headers = {'User-Agent':useragent}
@@ -582,7 +576,7 @@ def CREATE_STREAMS(showDialogs=True):
 		dict = {}
 		i = i+1
 		if pDialog.iscanceled(): return
-		pDialog.update(50+int(25*i/length),'قراءة الملفات الجديدة:- الفيديو رقم',str(i)+'/'+str(length))
+		if i%31==0: pDialog.update(50+int(25*i/length),'قراءة الملفات الجديدة:- الفيديو رقم',str(i)+'/'+str(length))
 		line = line.replace('\r','').replace('\n','')
 		if 'http' not in line: continue
 		line,url = line.rsplit('http',1)

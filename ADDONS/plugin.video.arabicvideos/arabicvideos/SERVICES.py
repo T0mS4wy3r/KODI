@@ -63,7 +63,6 @@ def DELETE_ALL_SETTIGNS():
 	return
 
 def ALLOW_DNS_SERVER():
-	settings = xbmcaddon.Addon(id=addon_id)
 	status = settings.getSetting('dns.status')
 	server = settings.getSetting('dns.server')
 	if status in ['','ALWAYS','ASK']:
@@ -90,7 +89,6 @@ def ALLOW_DNS_SERVER():
 	return
 
 def ALLOW_PROXY_SERVERS():
-	settings = xbmcaddon.Addon(id=addon_id)
 	status = settings.getSetting('proxy.status')
 	if status in ['','ENABLED','DISABLED','ASK']:
 		status = 'AUTO'
@@ -565,7 +563,7 @@ def LATEST_KODI():
 	message4a = 'إصدار كودي الأخير المتوفر الآن هو :   ' + latest_KODI_VER
 	message4b = 'إصدار كودي الذي انت تستخدمه هو :   ' + installed_KODI_VER
 	message4c = '[COLOR FFFFFF00]'+'البرنامج لا يعمل مع كودي إصدار 19 وما بعده'+'[/COLOR]'
-	DIALOG_OK('رسالة من المبرمج',message4a+'\n\r'+message4b+'\n\r\n\r'+message4c)
+	DIALOG_OK('رسالة من المبرمج','\n\r'+message4c+'\n\r'+message4a+'\n\r'+message4b)
 	return
 
 def TEST_ALL_WEBSITES():
@@ -912,7 +910,6 @@ def TESTING123():
 	selection = DIALOG_SELECT('URLS :', urls)
 	#url = ''
 	#PLAY_VIDEO(url)
-	#settings = xbmcaddon.Addon(id=addon_id)
 	#settings.setSetting('test1','hello test1')
 	#var = settings.getSetting('test2')
 	#xbmc.log('EMAD11 ' + str(var) + ' 11EMAD',level=xbmc.LOGNOTICE)

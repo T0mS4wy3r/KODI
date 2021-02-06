@@ -239,7 +239,6 @@ def SHOW_MESSAGES(showDialogs):
 	if not newfile: newfile = '""'
 	messages = EVAL(newfile)
 	messages = list(messages)
-	settings = xbmcaddon.Addon(id=addon_id)
 	for messageID,messageType,message in messages:
 		if messageID=='0': privs += message+'::'
 	privs = privs.strip('::')

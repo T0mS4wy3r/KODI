@@ -54,7 +54,6 @@ def LIST_FILES():
 	return
 
 def GET_DOWNLOAD_FOLDER():
-	settings = xbmcaddon.Addon(id=addon_id)
 	downloadpath = settings.getSetting('download.path')
 	if downloadpath!='': return downloadpath
 	settings.setSetting('download.path',addoncachefolder)
@@ -67,14 +66,13 @@ def CHANGE_FOLDER():
 		newpath = DIALOG_BROWSESINGLE(3,'مكان تحميل ملفات الفيديو','local','',False,True,downloadpath)
 		yes = DIALOG_YESNO(newpath,'هذا هو المكان الجديد لتخزين ملفات الفيديو التي تحملها انت باستخدام هذا البرنامج . هل تريد استخدامه بدلا من المكان القديم ؟','','','كلا','نعم')
 		if yes:
-			settings = xbmcaddon.Addon(id=addon_id)
 			settings.setSetting('download.path',newpath)
 			DIALOG_OK('رسالة من المبرمج','تم تغيير مكان تخزين الملفات المحملة')
 	#if not change or not yes: DIALOG_OK('رسالة من المبرمج','تم الغاء العملية')
 	return
 
 def DOWNLOAD_VIDEO(url,videofiletype):
-	DIALOG_NOTIFICATION('يرجى الانتظار','جاري فحص ملف التحميل',sound=False)
+	DIALOG_NOTIFICATION('يرجى الانتظار','جاري فحص ملف التحميل')
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to download the video file   URL: [ '+url+' ]')
 	DIALOG_OK(url,videofiletype)
 	if videofiletype=='':
@@ -87,7 +85,6 @@ def DOWNLOAD_VIDEO(url,videofiletype):
 		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Video type/extension is not supported   URL: [ '+url+' ]')
 		return
 	#DIALOG_OK('free space',str(freediskspace_MB))
-	settings = xbmcaddon.Addon(id=addon_id)
 	filename = menu_label.replace('  ',' ').replace(' ','_')
 	filename = 'file_'+str(int(now))[-4:]+'_'+filename+videofiletype
 	downloadpath = GET_DOWNLOAD_FOLDER()

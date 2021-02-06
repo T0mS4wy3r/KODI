@@ -32,7 +32,7 @@ def BLOCK_MESSAGE():
 
 def MENU(website=''):
 	if website=='':
-		BLOCK_MESSAGE()
+		#BLOCK_MESSAGE()
 		addMenuItem('link',website+'___'+menu_name+'[COLOR FFFFFF00]'+'معلومة مهمة جدا'+'[/COLOR]','',248)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		addMenuItem('folder',menu_name+'بحث في الموقع','',249,'','','_REMEMBERRESULTS_')
@@ -192,7 +192,7 @@ def PLAY(url):
 def FILTERS_MENU(url,filter):
 	filter = filter.replace('_FORGETRESULTS_','')
 	#DIALOG_OK(filter,url)
-	menu_list = ['section','rating','category','year']
+	menu_list = ['section','category','year','rating']
 	if '?' in url: url = url.split('?')[0]
 	type,filter = filter.split('___',1)
 	if filter=='': filter_options,filter_values = '',''

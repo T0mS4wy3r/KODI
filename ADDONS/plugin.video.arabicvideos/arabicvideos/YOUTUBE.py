@@ -5,8 +5,6 @@ script_name='YOUTUBE'
 menu_name='_YUT_'
 website0a = WEBSITES[script_name][0]
 
-settings = xbmcaddon.Addon(id=addon_id)
-
 #headers = '' 
 #headers = {'User-Agent':''}
 
@@ -26,7 +24,8 @@ def MAIN(mode,url,text,type,page):
 	return results
 
 def MENU():
-	#addMenuItem('folder',menu_name+'TEST YOUTUBE',website0a+'/channel/UCvcrw7HMdNqSb992Xk4k1dg',144)
+	#url = 'https://www.youtube.com/playlist?list=PLD3XcXKBUszlBtMSwFfZZVTLPKzzprxOS'
+	#addMenuItem('folder',menu_name+'TEST YOUTUBE',url,144)
 	#addMenuItem('folder',menu_name+'older playlist not listing newer plyalist','https://www.youtube.com/watch?v=XFpqeYzXZfk&list=RDQM63vHjP0heTs',144)
 	#addMenuItem('folder',menu_name+'موقع فارغ',website0a+'/channel/UCtOvonj4GyopMTMBa23qUcw',144)
 	addMenuItem('folder',menu_name+'بحث في الموقع','',149,'','','_REMEMBERRESULTS_')
@@ -139,8 +138,7 @@ def ITEMS(url,index='',visitor=''):
 		link = owner[0][1]
 		if 'http' not in link: link = website0a+link
 		#if '/playlists' in url and '/channel/' not in url and '/c/' not in url and '/user/' not in url:
-		if 'list=' in url:
-			addMenuItem('folder',menu_name+name,link,144)
+		if 'list=' in url: addMenuItem('folder',menu_name+ownerNAME,link,144)
 	#if cc=='': CHANNEL_ITEMS_OLD(url,html) ; return
 	not_entry_urls = ['/search','/videos','/channels','/playlists','/featured','ss=','ctoken=','key=','bp=','shelf_id=']
 	channels_entry_page = not any(value in url for value in not_entry_urls)
@@ -357,14 +355,14 @@ def INSERT_ITEM_TO_MENU(item,url='',index='',visitor=''):
 	elif '/feed/trending' in link and 'bp=' not in link: return #addMenuItem('folder',menu_name+title,link,146)
 	elif title=='': return
 	elif live!='': addMenuItem('live',menu_name+live+title,link,143,img)
-	elif 'watch?v=' in link:
-		if 'list=' in link and 'index=' not in link:
-			addMenuItem('folder',menu_name+'LIST'+count+':  '+title,link,144,img)
-		else: addMenuItem('video',menu_name+title,link,143,img,duration)
 	elif 'list=' in link and 'index=' not in link and 't=0' not in link:
 		listID = re.findall('list=(.*?)&',link+'&',re.DOTALL)
 		link = website0a+'/playlist?list='+listID[0]
 		addMenuItem('folder',menu_name+'LIST'+count+':  '+title,link,144,img)
+	elif 'watch?v=' in link:
+		if 'list=' in link and 'index=' not in link:
+			addMenuItem('folder',menu_name+'LIST'+count+':  '+title,link,144,img)
+		else: addMenuItem('video',menu_name+title,link,143,img,duration)
 	else:
 		type = ''
 		if link=='': link = url
