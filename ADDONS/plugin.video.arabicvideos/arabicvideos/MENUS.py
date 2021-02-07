@@ -231,8 +231,7 @@ def SHOW_MESSAGES(showDialogs):
 	color,privs = 'white',''
 	url = WEBSITES['PYTHON'][3]
 	payload = {'user':dummyClientID(32)}
-	allow_dns_fix = True
-	allow_proxy_fix = showDialogs
+	allow_dns_fix,allow_proxy_fix = showDialogs,showDialogs
 	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',url,payload,'','',False,'MENUS-SHOW_MESSAGES-1st',allow_dns_fix,allow_proxy_fix)
 	if not response.succeeded: return color
 	newfile = response.content

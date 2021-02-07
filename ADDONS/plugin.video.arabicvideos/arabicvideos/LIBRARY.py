@@ -139,7 +139,7 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'ARABSEED'		:['https://arabseed.net']
 			,'ALKAWTHAR'	:['https://www.alkawthartv.com']
 			,'ALMAAREF'		:['http://www.almaareftv.com/old','http://www.almaareftv.com']
-			,'ARBLIONZ'		:['https://arblionz.com']	#,'http://www.arblionz.org']
+			,'ARBLIONZ'		:['https://arblionz.art'] # 'https://arblionz.com','https://arblionz.net','http://www.arblionz.org']
 			,'BOKRA'		:['http://shoofvod.com']	#,'https://shahidlive.co']
 			,'DAILYMOTION'	:['https://www.dailymotion.com','https://graphql.api.dailymotion.com']
 			,'FAJERSHOW'	:['https://show.alfajertv.com']   #,'https://fajer.show']
@@ -675,10 +675,13 @@ def EXTRACT_KODI_PATH(path=''):
 	return type,name,url,mode,image,page,text,context
 
 def OPENURL_REQUESTS_CACHED(expiry,method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix=True,allow_proxy_fix=True):
+	#LOG_THIS('NOTICE',LOGGING(script_name)+'   URL: [ '+url+' ]   Data: [ '+str(data)+' ]   Headers: [ '+str(headers)+' ]')
 	#response = OPENURL_REQUESTS_PROXIES(method,url,data,headers,allow_redirects,showDialogs,source)
 	if expiry==0: return OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix,allow_proxy_fix)
 	response = READ_FROM_SQL3('OPENURL_REQUESTS',[method,url,data,headers,allow_redirects,showDialogs,source])
-	if response: return response
+	if response:
+		LOG_THIS('NOTICE',LOGGING(script_name)+'   URL: [ '+url+' ]   Data: [ '+str(data)+' ]   Headers: [ '+str(headers)+' ]')
+		return response
 	#DIALOG_OK('start',url)
 	response = OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix,allow_proxy_fix)
 	#DIALOG_OK('finish',url)
@@ -766,11 +769,7 @@ def OPENURL_CACHED(expiry,url,data,headers,showDialogs,source):
 	else:
 		method = 'POST'
 		data = unquote(data)
-		items = data.split('&')
-		data = {}
-		for item in items:
-			key,value = item.split('=',1)
-			data[key] = value
+		dummy,data = URLDECODE(data)
 	response = OPENURL_REQUESTS_CACHED(expiry,method,url,data,headers,True,showDialogs,source)
 	html = str(response.content)
 	return html
@@ -823,6 +822,8 @@ def USE_DNS_SERVER(connection,dns_server):
 	return original_create_connection
 
 def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix=True,allow_proxy_fix=True):
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   URL: [ '+url+' ]   Data: [ '+str(data)+' ]   Headers: [ '+str(headers)+' ]')
+	#DIALOG_OK(source,str(allow_dns_fix)+'  '+str(allow_proxy_fix))
 	if data=='': data = {}
 	if headers=='': headers = {'User-Agent':None}
 	if allow_redirects=='': allow_redirects = True
@@ -833,13 +834,15 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 	dns_server = settings.getSetting('dns.server')
 	dns_status = settings.getSetting('dns.status')
 	proxy_status = settings.getSetting('proxy.status')
+	"""
 	if 'google-analytics' in url2:
 		showDialogs = False
-		allow_dns_fix = True
-		allow_proxy_fix = True
-		proxy_status = 'AUTO'
-		dns_status = 'AUTO'
-		dns_server = DNS_SERVERS[0]
+		#dns_server = DNS_SERVERS[0]
+		#proxy_status = 'AUTO'
+		#dns_status = 'AUTO'
+		#allow_dns_fix = True
+		#allow_proxy_fix = True
+	"""
 	if dns_status in ['','ALWAYS','ASK']:
 		dns_status = 'AUTO'
 		dns_server = DNS_SERVERS[0]
@@ -1032,11 +1035,19 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 	elif original_request and not response2.succeeded and 'google-analytics' in url2:
 		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed sending analytics event   URL: [ '+url2+' ]')
 	if original_request and response2.succeeded and 'pythonanywhere' in url2:
-		#DIALOG_OK(source,str(showDialogs))
+		#DIALOG_OK(str(showDialogs),str(allow_dns_fix)+'  '+str(allow_proxy_fix))
 		#LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Sending analytics event   URL: [ '+url2+' ]')		
-		response3 = SEND_ANALYTICS_EVENT('PYTHON')
+		response3 = SEND_ANALYTICS_EVENT('PYTHON',allow_dns_fix,allow_proxy_fix)
 	#LOG_THIS('NOTICE',LOGGING(script_name)+'   Finished   Success: [ '+str(response2.succeeded)+' ]   URL: [ '+url2+' ]')
 	return response2
+
+def SEND_ANALYTICS_EVENT(script_name,allow_dns_fix=True,allow_proxy_fix=True):
+	#DIALOG_OK('SEND_ANALYTICS_EVENT',str(allow_dns_fix)+'  '+str(allow_proxy_fix))
+	randomNumber = str(random.randrange(111111111111,999999999999))
+	url = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+script_name+'&el='+str(kodi_version)+'&z='+randomNumber
+	response = OPENURL_REQUESTS('GET',url,'','','',False,'LIBRARY-SEND_ANALYTICS_EVENT-1st',allow_dns_fix,allow_proxy_fix)
+	#DIALOG_OK(url,response.content)
+	return response
 
 def EXTRACT_URL(url):
 	allitems = url.split('||')
@@ -1509,7 +1520,7 @@ def READ_FROM_SQL3(table,column):
 		data = cPickle.loads(text)
 		#data = eval(data)
 		column = str(column)[0:200].replace('\n','\\n').replace('\r','\\r')
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   Cache: [ Found ]   Table: [ '+table+' ]   Column: [ '+str(column)+' ]')
+		#LOG_THIS('NOTICE',LOGGING(script_name)+'   Cache: [ Found ]   Table: [ '+table+' ]   Column: [ '+str(column)+' ]')
 	#else: LOG_THIS('NOTICE',LOGGING(script_name)+'   Cache: [ Not Found ]   Table: [ '+table+' ]   Column: [ '+str(column)+' ]')
 	return data
 
@@ -1726,13 +1737,6 @@ def PLAY_VIDEO(url3,website='',type=''):
 	#		return 'https'
 	#sys.exit()
 	return result
-
-def SEND_ANALYTICS_EVENT(script_name):
-	randomNumber = str(random.randrange(111111111111,999999999999))
-	url = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+script_name+'&el='+str(kodi_version)+'&z='+randomNumber
-	response = OPENURL_REQUESTS('GET',url,'','','',False,'LIBRARY-SEND_ANALYTICS_EVENT-1st')
-	#DIALOG_OK(url,response.content)
-	return response
 
 def SEARCH_OPTIONS(search):
 	options,showdialogs = '',True

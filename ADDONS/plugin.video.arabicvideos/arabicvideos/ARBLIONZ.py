@@ -26,7 +26,7 @@ def MENU(website=''):
 		addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARBLIONZ-MENU-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a+'/alz','',headers,True,'','ARBLIONZ-MENU-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
 	if html_blocks:
@@ -49,6 +49,7 @@ def MENU(website=''):
 	return html
 
 def TITLES(url):
+	if url==website0a: url = url+'/alz'
 	#DIALOG_OK(url,'TITLES')
 	"""
 	# for POST filter:
@@ -294,7 +295,7 @@ def SEARCH(search):
 	if search=='': search = KEYBOARD()
 	if search=='': return
 	search = search.replace(' ','+')
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARBLIONZ-SEARCH-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a+'/alz','',headers,True,'','ARBLIONZ-SEARCH-1st')
 	html = response.content#.encode('utf8')
 	html_blocks = re.findall('chevron-select(.*?)</div>',html,re.DOTALL)
 	if showdialogs and html_blocks:
@@ -340,7 +341,7 @@ def FILTERS_MENU(url,filter):
 		addMenuItem('folder',menu_name+'أظهار قائمة الفيديو التي تم اختيارها ',url2,201)
 		addMenuItem('folder',menu_name+' [[   '+filter_show+'   ]]',url2,201)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,'','ARBLIONZ-FILTERS_MENU-1st')
+	html = OPENURL_CACHED(LONG_CACHE,url+'/alz','',headers,'','ARBLIONZ-FILTERS_MENU-1st')
 	#DIALOG_TEXTVIEWER(url,html)
 	html_blocks = re.findall('AjaxFilteringData(.*?)FilterWord',html,re.DOTALL)
 	block = html_blocks[0]
