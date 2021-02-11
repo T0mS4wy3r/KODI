@@ -135,6 +135,7 @@ def SEARCH_RANDOM_VIDEOS(options):
 	return
 
 def IMPORT_SITES():
+	failed_max = 5
 	global contentsDICT
 	results = READ_FROM_SQL3('IMPORT_SECTIONS','SITES')
 	if results: contentsDICT = results ; return
@@ -142,139 +143,198 @@ def IMPORT_SITES():
 	#LOG_THIS('NOTICE','START TIMING')
 	#DIALOG_OK('','start')
 	failed = 0
-	if failed<=5:
+	failed_list = ''
+	if failed<=failed_max:
 		try:
 			import BOKRA ; html = BOKRA.MENU('BOKRA')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' BOKRA'
+	if failed<=failed_max:
 		try:
-			import MOVS4U ; html = MOVS4U.MENU('CIMACLUB')
+			import MOVS4U ; html = MOVS4U.MENU('MOVS4U')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' MOVS4U'
+	"""
+	if failed<=failed_max:
 		try:
-			import DAILYMOTION ; html = DAILYMOTION.MENU('CIMACLUB')
+			import DAILYMOTION ; html = DAILYMOTION.MENU('DAILYMOTION')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' DAILYMOTION'
+	"""
+	if failed<=failed_max:
 		try:
-			import FAJERSHOW ; html = FAJERSHOW.MENU('CIMACLUB')
+			import FAJERSHOW ; html = FAJERSHOW.MENU('FAJERSHOW')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' FAJERSHOW'
+	if failed<=failed_max:
 		try:
 			import MYCIMA ; html = MYCIMA.MENU('MYCIMA')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' MYCIMA'
+	if failed<=failed_max:
 		try:
 			import AKOAMCAM ; html = AKOAMCAM.MENU('AKOAMCAM')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' AKOAMCAM'
+	if failed<=failed_max:
 		try:
 			import AKOAM ; html = AKOAM.MENU('AKOAM')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' AKOAM'
+	if failed<=failed_max:
 		try:
 			import AKWAM ; html = AKWAM.MENU('AKWAM')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' AKWAM'
+	if failed<=failed_max:
 		try:
 			import HELAL ; html = HELAL.MENU('HELAL')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' HELAL'
+	if failed<=failed_max:
 		try:
 			import PANET ; html = PANET.MENU('PANET')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' PANET'
+	if failed<=failed_max:
 		try:
 			import ALARAB ; html = ALARAB.MENU('ALARAB')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' ALARAB'
+	if failed<=failed_max:
 		try:
 			import IFILM ; html = IFILM.MENU('IFILM_ARABIC')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' IFILM_ARABIC'
+	if failed<=failed_max:
 		try:
 			import IFILM ; html = IFILM.MENU('IFILM_ENGLISH')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' IFILM_ENGLISH'
+	if failed<=failed_max:
 		try:
 			import ALFATIMI ; html = ALFATIMI.MENU('ALFATIMI')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' ALFATIMI'
+	"""
+	if failed<=failed_max:
 		try:
 			import ALMAAREF ; html = ALMAAREF.MENU('ALMAAREF')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' ALMAAREF'
+	"""
+	if failed<=failed_max:
 		try:
 			import ARABSEED ; html = ARABSEED.MENU('ARABSEED')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' ARABSEED'
+	if failed<=failed_max:
 		try:
 			import SHOOFMAX ; html = SHOOFMAX.MENU('SHOOFMAX')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' SHOOFMAX'
+	if failed<=failed_max:
 		try:
 			import SHAHID4U ; html = SHAHID4U.MENU('SHAHID4U')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' SHAHID4U'
+	if failed<=failed_max:
 		try:
 			import ALKAWTHAR ; html = ALKAWTHAR.MENU('ALKAWTHAR')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' ALKAWTHAR'
+	if failed<=failed_max:
 		try:
 			import ARBLIONZ ; html = ARBLIONZ.MENU('ARBLIONZ')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' ARBLIONZ'
+	"""
+	if failed<=failed_max:
 		try:
 			import EGYBESTVIP ; html = EGYBESTVIP.MENU('EGYBESTVIP')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' EGYBESTVIP'
+	"""
+	if failed<=failed_max:
 		try:
 			import CIMANOW ; html = CIMANOW.MENU('CIMANOW')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' CIMANOW'
+	if failed<=failed_max:
 		try:
 			import SHIAVOICE ; html = SHIAVOICE.MENU('SHIAVOICE')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' SHIAVOICE'
+	if failed<=failed_max:
 		try:
 			import KARBALATV ; html = KARBALATV.MENU('KARBALATV')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
-	if failed<=5:
+		except:
+			failed += 1
+			failed_list += ' KARBALATV'
+	"""
+	if failed<=failed_max:
 		try:
 			import YTB_CHANNELS ; html = YTB_CHANNELS.MENU('YTB_CHANNELS')
 			if '__Error__' in html: failed += 1
-		except: failed += 1
+		except:
+			failed += 1
+			failed_list += ' YTB_CHANNELS'
+	"""
 	#import EGYBEST			;	EGYBEST.MENU('EGYBEST')
 	#import HALACIMA		;	HALACIMA.MENU('HALACIMA')
 	#import MOVIZLAND		;	MOVIZLAND.MENU('MOVIZLAND')
 	#import SERIES4WATCH	;	SERIES4WATCH.MENU('SERIES4WATCH')
 	#import YOUTUBE			;	YOUTUBE.MENU('YOUTUBE')
 	menuItemsLIST[:] = previousMenu
-	if failed>5: DIALOG_OK('رسالة من المبرمج','لديك مشكلة في اكثر من 5 مواقع من مواقع البرنامج ... وسببها قد يكون عدم وجود إنترنيت في جهازك')
-	else: WRITE_TO_SQL3('IMPORT_SECTIONS','SITES',contentsDICT,PERMANENT_CACHE)
+	if failed>failed_max: DIALOG_OK('رسالة من المبرمج','لديك مشكلة في '+str(failed)+' مواقع من مواقع البرنامج ... وسببها قد يكون عدم وجود إنترنيت في جهازك وهي:'+failed_list)
+	#else: WRITE_TO_SQL3('IMPORT_SECTIONS','SITES',contentsDICT,PERMANENT_CACHE)
 	return
 
 def IMPORT_IPTV(options):

@@ -146,6 +146,7 @@ def PLAY(url):
 		block = html_blocks[0]
 		items = re.findall('<span>(.*?)<.*?src="(.*?)"',block,re.DOTALL|re.IGNORECASE)
 		for title,link in items:
+			if link=='': continue
 			link = unquote(link)
 			if 'http' not in link: link = 'http:'+link
 			quality = re.findall('\d\d\d+',title,re.DOTALL)
@@ -167,6 +168,7 @@ def PLAY(url):
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?<span>(.*?)<.*?<p>(.*?)<',block,re.DOTALL)
 		for link,title,quality in items:
+			if link=='': continue
 			link = unquote(link)
 			title = CLEAN_STREAM_NAME(title,link)
 			link = link+'?named='+title+'__download____'+quality

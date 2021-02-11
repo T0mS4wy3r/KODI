@@ -9,13 +9,13 @@ headers = {'User-Agent':''}
 
 def PLAY(linkLIST,script_name='',type=''):
 	linkLIST = list(set(linkLIST))
+	titleLIST,linkLIST = SERVERS_cached(linkLIST,script_name)
 	count_watch = str(linkLIST).count('__watch')
 	count_download = str(linkLIST).count('__download')
 	count_others = len(linkLIST)-count_watch-count_download
 	select_header = 'مشاهدة:'+str(count_watch)+'    تحميل:'+str(count_download)+'    أخرى:'+str(count_others)
 	#DIALOG_OK(str(count_watch),str(count_download))
 	#selection = DIALOG_SELECT(select_header, linkLIST)
-	titleLIST,linkLIST = SERVERS_cached(linkLIST,script_name)
 	if len(linkLIST)==0:
 		result = 'unresolved'
 		errormsg = ''
@@ -386,7 +386,7 @@ def SERVERS_cached(linkLIST2,script_name=''):
 		return titleLIST,linkLIST
 	titleLIST,linkLIST,serversDICT = [],[],[]
 	for link in linkLIST2:
-		if link=='': continue
+		if '//' not in link: continue
 		familiar,name,type,filetype,quality = RESOLVABLE(link)
 		quality = re.findall('\d+',quality,re.DOTALL)
 		if quality:

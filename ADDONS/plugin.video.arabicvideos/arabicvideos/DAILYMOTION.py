@@ -40,12 +40,17 @@ def CHANNELS_SUBMENU(url,ownerNAME):
 		headers = response.headers
 		if 'Location' in headers.keys(): url = website0a+headers['Location']
 	ownerNAME = '[COLOR FFC89008]'+ownerNAME+'[/COLOR]'
-	ownerNAME = escapeUNICODE(ownerNAME)
+	ownerNAME = CLEAN_NAME(ownerNAME)
 	addMenuItem('folder',menu_name+' - آخر الفيديوهات'+ownerNAME,url+'/videos',408)
 	addMenuItem('folder',menu_name+' - اكثر الفيديوهات مشاهدة'+ownerNAME,url+'/videos?sort=visited',408)
 	addMenuItem('folder',menu_name+' - آخر قوائم التشغيل'+ownerNAME,url+'/playlists',407)
 	addMenuItem('folder',menu_name+' - قوائم التشغيل ابجدية'+ownerNAME,url+'/playlists?sort=alphaaz',407)
 	return
+
+def CLEAN_NAME(title):
+	title = title.rstrip('\\').strip(' ').replace('\\\\','\\')
+	title = escapeUNICODE(title)
+	return title
 
 def PLAY(url,owner):
 	import RESOLVERS
@@ -57,6 +62,7 @@ def PLAY(url,owner):
 	titleLIST2,linkLIST2 = EXTRACT_M3U8(link)
 	owner_id,owner_name = owner.split('::',1)
 	owner_url = website0a+'/'+owner_id
+	owner_name = CLEAN_NAME(owner_name)
 	titleLIST = ['[COLOR FFC89008]OWNER:  '+owner_name+'[/COLOR]']+titleLIST2
 	linkLIST = [owner_url]+linkLIST2
 	selection = DIALOG_SELECT('اختر الملف المناسب: ('+str(len(linkLIST)-1)+' ملف)',titleLIST)
@@ -95,8 +101,7 @@ def SEARCH_FOR_VIDEOS(search,page=''):
 			if '"' in ownerID: ownerID = ownerID.replace('"','')
 			if '"' in ownerNAME: ownerNAME = ownerNAME.replace('"','')
 			link = website0a+'/video/'+id
-			title = title.rstrip('\\').strip(' ')
-			title = escapeUNICODE(title)
+			title = CLEAN_NAME(title)
 			owner = ownerID+'::'+ownerNAME
 			addMenuItem('video',menu_name+title,link,403,img,duration,owner)
 		if '"hasNextPage": true,' in html:
@@ -123,8 +128,7 @@ def SEARCH_FOR_PLAYLISTS(search,page=''):
 		if '"' in count: count = count.replace('"','')
 		link = website0a+'/playlist/'+id
 		title = 'LIST'+count+':  '+name
-		title = title.rstrip('\\').strip(' ')
-		title = escapeUNICODE(title)
+		title = CLEAN_NAME(title)
 		owner = ownerID+'::'+ownerNAME
 		#DIALOG_OK('',owner)
 		addMenuItem('folder',menu_name+title,link,401,img,'',owner)
@@ -151,8 +155,7 @@ def SEARCH_FOR_CHANNELS(search,page=''):
 			if '"' in img: img = img.replace('"','')
 			link = website0a+'/'+id
 			title = 'CHNL:  '+name
-			title = title.rstrip('\\').strip(' ')
-			title = escapeUNICODE(title)
+			title = CLEAN_NAME(title)
 			addMenuItem('folder',menu_name+title,link,402,img,'',name)
 		if '"hasNextPage": true,' in html:
 			page = str(int(page)+1)
@@ -164,8 +167,8 @@ def EXTRACT_PLAYLIST(url,owner):
 	id = url.split('/')[-1]
 	ownerID,ownerNAME = owner.split('::',1)
 	link = website0a+'/'+ownerID
+	ownerNAME = CLEAN_NAME(ownerNAME)
 	title = '[COLOR FFC89008]OWNER:  '+ownerNAME+'[/COLOR]'
-	title = escapeUNICODE(title)
 	addMenuItem('folder',menu_name+title,link,402,'','',ownerNAME)
 	request = '{"operationName":"DISCOVERY_QUEUE_QUERY","variables":{"collectionXid":"myplaylistid","videoXid":"x7s7qbn"},"query":"query DISCOVERY_QUEUE_QUERY($videoXid: String!, $collectionXid: String, $device: String, $videoCountPerSection: Int) {\n  views {\n    id\n    neon {\n      id\n      sections(device: $device, space: \"watching\", followingChannelXids: [], followingTopicXids: [], watchedVideoXids: [], context: {mediaXid: $videoXid, collectionXid: $collectionXid}, first: 20) {\n        edges {\n          node {\n            id\n            name\n            groupingType\n            relatedComponent {\n              ... on Channel {\n                __typename\n                id\n                xid\n                name\n                displayName\n                logoURL(size: \"x60\")\n                logoURLx25: logoURL(size: \"x25\")\n              }\n              ... on Topic {\n                __typename\n                id\n                xid\n                name\n                names {\n                  edges {\n                    node {\n                      id\n                      name\n                      language {\n                        id\n                        codeAlpha2\n                        __typename\n                      }\n                      __typename\n                    }\n                    __typename\n                  }\n                  __typename\n                }\n              }\n              ... on Collection {\n                __typename\n                id\n                xid\n                name\n              }\n              __typename\n            }\n            components(first: $videoCountPerSection) {\n              metadata {\n                algorithm {\n                  name\n                  version\n                  uuid\n                  __typename\n                }\n                __typename\n              }\n              edges {\n                node {\n                  ... on Video {\n                    __typename\n                    id\n                    xid\n                    title\n                    duration\n                    thumbnailx60: thumbnailURL(size: \"x60\")\n                    thumbnailx120: thumbnailURL(size: \"x120\")\n                    thumbnailx240: thumbnailURL(size: \"x240\")\n                    thumbnailx720: thumbnailURL(size: \"x720\")\n                    channel {\n                      id\n                      xid\n                      accountType\n                      displayName\n                      logoURLx25: logoURL(size: \"x25\")\n                      logoURL(size: \"x60\")\n                      __typename\n                    }\n                  }\n                  ... on Channel {\n                    __typename\n                    id\n                    xid\n                    name\n                    displayName\n                    accountType\n                    logoURL(size: \"x60\")\n                  }\n                  __typename\n                }\n                __typename\n              }\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n"}'
 	request = request.replace('myplaylistid',id)
@@ -183,8 +186,7 @@ def EXTRACT_PLAYLIST(url,owner):
 			if '"' in ownerID: ownerID = ownerID.replace('"','')
 			if '"' in ownerNAME: ownerNAME = ownerNAME.replace('"','')
 			link = website0a+'/video/'+id
-			title = title.rstrip('\\').strip(' ')
-			title = escapeUNICODE(title)
+			title = CLEAN_NAME(title)
 			owner = ownerID+'::'+ownerNAME
 			addMenuItem('video',menu_name+title,link,403,img,duration,owner)
 	return
@@ -216,8 +218,7 @@ def GET_CHANNEL_PLAYLISTS(url,page=''):
 			if '"' in ownerNAME: ownerNAME = ownerNAME.replace('"','')
 			link = website0a+'/playlist/'+id
 			title = 'LIST'+count+':  '+name
-			title = title.rstrip('\\').strip(' ')
-			title = escapeUNICODE(title)
+			title = CLEAN_NAME(title)
 			owner = ownerID+'::'+ownerNAME
 			addMenuItem('folder',menu_name+title,link,401,img,'',owner)
 		if '"hasNextPage": true,' in html:
@@ -251,7 +252,7 @@ def GET_CHANNEL_VIDEOS(url,page=''):
 			if '"' in ownerID: ownerID = ownerID.replace('"','')
 			if '"' in ownerNAME: ownerNAME = ownerNAME.replace('"','')
 			link = website0a+'/video/'+id
-			title = escapeUNICODE(title)
+			title = CLEAN_NAME(title)
 			owner = ownerID+'::'+ownerNAME
 			addMenuItem('video',menu_name+title,link,403,img,duration,owner)
 		if '"hasNextPage": true,' in html:

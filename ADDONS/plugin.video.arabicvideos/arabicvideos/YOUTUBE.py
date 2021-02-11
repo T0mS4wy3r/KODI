@@ -388,7 +388,7 @@ def GET_PAGE_DATA(url,visitor='',request=''):
 		data = {}
 		data['context'] = {"client":{"hl":"ar","clientName":"WEB","clientVersion":clientversion}}
 		data = str(data)
-		response = OPENURL_REQUESTS_CACHED(NO_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
+		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
 		#DIALOG_OK(url,str(data))
 		html = response.content
 	elif 'key=' in url and visitor!='':
@@ -398,17 +398,17 @@ def GET_PAGE_DATA(url,visitor='',request=''):
 		data = {'continuation':token}
 		data['context'] = {"client":{"visitorData":visitor,"clientName":"WEB","clientVersion":clientversion}}
 		data = str(data)
-		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
+		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
 		#DIALOG_OK(url,str(data))
 		html = response.content
 	elif 'ctoken=' in url and visitor!='':
 		clientversion = settings.getSetting('youtube.clientversion')
 		headers2.update({'X-YouTube-Client-Name':'1','X-YouTube-Client-Version':clientversion})
 		headers2.update({'Cookie':'VISITOR_INFO1_LIVE='+visitor})
-		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-2nd')
+		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-2nd')
 		html = response.content
 	else:
-		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-3rd')
+		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-3rd')
 		html = response.content
 	visitorData = re.findall('"visitorData".*?"(.*?)"',html,re.DOTALL|re.I)
 	if visitorData: settings.setSetting('youtube.visitorData',visitorData[0])
@@ -451,7 +451,7 @@ def SEARCH(search):
 	search,options,showdialogs = SEARCH_OPTIONS(search)
 	if search=='': search = KEYBOARD()
 	if search=='': return
-	search = search.replace(' ','%20')
+	search = search.replace(' ','+')
 	fileterLIST_search = ['بدون فلتر']
 	fileterLIST_sort = []
 	linkLIST_search = ['']

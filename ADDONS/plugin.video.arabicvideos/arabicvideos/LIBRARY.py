@@ -102,14 +102,14 @@ lastmenufile = os.path.join(addoncachefolder,"lastmenu.lst")
 favouritesfile = os.path.join(addoncachefolder,"favourites.lst")
 dummyiptvfile = os.path.join(addoncachefolder,"dummy.iptv")
 fulliptvfile = os.path.join(addoncachefolder,"fulliptvfile.m3u")
-messagesfile = os.path.join(addoncachefolder,"messages.txt")
+messagesfile = os.path.join(addoncachefolder,"messages.lst")
 
 addonfolder = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
 iconfile = os.path.join(addonfolder,'icon.png')
 thumbfile = os.path.join(addonfolder,'thumb.png')
 fanartfile = os.path.join(addonfolder,'fanart.jpg')
 changelogfile = os.path.join(addonfolder,'changelog.txt')
-useragentfile = os.path.join(addonfolder,'resources','useragents.txt')
+useragentfile = os.path.join(addonfolder,'arabicvideos','useragents.txt')
 
 homefolder = xbmc.translatePath('special://home')
 addonsfolder = os.path.join(homefolder,'addons')
@@ -139,7 +139,7 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'ARABSEED'		:['https://arabseed.net']
 			,'ALKAWTHAR'	:['https://www.alkawthartv.com']
 			,'ALMAAREF'		:['http://www.almaareftv.com/old','http://www.almaareftv.com']
-			,'ARBLIONZ'		:['https://arblionz.art'] # 'https://arblionz.com','https://arblionz.net','http://www.arblionz.org']
+			,'ARBLIONZ'		:['https://arblionz.com'] # 'https://arblionz.art','https://arblionz.net','http://www.arblionz.org']
 			,'BOKRA'		:['http://shoofvod.com']	#,'https://shahidlive.co']
 			,'DAILYMOTION'	:['https://www.dailymotion.com','https://graphql.api.dailymotion.com']
 			,'FAJERSHOW'	:['https://show.alfajertv.com']   #,'https://fajer.show']
@@ -184,7 +184,7 @@ def MAIN():
 	LOG_THIS('NOTICE',LOGGING(script_name)+message)
 	if not os.path.exists(versionfile):
 		if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
-		CLEAN_KODI_CACHE_FOLDER([dbfile])
+		#CLEAN_KODI_CACHE_FOLDER([dbfile])
 		with open(versionfile,'w') as f: f.write('')
 		if os.path.exists(dbfile):
 			DIALOG_NOTIFICATION('تم تحديث برنامج عماد','إلى الإصدار رقم '+addon_version)
@@ -546,7 +546,7 @@ def EXIT_IF_SOURCE(source,code,reason,showDialogs,allow_dns_fix,allow_proxy_fix)
 	#condition3 = 'Blocked by 5 seconds browser check' in reason
 
 def CLEAN_KODI_CACHE_FOLDER(exceptionLIST1=[]):
-	exceptionLIST2 = [lastvideosfile,favouritesfile,dummyiptvfile,fulliptvfile]
+	exceptionLIST2 = [lastvideosfile,favouritesfile,dummyiptvfile,fulliptvfile,messagesfile]
 	exceptionLIST = exceptionLIST1+exceptionLIST2
 	#delete = DIALOG_YESNO('مسح ملفات الفيديو القديمة','سوف يتم ايضا مسح ملفات الفيديو القديمة التي انت انزلتها باستخدام هذا البرنامج . هل تريد مسحها ام لا ؟','','','كلا','نعم')
 	for filename in os.listdir(addoncachefolder):
@@ -675,12 +675,12 @@ def EXTRACT_KODI_PATH(path=''):
 	return type,name,url,mode,image,page,text,context
 
 def OPENURL_REQUESTS_CACHED(expiry,method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix=True,allow_proxy_fix=True):
-	#LOG_THIS('NOTICE',LOGGING(script_name)+'   URL: [ '+url+' ]   Data: [ '+str(data)+' ]   Headers: [ '+str(headers)+' ]')
+	#LOG_OPENURL(url,headers,data)
 	#response = OPENURL_REQUESTS_PROXIES(method,url,data,headers,allow_redirects,showDialogs,source)
-	if expiry==0: return OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix,allow_proxy_fix)
+	if expiry==NO_CACHE: return OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix,allow_proxy_fix)
 	response = READ_FROM_SQL3('OPENURL_REQUESTS',[method,url,data,headers,allow_redirects,showDialogs,source])
 	if response:
-		LOG_THIS('NOTICE',LOGGING(script_name)+'   URL: [ '+url+' ]   Data: [ '+str(data)+' ]   Headers: [ '+str(headers)+' ]')
+		LOG_OPENURL(url,headers,data)
 		return response
 	#DIALOG_OK('start',url)
 	response = OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix,allow_proxy_fix)
@@ -776,7 +776,7 @@ def OPENURL_CACHED(expiry,url,data,headers,showDialogs,source):
 
 """
 	#DIALOG_OK('OPENURL_CACHED 111','')
-	if expiry==0: return OPENURL(url,data,headers,showDialogs,source)
+	if expiry==NO_CACHE: return OPENURL(url,data,headers,showDialogs,source)
 	html = READ_FROM_SQL3('OPENURL',[url,data,headers,showDialogs,source])
 	if html: return html
 	html = OPENURL(url,data,headers,showDialogs,source)
@@ -821,11 +821,20 @@ def USE_DNS_SERVER(connection,dns_server):
 	connection.create_connection = patched_create_connection
 	return original_create_connection
 
+def LOG_OPENURL(url,headers,data):
+	headers2 = str(headers)[0:250].replace('\n','\\n').replace('\r','\\r')
+	if len(str(headers))>250: headers2 = headers2+' ...'
+	data2 = str(data)[0:250].replace('\n','\\n').replace('\r','\\r')
+	if len(str(data))>250: data2 = data2+' ...'
+	LOG_THIS('NOTICE',LOGGING(script_name)+'   URL: [ '+url+' ]   Headers: [ '+str(headers2)+' ]   Data: [ '+data2+' ]')
+	return
+
 def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,allow_dns_fix=True,allow_proxy_fix=True):
-	LOG_THIS('NOTICE',LOGGING(script_name)+'   URL: [ '+url+' ]   Data: [ '+str(data)+' ]   Headers: [ '+str(headers)+' ]')
+	LOG_OPENURL(url,headers,data)
 	#DIALOG_OK(source,str(allow_dns_fix)+'  '+str(allow_proxy_fix))
 	if data=='': data = {}
 	if headers=='': headers = {'User-Agent':None}
+	if 'User-Agent' not in headers.keys(): headers['User-Agent'] = None
 	if allow_redirects=='': allow_redirects = True
 	if showDialogs=='': showDialogs = True
 	#url = url + '||MyProxyUrl=http://188.166.59.17:8118'
@@ -854,8 +863,9 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 	if dnsurl=='': dnsurl = dns_server
 	if dnsurl==None and dns_status=='ALWAYS' and allow_dns_fix: dnsurl = dns_server
 	if 'IFILM' in source: timeout = 20
+	if 'AKWAM' in source: timeout = 20
 	elif proxyurl!=None: timeout = 10
-	else: timeout = 7
+	else: timeout = 5
 	if proxyurl!=None:
 		proxies = {"http":proxyurl,"https":proxyurl}
 		proxy_server = proxyurl
@@ -929,7 +939,7 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 	if dns_status=='ALWAYS' and allow_dns_fix: dnsurl = None
 	#LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   4444444444444444444')
 	#DIALOG_OK('1111','')
-	if not succeeded and proxyurl==None:# and 'google-analytics' not in url2:
+	if not succeeded and proxyurl==None and 'google-analytics' not in url2:
 		errortrace = traceback.format_exc()
 		sys.stderr.write(errortrace)
 	else:
@@ -1075,13 +1085,14 @@ def SERVER(url):
 def HOSTNAME(url,full=True):
 	#DIALOG_OK(url,'')
 	url = '/'+url+'/'
-	if '//' in url: host = url.split('/')[3].split(':')[0]
+	if url=='//': host = ''
+	elif '//' in url: host = url.split('/')[3].split(':')[0]
 	else: host = url.split('/')[1]
 	host = host.strip('/')
-	if not full:
+	if not full and '.' in host:
 		host2 = host.split('.')
 		length = len(host2)
-		if   length<=2: host2 = host2[0]
+		if length<=2 or 'dailymotion' in host: host2 = host2[0]
 		elif length>=3: host2 = host2[1]
 		host2 = host2.strip('/')
 		if len(host2)>1: host = host2
@@ -1233,6 +1244,8 @@ def EXTRACT_M3U8(url2,headers=''):
 		videofiletype = re.findall('(\.avi|\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',link.lower()+'&&',re.DOTALL|re.IGNORECASE)
 		if videofiletype: title = videofiletype[0][0][1:]+'  '
 		else: title = ''
+		hostname = HOSTNAME(link,False)
+		title = title+'  '+hostname+'  '
 		#line = line.lower()
 		items = line.split(',')
 		for item in items:
@@ -1468,6 +1481,8 @@ def ENABLE_RTMP(showDialogs=True):
 	return
 
 def WRITE_TO_SQL3(table,column,data,expiry):
+	status = settings.getSetting('cache.status')
+	if status=='STOP' and 'IPTV' not in table: return
 	if expiry==NO_CACHE: return
 	dataType = str(type(data))
 	#DIALOG_OK(str(data),dataType)
@@ -1503,6 +1518,8 @@ def READ_FROM_SQL3(table,column):
 	#elif table in ['OPENURL_REQUESTS']: data = dummy_object()
 	#elif table in ['SERVERS']: data = (('',''))
 	else: data = None
+	status = settings.getSetting('cache.status')
+	if status=='STOP' and 'IPTV' not in table: return data
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
 	conn.text_factory = str
@@ -1518,9 +1535,8 @@ def READ_FROM_SQL3(table,column):
 		compressed = rows[0][0]
 		text = zlib.decompress(compressed)
 		data = cPickle.loads(text)
-		#data = eval(data)
-		column = str(column)[0:200].replace('\n','\\n').replace('\r','\\r')
-		#LOG_THIS('NOTICE',LOGGING(script_name)+'   Cache: [ Found ]   Table: [ '+table+' ]   Column: [ '+str(column)+' ]')
+		#column2 = str(column)[0:200].replace('\n','\\n').replace('\r','\\r')
+		#LOG_THIS('NOTICE',LOGGING(script_name)+'   Cache: [ Found ]   Table: [ '+table+' ]   Column: [ '+column2+' ]')
 	#else: LOG_THIS('NOTICE',LOGGING(script_name)+'   Cache: [ Not Found ]   Table: [ '+table+' ]   Column: [ '+str(column)+' ]')
 	return data
 
@@ -1833,7 +1849,7 @@ def RANDOM_USERAGENT():
 	count = html.count('Mozilla')
 	#LOG_THIS('NOTICE',html)
 	#DIALOG_OK(str(count),html)
-	if '___Error___' in html or count<200:
+	if '___Error___' in html or count<100:
 		with open(useragentfile,'r') as f: text = f.read()
 	else:
 		text = re.findall('get-the-list.*?>(.*?)<',html,re.DOTALL)

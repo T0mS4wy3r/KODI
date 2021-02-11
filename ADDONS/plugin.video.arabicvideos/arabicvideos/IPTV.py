@@ -755,6 +755,8 @@ def DELETE_IPTV_FILES(show=True):
 		yes = DIALOG_YESNO('مسح ملفات IPTV','تستطيع في أي وقت الدخول إلى قائمة IPTV وجلب ملفات IPTV جديدة .. هل تريد الآن مسح الملفات القديمة المخزنة في البرنامج ؟!','','','كلا','نعم')
 		if not yes: return
 	else: yes = False
+	try: os.remove(fulliptvfile)
+	except: pass
 	try: os.remove(dummyiptvfile)
 	except: pass
 	DELETE_FROM_SQL3('IPTV_ITEMS')
