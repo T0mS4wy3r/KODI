@@ -1,4 +1,8 @@
 ﻿
+v6.0.2	2021-02-24
+Modified icon file
+
+
 v6.0.1	2021-01-01
 Added 2021 to icon image
 
