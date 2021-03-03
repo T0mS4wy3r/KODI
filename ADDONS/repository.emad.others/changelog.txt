@@ -1,4 +1,8 @@
 ﻿
+v6.0.3	2021-03-03
+Modified repository icon file
+
+
 v6.0.2	2021-02-24
 Modified icon file
 
