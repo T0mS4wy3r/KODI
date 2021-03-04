@@ -8,15 +8,11 @@
 <hr />
 <hr />
 
-
-<center>
-<div class="text-red mb-2">
+<h1 class="text-red mb-2">
 برنامج عماد للفيديوهات العربية<br />
 لا يعمل مع كودي الإصدار رقم 19<br />
 ولن يعمل إلى أن يشاء الله<br />
-</div>
-</center>
-
+</h1>
 
 <hr />
 <hr />
