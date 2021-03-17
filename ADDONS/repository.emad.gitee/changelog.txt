@@ -1,4 +1,8 @@
 ﻿
+v6.1.0	2021-03-17
+Added zombiB repository
+
+
 v6.0.3	2021-03-03
 Modified repository icon file
 
