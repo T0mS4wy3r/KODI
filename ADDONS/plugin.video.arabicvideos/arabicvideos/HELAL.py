@@ -101,7 +101,7 @@ def PLAY(url):
 	linkLIST,urlLIST = [],[]
 	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','HELAL-PLAY-1st')
 	ratingLIST = re.findall('text-shadow: none;">(.*?)<',html,re.DOTALL)
-	if RATING_CHECK(script_name,url,ratingLIST): return
+	if ratingLIST and RATING_CHECK(script_name,url,ratingLIST): return
 	html_blocks = re.findall('id="links-panel(.*?)div',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -116,7 +116,7 @@ def PLAY(url):
 	items = re.findall('data-server-src="(.*?)"',block,re.DOTALL)
 	for link in items:
 		if 'http' not in link: link = 'http:' + link
-		link = unquote(link)
+		link = UNQUOTE(link)
 		linkLIST.append(link)
 	"""
 	items = re.findall('data-server="(.*?)"',block,re.DOTALL)

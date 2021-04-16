@@ -122,7 +122,7 @@ def TITLES(url,page):
 			title = escapeUNICODE(title)
 			title = unescapeHTML(title)
 			link = website0 + link
-			img = website0 + quote(img)
+			img = website0 + QUOTE(img)
 			addMenuItem('folder',menu_name+title,link,23,img,order+'01')
 	count_items=0
 	if type=='Series': category='3'
@@ -139,7 +139,7 @@ def TITLES(url,page):
 			title = title.replace('"','')
 			count_items += 1
 			link = website0 + '/' + type + '/Content/' + id
-			img = website0 + quote(img)
+			img = website0 + QUOTE(img)
 			if type=='Film': addMenuItem('video',menu_name+title,link,24,img,order+'01')
 			else: addMenuItem('folder',menu_name+title,link,23,img,order+'01')
 	if type=='Music':
@@ -200,8 +200,8 @@ def EPISODES(url,page):
 		if lang=='fa2': title = ' - قسمت '
 		for episode,img,link,desc,name in items:
 			count_items += 1
-			img1 = website1 + quote(img)
-			link1 = website1 + quote(link)
+			img1 = website1 + QUOTE(img)
+			link1 = website1 + QUOTE(link)
 			name = escapeUNICODE(name)
 			name1 = name + title + str(episode)
 			addMenuItem('video',menu_name+name1,link1,24,img1)
@@ -212,8 +212,8 @@ def EPISODES(url,page):
 			items = re.findall('ImageAddress_S":"(.*?)".*?VoiceAddress":"(.*?)".*?Caption":"(.*?)","Title":"(.*?)"',html,re.DOTALL)
 			for img,link,name,title in items:
 				count_items += 1
-				img1 = website1 + quote(img)
-				link1 = website1 + quote(link)
+				img1 = website1 + QUOTE(img)
+				link1 = website1 + QUOTE(link)
 				name1 = name + ' - ' + title
 				name1 = name1.strip(' ')
 				name1 = escapeUNICODE(name1)
@@ -224,8 +224,8 @@ def EPISODES(url,page):
 			items = re.findall('ImageAddress_S":"(.*?)".*?Caption":"(.*?)".*?VideoAddress":"(.*?)"',html,re.DOTALL)
 			for img,title,link in items:
 				count_items += 1
-				img1 = website1 + quote(img)
-				link1 = website1 + quote(link)
+				img1 = website1 + QUOTE(img)
+				link1 = website1 + QUOTE(link)
 				name1 = title.strip(' ')
 				name1 = escapeUNICODE(name1)
 				addMenuItem('video',menu_name+name1,link1,24,img1)
@@ -237,8 +237,8 @@ def EPISODES(url,page):
 			items = re.findall('ImageAddress_S":"(.*?)".*?VoiceAddress":"(.*?)".*?Caption":"(.*?)","Title":"(.*?)"',html,re.DOTALL)
 			for img,link,name,title in items:
 				count_items += 1
-				img1 = website1 + quote(img)
-				link1 = website1 + quote(link)
+				img1 = website1 + QUOTE(img)
+				link1 = website1 + QUOTE(link)
 				name1 = name + ' - ' + title
 				name1 = name1.strip(' ')
 				name1 = escapeUNICODE(name1)
@@ -320,7 +320,7 @@ def SEARCH(url,search=''):
 					elif lang=='fa2': name = 'برنامه ها : '
 				title = name + title
 				link = url + '/' + type + '/Content/' + id
-				img = url + quote(img)
+				img = url + QUOTE(img)
 				addMenuItem('folder',menu_name+title,link,23,img,'101')
 	#else: DIALOG_OK('رسالة من المبرمج',,لا توجد نتائج للبحث')
 	return

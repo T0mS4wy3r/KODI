@@ -61,7 +61,7 @@ def SEARCH_RANDOM_VIDEOS(options):
 	headers = { 'User-Agent' : '' }
 	url = 'https://www.bestrandoms.com/random-arabic-words'
 	payload = { 'quantity' : '50' }
-	data = urllib.urlencode(payload)
+	data = URLENCODE(payload)
 	#DIALOG_OK('',str(data))
 	response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'GET',url,data,headers,'','','RANDOMS-SEARCH_RANDOM_VIDEOS-1st')
 	html = response.content
@@ -137,7 +137,7 @@ def SEARCH_RANDOM_VIDEOS(options):
 def IMPORT_SITES():
 	failed_max = 5
 	global contentsDICT
-	results = READ_FROM_SQL3('IMPORT_SECTIONS','SITES')
+	results = READ_FROM_SQL3('MISC','SITES_SECTIONS')
 	if results: contentsDICT = results ; return
 	previousMenu = menuItemsLIST[:]
 	#LOG_THIS('NOTICE','START TIMING')
@@ -151,22 +151,6 @@ def IMPORT_SITES():
 		except:
 			failed += 1
 			failed_list += ' BOKRA'
-	if failed<=failed_max:
-		try:
-			import MOVS4U ; html = MOVS4U.MENU('MOVS4U')
-			if '__Error__' in html: failed += 1
-		except:
-			failed += 1
-			failed_list += ' MOVS4U'
-	"""
-	if failed<=failed_max:
-		try:
-			import DAILYMOTION ; html = DAILYMOTION.MENU('DAILYMOTION')
-			if '__Error__' in html: failed += 1
-		except:
-			failed += 1
-			failed_list += ' DAILYMOTION'
-	"""
 	if failed<=failed_max:
 		try:
 			import FAJERSHOW ; html = FAJERSHOW.MENU('FAJERSHOW')
@@ -204,13 +188,6 @@ def IMPORT_SITES():
 			failed_list += ' AKWAM'
 	if failed<=failed_max:
 		try:
-			import HELAL ; html = HELAL.MENU('HELAL')
-			if '__Error__' in html: failed += 1
-		except:
-			failed += 1
-			failed_list += ' HELAL'
-	if failed<=failed_max:
-		try:
 			import PANET ; html = PANET.MENU('PANET')
 			if '__Error__' in html: failed += 1
 		except:
@@ -244,15 +221,6 @@ def IMPORT_SITES():
 		except:
 			failed += 1
 			failed_list += ' ALFATIMI'
-	"""
-	if failed<=failed_max:
-		try:
-			import ALMAAREF ; html = ALMAAREF.MENU('ALMAAREF')
-			if '__Error__' in html: failed += 1
-		except:
-			failed += 1
-			failed_list += ' ALMAAREF'
-	"""
 	if failed<=failed_max:
 		try:
 			import ARABSEED ; html = ARABSEED.MENU('ARABSEED')
@@ -269,34 +237,11 @@ def IMPORT_SITES():
 			failed_list += ' SHOOFMAX'
 	if failed<=failed_max:
 		try:
-			import SHAHID4U ; html = SHAHID4U.MENU('SHAHID4U')
-			if '__Error__' in html: failed += 1
-		except:
-			failed += 1
-			failed_list += ' SHAHID4U'
-	if failed<=failed_max:
-		try:
 			import ALKAWTHAR ; html = ALKAWTHAR.MENU('ALKAWTHAR')
 			if '__Error__' in html: failed += 1
 		except:
 			failed += 1
 			failed_list += ' ALKAWTHAR'
-	if failed<=failed_max:
-		try:
-			import ARBLIONZ ; html = ARBLIONZ.MENU('ARBLIONZ')
-			if '__Error__' in html: failed += 1
-		except:
-			failed += 1
-			failed_list += ' ARBLIONZ'
-	"""
-	if failed<=failed_max:
-		try:
-			import EGYBESTVIP ; html = EGYBESTVIP.MENU('EGYBESTVIP')
-			if '__Error__' in html: failed += 1
-		except:
-			failed += 1
-			failed_list += ' EGYBESTVIP'
-	"""
 	if failed<=failed_max:
 		try:
 			import CIMANOW ; html = CIMANOW.MENU('CIMANOW')
@@ -318,7 +263,63 @@ def IMPORT_SITES():
 		except:
 			failed += 1
 			failed_list += ' KARBALATV'
+	if failed<=failed_max:
+		try:
+			import MOVS4U ; html = MOVS4U.MENU('MOVS4U')
+			if '__Error__' in html: failed += 1
+		except:
+			failed += 1
+			failed_list += ' MOVS4U'
+	if failed<=failed_max:
+		try:
+			import SHAHID4U ; html = SHAHID4U.MENU('SHAHID4U')
+			if '__Error__' in html: failed += 1
+		except:
+			failed += 1
+			failed_list += ' SHAHID4U'
+	if failed<=failed_max:
+		try:
+			import EGYBEST ; html = EGYBEST.MENU('EGYBEST')
+			if '__Error__' in html: failed += 1
+		except:
+			failed += 1
+			failed_list += ' EGYBEST'
 	"""
+	if failed<=failed_max:
+		try:
+			import HELAL ; html = HELAL.MENU('HELAL')
+			if '__Error__' in html: failed += 1
+		except:
+			failed += 1
+			failed_list += ' HELAL'
+	if failed<=failed_max:
+		try:
+			import ARBLIONZ ; html = ARBLIONZ.MENU('ARBLIONZ')
+			if '__Error__' in html: failed += 1
+		except:
+			failed += 1
+			failed_list += ' ARBLIONZ'
+	if failed<=failed_max:
+		try:
+			import EGYBESTVIP ; html = EGYBESTVIP.MENU('EGYBESTVIP')
+			if '__Error__' in html: failed += 1
+		except:
+			failed += 1
+			failed_list += ' EGYBESTVIP'
+	if failed<=failed_max:
+		try:
+			import DAILYMOTION ; html = DAILYMOTION.MENU('DAILYMOTION')
+			if '__Error__' in html: failed += 1
+		except:
+			failed += 1
+			failed_list += ' DAILYMOTION'
+	if failed<=failed_max:
+		try:
+			import ALMAAREF ; html = ALMAAREF.MENU('ALMAAREF')
+			if '__Error__' in html: failed += 1
+		except:
+			failed += 1
+			failed_list += ' ALMAAREF'
 	if failed<=failed_max:
 		try:
 			import YTB_CHANNELS ; html = YTB_CHANNELS.MENU('YTB_CHANNELS')
@@ -327,14 +328,13 @@ def IMPORT_SITES():
 			failed += 1
 			failed_list += ' YTB_CHANNELS'
 	"""
-	#import EGYBEST			;	EGYBEST.MENU('EGYBEST')
 	#import HALACIMA		;	HALACIMA.MENU('HALACIMA')
 	#import MOVIZLAND		;	MOVIZLAND.MENU('MOVIZLAND')
 	#import SERIES4WATCH	;	SERIES4WATCH.MENU('SERIES4WATCH')
 	#import YOUTUBE			;	YOUTUBE.MENU('YOUTUBE')
 	menuItemsLIST[:] = previousMenu
 	if failed>failed_max: DIALOG_OK('رسالة من المبرمج','لديك مشكلة في '+str(failed)+' مواقع من مواقع البرنامج ... وسببها قد يكون عدم وجود إنترنيت في جهازك وهي:'+failed_list)
-	#else: WRITE_TO_SQL3('IMPORT_SECTIONS','SITES',contentsDICT,PERMANENT_CACHE)
+	else: WRITE_TO_SQL3('MISC','SITES_SECTIONS',contentsDICT,PERMANENT_CACHE)
 	return
 
 def IMPORT_IPTV(options):
@@ -345,9 +345,10 @@ def IMPORT_IPTV(options):
 		if '_IPTV_' in options and '_LIVE_' not in options:
 			try: IPTV.GROUPS('VOD_ORIGINAL_GROUPED','',options+'_FORGETRESULTS__REMEMBERRESULTS_')
 			except: DIALOG_OK('موقع IPTV للفيديوهات',message)
-		if '_IPTV_' in options and '_VOD_' not in options:
-			try: IPTV.GROUPS('LIVE_ORIGINAL_GROUPED','',options+'_FORGETRESULTS__REMEMBERRESULTS_')
-			except: DIALOG_OK('موقع IPTV للقنوات',message)
+		if str(contentsDICT).count('9999')>=4:
+			if '_IPTV_' in options and '_VOD_' not in options:
+				try: IPTV.GROUPS('LIVE_ORIGINAL_GROUPED','',options+'_FORGETRESULTS__REMEMBERRESULTS_')
+				except: DIALOG_OK('موقع IPTV للقنوات',message)
 	#else: EXIT_PROGRAM('RANDOMS-IMPORT_IPTV-1st')
 	return
 
@@ -357,7 +358,7 @@ def CATEGORIES_MENU(options):
 	addMenuItem('folder','تحديث هذه القائمة','',165,'','','_CREATENEW__FORGETRESULTS_'+clean_options)
 	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	if '_SITES_' in options:
-		if '_CREATENEW_' in options: DELETE_FROM_SQL3('IMPORT_SECTIONS','SITES')
+		if '_CREATENEW_' in options: DELETE_FROM_SQL3('MISC','SITES_SECTIONS')
 		IMPORT_SITES()
 		#DIALOG_OK('',str(len(menuItemsLIST)))
 		for nameonly in sorted(contentsDICT.keys()):

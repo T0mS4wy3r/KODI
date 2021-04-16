@@ -52,20 +52,6 @@ def MAIN(mode,text=''):
 	elif mode==345: ALLOW_CACHE()
 	return
 
-def ALLOW_CACHE():
-	WHAT_IS_CACHE()
-	status = settings.getSetting('cache.status')
-	if status=='': status = 'AUTO'
-	message = {}
-	message['AUTO'] = 'الكاش الأوتوماتيكي يعمل'
-	message['STOP'] = 'الكاش متوقف تماما وبالكامل'
-	yes = DIALOG_YESNO(message[status],'هل تريد استخدام الكاش الذكي الأوتوماتيكي أم تريد إيقاف الكاش بالكامل ؟!','','','إيقاف كامل','تشغيل أوتوماتيكي')
-	if yes: newstatus = 'AUTO'
-	else: newstatus = 'STOP'
-	settings.setSetting('cache.status',newstatus)
-	DIALOG_OK('',message[newstatus])
-	return
-
 def DELETE_ALL_SETTIGNS():
 	yes = DIALOG_YESNO('سؤال','هل أنت متأكد وتريد مسح وتصفير جميع إعدادات برنامج عماد للفيديوهات العربية . حيث تعود جميع الإعدادات إلى وضعية تثبيت وتنصيب البرنامج ؟','','','كلا','نعم')
 	if yes:
@@ -77,51 +63,73 @@ def DELETE_ALL_SETTIGNS():
 		else: DIALOG_OK('','للأسف فشلت عملية مسح ملف الإعدادات')
 	return
 
-def ALLOW_DNS_SERVER():
-	status = settings.getSetting('dns.status')
-	server = settings.getSetting('dns.server')
-	if status in ['','ALWAYS','ASK']:
-		status = 'AUTO'
-		settings.setSetting('dns.status',status)
-	dns = DIALOG_YESNO('سيرفر DNS الحالي هو: '+server,'اختار سيرفر ال DNS المجاني الذي تريد استخدامه !','','',DNS_SERVERS[1],DNS_SERVERS[0])
-	if dns: server = DNS_SERVERS[0]
-	else: server = DNS_SERVERS[1]
-	settings.setSetting('dns.server',server)
+def ALLOW_CACHE():
+	WHAT_IS_CACHE()
+	oldstatus = settings.getSetting('cache.status')
+	if oldstatus=='': oldstatus = 'AUTO'
 	message = {}
-	message['AUTO'] = 'سيرفر DNS الأوتوماتيكي يعمل: '+server
-	message['ASKING'] = 'سيرفر DNS سيعمل بعد السماح له: '+server
+	message['AUTO'] = 'الكاش الأوتوماتيكي يعمل'
+	message['STOP'] = 'الكاش متوقف تماما وبالكامل'
+	message['SHORT'] = 'كاش جدا قصير المدى . '+str(LIMITED_CACHE/60)+' دقيقة فقط'
+	oldmessage = message[oldstatus]
+	choice = DIALOG_THREEBUTTONS(oldmessage,'هل تريد استخدام الكاش الذكي الأوتوماتيكي أم تريد إيقاف الكاش بالكامل أم تريد كاش عمره قصير جدا ؟!','كاش '+str(LIMITED_CACHE/60)+' دقيقة','تشغيل أوتوماتيكي','إيقاف كامل')
+	if choice==0: newstatus = 'SHORT'
+	elif choice==1: newstatus = 'AUTO'
+	elif choice==2: newstatus = 'STOP'
+	else: newstatus = ''
+	if newstatus:
+		settings.setSetting('cache.status',newstatus)
+		newmessage = message[newstatus]
+		DIALOG_OK('',newmessage)
+	return
+
+def ALLOW_DNS_SERVER():
+	message = {}
+	message['AUTO'] = 'سيرفر DNS الأوتوماتيكي يعمل: '
+	message['ASKING'] = 'سيرفر DNS سيعمل بعد السماح له: '
 	message['STOP'] = 'سيرفر DNS متوقف تماما وبالكامل'
-	oldstatus = message[status]
-	yes = DIALOG_YESNO(oldstatus,'سيرفر DNS هو جهاز في الإنترنيت يقوم بتحويل أسماء المواقع والسيرفرات إلى أرقام وعند بعض الناس يقوم بحجب ومنع وحضر بعض المواقع . هل تريد تشغيل أم إيقاف سيرفر DNS ؟','','','تشغيل DNS','إيقاف DNS')
-	if yes: newstatus = 'STOP'
-	else:
-		yes = DIALOG_YESNO('','هل تريد تشغيل DNS فقط بعد موافقتك وفقط عند حدوث مشكلة أم تريد تشغيل DNS الأوتوماتيكي ؟','','','تشغيل بعد الموافقة','تشغيل أوتوماتيكي')
-		if yes: newstatus = 'AUTO'
-		else: newstatus = 'ASKING'
-	settings.setSetting('dns.status',newstatus)
-	newstatus = message[newstatus]
-	DIALOG_OK('',newstatus)
+	oldserver = settings.getSetting('dns.server')
+	oldstatus = settings.getSetting('dns.status')
+	if oldstatus in ['','ALWAYS','ASK']:
+		oldstatus = 'AUTO'
+		settings.setSetting('dns.status',oldstatus)
+	oldmessage = message[oldstatus]+oldserver
+	choice = DIALOG_THREEBUTTONS(oldmessage,'سيرفر DNS هو جهاز في الإنترنيت يقوم بتحويل أسماء المواقع والسيرفرات إلى أرقام وعند بعض الناس يقوم بحجب ومنع وحضر بعض المواقع . لتشغيل سيرفر DNS قم باختيار السيرفر المناسب أو قم بإيقافه بالكامل','تشغيل عند الموافقة','تشغيل أوتوماتيكي','إيقاف كامل')
+	if choice==0: newstatus = 'ASKING'
+	elif choice==1: newstatus = 'AUTO'
+	elif choice==2: newstatus = 'STOP'
+	if choice in [0,1]:
+		yes = DIALOG_YESNO('','أختار سيرفر DNS المناسب لك','','','سيرفر: '+DNS_SERVERS[1],'سيرفر: '+DNS_SERVERS[0])
+		if yes: newserver = DNS_SERVERS[0]
+		else: newserver = DNS_SERVERS[1]
+	elif choice==2: newserver = ''
+	else: newstatus = ''
+	if newstatus:
+		settings.setSetting('dns.status',newstatus)
+		settings.setSetting('dns.server',newserver)
+		newmessage = message[newstatus]+newserver
+		DIALOG_OK('',newmessage)
 	return
 
 def ALLOW_PROXY_SERVERS():
-	status = settings.getSetting('proxy.status')
-	if status in ['','ENABLED','DISABLED','ASK']:
-		status = 'AUTO'
-		settings.setSetting('proxy.status',status)
+	oldstatus = settings.getSetting('proxy.status')
+	if oldstatus in ['','ENABLED','DISABLED','ASK']:
+		oldstatus = 'AUTO'
+		settings.setSetting('proxy.status',oldstatus)
 	message = {}
 	message['AUTO'] = 'البروكسي الأوتوماتيكي جاهز للعمل'
 	message['ASKING'] = 'البروكسي سيعمل بعد السماح له'
 	message['STOP'] = 'البروكسي متوقف تماما وبالكامل'
-	oldstatus = message[status]
-	yes = DIALOG_YESNO(oldstatus,'البروكسي هو جهاز في الإنترنيت يعمل وسيط بين جهازك والإنترنيت . هو يستلم طلباتك ويقوم بسحبها بدلا منك ثم يبعثها لك . هل تريد تشغيل أم إيقاف البروكسي ؟','','','تشغيل البروكسي','إيقاف البروكسي')
-	if yes: newstatus = 'STOP'
-	else:
-		yes = DIALOG_YESNO('','هل تريد تشغيل البروكسي فقط بعد موافقتك وفقط عند حدوث مشكلة أم تريد تشغيل البروكسي الأوتوماتيكي ؟','','','تشغيل بعد الموافقة','تشغيل أوتوماتيكي')
-		if yes: newstatus = 'AUTO'
-		else: newstatus = 'ASKING'
-	settings.setSetting('proxy.status',newstatus)
-	newstatus = message[newstatus]
-	DIALOG_OK('',newstatus)
+	oldmessage = message[oldstatus]
+	choice = DIALOG_THREEBUTTONS(oldmessage,'البروكسي هو جهاز في الإنترنيت يعمل وسيط بين جهازك والإنترنيت . هو يستلم طلباتك ويقوم بسحبها بدلا منك ثم يبعثها لك . هل تريد تشغيل أم إيقاف البروكسي ؟','تشغيل عند الموافقة','تشغيل أوتوماتيكي','إيقاف كامل')
+	if choice==0: newstatus = 'ASKING'
+	elif choice==1: newstatus = 'AUTO'
+	elif choice==2: newstatus = 'STOP'
+	else: newstatus = ''
+	if newstatus:
+		settings.setSetting('proxy.status',newstatus)
+		newmessage = message[newstatus]
+		DIALOG_OK('',newmessage)
 	return
 
 def ARABIC_KEYBOARD(text):
@@ -148,14 +156,14 @@ def ARABIC_KEYBOARD(text):
 	return
 
 def IGNORE_LOGLINE(line):
-	#if 'Previous line repeats' in line: return True
 	if "extension '' is not currently supported" in line: return True
 	if 'Checking for Malicious scripts' in line: return True
 	if 'PVR IPTV Simple Client' in line: return True
 	if 'Unknown Video Info Key' in line: return True
 	if 'this hash function is broken' in line: return True
 	if 'uses plain HTTP for add-on downloads' in line: return True
-	if 'NOTICE: ADDON:' in line and line.endswith('installed\n'): return True
+	#if 'Previous line repeats' in line: return True
+	#if 'NOTICE: ADDON:' in line and line.endswith('installed\n'): return True
 	return False
 
 def SHOW_LOGFILE():
@@ -234,64 +242,71 @@ def GET_IPLOCATION(ip=''):
 def SEND_EMAIL(subject,message,showDialogs=True,url='',source='',text=''):
 	if '_PROBLEM_' in text: problem = True
 	else: problem = False
-	sendit,html = 1,''
-	if showDialogs:
-		sendit = DIALOG_YESNO('هل ترسل هذه الرسالة إلى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
-		if sendit==0: 
-			DIALOG_OK('رسالة من المبرمج','تم إلغاء الإرسال بناء على طلبك')
-			return ''
-	if sendit==1:
-		#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
-		kodiName = xbmc.getInfoLabel( "System.FriendlyName" )
-		message += ' \\n\\n==== ==== ==== \\nAddon Version: '+addon_version+' :\\n'
-		message += 'Email Sender: '+dummyClientID(32)+' :\\nKodi Version: '+kodi_release+' :\\n'
-		message += 'Kodi Name: '+kodiName
-		#xbmc.sleep(4000)
-		#playerTitle = xbmc.getInfoLabel( "Player.Title" )
-		#playerPath = xbmc.getInfoLabel( "Player.Filenameandpath" )
-		#if playerTitle != '': message += ' :\\nPlayer Title: '+playerTitle
-		#if playerPath != '': message += ' :\\nPlayer Path: '+playerPath
-		#DIALOG_OK(playerTitle,playerPath)
-		location = GET_IPLOCATION()
-		if location!='': message += ' :\\nLocation: '+location
-		if url!='': message += ' :\\nURL: '+url
-		if source!='': message += ' :\\nSource: '+source
-		message += ' :\\n'
-		if showDialogs: DIALOG_NOTIFICATION('جاري ألإرسال','الرجاء الانتظار')
-		logfileNEW = ''
-		if problem:
-			dataNEW,counts = [],0
-			#logfile = 'S://DOWNLOADS/6ac26462c99fc35816f3532bb17608f4-5.8.1.log'
-			size = os.path.getsize(logfile)
-			f = open(logfile,'rb')
-			if size>600100: f.seek(-600000,os.SEEK_END)
-			data = f.readlines()
-			for line in reversed(data):
-				ignore = IGNORE_LOGLINE(line)
-				if not ignore:
-					dataNEW.append(line)
-					counts += 1
-					if counts==1000: break
-			dataNEW = reversed(dataNEW)
-			logfileNEW = ''.join(dataNEW)
-			#logfileNEW = ''.join(dataNEW[-1000:])
-			#logfileNEW = logfileNEW[:102400]
-			#logfileNEW = quote(logfileNEW)
-			logfileNEW = base64.b64encode(logfileNEW)
-		url = WEBSITES['PYTHON'][2]
-		payload = { 'subject' : subject , 'message' : message , 'logfile' : logfileNEW }
-		#logfileNEW = base64.b64decode(logfileNEW)
-		#with open('S:\\00emad.log','w') as f: f.write(logfileNEW)
-		response = OPENURL_REQUESTS_CACHED(NO_CACHE,'POST',url,payload,'','','','SERVICES-SEND_EMAIL-1st')
-		html = response.content
-		result = html[0:6]
+	sendit = True
+	if not PRIVS('CTE9DS19VU0VSX'):
 		if showDialogs:
-			if result == 'Error ':
-				DIALOG_NOTIFICATION('للأسف','فشل في الإرسال')
-				DIALOG_OK('رسالة من المبرمج','خطأ وفشل في إرسال الرسالة')
-			else:
-				DIALOG_NOTIFICATION('تم الإرسال','بنجاح')
-				DIALOG_OK('Message sent','تم إرسال الرسالة بنجاح')
+			sendit = DIALOG_YESNO('هل ترسل هذه الرسالة إلى المبرمج',message.replace('\\n','\n'),'','','كلا','نعم')
+	elif showDialogs:
+		message = '\\nتم مسح الرسالة\\nتم مسح رسالة\\nتم مسح الرسالة\\nتم مسح الرسالة\\nتم مسح الرسالة'
+		sendit1 = DIALOG_YESNO('تم مسح رسالتك'+'  1/5','هل تريد إرسال رسالة فارغة','','','كلا','نعم')
+		sendit2 = DIALOG_YESNO('تم مسح رسالتك'+'  2/5','هل تريد إرسال رسالة فارغة','','','كلا','نعم')
+		sendit3 = DIALOG_YESNO('تم مسح رسالتك'+'  3/5','هل تريد إرسال رسالة فارغة','','','كلا','نعم')
+		sendit4 = DIALOG_YESNO('تم مسح رسالتك'+'  4/5','هل تريد إرسال رسالة فارغة','','','كلا','نعم')
+		sendit = DIALOG_YESNO('تم مسح رسالتك'+'  5/5','هل تريد إرسال رسالة فارغة','','','كلا','نعم')
+	if not sendit:
+		if showDialogs: DIALOG_OK('رسالة من المبرمج','تم إلغاء الإرسال بناء على طلبك')
+		return ''
+	#addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
+	kodiName = xbmc.getInfoLabel( "System.FriendlyName" )
+	message += ' \\n\\n==== ==== ==== \\nAddon Version: '+addon_version+' :\\n'
+	message += 'Email Sender: '+dummyClientID(32)+' :\\nKodi Version: '+kodi_release+' :\\n'
+	message += 'Kodi Name: '+kodiName
+	#xbmc.sleep(4000)
+	#playerTitle = xbmc.getInfoLabel( "Player.Title" )
+	#playerPath = xbmc.getInfoLabel( "Player.Filenameandpath" )
+	#if playerTitle != '': message += ' :\\nPlayer Title: '+playerTitle
+	#if playerPath != '': message += ' :\\nPlayer Path: '+playerPath
+	#DIALOG_OK(playerTitle,playerPath)
+	location = GET_IPLOCATION()
+	if location!='': message += ' :\\nLocation: '+location
+	if url!='': message += ' :\\nURL: '+url
+	if source!='': message += ' :\\nSource: '+source
+	message += ' :\\n'
+	if showDialogs: DIALOG_NOTIFICATION('جاري ألإرسال','الرجاء الانتظار')
+	logfileNEW = ''
+	if problem:
+		dataNEW,counts = [],0
+		#logfile = 'S://DOWNLOADS/6ac26462c99fc35816f3532bb17608f4-5.8.1.log'
+		size = os.path.getsize(logfile)
+		f = open(logfile,'rb')
+		if size>600100: f.seek(-600000,os.SEEK_END)
+		data = f.readlines()
+		for line in reversed(data):
+			ignore = IGNORE_LOGLINE(line)
+			if not ignore:
+				dataNEW.append(line)
+				counts += 1
+				if counts==1500: break
+		dataNEW = reversed(dataNEW)
+		logfileNEW = ''.join(dataNEW)
+		#logfileNEW = ''.join(dataNEW[-1000:])
+		#logfileNEW = logfileNEW[:102400]
+		#logfileNEW = QUOTE(logfileNEW)
+		logfileNEW = base64.b64encode(logfileNEW)
+	url = WEBSITES['PYTHON'][2]
+	payload = { 'subject' : subject , 'message' : message , 'logfile' : logfileNEW }
+	#logfileNEW = base64.b64decode(logfileNEW)
+	#with open('S:\\00emad.log','w') as f: f.write(logfileNEW)
+	response = OPENURL_REQUESTS_CACHED(NO_CACHE,'POST',url,payload,'','','','SERVICES-SEND_EMAIL-1st')
+	html = response.content
+	result = html[0:6]
+	if showDialogs:
+		if result == 'Error ':
+			DIALOG_NOTIFICATION('للأسف','فشل في الإرسال')
+			DIALOG_OK('رسالة من المبرمج','خطأ وفشل في إرسال الرسالة')
+		else:
+			DIALOG_NOTIFICATION('تم الإرسال','بنجاح')
+			DIALOG_OK('Message sent','تم إرسال الرسالة بنجاح')
 	return html
 
 def NO_ARABIC_FONTS():
@@ -325,7 +340,7 @@ def UNKNOWN_SERVERS():
 	return
 
 def PRIVATE_PUBLIC_SERVERS():
-	message = 'السيرفرات العامة هي سيرفرات خارجية وغير جيدة لان الكثير منها ممنوع أو محذوف أو خطأ بسبب حقوق الطبع وحقوق الألفية الرقمية ولا توجد طريقة لفحصها أو إصلاحها \n\n السيرفرات الخاصة هي سيرفرات يتحكم فيها الموقع الأصلي وهي جيدة نسبيا ولا توجد طريقة لفحصها أو إصلاحها \n\n الرجاء قبل الإبلاغ عن مشكلة وقبل مراسلة المبرمج افحص نفس الفيديو وافحص نفس السيرفر على الموقع الأصلي'
+	message = 'السيرفرات العامة هي سيرفرات خارجية وغير تابعة للموقع الأصلي وجميع المواقع تستخدمها وعادة تكون مجانية ومشاكلها كثيرة لان الفيديوهات فيها إما بطيئة أو ممنوعة أو محذوفة أو فيها مشكلة حقوق الملكية\n\n\nالسيرفرات الخاصة هي سيرفرات تابعة للموقع الأصلي ومستخدمة في مواقع قليلة جدا وعادة تكون مدفوعة الأجر أو يملكها الموقع الأصلي ولهذا فهي جيدة نسبيا وسريعة ومشاكلها قليلة جدا'
 	DIALOG_TEXTVIEWER_FULLSCREEN('رسالة من المبرمج',message,'big','right')
 	return
 
@@ -337,14 +352,15 @@ def SLOW_VIDES():
 	return
 
 def WHAT_IS_CACHE():
-	message2 = 'الكاش هو مخزن مؤقت للمعلومات يستخدمه البرنامج لخزن صفحات الإنترنيت وروابط الفيديوهات للوصول إليها بسرعة وبدون إنترنيت والبرنامج يمسحها أوتوماتيكيا بعد انتهاء عمرها ويمسحها أيضا عند تحديث البرنامج . أما عمر الكاش فهو في هذا البرنامج ستة أنواع :'
-	message2 += '\n\n' + 'جدا طويل المدى للصفحات الثابتة ومدته ' + str(VERY_LONG_CACHE/60/60/24) + ' يوم'
+	message2 = 'الكاش هو مخزن مؤقت للمعلومات يستخدمه البرنامج لخزن صفحات الإنترنيت وروابط الفيديوهات للوصول إليها بسرعة وبدون إنترنيت والبرنامج يمسحها أوتوماتيكيا بعد انتهاء عمرها ويمسحها أيضا عند تحديث البرنامج . أما عمر الكاش فهو في هذا البرنامج سبعة أنواع :'
+	message2 += '\n\n' + 'ثابت للصفحات التي معروف أنها لا تتغير نهائيا ومدته ' + str(PERMANENT_CACHE/60/60/24/30) + ' شهر'
+	message2 += '\n' + 'جدا طويل المدى للصفحات المفروض أنها لا تتغير ومدته ' + str(VERY_LONG_CACHE/60/60/24) + ' يوم'
 	message2 += '\n' + 'طويل المدى للصفحات التي نادرا تتغير ومدته ' + str(LONG_CACHE/60/60/24) + ' يوم'
 	message2 += '\n' + 'متوسط المدى للصفحات التي قد تتغير ومدته ' + str(REGULAR_CACHE/60/60) + ' ساعة'
 	message2 += '\n' + 'قصير المدى للصفحات التي تتغير دائما ومدته ' + str(SHORT_CACHE/60/60) + ' ساعة'
 	message2 += '\n' + 'جدا قصير المدى للصفحات التي تتغير كثيرا ومدته ' + str(VERY_SHORT_CACHE/60) + ' دقيقة'
 	message2 += '\n' + 'بدون كاش للصفحات التي تتغير بسرعة ومدته ' + str(NO_CACHE) + ' دقيقة'
-	message2 += '\n\n\n' + 'مثلا: صفحات قوائم الأفلام والمسلسلات والحلقات عمرها ' + str(REGULAR_CACHE/60/60) + ' ساعة . أما قوائم أنواع الفيديوهات فعمرها ' + str(LONG_CACHE/60/60/24) + ' أيام . أما ملفات الفيديو فعمرها ' + str(SHORT_CACHE/60/60) + ' ساعة فقط . أما فحص رقم الإصدار فعمره ' + str(VERY_SHORT_CACHE/60) + ' دقيقة . أما فحص اشتراك فعمره ' + str(NO_CACHE) + ' دقيقة'
+	message2 += '\n\n' + 'مثلا: صفحات قوائم الأفلام والمسلسلات والحلقات عمرها ' + str(REGULAR_CACHE/60/60) + ' ساعة . أما قوائم أنواع الفيديوهات فعمرها ' + str(LONG_CACHE/60/60/24) + ' أيام . أما ملفات الفيديو فعمرها ' + str(SHORT_CACHE/60/60) + ' ساعة فقط . أما فحص رقم الإصدار فعمره ' + str(VERY_SHORT_CACHE/60) + ' دقيقة . أما فحص اشتراك فعمره ' + str(NO_CACHE) + ' دقيقة'
 	DIALOG_TEXTVIEWER_FULLSCREEN('ما هو الكاش المستخدم في البرنامج',message2,'big','right')
 	return
 
@@ -496,10 +512,10 @@ def GET_LATEST_VERSION_NUMBERS(addon_id='plugin.video.arabicvideos'):
 	#url = 'https://gitee.com/emadmahdi/KODI/raw/master/addons.xml'
 	#url = 'https://raw.githubusercontent.com/emadmahdi/KODI/master/ADDONS/addons.xml'
 	addon_ver,repo_ver,repo_id,repo_url,sources,repos = '','','','',[],[]
-	sources.append(['repository.emad.gitee','https://gitee.com/emadmahdi/KODI2/raw/master/ADDONS/addons.xml'])
+	sources.append(['repository.emad','https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml'])
 	sources.append(['repository.emad.github','https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml'])
 	sources.append(['repository.emad.others','https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml'])
-	sources.append(['repository.emad','https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml'])
+	sources.append(['repository.emad.gitee','https://gitee.com/emadmahdi/KODI2/raw/master/ADDONS/addons.xml'])
 	for repo_id,repo_url in sources:
 		repo_ver,addon_ver = '',''
 		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'GET',repo_url,'','','',False,'SERVICES-GET_LATEST_VERSION_NUMBERS-1st')
@@ -512,10 +528,13 @@ def GET_LATEST_VERSION_NUMBERS(addon_id='plugin.video.arabicvideos'):
 		if repo_ver!='' and addon_ver!='': repos.append([addon_ver,repo_ver,repo_id,repo_url])
 	return repos
 
-def VERSIONS():
+def VERSIONS(allowFIX=True,showDialogs=True):
+	repos = GET_LATEST_VERSION_NUMBERS()
+	#repos = []
+	#repos.append(['8.0.2','6.0.1','repository.emad.gitee','https://gitee.com/emadmahdi/KODI2/raw/master/ADDONS/addons.xml'])
+	#repos.append(['8.0.5','6.0.1','repository.emad.github','https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml'])
 	#DIALOG_BUSY('start')
 	#DIALOG_NOTIFICATION('جاري جمع المعلومات','الرجاء الانتظار')
-	repos = GET_LATEST_VERSION_NUMBERS()
 	need_update,least_REPO_VER,highest_REPO_VER = False,'999999',''
 	installed_ADDON_VER = addon_version
 	latest_addon_version = ''
@@ -525,46 +544,45 @@ def VERSIONS():
 		installed_REPO_VER = xbmc.getInfoLabel('System.AddonVersion('+repo_id+')')
 		if installed_REPO_VER!='' and installed_REPO_VER<=least_REPO_VER: least_REPO_VER = installed_REPO_VER
 		if latest_repo_version>=highest_REPO_VER: highest_REPO_VER = latest_repo_version
-		if least_REPO_VER!='999999' or not repo_enabled or latest_addon_version>installed_ADDON_VER or latest_repo_version>installed_REPO_VER:
+		#if least_REPO_VER!='999999' or not repo_enabled or latest_addon_version>installed_ADDON_VER or latest_repo_version>installed_REPO_VER:
+		if not repo_enabled or latest_addon_version>installed_ADDON_VER or latest_repo_version>installed_REPO_VER:
 			need_update = True
 			message1 = 'الرجاء تحديث إضافات كودي لحل المشاكل'
-			message3 = '\n\n' + 'انت بحاجة لتحديث هذا البرنامج أو تحديث مخازن عماد'
+			message3 = '\n\n' + 'انت بحاجة لتحديث برنامج عماد أو تحديث مخازن عماد'
 	if not need_update:
-		message1 = 'لا توجد تحديثات للبرنامج أو المخازن حاليا'
+		message1 = 'حاليا لا يوجد تحديثات لبرنامج عماد أو مخازن عماد'
 		message3 = '\n\n' + 'الرجاء إبلاغ المبرمج عن المشكلة التي تواجهك'
 	if least_REPO_VER=='999999': installed_REPO_VER = 'لا يوجد'
 	else: installed_REPO_VER = ' '+least_REPO_VER
-	message2  = 'الإصدار الأخير للبرنامج المتوفر الآن هو :   ' + latest_addon_version
-	message2 += '\n' + 'الإصدار الذي انت تستخدمه للبرنامج هو :   ' + installed_ADDON_VER
-	message2 += '\n' + 'ألإصدار الأخير لمخازن عماد المتوفر الآن هو :   ' + highest_REPO_VER
-	message2 += '\n' + 'ألإصدار الذي انت تستخدمه لمخازن عماد هو :  ' + installed_REPO_VER
+	message2  = 'الإصدار الأخير لبرنامج عماد المتوفر الآن هو :   ' + latest_addon_version
+	message2 += '\n' + 'الإصدار الذي انت تستخدمه لبرنامج عماد هو :   ' + installed_ADDON_VER
+	message2 += '\n' + 'الإصدار الأخير لمخازن عماد المتوفر الآن هو :   ' + highest_REPO_VER
+	message2 += '\n' + 'الإصدار الذي انت تستخدمه لمخازن عماد هو :  ' + installed_REPO_VER
 	message3 += '\n\n' + 'لكي يعمل عندك التحديث الأوتوماتيكي ... يجب أن يكون لديك في كودي مخازن عماد EMAD Repositories'
-	message3 += '\n\n' + 'الموقع الرسمي الجديد للبرنامج وفيه ملف تثبيت تطبيق كودي عماد تجده في الرابط'
+	message3 += '\n\n' + 'الموقع الرسمي الجديد للبرنامج وفيه ملف تثبيت تطبيق كودي عماد تجده في'
 	message3 += '\n' + '[COLOR FFFFFF00]http://tiny.cc/kodiemad     أو     http://bit.ly/kodiemad[/COLOR]'
 	message3 += '\n\n' + 'ملفات التثبيت القديمة وملفات البرمجة تجدها في هذه الروابط'
 	message3 += '\n' + '[COLOR FFFFFF00]https://github.com/emadmahdi/KODI[/COLOR]'
 	message3 += '\n' + '[COLOR FFFFFF00]https://gitee.com/emadmahdi/KODI[/COLOR]'
-	DIALOG_TEXTVIEWER_FULLSCREEN(message1,message2+message3,'big','right')
-	#threads22 = CustomThread()
-	#threads22.start_new_thread('22',LATEST_KODI)
-	#DIALOG_NOTIFICATION('thread submitted','')
-	#time.sleep(5)
-	LATEST_KODI()
-	#DIALOG_BUSY('stop')
-	if need_update:
-		CHECK_INSTALLED_REPOSITORIES(True,repos)
-		CHECK_FOR_ADDONS_UPDATES()
-	#time.sleep(5)
-	#LATEST_KODI()
-	#threads22.wait_finishing_all_threads()
-	return
+	if showDialogs:
+		DIALOG_TEXTVIEWER_FULLSCREEN(message1,message2+message3,'big','right')
+	if allowFIX:
+		LATEST_KODI(showDialogs)
+		if need_update:
+			CHECK_INSTALLED_REPOSITORIES(showDialogs,repos)
+			CHECK_FOR_ADDONS_UPDATES(showDialogs)
+	DELETE_FROM_SQL3('MISC','VERSIONS')
+	#xbmc.executebuiltin("Container.Update("+sys.argv[0]+'?mode=260'+")")
+	xbmc.executebuiltin("Container.Refresh")
+	#if not need_update: 
+	return need_update,message1,message2
 
 def SSL_WARNING():
 	DIALOG_OK('رسالة من المبرمج','البرنامج لا يفحص شهادة التشفير عند الاتصال بالمواقع المشفرة ولهذا في حال وجود شهادة غير صحيحة أو منتهية الصلاحية أو مزيفة فان هذا لن يوقف الربط المشفر ولن يوقف عمل البرنامج')
 	WHY_IGNORE_SSL_CERTIFICATE()
 	return
 
-def LATEST_KODI():
+def LATEST_KODI(showDialogs=True):
 	#	https://kodi.tv/download/849
 	#   https://play.google.com/store/apps/details?id=org.xbmc.kodi
 	#	http://mirror.math.princeton.edu/pub/xbmc/releases/windows/win64
@@ -579,7 +597,8 @@ def LATEST_KODI():
 	message4a = 'إصدار كودي الأخير المتوفر الآن هو :   ' + latest_KODI_VER
 	message4b = 'إصدار كودي الذي انت تستخدمه هو :   ' + installed_KODI_VER
 	message4c = '[COLOR FFFFFF00]'+'البرنامج لا يعمل مع كودي إصدار 19 وما بعده'+'[/COLOR]'
-	DIALOG_OK('رسالة من المبرمج','\n\r'+message4c+'\n\r'+message4a+'\n\r'+message4b)
+	if showDialogs:
+		DIALOG_OK('رسالة من المبرمج','\n\r'+message4c+'\n\r'+message4a+'\n\r'+message4b)
 	return
 
 def TEST_ALL_WEBSITES():
@@ -645,15 +664,25 @@ def TEST_ALL_WEBSITES():
 	return
 
 def ANALYTICS_REPORT():
-	message1,message2,message3,message4,message9 = '','','','',''
+	# https://ga-dev-tools.appspot.com/request-composer
+	# https://ga-dev-tools.appspot.com/query-explorer
+	message1,message2,message3,message4,message9,message8,message10 = '','','','','','',''
 	payload,usageDICT,sortedLIST2,countsDICT = {'a':'a'},{},[],{}
-	response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'POST',WEBSITES['PYTHON'][1],payload,'','','','SERVICES-ANALYTICS_REPORT-1st')
+	url = WEBSITES['PYTHON'][1]
+	response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'POST',url,payload,'','','','SERVICES-ANALYTICS_REPORT-1st')
 	html = response.content
+	html = html.replace('United States','USA')
+	html = html.replace('United Kingdom','UK')
+	html = html.replace('United Arab Emirates','UAE')
+	html = html.replace('Saudi Arabia','KSA')
+	html = html.replace('North Macedonia','N.Macedonia')
+	html = html.replace('Western Sahara','W.Sahara')
+	html = html.replace('___','  ')
 	try: resultsLIST = eval(html)
 	except:
 		DIALOG_OK('رسالة من المبرمج','فشل في جلب محتويات تقرير الاستخدام')
 		return
-	countriesLIST,sitesLIST,usersTotal = resultsLIST
+	countriesLIST,sitesLIST,usersLIST = resultsLIST
 	countsDICT = {}
 	for site,usage,countries in sitesLIST:
 		site = site.encode('utf8')
@@ -666,13 +695,6 @@ def ANALYTICS_REPORT():
 		elif usage=='lowusage': message2 += '  '+site
 		countries = countries.encode('utf8')
 		countries = countries.strip(' ').strip(' .')
-		countries = countries.replace('___','  ')
-		countries = countries.replace('United States','USA')
-		countries = countries.replace('United Kingdom','UK')
-		countries = countries.replace('United Arab Emirates','UAE')
-		countries = countries.replace('Saudi Arabia','KSA')
-		countries = countries.replace('Western Sahara','W.Sahara')
-		countries = countries[:9999].strip(' ').strip(' .')
 		message4 += '\n[COLOR FFFFFF00]'+site+': [/COLOR]'+countries+'\n'
 	sitesLIST2,usageLIST2,countriesLIST2 = zip(*sitesLIST)
 	for site in sorted(WEBSITES.keys()):
@@ -680,11 +702,6 @@ def ANALYTICS_REPORT():
 			message3 += '  '+site
 			message4 += '\n[COLOR FFFFFF00]'+site+': [/COLOR]'+'لا يوجد'+'\n'
 	for countries,counts in countriesLIST:
-		countries = countries.replace('United States','USA')
-		countries = countries.replace('United Kingdom','UK')
-		countries = countries.replace('United Arab Emirates','UAE')
-		countries = countries.replace('Saudi Arabia','KSA')
-		countries = countries.replace('Western Sahara','W.Sahara')
 		message9 += countries+': [COLOR FFC89008]'+str(counts)+'[/COLOR]   '
 	message1 = message1.strip(' ')
 	message2 = message2.strip(' ')
@@ -705,14 +722,28 @@ def ANALYTICS_REPORT():
 	if 'INSTALL' in countsDICT.keys(): install = countsDICT['INSTALL']
 	if 'METROPOLIS' in countsDICT.keys(): metropolis = countsDICT['METROPOLIS']
 	videos_count = all-python-install-metropolis
-	message8 = '[COLOR FFFFFF00]'+str(usersTotal)+'[/COLOR]'+'أجهزة اشتغلت : '
-	message8 += '\n[COLOR FFFFFF00]'+str(videos_count)+'[/COLOR]'+'فيديوهات اشتغلت : '
-	#message8 += '\n[COLOR FFFFFF00]'+str(python)+'[/COLOR]'+'البرنامج اشتغل : '
+	dummy,devicesALL = usersLIST[0]
+	dummy,devicesUNIQUE = usersLIST[1]
+	devices = devicesALL-devicesUNIQUE
+	message10 += '\n[COLOR FFFFFF00]'+str(devicesUNIQUE)+'[/COLOR]'+'العدد الحقيقي للأجهزة : '
+	message10 += '\n[COLOR FFFFFF00]'+str(devices)+'[/COLOR]'+'باستخدام proxy أو vpn : '
+	message10 += '\n[COLOR FFFFFF00]'+str(devicesALL)+'[/COLOR]'+'العدد الكلي لجميع الأجهزة : '
+	message10 += '\n[COLOR FFFFFF00]'+str(len(usersLIST[2:]))+'[/COLOR]'+'عدد الدول التي فيها أجهزة : \n\n'
+	for country,users in usersLIST[2:]:
+		country = country.strip(' ').strip(' .')
+		country = country.encode('utf8')
+		message10 += country+': [COLOR FFC89008]'+str(users)+'[/COLOR]   '
+	#message10 += '\n.'
+	message8 += '[COLOR FFFFFF00]'+str(videos_count)+'[/COLOR]'+'فيديوهات اشتغلت : '
+	message8 += '\n[COLOR FFFFFF00]'+str(python)+'[/COLOR]'+'طلبات سيرفر بايثون : '
 	message8 += '\n[COLOR FFFFFF00]'+str(install)+'[/COLOR]'+'تثبيت تطبيق كودي عماد : '
 	message8 += '\n[COLOR FFFFFF00]'+str(metropolis)+'[/COLOR]'+'تثبيت جلد متروبولس عماد : '
 	message8 += '\n[COLOR FFFFFF00]'+str(len(countriesLIST))+'[/COLOR]'+'دول شغلت فيديوهات : '
-	message8 += '\n\n[COLOR FFFFFF00]'+'عدد الفيديوهات التي شغلها هذا البرنامج بالعالم يوم أمس (البارحة)'+'[/COLOR]\n'+message9.encode('utf8')
-	DIALOG_TEXTVIEWER_FULLSCREEN('جميع هذه الأرقام تخص أستخدام هذا البرنامج  فقط يوم أمس (البارحة)',message8,'big','center')
+	#message8 += '\n\n[COLOR FFFFFF00]'+'عدد الفيديوهات التي شغلها هذا البرنامج بالعالم يوم أمس (البارحة)'+'[/COLOR]'
+	message8 += '\n\n'+message9.encode('utf8')
+	DIALOG_TEXTVIEWER_FULLSCREEN('عدد الأجهزة التي أستخدمت هذا البرنامج بالعالم يوم أمس (البارحة)',message10,'big','center')
+	#DIALOG_TEXTVIEWER_FULLSCREEN('جميع هذه الأرقام تخص أستخدام هذا البرنامج  فقط يوم أمس (البارحة)',message8,'big','center')
+	DIALOG_TEXTVIEWER_FULLSCREEN('عدد الفيديوهات التي شغلها هذا البرنامج بالعالم يوم أمس (البارحة)',message8,'big','center')
 	DIALOG_TEXTVIEWER_FULLSCREEN('مواقع اشتغلت يوم البارحة في جميع دول العالم',message5,'big','center')
 	DIALOG_TEXTVIEWER_FULLSCREEN('أعلى الدول التي يوم البارحة استخدمت البرنامج',message4,'big','left')
 	return
@@ -745,11 +776,12 @@ def INPUTSTREAM_ADAPTIVE_SETTINGS():
 	xbmc.executebuiltin('Addon.OpenSettings(inputstream.adaptive)', True)
 	return
 
-def CHECK_FOR_ADDONS_UPDATES():
-	yes = DIALOG_YESNO('رسالة من المبرمج','برنامج كودي يقوم بعملية تحديث جميع الإضافات أوتوماتيكيا كل 24 ساعة ولكن ممكن إجراءها الآن . هل تريد تحديث جميع إضافات كودي الآن ؟','','','كلا','نعم')
-	if yes==1:
+def CHECK_FOR_ADDONS_UPDATES(showDialogs=True):
+	if not showDialogs: yes = True
+	else: yes = DIALOG_YESNO('رسالة من المبرمج','برنامج كودي يقوم بعملية تحديث جميع الإضافات أوتوماتيكيا كل 24 ساعة ولكن ممكن إجراءها الآن . هل تريد تحديث جميع إضافات كودي الآن ؟','','','كلا','نعم')
+	if yes:
 		xbmc.executebuiltin('UpdateAddonRepos')
-		DIALOG_OK('رسالة من المبرمج','تم إرسال طلب إلى برنامج كودي الذي في جهازك لكي يقوم بتحديث جميع إضافات كودي . بما فيها تحديث هذا البرنامج وتحديث مخازن عماد . يرجى إعطاء كودي 5 دقائق أو أكثر لكي ينهي عملية التحديث')
+		if showDialogs: DIALOG_OK('رسالة من المبرمج','تم إرسال طلب إلى برنامج كودي الذي في جهازك لكي يقوم بتحديث جميع إضافات كودي . بما فيها تحديث هذا البرنامج وتحديث مخازن عماد . يرجى إعطاء كودي 5 دقائق أو أكثر لكي ينهي عملية التحديث')
 	return
 
 def INSTALL_ADDON(repo_url,addon_ver,addon_id):
@@ -757,17 +789,18 @@ def INSTALL_ADDON(repo_url,addon_ver,addon_id):
 	installed_addon_version = xbmc.getInfoLabel('System.AddonVersion('+addon_id+')')
 	is_installed = (installed_addon_version!='')
 	is_enabled = (xbmc.getCondVisibility('System.HasAddon('+addon_id+')')==1)
+	#DIALOG_OK(addon_id,str(is_installed)+'\n'+str(is_enabled)+'\n'+installed_addon_version+'\n'+addon_ver)
 	if is_installed and not is_enabled:
 		result = xbmc.executeJSONRPC('{"jsonrpc":"2.0","method":"Addons.SetAddonEnabled","id":1,"params":{"addonid":"'+addon_id+'","enabled":true}}')
 		if 'OK' in result: succedded = True
-	elif not is_installed:
-		#DIALOG_OK(addon_id,str(is_installed)+'   '+str(is_enabled))
+	elif not is_installed or addon_ver>installed_addon_version:
+		#DIALOG_OK(addon_id,'installing version: '+addon_ver)
 		zipfile_url = repo_url.replace('addons.xml',addon_id+'/'+addon_id+'-'+addon_ver+'.zip')
 		zipfile_html = OPENURL_CACHED(LONG_CACHE,zipfile_url,'','','','SERVICES-INSTALL_ADDON-1st')
 		import zipfile,StringIO
 		stream = StringIO.StringIO(zipfile_html)
 		zf = zipfile.ZipFile(stream)
-		zf.extractall(addonsfolder)
+		zf.extractall(useraddonsfolder)
 		time.sleep(1)
 		xbmc.executebuiltin('UpdateLocalAddons')
 		time.sleep(1)
@@ -783,6 +816,7 @@ def INSTALL_ALL_REPOSITORIES(repos='',highest_latest_repo_version='999999'):
 		installed_repo_version = xbmc.getInfoLabel('System.AddonVersion('+repo_id+')')
 		#DIALOG_OK(repo_id,str(highest_latest_repo_version)+'   '+str(installed_repo_version))
 		if installed_repo_version<=highest_latest_repo_version:
+			#DIALOG_OK(repo_url,str(repo_ver)+'\n'+str(repo_id))
 			succedded = INSTALL_ADDON(repo_url,repo_ver,repo_id)
 			result = result and succedded
 	return result

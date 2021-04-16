@@ -30,7 +30,7 @@ def MENU(website=''):
 		addMenuItem('folder',menu_name+'بحث عن آخر الفيديوهات','',409,'','videos?sortBy=RECENT','_REMEMBERRESULTS_')
 		addMenuItem('folder',menu_name+'بحث عن الفيديوهات الأكثر مشاهدة','',409,'','videos?sortBy=VIEW_COUNT','_REMEMBERRESULTS_')
 		addMenuItem('folder',menu_name+'بحث عن قوائم التشغيل','',409,'','playlists','_REMEMBERRESULTS_')
-		addMenuItem('folder',menu_name+'بحث عن القنوات','',409,'','channels','_REMEMBERRESULTS_')
+		addMenuItem('folder',menu_name+'بحث عن قنوات','',409,'','channels','_REMEMBERRESULTS_')
 	return
 
 def CHANNELS_SUBMENU(url,ownerNAME):

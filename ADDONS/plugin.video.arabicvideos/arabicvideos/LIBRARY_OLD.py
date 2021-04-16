@@ -6,7 +6,7 @@ def openURL_OLD(url,data='',headers='',showDialogs=True,source=''):
 	proxies,timeout = {},40
 	url2,proxyurl,dnsurl,sslurl = EXTRACT_URL(url)
 	#DIALOG_OK(url2,'')
-	#url2 = quote(url2)
+	#url2 = QUOTE(url2)
 	html,code,reason,finalURL = None,None,None,url2
 	if dnsurl!=None:
 		import socket
@@ -208,8 +208,8 @@ def openURL_WEBPROXYTO(url,data='',headers='',showDialogs=True,source=''):
 	else: headers3 = headers
 	if 'Cookie' in headers3: headers3['Cookie'] += ';' + cookies2
 	else: headers3['Cookie'] = cookies2
-	html = OPENURL_CACHED(NO_CACHE,'http://webproxy.to/browse.php?u='+quote(url)+'&b=128',data,headers3,showDialogs,'LIBRARY-openURL_WEBPROXYTO-2nd')
-	html = unquote(html).replace('/browse.php?u='+url,'').replace('/browse.php?u=','').replace('&amp;b=128','')
+	html = OPENURL_CACHED(NO_CACHE,'http://webproxy.to/browse.php?u='+QUOTE(url)+'&b=128',data,headers3,showDialogs,'LIBRARY-openURL_WEBPROXYTO-2nd')
+	html = UNQUOTE(html).replace('/browse.php?u='+url,'').replace('/browse.php?u=','').replace('&amp;b=128','')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	if '<!-- CONTENT START -->'.lower() in html.lower() or '___Error___' in html:
 		source = 'LIBRARY-openURL_WEBPROXYTO-4th'
@@ -230,9 +230,9 @@ def openURL_KPROXYCOM(url,data='',headers='',showDialogs=True,source=''):
 	KP_DAT2 = cookies['KP_DAT2__']
 	cookies2 = 'KP_DAT2__=' + KP_DAT2
 	headers2 = { 'Cookie' : cookies2 }
-	#payload = { 'page' : quote(url) }
-	#data2 = urllib.urlencode(payload)
-	html2 = OPENURL_CACHED(VERY_SHORT_CACHE,'http://kproxy.com/doproxy.jsp?page='+quote(url),'',headers2,False,'LIBRARY-openURL_KPROXYCOM-2nd')
+	#payload = { 'page' : QUOTE(url) }
+	#data2 = URLENCODE(payload)
+	html2 = OPENURL_CACHED(VERY_SHORT_CACHE,'http://kproxy.com/doproxy.jsp?page='+QUOTE(url),'',headers2,False,'LIBRARY-openURL_KPROXYCOM-2nd')
 	proxyURL = re.findall('url=(.*?)"',html2,re.DOTALL)
 	if proxyURL:
 		proxyURL = proxyURL[0]
@@ -285,7 +285,7 @@ def OPENURL_CACHED_OLD(cacheperiod,url,data='',headers='',showDialogs=True,sourc
 	#url = url+'||MyProxyUrl=http://41.33.212.68:4145'
 	#cacheperiod = 0
 	#t1 = time.time()
-	#DIALOG_OK(unquote(url),source+'     cache(hours)='+str(cacheperiod/60/60))
+	#DIALOG_OK(UNQUOTE(url),source+'     cache(hours)='+str(cacheperiod/60/60))
 	#nowTEXT = time.ctime(now)
 	#xbmc.log(LOGGING(script_name)+'   opening url   Source:['+source+']   URL: [ '+url+' ]', level=xbmc.LOGNOTICE)
 	#xbmc.log('WWWW: 1111:', level=xbmc.LOGNOTICE)
@@ -514,7 +514,7 @@ def CLEAN_EPSIODE_NAME(title):
 items = re.findall('getVideoPlayer\(\'(.*?)\'',block,re.DOTALL)
 for server in items:
 	payload = { 'Ajax' : '1' , 'art' : artID , 'server' : server }
-	data = urllib.urlencode(payload)
+	data = URLENCODE(payload)
 	#dataLIST.append(data)
 	t = threading.Thread(target=linkFUNC,args=(data,linkLIST))
 	t.start()

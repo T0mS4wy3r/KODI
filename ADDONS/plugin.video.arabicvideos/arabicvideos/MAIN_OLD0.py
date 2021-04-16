@@ -65,7 +65,7 @@ if mode0==266:
 	xbmc.executebuiltin("Container.Refresh")
 	EXIT_PROGRAM('MAIN-MAIN-2nd',False)
 previous_path = xbmc.getInfoLabel('ListItem.FolderPath')
-previous_path = unquote(previous_path)
+previous_path = UNQUOTE(previous_path)
 if mode0==262:
 	if 'text=' in previous_path:
 		search = previous_path.split('text=')[1]

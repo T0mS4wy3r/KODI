@@ -157,7 +157,7 @@ def PROGRAMS():
 def LIVE():
 	html = OPENURL_CACHED(LONG_CACHE,'http://live.almaaref.tv','',headers,'','ALMAAREF-LIVE-1st')
 	items = re.findall('sourceURL":"(.*?)"',html,re.DOTALL)
-	url = unquote(items[0])
+	url = UNQUOTE(items[0])
 	#DIALOG_OK(url,str(html))
 	PLAY_VIDEO(url,script_name,'live')
 	return

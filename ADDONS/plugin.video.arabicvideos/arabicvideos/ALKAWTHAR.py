@@ -200,7 +200,7 @@ def SEARCH(search,url=''):
 		#search = search.replace(' ','+')
 		#search = '-tag docs OR films OR series OR episode OR episodes OR category OR news mp4 '+search
 		search = '"mp4" '+search
-		search = quote(search)
+		search = QUOTE(search)
 		url = website0a+'/search?q='+search
 		html = OPENURL_CACHED(SHORT_CACHE,url,'','',True,'ALKAWTHAR-SEARCH-1st')
 		#with open('S:\\emad1.html', 'w') as f: f.write(html)

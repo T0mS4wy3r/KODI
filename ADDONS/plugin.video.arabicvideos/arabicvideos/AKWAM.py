@@ -9,7 +9,7 @@ website0a = WEBSITES[script_name][0]
 #proxy = '||MyProxyUrl=https://159.203.87.130:3128'
 #proxy = '||MyProxyUrl='+PROXIES[6][1]
 proxy = ''
-ignoreLIST = ['برامج','ألعاب','المصارعة الحرة','الأجهزة اللوحية','الكورسات التعليمية','برامج التصميم','العاب قتال','العاب الكمبيوتر PC','البرامج','قيامة عثمان','الألعاب','الموقع القديم','اضيف حديثاً']
+ignoreLIST = ['برامج','ألعاب','المصارعة الحرة','الأجهزة اللوحية','الكورسات التعليمية','برامج التصميم','العاب قتال','العاب الكمبيوتر PC','البرامج','قيامة عثمان','الألعاب','الموقع القديم','اضيف حديثاً','القران الكريم','اسلاميات و اناشيد','الكتب و الابحاث','الصور و الخلفيات']
 
 def MAIN(mode,url,text):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
@@ -33,15 +33,16 @@ def BLOCK_MESSAGE():
 def MENU(website=''):
 	if website=='':
 		#BLOCK_MESSAGE()
-		addMenuItem('link',website+'___'+menu_name+'[COLOR FFFFFF00]'+'معلومة مهمة جدا'+'[/COLOR]','',248)
-		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+		#addMenuItem('link',website+'___'+menu_name+'[COLOR FFFFFFFF]'+'معلومة مهمة جدا'+'[/COLOR]','',248)
+		#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 		addMenuItem('folder',menu_name+'بحث في الموقع','',249,'','','_REMEMBERRESULTS_')
 		addMenuItem('folder',website+'___'+menu_name+'فلتر محدد',website0a,246)
 		addMenuItem('folder',website+'___'+menu_name+'فلتر كامل',website0a,247)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#addMenuItem('folder',website+'___'+menu_name+'المزيد',website0a,242,'','','more')
 	#addMenuItem('folder',website+'___'+menu_name+'الاخبار',website0a,242,'','','news')
-	html = OPENURL_CACHED(REGULAR_CACHE,website0a,'',headers,'','AKWAM-MENU-1st')
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',website0a,'',headers,'','','AKWAM-MENU-1st')
+	html = response.content
 	url2 = re.findall('recently-container.*?href="(.*?)"',html,re.DOTALL)
 	if url2: url2 = url2[0]
 	else: url2 = website0a
@@ -50,6 +51,8 @@ def MENU(website=''):
 	if url2: url2 = url2[0]
 	else: url2 = website0a
 	addMenuItem('folder',website+'___'+menu_name+'المميزة',url2,241,'','','featured')
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	"""
 	html_blocks = re.findall('main-categories-list(.*?)main-categories-list',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -57,6 +60,21 @@ def MENU(website=''):
 		for link,title in items:
 			if title not in ignoreLIST: addMenuItem('folder',menu_name+title,link,241)
 		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	"""
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url2,'',headers,'','','AKWAM-MENU-2nd')
+	html2 = response.content
+	html_blocks = re.findall('class="header-title.*?href="(.*?)".*?>(.*?)<(.*?)</div>.</div>',html2,re.DOTALL)
+	if html_blocks:
+		for link,title,block in html_blocks:
+			if 'section=' not in block: continue
+			if title not in ignoreLIST: addMenuItem('folder',menu_name+title,link,241)
+			items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
+			for link2,title2 in items:
+				link3 = unescapeHTML(link2)
+				if title in ['مسلسلات','أفلام']: title3 = title+' '+title2
+				else: title3 = title2
+				if title2 not in ignoreLIST: addMenuItem('folder',menu_name+title3,link3,241)
+			if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('class="categories-box(.*?)<footer',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -64,7 +82,7 @@ def MENU(website=''):
 		for link,title in items:
 			link = unescapeHTML(link)
 			if title not in ignoreLIST: addMenuItem('folder',menu_name+title,link,241)
-	return html
+	return
 
 def FILTERS_DEFINED(website=''):
 	html = OPENURL_CACHED(LONG_CACHE,website0a,'',headers,'','AKWAM-MENU-1st')
@@ -145,12 +163,12 @@ def EPISODES(url):
 	return
 
 def PLAY(url):
-	BLOCK_MESSAGE()
+	#BLOCK_MESSAGE()
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	#with open('S:\\emad.html', 'w') as f: f.write(html)
 	html = OPENURL_CACHED(LONG_CACHE,url,'',headers,True,'AKWAM-PLAY-1st')
 	ratingLIST = re.findall('class="badge.*?>.*?(\w*).*?<',html,re.DOTALL)
-	if RATING_CHECK(script_name,url,ratingLIST): return
+	if ratingLIST and RATING_CHECK(script_name,url,ratingLIST): return
 	buttons = re.findall('li><a href="#(.*?)".*?>(.*?)<',html,re.DOTALL)
 	#buttons = (['',''],['',''])
 	linkLIST,titleLIST,blocks,qualities = [],[],[],[]
@@ -208,7 +226,7 @@ def FILTERS_MENU(url,filter):
 		url2 = url+'?'+clean_filter
 	elif type=='FILTERS':
 		filter_show = RECONSTRUCT_FILTER(filter_options,'modified_values')
-		filter_show = unquote(filter_show)
+		filter_show = UNQUOTE(filter_show)
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'all')
 		if filter_values=='': url2 = url
 		else: url2 = url+'?'+filter_values
@@ -276,7 +294,7 @@ def RECONSTRUCT_FILTER(filters,mode):
 	for key in url_filter_list:
 		if key in filtersDICT.keys(): value = filtersDICT[key]
 		else: value = '0'
-		#if '%' not in value: value = quote(value)
+		#if '%' not in value: value = QUOTE(value)
 		if mode=='modified_values' and value!='0': new_filters = new_filters+' + '+value
 		elif mode=='modified_filters' and value!='0': new_filters = new_filters+'&'+key+'='+value
 		elif mode=='all': new_filters = new_filters+'&'+key+'='+value

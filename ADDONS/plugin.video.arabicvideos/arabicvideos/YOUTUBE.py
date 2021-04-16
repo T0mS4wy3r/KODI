@@ -134,7 +134,7 @@ def ITEMS(url,index='',visitor=''):
 	if not owner: owner = re.findall('"videoOwner".*?"text":"(.*?)".*?"url":"(.*?)"',html,re.DOTALL)
 	if not owner: owner = re.findall('"channelMetadataRenderer":\{"title":"(.*?)".*?"ownerUrls":\["(.*?)"',html,re.DOTALL)
 	if owner:
-		ownerNAME = '[COLOR FFC89008]'+owner[0][0]+'[/COLOR]'
+		ownerNAME = '[COLOR FFC89008]OWNER:  '+owner[0][0]+'[/COLOR]'
 		link = owner[0][1]
 		if 'http' not in link: link = website0a+link
 		#if '/playlists' in url and '/channel/' not in url and '/c/' not in url and '/user/' not in url:
@@ -388,7 +388,7 @@ def GET_PAGE_DATA(url,visitor='',request=''):
 		data = {}
 		data['context'] = {"client":{"hl":"ar","clientName":"WEB","clientVersion":clientversion}}
 		data = str(data)
-		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
 		#DIALOG_OK(url,str(data))
 		html = response.content
 	elif 'key=' in url and visitor!='':
@@ -398,17 +398,17 @@ def GET_PAGE_DATA(url,visitor='',request=''):
 		data = {'continuation':token}
 		data['context'] = {"client":{"visitorData":visitor,"clientName":"WEB","clientVersion":clientversion}}
 		data = str(data)
-		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',url,data,headers2,True,True,'YOUTUBE-GET_PAGE_DATA-1st')
 		#DIALOG_OK(url,str(data))
 		html = response.content
 	elif 'ctoken=' in url and visitor!='':
 		clientversion = settings.getSetting('youtube.clientversion')
 		headers2.update({'X-YouTube-Client-Name':'1','X-YouTube-Client-Version':clientversion})
 		headers2.update({'Cookie':'VISITOR_INFO1_LIVE='+visitor})
-		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-2nd')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-2nd')
 		html = response.content
 	else:
-		response = OPENURL_REQUESTS_CACHED(VERY_SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-3rd')
+		response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers2,'','','YOUTUBE-GET_PAGE_DATA-3rd')
 		html = response.content
 	visitorData = re.findall('"visitorData".*?"(.*?)"',html,re.DOTALL|re.I)
 	if visitorData: settings.setSetting('youtube.visitorData',visitorData[0])

@@ -56,7 +56,7 @@ def ITEMS(url,html='',type='',page='0'):
 		headers2 = headers
 		headers2['Content-Type'] = 'application/x-www-form-urlencoded'
 		payload = { 'Ajax' : '1' , 'item' : type , 'offset' : page*50 }
-		data = urllib.urlencode(payload)
+		data = URLENCODE(payload)
 		block = OPENURL_CACHED(REGULAR_CACHE,url2,data,headers2,'','HALACIMA-ITEMS-2nd')
 	items = re.findall('<a href="(.*?)".*?data-original="(.*?)".*?class="content">(.*?)<',block,re.DOTALL)
 	allTitles,allLinks,allEpisodes,allImages = [],[],[],[]
@@ -137,7 +137,7 @@ def PLAY(url):
 		return link[0]
 	for server in items:
 		payload = { 'Ajax' : '1' , 'art' : artID , 'server' : server }
-		data = urllib.urlencode(payload)
+		data = URLENCODE(payload)
 		threads.start_new_thread(server,linkFUNC)
 	threads.wait_finishing_all_threads()
 	linkLIST = linkLIST + threads.resultsDICT.values()
@@ -153,7 +153,7 @@ def SEARCH(search):
 	url = website0a + '/search.html'
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 	payload = { 'name' : search , 'search' : 'البحث' }
-	data = urllib.urlencode(payload)
+	data = URLENCODE(payload)
 	html = OPENURL_CACHED(REGULAR_CACHE,url,data,headers,'','HALACIMA-SEARCH-1st')
 	#xbmc.log(html, level=xbmc.LOGNOTICE)
 	ITEMS('/category/',html)

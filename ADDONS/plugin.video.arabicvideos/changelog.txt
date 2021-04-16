@@ -1,4 +1,74 @@
 ﻿
+v8.1.0	2021-04-16
+Added EGYBEST site
+Added cache to sites sections
+Added 3 buttons custom confirm dialog
+Added 60 minutes max cache
+Added devices count report
+Added automatic versions check
+Added RESOLVEURL error handling
+Added message for KODI 19 incompatibility
+Added BOKRA play of rtmp links
+Added image to series episodes
+Added EGYBEST new player
+Added EGYBEST filters
+Added EGYBEST sub-menus
+Added FASELHD player
+Added MOVS4U new embed video link
+Added MAIN daily activities
+Added sending empty emails
+Added ARBLIONZ trending movies/series
+Added islamic dialog
+Added CIMANOW new design
+Modified MOSHAHDA resolver
+Modified main menu
+Modified BOKRA main menu
+Modified blocked menus
+Modified AKWAM main menu
+Modified the message of private/public video servers
+Modified cache explanation
+Modified IPTV account check
+Modified IPTV cache time
+Modified dns/proxy/cache dialogs & functions
+Modified favourites context menu
+Modified addon icon & thumb files
+Modified ARBLIONZ main menu
+Modified some functions for KODI 19 compatibility
+Modified IPTV tables
+Modified SQL3 compression
+Fixed updating/installing addons
+Fixed IPTV files deletion
+Fixed ARABSEED main menu
+Fixed ARABSEED poster images
+Fixed ARABSEED titles
+Fixed ALARAB player
+Fixed YOUTUBE android useragent
+Fixed MYCIMA main menu
+Fixed MYCIMA resolver
+Fixed MYCIMA episodes series name
+Fixed FAJERSHOW resolver
+Fixed OPENURL showdialog
+Fixed deleting cache folder downloaded videos
+Fixed detection of new version
+Fixed ARBLIONZ menus,trending & pagination
+Fixed clientid unknown hardware
+Fixed empty DNS situation
+Fixed upbbom resolver
+Fixed playing quoted urls
+Changed gitee timeout
+Renamed sections cache table name
+Renamed some LIBRARY functions
+Renamed some sql3 tables
+Renamed MOVIZLAND resolver to MOSHAHDA
+Removed AKWAM player blocking message
+Removed ARBLIONZ site
+Moved some functions to LIBRARY
+Moved some global imports to local functions
+Increased YOUTUBE cache time
+Decreased MYCIMA resolver cache
+Minor fixes and improvements
+
+
 v8.0.4	2021-02-11
 Added hostname to m3u8 extractor
 Added cache enable/disable

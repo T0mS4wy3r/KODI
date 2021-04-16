@@ -34,7 +34,7 @@ def ITEMS(menu,show=True):
 	menu_name='_TV'+menu+'_'
 	client = dummyClientID(32)
 	payload = { 'id' : '' , 'user' : client , 'function' : 'list' , 'menu' : menu }
-	#data = urllib.urlencode(payload)
+	#data = URLENCODE(payload)
 	#LOG_THIS('NOTICE',str(payload))
 	#LOG_THIS('NOTICE',str(data))
 	#response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST', website0a, payload, '', True,'','LIVETV-ITEMS-1st')

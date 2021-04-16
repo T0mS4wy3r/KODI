@@ -21,39 +21,42 @@ def MAIN(mode,url,text=''):
 def MENU():
 	#addMenuItem('video','Testing - watched enabled','',179)
 	#addMenuItem('live','Testing - watched disabled','',179)
-	color = SHOW_MESSAGES(False)
-	if color=='yellow': addMenuItem('link','[COLOR FFC89008]  1.  [/COLOR]'+'[COLOR FFFFFF00]لديك رسالة من المبرمج[/COLOR]','',267)
-	else: addMenuItem('link','[COLOR FFC89008]  1.  [/COLOR]'+'رسائل وأخبار من المبرمج','',267)
-	addMenuItem('link','[COLOR FFC89008]  2.  [/COLOR]'+'تقرير استخدام البرنامج','',176)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	if PRIVILEGED('__BLOCK_USER__'): return
-	addMenuItem('folder','[COLOR FFC89008]  3.  [/COLOR]'+'مواقع هذا البرنامج','',261)
-	addMenuItem('folder','[COLOR FFC89008]  4.  [/COLOR]'+'بحث بجميع المواقع','',262)
-	addMenuItem('folder','[COLOR FFC89008]  5.  [/COLOR]'+'قائمة الاقسام','',165,'','','_SITES_')
-	addMenuItem('folder','[COLOR FFC89008]  6.  [/COLOR]'+'قائمة القنوات','',100)
-	addMenuItem('folder','[COLOR FFC89008]  7.  [/COLOR]'+'قائمة العشوائية','',160)
-	addMenuItem('folder','[COLOR FFC89008]  8.  [/COLOR]'+'الفيديوهات المحملة','',330)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','[COLOR FFC89008]  9.  [/COLOR]'+'مواقع يوتيوب من يوتيوب','https://www.youtube.com/feed/guide_builder',144)
-	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'مواقع يوتيوب من البرنامج','',290)
-	addMenuItem('folder','[COLOR FFC89008]11.  [/COLOR]'+'قائمة اشتراك IPTV','',230)
-	addMenuItem('folder','[COLOR FFC89008]12.  [/COLOR]'+'IPTV قائمة أقسام الـ','',165,'','','_IPTV_')
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('folder','[COLOR FFC89008]13.  [/COLOR]'+'قائمة المفضلة 1','',270,'','','','1')
-	addMenuItem('folder','[COLOR FFC89008]14.  [/COLOR]'+'قائمة المفضلة 2','',270,'','','','2')
-	addMenuItem('folder','[COLOR FFC89008]15.  [/COLOR]'+'قائمة المفضلة 3','',270,'','','','3')
-	addMenuItem('folder','[COLOR FFC89008]16.  [/COLOR]'+'قائمة المفضلة 4','',270,'','','','4')
-	addMenuItem('folder','[COLOR FFC89008]17.  [/COLOR]'+'قائمة المفضلة 5','',270,'','','','5')
-	addMenuItem('folder','[COLOR FFC89008]18.  [/COLOR]'+'آخر 50 فيديو تم تشغيلها','',265,'','','video')
-	addMenuItem('folder','[COLOR FFC89008]19.  [/COLOR]'+'آخر 50 مجلد تم فتحها','',265,'','','folder')
-	addMenuItem('folder','[COLOR FFC89008]20.  [/COLOR]'+'آخر 50 قناة تم تشغيلها','',265,'','','live')
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	addMenuItem('link','[COLOR FFC89008]21.  [/COLOR]'+'تقرير عن آخر التغييرات','',199)
-	addMenuItem('link','[COLOR FFC89008]22.  [/COLOR]البرنامج إصدار رقم ( '+addon_version+' )','',7)
-	#addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'ـ Services Menu  قائمة الخدمات','',172)
-	#addMenuItem('folder','  4.  [COLOR FFC89008]ـ Services Menu  قائمة الخدمات[/COLOR]','',264)
-	#addMenuItem('link','  5.  [COLOR FFC89008]البرنامج إصدار رقم ('+addon_version+')[/COLOR]','',7)
-	addMenuItem('folder','[COLOR FFC89008]23.  [/COLOR]ـ Answers Menu  قائمة الاجوبة','',263)
+	#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	#addMenuItem('link','[COLOR FFC89008]  1.  [/COLOR]جهازك في القائمة السوداء','',9999)
+	#addMenuItem('link','[COLOR FFC89008]  2.  [/COLOR]والبرنامج لن يعمل عندك','',9999)
+	#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	need_update = CHECK_VERSIONS()
+	new_messages = SHOW_MESSAGES(False)
+	if need_update: addMenuItem('link','[COLOR FFC89008]  0.  [/COLOR][COLOR FFFFFF00]البرنامج بحاجة إلى تحديث[/COLOR]','',7)
+	if new_messages: addMenuItem('link','[COLOR FFC89008]  0.  [/COLOR]'+'[COLOR FFFFFF00]لديك رسالة من المبرمج[/COLOR]','',267)
+	if need_update or new_messages:
+		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder','[COLOR FFC89008]  1.  [/COLOR]'+'مواقع الفيديوهات','',261)
+	addMenuItem('folder','[COLOR FFC89008]  2.  [/COLOR]'+'بحث بكل المواقع','',262)
+	addMenuItem('folder','[COLOR FFC89008]  3.  [/COLOR]'+'قائمة الأقسام','',165,'','','_SITES_')
+	addMenuItem('folder','[COLOR FFC89008]  4.  [/COLOR]'+'قائمة القنوات','',100)
+	addMenuItem('folder','[COLOR FFC89008]  5.  [/COLOR]'+'قائمة العشوائية','',160)
+	addMenuItem('link','[COLOR FFC89008]1====================1[/COLOR]','',9999)
+	addMenuItem('folder','[COLOR FFC89008]  6.  [/COLOR]'+'الفيديوهات المحملة','',330)
+	addMenuItem('folder','[COLOR FFC89008]  7.  [/COLOR]'+'مواقع يوتيوب من يوتيوب','https://www.youtube.com/feed/guide_builder',144)
+	addMenuItem('folder','[COLOR FFC89008]  8.  [/COLOR]'+'مواقع يوتيوب من البرنامج','',290)
+	addMenuItem('folder','[COLOR FFC89008]  9.  [/COLOR]'+'قائمة اشتراك IPTV','',230)
+	addMenuItem('folder','[COLOR FFC89008]10.  [/COLOR]'+'IPTV قائمة أقسام الـ','',165,'','','_IPTV_')
+	addMenuItem('link','[COLOR FFC89008]2====================2[/COLOR]','',9999)
+	addMenuItem('folder','[COLOR FFC89008]11.  [/COLOR]'+'قائمة المفضلة 1','',270,'','','','1')
+	addMenuItem('folder','[COLOR FFC89008]12.  [/COLOR]'+'قائمة المفضلة 2','',270,'','','','2')
+	addMenuItem('folder','[COLOR FFC89008]13.  [/COLOR]'+'قائمة المفضلة 3','',270,'','','','3')
+	addMenuItem('folder','[COLOR FFC89008]14.  [/COLOR]'+'قائمة المفضلة 4','',270,'','','','4')
+	addMenuItem('folder','[COLOR FFC89008]15.  [/COLOR]'+'قائمة المفضلة 5','',270,'','','','5')
+	addMenuItem('folder','[COLOR FFC89008]16.  [/COLOR]'+'آخر 50 فيديو تم تشغيلها','',265,'','','video')
+	addMenuItem('folder','[COLOR FFC89008]17.  [/COLOR]'+'آخر 50 مجلد تم فتحها','',265,'','','folder')
+	addMenuItem('folder','[COLOR FFC89008]18.  [/COLOR]'+'آخر 50 قناة تم تشغيلها','',265,'','','live')
+	addMenuItem('link','[COLOR FFC89008]3====================3[/COLOR]','',9999)
+	addMenuItem('link','[COLOR FFC89008]19.  [/COLOR]'+'تقرير استخدام البرنامج','',176)
+	addMenuItem('link','[COLOR FFC89008]20.  [/COLOR]'+'رسائل وأخبار من المبرمج','',267)
+	addMenuItem('link','[COLOR FFC89008]21.  [/COLOR]البرنامج إصدار رقم ( '+addon_version+' )','',7)
+	addMenuItem('link','[COLOR FFC89008]22.  [/COLOR]'+'تقرير عن آخر التغييرات','',199)
+	addMenuItem('folder','[COLOR FFC89008]23.  [/COLOR]ـ Answers Menu  قائمة الأجوبة','',263)
 	addMenuItem('folder','[COLOR FFC89008]24.  [/COLOR]ـ Services Menu  قائمة الخدمات','',264)
 	addMenuItem('link','[COLOR FFC89008]25.  [/COLOR]ـ Contact Me  كيف تتصل بالمبرمج','',196)
 	return
@@ -62,14 +65,14 @@ def WEBSITES_MENU():
 	#addMenuItem('folder','  1.  [COLOR FFC89008] TV    [/COLOR]'+'قنوات تلفزيونية','',100)
 	#addMenuItem('folder','  2.  [COLOR FFC89008] IPT   [/COLOR]'+'اشتراك IPTV مدفوع','',230)
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات خاصة - مشاكل قليلة[/COLOR]','',157)
-	#addMenuItem('folder','[COLOR FFC89008] EGV  [/COLOR]'+'موقع إيجي بيست','',120)
 	addMenuItem('folder','[COLOR FFC89008] BKR  [/COLOR]'+'موقع بكرا','',370)
 	addMenuItem('folder','[COLOR FFC89008] PNT  [/COLOR]'+'موقع بانيت','',30)
 	addMenuItem('folder','[COLOR FFC89008] YUT  [/COLOR]'+'موقع يوتيوب','',140)
 	addMenuItem('folder','[COLOR FFC89008] KLA  [/COLOR]'+'موقع كل العرب','',10)
-	addMenuItem('folder','[COLOR FFC89008] DLM [/COLOR]'+'موقع دايلي موشن','',400)
-	addMenuItem('folder','[COLOR FFC89008] AKW [/COLOR]'+'موقع أكوام الجديد','',240)
+	addMenuItem('folder','[COLOR FFC89008] EGB  [/COLOR]'+'موقع ايجي بيست','',120) # 128
+	addMenuItem('folder','[COLOR FFC89008] AKW [/COLOR]' +'موقع أكوام الجديد','',240)
 	addMenuItem('folder','[COLOR FFC89008] SHF  [/COLOR]'+'موقع شوف ماكس','',50)
+	addMenuItem('folder','[COLOR FFC89008] DLM  [/COLOR]'+'موقع دايلي موشن','',400)
 	addMenuItem('folder','[COLOR FFC89008] KRB  [/COLOR]'+'موقع قناة كربلاء','',320)
 	addMenuItem('folder','[COLOR FFC89008] KWT  [/COLOR]'+'موقع قناة الكوثر','',130)
 	addMenuItem('folder','[COLOR FFC89008] IFL    [/COLOR]'+'موقع قناة آي فيلم','',20)
@@ -86,13 +89,13 @@ def WEBSITES_MENU():
 	#addMenuItem('folder','[COLOR FFC89008] EGV  [/COLOR]'+'موقع إيجي بيست vip','',220)
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات عامة - مشاكل كثيرة جدا[/COLOR]','',157)
 	addMenuItem('folder','[COLOR FFC89008] AKC  [/COLOR]'+'موقع أكوام كام','',350)
-	addMenuItem('folder','[COLOR FFC89008] ARL  [/COLOR]'+'موقع عرب ليونز','',200)
+	#addMenuItem('folder','[COLOR FFC89008] ARL  [/COLOR]'+'موقع عرب ليونز','',200)
 	addMenuItem('folder','[COLOR FFC89008] SHA  [/COLOR]'+'موقع شاهد فوريو','',110)
-	addMenuItem('folder','[COLOR FFC89008] HEL  [/COLOR]'+'موقع هلال يوتيوب','',90)
+	#addMenuItem('folder','[COLOR FFC89008] HEL  [/COLOR]'+'موقع هلال يوتيوب','',90)
 	#addMenuItem('folder','16.  [COLOR FFC89008] HLA  [/COLOR]'+'موقع هلا سيما','',88) # 80
 	#addMenuItem('folder','17.  [COLOR FFC89008] SFW  [/COLOR]'+'موقع سيريس فور وتش','',218)  # 210
 	#addMenuItem('folder','18.  [COLOR FFC89008] MVZ  [/COLOR]'+'موقع موفيزلاند اونلاين','',188) # 180
-	#addMenuItem('folder','19.  [COLOR FFC89008] EGB  [/COLOR]'+'موقع ايجي بيست','',128) # 120
+	#addMenuItem('folder','19.  [COLOR FFC89008] EGB  [/COLOR]'+'موقع ايجي بيست','',120) # 128
 	return
 
 def SERVICES_MENU():
@@ -126,7 +129,6 @@ def SERVICES_MENU():
 
 def ANSWERS_MENU():
 	addMenuItem('link','[COLOR FFC89008]  1.  [/COLOR]'+'No Arabic letters (or text)','',151)
-	addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('link','[COLOR FFC89008]  2.  [/COLOR]'+'ما هو الموقع الرسمي للبرنامج','',341)
 	addMenuItem('link','[COLOR FFC89008]  3.  [/COLOR]'+'ما هي افضل واجهة للبرنامج','',197)
 	addMenuItem('link','[COLOR FFC89008]  4.  [/COLOR]'+'ما هو آخر إصدار لكودي وللبرنامج','',7)
@@ -167,9 +169,10 @@ def GLOBAL_SEARCH_MENU(search='',show=True):
 	addMenuItem('folder','[COLOR FFC89008] PNT  [/COLOR]'+search2+' - موقع بانيت','',39,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008] YUT  [/COLOR]'+search2+' - موقع يوتيوب','',149,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008] KLA  [/COLOR]'+search2+' - موقع كل العرب','',19,'','',search+'_REMEMBERRESULTS_')
-	addMenuItem('folder','[COLOR FFC89008] DLM [/COLOR]'+search2+' - موقع دايلي موشن','',409,'','',search+'_REMEMBERRESULTS_')
+	addMenuItem('folder','[COLOR FFC89008] EGB  [/COLOR]'+search2+' - موقع ايجي بيست','',129,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008] AKW [/COLOR]'+search2+' - موقع أكوام الجديد','',249,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008] SHF  [/COLOR]'+search2+' - موقع شوف ماكس','',59,'','',search+'_REMEMBERRESULTS_')
+	addMenuItem('folder','[COLOR FFC89008] DLM  [/COLOR]'+search2+' - موقع دايلي موشن','',409,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008] KRB  [/COLOR]'+search2+' - موقع قناة كربلاء','',329,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008] KWT [/COLOR]'+search2+' - موقع قناة الكوثر','',139,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008] IFL   [/COLOR]'+search2+' - موقع قناة آي فيلم','',29,'','',search+'_REMEMBERRESULTS_')
@@ -188,13 +191,12 @@ def GLOBAL_SEARCH_MENU(search='',show=True):
 	#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	addMenuItem('link','[COLOR FFC89008]مواقع سيرفرات عامة - كثيرة المشاكل[/COLOR]','',157)
 	addMenuItem('folder','[COLOR FFC89008] AKC [/COLOR]'+search2+' - موقع اكوام كام','',359,'','',search+'_REMEMBERRESULTS_')
-	addMenuItem('folder','[COLOR FFC89008] ARL [/COLOR]'+search2+' - موقع عرب ليونز','',209,'','',search+'_REMEMBERRESULTS_')
+	#addMenuItem('folder','[COLOR FFC89008] ARL [/COLOR]'+search2+' - موقع عرب ليونز','',209,'','',search+'_REMEMBERRESULTS_')
 	addMenuItem('folder','[COLOR FFC89008] SHA [/COLOR]'+search2+' - موقع شاهد فوريو','',119,'','',search+'_REMEMBERRESULTS_')
-	addMenuItem('folder','[COLOR FFC89008] HEL [/COLOR]'+search2+' - موقع هلال يوتيوب','',99,'','',search+'_REMEMBERRESULTS_')
+	#addMenuItem('folder','[COLOR FFC89008] HEL [/COLOR]'+search2+' - موقع هلال يوتيوب','',99,'','',search+'_REMEMBERRESULTS_')
 	#addMenuItem('folder','16. [COLOR FFC89008] HLA [/COLOR]'+search+' - موقع هلا سيما','',88,'','',search) # 89
 	#addMenuItem('folder','17. [COLOR FFC89008] SFW [/COLOR]'+search+' - موقع سيريس فور وتش','',218,'','',search) # 219
 	#addMenuItem('folder','18. [COLOR FFC89008] MVZ [/COLOR]'+search+' - موقع موفيز لاند','',188,'','',search)# 189
-	#addMenuItem('folder','19. [COLOR FFC89008] EGB [/COLOR]'+search+' - موقع ايجي بيست','',128,'','',search)# 129
 	return
 
 def LAST_VIDEOS_MENU(type,lengthonly=False):
@@ -229,26 +231,28 @@ def DELETE_LAST_VIDEOS_MENU(type):
 	return
 
 def SHOW_MESSAGES(showDialogs):
-	color,privs = 'white',''
+	new_messages,privs,newfile2 = False,'',''
 	url = WEBSITES['PYTHON'][3]
 	payload = {'user':dummyClientID(32)}
-	allow_dns_fix,allow_proxy_fix = showDialogs,showDialogs
-	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'POST',url,payload,'','',False,'MENUS-SHOW_MESSAGES-1st',allow_dns_fix,allow_proxy_fix)
-	if not response.succeeded: return color
+	#allow_dns_fix,allow_proxy_fix = showDialogs,showDialogs
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST',url,payload,'','',True,'MENUS-SHOW_MESSAGES-1st',True,True)
+	if not response.succeeded: return new_messages
 	newfile = response.content
 	if not newfile: newfile = '""'
 	messages = EVAL(newfile)
 	messages = list(messages)
 	for messageID,messageType,message in messages:
 		if messageID=='0': privs += message+'::'
+		else: newfile2 += message
 	privs = privs.strip('::')
-	settings.setSetting('user.privs',privs)
 	#DIALOG_OK('SHOW_MESSAGES',str(showDialogs))
+	settings.setSetting('user.privs',privs)
+	settings.setSetting('lastcheck.messages',str(now))
 	if not showDialogs:
 		if os.path.exists(messagesfile):
 			with open(messagesfile,'r') as f: oldfile = f.read()
 		else: oldfile = '""'
-		if newfile!=oldfile: color = 'yellow'
+		if newfile2!=oldfile: new_messages = True
 	else:
 		messages = sorted(messages,reverse=True,key=lambda key: int(key[0]))
 		messageText = ''
@@ -260,8 +264,25 @@ def SHOW_MESSAGES(showDialogs):
 			messageText += message+'\n\n==============================\n\n'
 		DIALOG_TEXTVIEWER_FULLSCREEN('رسائل من المبرمج إلى مستخدمي البرنامج',messageText,'big','right')
 		xbmc.executebuiltin("Container.Refresh")
-		with open(messagesfile,'w') as f: f.write(newfile)
-	return color
+		with open(messagesfile,'w') as f: f.write(newfile2)
+	return new_messages
+
+def CHECK_VERSIONS():
+	results = READ_FROM_SQL3('MISC','VERSIONS')
+	#DIALOG_OK('111',str(results))
+	if results: need_update,message1,message2 = results
+	else:
+		import SERVICES
+		need_update,message1,message2 = SERVICES.VERSIONS(False,False)
+		results = need_update,message1,message2
+		WRITE_TO_SQL3('MISC','VERSIONS',results,LONG_CACHE)
+		if 0 and need_update:
+			message4 = '[COLOR FFFFFF00]انت بحاجة لتحديث برنامج عماد أو تحديث مخازن عماد[/COLOR]'
+			message4 += '\n\n'+'لكي تقوم بالتحديث ... اذهب إلى نهاية القائمة الرئيسية لبرنامج عماد ... ثم ادخل على رابط "البرنامج إصدار رقم"'
+			message4 += '\n\n\n\n'+'الموقع الرسمي الجديد للبرنامج وفيه ملف تثبيت تطبيق كودي عماد تجده في'
+			message4 += '\n'+'http://bit.ly/kodiemad     أو     http://tiny.cc/kodiemad'
+			DIALOG_TEXTVIEWER_FULLSCREEN(message1,message2+'\n\n\n\n'+message4,'big','right')
+	return need_update
 
 
 

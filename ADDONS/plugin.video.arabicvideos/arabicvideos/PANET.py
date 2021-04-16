@@ -162,7 +162,7 @@ def SEARCH(search,page):
 	else: page,type = '1',random.sample(typeLIST,1)
 	payload = { 'query':new_search , 'searchDomain':type }
 	if page!='1': payload['from'] = page
-	data = urllib.urlencode(payload)
+	data = URLENCODE(payload)
 	html = OPENURL_CACHED(REGULAR_CACHE,website0a+'/search',data,headers,'','PANET-SEARCH-1st')
 	#xbmc.log(str(html), level=xbmc.LOGNOTICE)
 	items=re.findall('title":"(.*?)".*?link":"(.*?)"',html,re.DOTALL)

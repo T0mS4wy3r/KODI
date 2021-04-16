@@ -90,7 +90,7 @@ def MOSTS(category):
 	payload = { 'mode' : category }
 	url = 'http://alfatimi.tv/ajax.php'
 	headers = { 'Content-Type' : 'application/x-www-form-urlencoded' }
-	data = urllib.urlencode(payload)
+	data = URLENCODE(payload)
 	html = OPENURL_CACHED(SHORT_CACHE,url,data,headers,True,'ALFATIMI-MOSTS-1st')
 	items = re.findall('href="(.*?)".*?title="(.*?)".*?src="(.*?)".*?href',html,re.DOTALL)
 	for link,title,img in items:

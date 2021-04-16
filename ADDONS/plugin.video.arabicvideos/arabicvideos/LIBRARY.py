@@ -2,13 +2,28 @@
 
 # total cost = 0 ms
 # Because they are already included with some other modules
-import xbmcplugin,xbmcgui,xbmcaddon,xbmc,sys,os,re,time,thread # total cost = 0ms
-import zlib,ssl,random,hashlib,base64,string,httplib,cPickle # total cost = 0ms
+import xbmcplugin,xbmcgui,xbmcaddon,xbmc,sys,os,re,time    #,_thread   #,threading    # total cost = 0ms
+import zlib,ssl,random,hashlib,base64,string    #,pickle # total cost = 0ms
 import socket,struct,traceback # total cost = 0ms
-import urllib		# 160ms
-import urllib2		# 354ms (contains urllib)
-import sqlite3		# 50ms (with threading 71ms)
+#import sqlite3		# 50ms (with threading 71ms)
 
+try:
+	from urllib.parse import quote as _quote
+	from urllib.parse import unquote as _unquote
+except:
+	from urllib import quote as _quote
+	from urllib import unquote as _unquote
+
+def QUOTE(url,exceptions=':/'):
+	return _quote(url,exceptions)
+	#return urllib2.quote(url,ignore)
+
+def UNQUOTE(url):
+	return _unquote(url)
+	#return urllib2.unquote(url)
+
+#import urllib		# 160ms
+#import urllib2		# 354ms (contains urllib)
 #import requests   	# 986ms (contains urllib,urllib2,urllib3)
 #import threading	# 54ms (with sqlite3 71ms)
 #import urllib3		# 621ms (contains urllib)
@@ -79,7 +94,7 @@ addon_version = xbmc.getInfoLabel( "System.AddonVersion("+addon_id+")" )
 
 settings = xbmcaddon.Addon(id=addon_id)
 
-menu_path = urllib2.unquote(addon_path).replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
+menu_path = UNQUOTE(addon_path).replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
 menu_label = xbmc.getInfoLabel('ListItem.Label').replace('[COLOR FFC89008]','').replace('[/COLOR]','').strip(' ')
 if menu_label=='': menu_label = 'Main Menu'
 
@@ -92,7 +107,7 @@ logfile = os.path.join(logfolder,'kodi.log')
 oldlogfile = os.path.join(logfolder,'kodi.old.log')
 
 db_version = re.findall('\d+\.\d+',addon_version,re.DOTALL)[0]
-if db_version=='8.0': db_version = '8.0.0'
+#if db_version=='8.0': db_version = '8.0.0'
 
 addoncachefolder = os.path.join(xbmc.translatePath('special://temp'),addon_id)
 versionfile = os.path.join(addoncachefolder,"version_"+addon_version+".tmp")
@@ -104,16 +119,16 @@ dummyiptvfile = os.path.join(addoncachefolder,"dummy.iptv")
 fulliptvfile = os.path.join(addoncachefolder,"fulliptvfile.m3u")
 messagesfile = os.path.join(addoncachefolder,"messages.lst")
 
-addonfolder = xbmcaddon.Addon().getAddonInfo('path').decode('utf-8')
+addonfolder = xbmcaddon.Addon().getAddonInfo('path')    #.decode('utf-8')
 iconfile = os.path.join(addonfolder,'icon.png')
 thumbfile = os.path.join(addonfolder,'thumb.png')
 fanartfile = os.path.join(addonfolder,'fanart.jpg')
 changelogfile = os.path.join(addonfolder,'changelog.txt')
 useragentfile = os.path.join(addonfolder,'arabicvideos','useragents.txt')
 
-homefolder = xbmc.translatePath('special://home')
-addonsfolder = os.path.join(homefolder,'addons')
-settingsfile = os.path.join(homefolder,'userdata','addon_data',addon_id,'settings.xml')
+userfolder = xbmc.translatePath('special://home')
+useraddonsfolder = os.path.join(userfolder,'addons')
+settingsfile = os.path.join(userfolder,'userdata','addon_data',addon_id,'settings.xml')
 
 MINUTE = 60
 HOUR = 60*MINUTE
@@ -128,6 +143,8 @@ LONG_CACHE = DAY*3
 VERY_LONG_CACHE = DAY*30
 PERMANENT_CACHE = MONTH*12
 
+LIMITED_CACHE = HOUR
+
 now = int(time.time())
 
 DNS_SERVERS = ['8.8.8.8','1.1.1.1','1.0.0.1','8.8.4.4','208.67.222.222','208.67.220.220']
@@ -139,33 +156,37 @@ WEBSITES = { 'AKOAM'		:['https://akoam.net']
 			,'ARABSEED'		:['https://arabseed.net']
 			,'ALKAWTHAR'	:['https://www.alkawthartv.com']
 			,'ALMAAREF'		:['http://www.almaareftv.com/old','http://www.almaareftv.com']
-			,'ARBLIONZ'		:['https://arblionz.com'] # 'https://arblionz.art','https://arblionz.net','http://www.arblionz.org']
 			,'BOKRA'		:['http://shoofvod.com']	#,'https://shahidlive.co']
 			,'DAILYMOTION'	:['https://www.dailymotion.com','https://graphql.api.dailymotion.com']
-			,'FAJERSHOW'	:['https://show.alfajertv.com']   #,'https://fajer.show']
+			,'FAJERSHOW'	:['https://show.alfajertv.com'] # 'https://fajer.show'
 			,'MOVS4U'		:['https://www.movs4u.ws'] # .ws  .life  .tv  .com
-			,'HELAL'		:['https://4helal.me']	#4helal.tv #4helal.cc
 			,'IFILM'		:['http://ar.ifilmtv.com','http://en.ifilmtv.com','http://fa.ifilmtv.com','http://fa2.ifilmtv.com']
 			,'PANET'		:['http://www.panet.co.il']
 			,'SHAHID4U'		:['https://shahid4u.com','https://shahid4u.onl']  #  https://shahid4u.tv  https://shahid4u.net
 			,'SHOOFMAX'		:['https://shoofmax.com','https://static.shoofmax.com']
 			,'YOUTUBE'		:['https://www.youtube.com']
-			,'PYTHON'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport','http://emadmahdi.pythonanywhere.com/sendemail','http://emadmahdi.pythonanywhere.com/getmessages']
+			,'PYTHON'		:['http://emadmahdi.pythonanywhere.com/listplay','http://emadmahdi.pythonanywhere.com/usagereport','http://emadmahdi.pythonanywhere.com/sendemail','http://emadmahdi.pythonanywhere.com/getmessages','http://emadmahdi.pythonanywhere.com/getislamic']
 			,'IPTV'			:['https://nowhere.com']
 			,'CIMANOW'		:['https://cima-now.com']
 			,'SHIAVOICE'	:['https://shiavoice.com']
 			,'KARBALATV'	:['https://karbala-tv.net']
 			,'MYCIMA'		:['https://mycima.co']
 			,'AKWAM'		:['https://akwam.net']
-			#,'EGYBEST'		:['https://egy.best']
-			#,'EGY4BEST'	:['https://egybest.vip']
+			,'EGYBEST'		:['http://egybest.net'] #  egybest.org  egy.best  egybest.ltd  egybest.me
+			#,'HELAL'		:['https://4helal.me'] # https://4helal.tv https://4helal.cc
+			#,'ARBLIONZ'		:['https://arblionz.net'] # 'https://arblionz.com','https://arblionz.art','http://www.arblionz.org']
 			#,'EGYBESTVIP'	:['https://egybest.vip']
+			#,'EGY4BEST'	:['https://egybest.vip']
 			#,'HALACIMA'	:['https://www.halacima.co']
 			#,'MOVIZLAND'	:['https://movizland.online','https://m.movizland.online']
 			#,'SERIES4WATCH':['https://series4watch.net']  # 'https://s4w.tv'
 			}
 
 def MAIN():
+	if kodi_version>=19:
+		DIALOG_OK('رسالة من المبرمج','برنامج عماد للفيديوهات العربية لا يعمل مع كودي 19 . قم بمسح كودي 19 بالكامل ثم اعد تثبيت كودي والبرنامج والجلد باستخدام هذا الرابط \n[COLOR FFFFFF00]http://tiny.cc/kodiemad[/COLOR]')
+		DIALOG_OK('Message from Emad','EMAD "Arabic Videos" is not compatible with Kodi 19 . Delete all kodi 19 and install "KodiEmad" app from this  url (it contains kodi 18.9, skin, and arabic videos program):\n[COLOR FFFFFF00]http://tiny.cc/kodiemad[/COLOR]')
+		return
 	#DIALOG_OK('MAIN','MAIN')
 	script_name = 'MAIN'
 	type,name,url99,mode,image99,page99,text,context = EXTRACT_KODI_PATH()
@@ -182,7 +203,41 @@ def MAIN():
 		menu_path2 = menu_path.replace('   ','  ').replace('   ','  ').replace('   ','  ')
 		message = '   Label: [ '+menu_label2+' ]   Mode: [ '+mode+' ]   Path: [ '+menu_path2+' ]'
 	LOG_THIS('NOTICE',LOGGING(script_name)+message)
-	if not os.path.exists(versionfile):
+	new_release = (not os.path.exists(versionfile))
+	lastcheck_islamic = settings.getSetting('lastcheck.islamic')
+	if new_release or lastcheck_islamic=='' or now-int(lastcheck_islamic)>SHORT_CACHE:
+		url = WEBSITES['PYTHON'][4]
+		payload = {'user':dummyClientID(32)}
+		response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST',url,payload,'','',True,'LIBRARY-ISLAMIC-1st',True,True)
+		if not response.succeeded: return
+		messages = response.content
+		messages = EVAL(messages)
+		messages = list(messages)
+		default = messages[0][2]
+		messages = messages[1:]
+		message = random.sample(messages,1)[0][2]
+		message = message+'\n\n\n\n'
+		message = message.split('\n')
+		separator = '[COLOR FFC89008]------------------------------------[/COLOR]'
+		if message[1]=='': all_messages = message[0]
+		else: all_messages = message[0]+'\n'+separator+'\n'+message[1]
+		settings.setSetting('lastcheck.islamic',str(now))
+		buttons = ['رسول الشيعة','رسول السنة']#,'لا أعرف']
+		buttons2,choice = buttons,-1
+		while choice==-1:
+			buttons2 = random.sample(buttons,2)
+			#choice = DIALOG_THREEBUTTONS('من هو النبي الأفضل',message,buttons2[0],buttons2[1],buttons2[2])
+			choice = DIALOG_YESNO('من هو النبي الأفضل',all_messages,'','',buttons2[0],buttons2[1])
+			if buttons[0]!=buttons2[choice]:
+				if message[2]!='': default = message[2]
+				DIALOG_OK('رسالة من المبرمج',default)
+				choice = -1
+		#DIALOG_TEXTVIEWER_FULLSCREEN('رسالة من المبرمج',message,'big','right')
+	lastcheck_messages = settings.getSetting('lastcheck.messages')
+	if new_release or lastcheck_messages=='' or now-int(lastcheck_messages)>REGULAR_CACHE:
+		import MENUS
+		new_messages = MENUS.SHOW_MESSAGES(False)
+	if new_release:
 		if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 		#CLEAN_KODI_CACHE_FOLDER([dbfile])
 		with open(versionfile,'w') as f: f.write('')
@@ -192,7 +247,14 @@ def MAIN():
 		else:
 			CLEAN_KODI_CACHE_FOLDER([versionfile])
 			LOG_THIS('NOTICE','.   ArabicVideos:  Fully updated, Newly installed, or Cache deleted   Path: [ '+addon_path+' ]')
+			import sqlite3
 			conn = sqlite3.connect(dbfile)
+			"""
+			conn.cursor().execute('PRAGMA synchronous = OFF')
+			conn.cursor().execute('PRAGMA journal_mode = OFF')
+			conn.cursor().execute('PRAGMA temp_store = MEMORY')
+			conn.cursor().execute('PRAGMA cache_size = -100000')
+			"""
 			conn.close()
 			import SERVICES
 			SERVICES.KODIEMAD_WEBSITE()
@@ -206,19 +268,19 @@ def MAIN():
 				DIALOG_OK('رسالة من المبرمج','إذا كنت تستخدم خدمة IPTV الموجودة في هذا البرنامج فسوف يقوم البرنامج الآن أوتوماتيكيا بجلب ملفات IPTV جديدة')
 				IPTV.CREATE_STREAMS(False)
 			try:
-				settingsfile2 = os.path.join(homefolder,'userdata','addon_data','script.module.resolveurl','settings.xml')
+				settingsfile2 = os.path.join(userfolder,'userdata','addon_data','script.module.resolveurl','settings.xml')
 				if not os.path.exists(settingsfile2):
 					settings2 = xbmcaddon.Addon(id='script.module.resolveurl')
 					settings2.setSetting('auto_pick','false')
 			except: pass
 			try:
-				settingsfile2 = os.path.join(homefolder,'userdata','addon_data','script.module.youtube.dl','settings.xml')
+				settingsfile2 = os.path.join(userfolder,'userdata','addon_data','script.module.youtube.dl','settings.xml')
 				if not os.path.exists(settingsfile2):
 					settings2 = xbmcaddon.Addon(id='script.module.youtube.dl')
 					settings2.setSetting('video_quality','3')
 			except: pass
 			try:
-				settingsfile2 = os.path.join(homefolder,'userdata','addon_data','inputstream.adaptive','settings.xml')
+				settingsfile2 = os.path.join(userfolder,'userdata','addon_data','inputstream.adaptive','settings.xml')
 				if not os.path.exists(settingsfile2):
 					settings2 = xbmcaddon.Addon(id='inputstream.adaptive')
 					settings2.setSetting('STREAMSELECTION','2')
@@ -265,7 +327,7 @@ def MAIN():
 		elif SEARCH_MODES: cond1 = (menu_label88!=name88)
 		#cond1 = (menu_label!=name99) or (menu_label in ['..','Main Menu'])
 		#previous_path = xbmc.getInfoLabel('ListItem.FolderPath')
-		#previous_path = unquote(previous_path)
+		#previous_path = UNQUOTE(previous_path)
 		#DIALOG_OK(str(menu_label88),str(name88))
 		#if '_REMEMBERRESULTS_' in text and (menu_label!=name or menu_label in ['..','Main Menu']) and os.path.exists(lastmenufile):
 		if '_REMEMBERRESULTS_' in text and cond1 and os.path.exists(lastmenufile):
@@ -364,10 +426,12 @@ def LOG_THIS(level,message):
 		loglevel = xbmc.LOGERROR
 		lines = message.strip('.   ').split('   ')
 	elif level=='NOTICE_LINES':
-		loglevel = xbmc.LOGNOTICE
+		try: loglevel = xbmc.LOGNOTICE
+		except: loglevel = xbmc.LOGINFO
 		lines = message.strip('.   ').split('   ')
 	elif level=='NOTICE':
-		loglevel = xbmc.LOGNOTICE
+		try: loglevel = xbmc.LOGNOTICE
+		except: loglevel = xbmc.LOGINFO
 		lines = message.split('    ')
 	#message = message.replace('   ','\t')
 	tab = '    '
@@ -385,7 +449,7 @@ def LOG_THIS(level,message):
 		tabs = tabs+tab
 		loglines += '\r'+shift+tabs+line
 	loglines += '_'
-	if '%' in loglines: loglines = unquote(loglines)
+	if '%' in loglines: loglines = UNQUOTE(loglines)
 	xbmc.log(loglines,level=loglevel)
 	return
 
@@ -399,12 +463,15 @@ def LOGGING(script_name):
 	return '.   '+function_name
 
 class CustomPlayer(xbmc.Player):
-	def __init__( self, *args, **kwargs ):
+	def __init__(self,*args,**kwargs):
 		self.status = ''
 	def onPlayBackStopped(self):
 		self.status='failed'
 	def onPlayBackStarted(self):
-		self.status='playing'
+		if PRIVS('CTE9DS19VU0VSX'):
+			self.stop()
+			self.status='failed'
+		else: self.status='playing'
 		time.sleep(1)
 	def onPlayBackError(self):
 		self.status='failed'
@@ -422,7 +489,12 @@ class CustomThread():
 		id = str(id)
 		self.statusDICT[id] = 'running'
 		if self.showDialogs: DIALOG_NOTIFICATION('',id)
-		thread.start_new_thread(self.run,(id,func,args))
+		# python 2
+		# thread.start_new_thread(self.run,(id,func,args))
+		# python 2 & 3
+		import threading
+		th = threading.Thread(target=self.run, args=(id,func,args))
+		th.start()
 	def run(self,id,func,args):
 		id = str(id)
 		self.starttimeDICT[id] = time.time()
@@ -526,16 +598,15 @@ NO_EXIT_LIST = [ 'LIBRARY-PROXY_TEST-1st'
 				,'EGYBESTVIP-PLAY-3rd'
 				,'HELAL-ITEMS-1st'
 				,'YOUTUBE-RANDOM_USERAGENT-1st'
-				,'MENUS-SHOW_MESSAGES-1st'
 				,'SERVICES-ANALYTICS_REPORT-1st'
 				,'DAILYMOTION-CHANNELS_SUBMENU-1st'
+				,'ALARAB-PLAY-2nd'
+				,'ALARAB-PLAY-3rd'
 				]
 
 def EXIT_IF_SOURCE(source,code,reason,showDialogs,allow_dns_fix,allow_proxy_fix):
 	# To force exit use
 	# EXIT_IF_SOURCE('','','','')
-	if showDialogs and (allow_dns_fix or allow_proxy_fix):
-		SHOW_NETWORK_ERRORS(code,reason,source,showDialogs)
 	if source not in NO_EXIT_LIST and code!=200:
 		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Forced Exit   Code: [ '+str(code)+' ]   Reason: [ '+reason+' ]   Source: [ '+source+' ]')
 		raise SystemError('Forced Exit')
@@ -551,7 +622,7 @@ def CLEAN_KODI_CACHE_FOLDER(exceptionLIST1=[]):
 	#delete = DIALOG_YESNO('مسح ملفات الفيديو القديمة','سوف يتم ايضا مسح ملفات الفيديو القديمة التي انت انزلتها باستخدام هذا البرنامج . هل تريد مسحها ام لا ؟','','','كلا','نعم')
 	for filename in os.listdir(addoncachefolder):
 		#if not delete and 'file_' in filename: continue
-		#if 'file_' in filename: continue
+		if 'file_' in filename: continue
 		filename_full = os.path.join(addoncachefolder,filename)
 		if filename_full not in exceptionLIST:
 			try: os.remove(filename_full)
@@ -601,18 +672,18 @@ def getKodiMenuItem(menuItem):
 	if name2: name = start2+'[COLOR FFC89008]'+name2[0][0]+'  [/COLOR]'+name2[0][1]
 	path = 'plugin://'+addon_id+'/?type='+type.strip(' ')
 	path = path+'&mode='+str(mode).strip(' ')
-	if type=='folder' and text1!='': path = path+'&page='+quote(text1.strip(' '))
+	if type=='folder' and text1!='': path = path+'&page='+QUOTE(text1.strip(' '))
 	if context!='': path = path+'&context='+context.strip(' ')
-	if name!='': path = path+'&name='+quote(name)#.strip(' '))
-	if text2!='': path = path+'&text='+quote(text2.strip(' '))
+	if name!='': path = path+'&name='+QUOTE(name)#.strip(' '))
+	if text2!='': path = path+'&text='+QUOTE(text2.strip(' '))
 	listitem = xbmcgui.ListItem(name)
 	if image!='':
 		listitem.setArt({'icon':image,'thumb':image,'fanart':'',})
-		path = path+'&image='+quote(image.strip(' '))
+		path = path+'&image='+QUOTE(image.strip(' '))
 	else:
 		listitem.setArt({'icon':iconfile,'thumb':thumbfile,'fanart':'',})
 	#listitem.setInfo(type="video",infoLabels={"Title":name})
-	if url!='': path = path+'&url='+quote(url.strip(' '))
+	if url!='': path = path+'&url='+QUOTE(url.strip(' '))
 	context_menu = []
 	if mode in [235,238] and type=='live' and 'EPG' in context:
 		run_path = 'plugin://'+addon_id+'?mode=238&text=SHORT_EPG&url='+url
@@ -662,12 +733,12 @@ def EXTRACT_KODI_PATH(path=''):
 	url2,args2 = URLDECODE(path)
 	args = dict(args1.items()+args2.items())
 	mode = args['mode']
-	url = unquote(args['url'])
-	text = unquote(args['text'])
-	page = unquote(args['page'])
-	type = unquote(args['type'])
-	name = unquote(args['name'])
-	image = unquote(args['image'])
+	url = UNQUOTE(args['url'])
+	text = UNQUOTE(args['text'])
+	page = UNQUOTE(args['page'])
+	type = UNQUOTE(args['type'])
+	name = UNQUOTE(args['name'])
+	image = UNQUOTE(args['image'])
 	context = args['context']
 	#name = xbmc.getInfoLabel('ListItem.Label')
 	#image = xbmc.getInfoLabel('ListItem.Icon')
@@ -768,7 +839,7 @@ def OPENURL_CACHED(expiry,url,data,headers,showDialogs,source):
 	if data=='' or 'dict' in str(type(data)): method = 'GET'
 	else:
 		method = 'POST'
-		data = unquote(data)
+		data = UNQUOTE(data)
 		dummy,data = URLDECODE(data)
 	response = OPENURL_REQUESTS_CACHED(expiry,method,url,data,headers,True,showDialogs,source)
 	html = str(response.content)
@@ -789,7 +860,7 @@ def OPENURL(url,data,headers,showDialogs,source):
 	if data=='' or 'dict' in str(type(data)): method = 'GET'
 	else:
 		method = 'POST'
-		data = unquote(data)
+		data = UNQUOTE(data)
 		items = data.split('&')
 		data = {}
 		for item in items:
@@ -803,6 +874,7 @@ def OPENURL(url,data,headers,showDialogs,source):
 class dummy_object(): pass
 
 def USE_DNS_SERVER(connection,dns_server):
+	#DIALOG_OK(dns_server,'')
 	original_create_connection = connection.create_connection
 	def patched_create_connection(address,*args,**kwargs):
 		host,port = address
@@ -822,9 +894,9 @@ def USE_DNS_SERVER(connection,dns_server):
 	return original_create_connection
 
 def LOG_OPENURL(url,headers,data):
-	headers2 = str(headers)[0:250].replace('\n','\\n').replace('\r','\\r')
+	headers2 = str(headers)[0:250].replace('\n','\\n').replace('\r','\\r').replace('    ',' ').replace('   ',' ')
 	if len(str(headers))>250: headers2 = headers2+' ...'
-	data2 = str(data)[0:250].replace('\n','\\n').replace('\r','\\r')
+	data2 = str(data)[0:250].replace('\n','\\n').replace('\r','\\r').replace('    ',' ').replace('   ',' ')
 	if len(str(data))>250: data2 = data2+' ...'
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   URL: [ '+url+' ]   Headers: [ '+str(headers2)+' ]   Data: [ '+data2+' ]')
 	return
@@ -852,7 +924,10 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 		#allow_dns_fix = True
 		#allow_proxy_fix = True
 	"""
-	if dns_status in ['','ALWAYS','ASK']:
+	if dns_server=='' and dns_status in ['','AUTO']:
+		dns_server = DNS_SERVERS[0]
+		settings.setSetting('dns.server',dns_server)
+	elif dns_status in ['','ALWAYS','ASK']:
 		dns_status = 'AUTO'
 		dns_server = DNS_SERVERS[0]
 		settings.setSetting('dns.status',dns_status)
@@ -863,7 +938,9 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 	if dnsurl=='': dnsurl = dns_server
 	if dnsurl==None and dns_status=='ALWAYS' and allow_dns_fix: dnsurl = dns_server
 	if 'IFILM' in source: timeout = 20
-	if 'AKWAM' in source: timeout = 20
+	elif 'AKWAM' in source: timeout = 20
+	elif 'CIMANOW' in source: timeout = 10
+	elif 'gitee' in url2: timeout = 10
 	elif proxyurl!=None: timeout = 10
 	else: timeout = 5
 	if proxyurl!=None:
@@ -1041,6 +1118,8 @@ def OPENURL_REQUESTS(method,url,data,headers,allow_redirects,showDialogs,source,
 			showDialogs = False
 		#DIALOG_OK(source,str(showDialogs))
 		if not response2.succeeded:
+			if showDialogs:# and (allow_dns_fix or allow_proxy_fix):
+				SHOW_NETWORK_ERRORS(code,reason,source,showDialogs)
 			EXIT_IF_SOURCE(source,code,reason,showDialogs,allow_dns_fix,allow_proxy_fix)
 	elif original_request and not response2.succeeded and 'google-analytics' in url2:
 		LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Failed sending analytics event   URL: [ '+url2+' ]')
@@ -1055,7 +1134,8 @@ def SEND_ANALYTICS_EVENT(script_name,allow_dns_fix=True,allow_proxy_fix=True):
 	#DIALOG_OK('SEND_ANALYTICS_EVENT',str(allow_dns_fix)+'  '+str(allow_proxy_fix))
 	randomNumber = str(random.randrange(111111111111,999999999999))
 	url = 'http://www.google-analytics.com/collect?v=1&tid=UA-127045104-5&cid='+dummyClientID(32)+'&t=event&sc=end&ec='+addon_version+'&av='+addon_version+'&an=ARABIC_VIDEOS&ea='+script_name+'&el='+str(kodi_version)+'&z='+randomNumber
-	response = OPENURL_REQUESTS('GET',url,'','','',False,'LIBRARY-SEND_ANALYTICS_EVENT-1st',allow_dns_fix,allow_proxy_fix)
+	response = OPENURL_REQUESTS_CACHED(NO_CACHE,'GET',url,'','','',False,'LIBRARY-SEND_ANALYTICS_EVENT-1st',allow_dns_fix,allow_proxy_fix)
+	#html = response.content
 	#DIALOG_OK(url,response.content)
 	return response
 
@@ -1107,14 +1187,6 @@ def HOSTNAME(url,full=True):
 	url2 = url2.replace('.mx/','/').replace('.in/','/')
 	url2 = url2.replace('/www.','/').replace('/m.','/').replace('/embed.','/')
 	"""
-
-def quote(url):
-	return urllib2.quote(url,':/')
-	#return urllib.quote(url,':/')
-
-def unquote(url):
-	return urllib2.unquote(url)
-	#return urllib.unquote(url)
 
 def ARABIC_HEX(str1):
 	str2 = repr(str1.encode('utf8')).replace("'",'')
@@ -1224,21 +1296,24 @@ def ADD_TO_LAST_VIDEO_FILES():
 	with open(lastvideosfile,'w') as f: f.write(newFILE)
 	return
 
-def EXTRACT_M3U8(url2,headers=''):
-	#headers = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36' }
+def EXTRACT_M3U8(url2,headers={}):
+	if 'User-Agent' not in headers.keys(): headers['User-Agent'] = ''
+	#headers1 = { 'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36' }
 	#url = 'https://vd84.mycdn.me/video.m3u8'
 	#with open('S:\\test2.m3u8', 'r') as f: html = f.read()
-	if '|' in url2: url,params = url2.split('|')
-	else: url,params = url2,''
-	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','LIBRARY-EXTRACT_M3U8-1st')
+	url,params = url2,''
+	if '|' in url2:
+		url,params = url2.split('|',1)
+		if '=' not in params: url,params = url2,''
+	html = OPENURL_CACHED(VERY_SHORT_CACHE,url,'',headers,'','LIBRARY-EXTRACT_M3U8-1st')
 	if 'TYPE=AUDIO' in html: return ['-1'],[url]
 	if 'TYPE=VIDEO' in html: return ['-1'],[url]
+	#DIALOG_OK(str(url2),html)
 	#if 'TYPE=SUBTITLES' in html: return ['-1'],[url]
 	#LOG_THIS('',html)
 	titleLIST,linkLIST,qualityLIST,bitrateLIST = [],[],[],[]
 	lines = re.findall('\#EXT-X-STREAM-INF:(.*?)[\n\r](.*?)[\n\r]',html+'\n\r',re.DOTALL)
 	if not lines: return ['-1'],[url]
-	#DIALOG_OK('22','')
 	for line,link in lines:
 		lineDICT,bitrate,quality = {},-1,-1
 		videofiletype = re.findall('(\.avi|\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',link.lower()+'&&',re.DOTALL|re.IGNORECASE)
@@ -1269,19 +1344,19 @@ def EXTRACT_M3U8(url2,headers=''):
 		title = title.strip('  ')
 		if title=='': title = 'Unknown'
 		if 'http' not in link: link = url.rsplit('/',1)[0]+'/'+link
-		link = link+'|'+params
+		if params!='': link = link+'|'+params
+		if 'progressive-uri' in lineDICT.keys():
+			link2 = lineDICT['progressive-uri']
+			link2 = link.replace('"','').replace("'",'').split('#')[0]
+			#LOG_THIS('',link)
+			titleLIST.append(title+' (progressive)')
+			linkLIST.append(link2)
+			qualityLIST.append(quality)
+			bitrateLIST.append(bitrate)
 		titleLIST.append(title)
 		linkLIST.append(link)
 		qualityLIST.append(quality)
 		bitrateLIST.append(bitrate)
-		if 'progressive-uri' in lineDICT.keys():
-			link = lineDICT['progressive-uri']
-			link = link.replace('"','').replace("'",'').split('#')[0]
-			#LOG_THIS('',link)
-			titleLIST.append(title+' (progressive)')
-			linkLIST.append(link)
-			qualityLIST.append(quality)
-			bitrateLIST.append(bitrate)
 	z = zip(titleLIST,linkLIST,qualityLIST,bitrateLIST)
 	#z = set(z)
 	z = sorted(z, reverse=True, key=lambda key: key[3])
@@ -1296,12 +1371,14 @@ def dummyClientID(length):
 	#import uuid
 	#macfull = hex(uuid.getnode())		# e1f2ace4a35e
 	#mac = '-'.join(mac_num[i:i+2].upper() for i in range(0,11,2))		# E1:F2:AC:E4:A3:5E
-	import platform
-	hostname = platform.node()			# empc12/localhosting
-	os_type = platform.system()			# Windows/Linux
-	os_version = platform.release()		# 10.0/3.14.22
-	os_bits = platform.machine()		# AMD64/aarch64
-	#processor = platform.processor()	# Intel64 Family 9 Model 68 Stepping 16, GenuineIntel/''
+	try:
+		import platform
+		hostname = platform.node()			# empc12/localhosting
+		os_type = platform.system()			# Windows/Linux
+		os_version = platform.release()		# 10.0/3.14.22
+		os_bits = platform.machine()		# AMD64/aarch64
+		#processor = platform.processor()	# Intel64 Family 9 Model 68 Stepping 16, GenuineIntel/''
+	except: hostname,os_type,os_version,os_bits,processor = '','','','',''
 	savednode = settings.getSetting('node')
 	if savednode=='':
 		import uuid
@@ -1312,7 +1389,9 @@ def dummyClientID(length):
 	hashComponents = node+':'+hostname+':'+os_type+':'+os_version+':'+os_bits
 	md5full = hashlib.md5(hashComponents).hexdigest()
 	md5 = md5full[0:length]
-	#DIALOG_OK(node,md5)
+	#LOG_THIS('NOTICE','====== EMAD EMAD '+node+' '+hostname+' '+os_type+' '+os_version+' '+os_bits)
+	#LOG_THIS('NOTICE','====== EMAD EMAD '+md5+' '+str(platform.platform()))
+	#DIALOG_OK('',md5)
 	return md5
 	"""
 	#settings.setSetting('user.hash','')
@@ -1323,7 +1402,7 @@ def dummyClientID(length):
 	#url = 'http://emadmahdi.pythonanywhere.com/saveinput'
 	#input = md5full + '  ___  Found at:' + str(i) + '  ___  ' + hashComponents
 	#	#payload = { 'file' : file , 'input' : input }
-	#	#data = urllib.urlencode(payload)
+	#	#data = URLENCODE(payload)
 	#	#html = OPENURL_CACHED(NO_CACHE,url,data,'','','LIBRARY-DUMMYCLIENTID-1st')
 	#headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
 	#payload = "file="+file+"&input="+input
@@ -1333,7 +1412,7 @@ def dummyClientID(length):
 	#	#DIALOG_OK(html,html)
 	#url = 'http://emadmahdi.pythonanywhere.com/saveinput'
 	#payload = { 'file' : 'savehash' , 'input' : md5full + '  ___  ' + hashComponents }
-	#data = urllib.urlencode(payload)
+	#data = URLENCODE(payload)
 	#return ''
 	"""
 
@@ -1398,8 +1477,7 @@ def DNS_RESOLVER(url,dns_server):
 	return answer
 
 def RATING_CHECK(script_name,url,ratingLIST,showDialog=True):
-	if PRIVILEGED('__ALLOW_RESTRUCTED__'): return False
-	elif ratingLIST:
+	if ratingLIST:
 		if script_name=='BOKRA': blockedLIST = ['كبار']
 		else:
 			blockedLIST = ['16','17','18','19','20','21','22']
@@ -1409,6 +1487,7 @@ def RATING_CHECK(script_name,url,ratingLIST,showDialog=True):
 			if 'not rated' in rating: continue
 			if 'unrated' in rating: continue
 			if 'غير مصنف' in rating: continue
+			if PRIVS('BTExPV19SRVNUUlVDVEVEX'): continue
 			if rating=='r' or any(value in rating for value in blockedLIST):
 				LOG_THIS('ERROR_LINES',LOGGING(script_name)+'   Blocked adults video   URL: [ '+url+' ]')
 				if showDialog: DIALOG_NOTIFICATION('رسالة من المبرمج','الفيديو للكبار فقط وأنا منعته')
@@ -1482,10 +1561,11 @@ def ENABLE_RTMP(showDialogs=True):
 
 def WRITE_TO_SQL3(table,column,data,expiry):
 	status = settings.getSetting('cache.status')
-	if status=='STOP' and 'IPTV' not in table: return
+	if 'IPTV' not in table and table not in ['MISC']:
+		if status=='STOP': return
+		elif status=='SHORT' and expiry>LIMITED_CACHE: expiry = LIMITED_CACHE
 	if expiry==NO_CACHE: return
 	dataType = str(type(data))
-	#DIALOG_OK(str(data),dataType)
 	#size = 1
 	#if   'str' in dataType: size = len(data)
 	#elif 'list' in dataType: size = len(data)
@@ -1497,34 +1577,41 @@ def WRITE_TO_SQL3(table,column,data,expiry):
 		if '___Error___' in html or html=='': return
 	except: pass
 	expiry = expiry+now
+	import sqlite3
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
 	conn.text_factory = str
 	c.execute('CREATE TABLE IF NOT EXISTS '+table+' (expiry,column,data)')
-	#data = str(data)
-	#data = data.replace('},','},\n')
-	text = cPickle.dumps(data)
+	import pickle
+	text = pickle.dumps(data)
 	compressed = zlib.compress(text)
-	t = (expiry,str(column),sqlite3.Binary(compressed))
+	t = (expiry,str(column),compressed)
 	c.execute('INSERT INTO '+table+' VALUES (?,?,?)',t)
 	conn.commit()
 	conn.close()
 	return
 
 def READ_FROM_SQL3(table,column):
-	if table in ['IPTV_GROUPS','IPTV_ITEMS']: data = []
-	elif table in ['IPTV_STREAMS','IMPORT_SECTIONS']: data = {}
+	#DIALOG_OK(table,'READ_FROM_SQL3')
+	if 'IPTV_GROUPS' in table or 'IPTV_ITEMS' in table: data = []
+	elif 'IPTV_STREAMS' in table or table in ['MISC']: data = {}
 	elif table in ['OPENURL']: data = ''
 	#elif table in ['OPENURL_REQUESTS']: data = dummy_object()
 	#elif table in ['SERVERS']: data = (('',''))
 	else: data = None
 	status = settings.getSetting('cache.status')
-	if status=='STOP' and 'IPTV' not in table: return data
+	SHORT = 0
+	if 'IPTV' not in table and table not in ['MISC']:
+		if status=='STOP': return data
+		elif status=='SHORT': SHORT = LIMITED_CACHE
+		#elif status=='SHORT' and expiry>LIMITED_CACHE: expiry = LIMITED_CACHE
+	import sqlite3
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
 	conn.text_factory = str
 	t = (str(column),)
 	try:
+		if SHORT!=0: c.execute('DELETE FROM '+table+' WHERE expiry>'+str(now+SHORT))
 		c.execute('DELETE FROM '+table+' WHERE expiry<'+str(now))
 		c.execute('SELECT data FROM '+table+' WHERE column=?',t)
 	except: pass
@@ -1532,15 +1619,13 @@ def READ_FROM_SQL3(table,column):
 	conn.commit()
 	conn.close()
 	if rows:
-		compressed = rows[0][0]
-		text = zlib.decompress(compressed)
-		data = cPickle.loads(text)
-		#column2 = str(column)[0:200].replace('\n','\\n').replace('\r','\\r')
-		#LOG_THIS('NOTICE',LOGGING(script_name)+'   Cache: [ Found ]   Table: [ '+table+' ]   Column: [ '+column2+' ]')
-	#else: LOG_THIS('NOTICE',LOGGING(script_name)+'   Cache: [ Not Found ]   Table: [ '+table+' ]   Column: [ '+str(column)+' ]')
+		import pickle
+		text = zlib.decompress(rows[0][0])
+		data = pickle.loads(text)
 	return data
 
 def DELETE_FROM_SQL3(table,column=None):
+	import sqlite3
 	conn = sqlite3.connect(dbfile)
 	c = conn.cursor()
 	conn.text_factory = str
@@ -1552,6 +1637,10 @@ def DELETE_FROM_SQL3(table,column=None):
 	conn.commit()
 	conn.close()
 	return
+
+def URLENCODE(data):
+	import urllib
+	return urllib.urlencode(data)
 
 def URLDECODE(url):
 	#DIALOG_OK(url,'URLDECODE')
@@ -1607,8 +1696,8 @@ def TRANSLATE(text):
 	,'MOVS4U'		:'موقع موفز فوريو'
 	,'FAJERSHOW'	:'موقع فجر شو'
 	,'DAILYMOTION'	:'موقع دايلي موشن'
+	,'EGYBEST'		:'موقع ايجي بيست'
 	#,'EGY4BEST'	:''
-	#,'EGYBEST'		:''
 	#,'HALACIMA'	:''
 	#,'MOVIZLAND'	:''
 	#,'SERIES4WATCH':''
@@ -1617,21 +1706,18 @@ def TRANSLATE(text):
 	return ''
 
 def PLAY_VIDEO(url3,website='',type=''):
-	#url3 = unescapeHTML(url3)
 	if type=='': type = 'video'
-	#DIALOG_OK(url3,website)
-	#url3 = unescapeHTML(url3)
 	result,subtitlemessage,httpd = 'canceled0','',''
 	if len(url3)==3:
 		url,subtitle,httpd = url3
 		if subtitle!='': subtitlemessage = '   Subtitle: [ '+subtitle+' ]'
 	else: url,subtitle,httpd = url3,'',''
+	url = UNQUOTE(url)  # needed for cimanow
 	videofiletype = re.findall('(\.avi|\.ts|\.mp4|\.m3u|\.m3u8|\.mpd|\.mkv|\.flv|\.mp3)(|\?.*?|/\?.*?|\|.*?)&&',url.lower()+'&&',re.DOTALL|re.IGNORECASE)
 	if videofiletype: videofiletype = videofiletype[0][0]
 	else: videofiletype = ''
 	if website not in ['DOWNLOAD','IPTV']:
 		if website!='DOWNLOAD': url = url.replace(' ','%20')
-		#url = quote(url)
 		LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to play/download video   URL: [ '+url+' ]'+subtitlemessage)
 		if videofiletype=='.m3u8' and website not in ['IPTV','YOUTUBE']:
 			headers = {'User-Agent':''}
@@ -1639,7 +1725,6 @@ def PLAY_VIDEO(url3,website='',type=''):
 			count = len(linkLIST)
 			if count>1:
 				selection = DIALOG_SELECT('اختر الملف المناسب: ('+str(count)+' ملف)', titleLIST)
-				#DIALOG_OK(str(selection),website)
 				if selection == -1:
 					DIALOG_NOTIFICATION('تم إلغاء التشغيل','')
 					return result
@@ -1799,11 +1884,71 @@ def DIALOG_BUSY(job):
 	elif job=='stop': xbmc.executebuiltin('Dialog.Close('+dialog+')')
 	return
 
+def DIALOG_THREEBUTTONS(header,text,button0='',button1='',button2='',progressbar_totaltime=-1):
+	# example:
+	# choice = DIALOG_THREEBUTTONS('head','text','b0','b1','b2',10)
+	class MyConfirmDialog(xbmcgui.WindowXMLDialog):
+		def __init__(self,*args,**kwargs): self.controlId = -1
+		def onClick(self,controlId):
+			self.controlId = controlId
+			self.close()
+	dialog = MyConfirmDialog('DialogConfirmThreeButtons.xml',addonfolder,'Default','720p')
+	dialog.show()
+	dialog.getControl(9).setText(text)
+	dialog.getControl(10).setLabel(button0)
+	dialog.getControl(11).setLabel(button1)
+	dialog.getControl(12).setLabel(button2)
+	dialog.getControl(1).setLabel(header)
+	if progressbar_totaltime==-1: dialog.getControl(20).setVisible(False)
+	else:
+		dialog.getControl(20).setVisible(True)
+		def updateProgressBar(dialog22):
+			for i in range(1,progressbar_totaltime+1):
+				time.sleep(1)
+				timeTEXT = time.strftime("%M:%S",time.gmtime(progressbar_totaltime-i))
+				header = 'باقي من الزمن  '+timeTEXT+'  دقيقة'
+				dialog22.getControl(1).setLabel(header)
+				percent = int(100*i/progressbar_totaltime)
+				dialog22.getControl(20).setPercent(percent)
+				if dialog22.controlId>=0: break
+			else: dialog22.close()
+			return
+		import threading
+		th = threading.Thread(target=updateProgressBar, args=(dialog,))
+		th.start()
+	dialog.doModal()
+	if dialog.controlId>=10: choice = dialog.controlId-10
+	else: choice = -1
+	del dialog
+	#DIALOG_OK(str(choice),'')
+	return choice
+	"""
+	class MyClass(xbmcgui.WindowXMLDialog):
+		def __init__(self,*args,**kwargs): self.controlId = -1
+		def onClick(self,controlId): self.controlId = controlId
+	dialog = MyClass('DialogConfirmThreeButtons.xml',addonfolder,'Default','720p')
+	dialog.show()
+	dialog.getControl(1).setLabel(header)
+	dialog.getControl(9).setText(text)
+	dialog.getControl(10).setLabel(button0)
+	dialog.getControl(11).setLabel(button1)
+	dialog.getControl(12).setLabel(button2)
+	if update>=0:
+		dialog.getControl(20).setVisible(True)
+		dialog.getControl(20).setPercent(update)
+	else: dialog.getControl(20).setVisible(False)
+	dialog.doModal()
+	choice = dialog.controlId-10
+	#DIALOG_OK(str(choice),'')
+	del dialog
+	return choice
+	"""
+
 def DIALOG_TEXTVIEWER_FULLSCREEN(header,text,size='small',direction='left'):
 	#return
 	#dialog = xbmcgui.WindowXML('Font22.xml',addonfolder)
 	#dialog.show()
-	dialog = xbmcgui.WindowXMLDialog('DialogTextViewerFullScreen.xml',addonfolder)
+	dialog = xbmcgui.WindowXMLDialog('DialogTextViewerFullScreen.xml',addonfolder,'Default','720p')
 	dialog.show()
 	#dialog.getControl(99991).setPosition(0,0)
 	dialog.getControl(1).setLabel(header)
@@ -1837,7 +1982,7 @@ def DIALOG_TEXTVIEWER_FULLSCREEN(header,text,size='small',direction='left'):
 	return result
 
 def RANDOM_USERAGENT():
-	results = READ_FROM_SQL3('SETTINGS','USERAGENT')
+	results = READ_FROM_SQL3('MISC','USERAGENT')
 	#DIALOG_OK(results,'')
 	#LOG_THIS('NOTICE','EMAD ======== useragent: '+results)
 	if results: useragent = results ; return useragent
@@ -1854,11 +1999,15 @@ def RANDOM_USERAGENT():
 	else:
 		text = re.findall('get-the-list.*?>(.*?)<',html,re.DOTALL)
 		text = text[0]
-	a = re.findall('(Mozilla.*?)\n',text,re.DOTALL)
-	b = random.sample(a,1)
-	useragent = b[0]
+	oldlist = re.findall('(Mozilla.*?)\n',text,re.DOTALL)
+	newlist = []
+	for line in oldlist:
+		if 'android 4' in line.lower(): continue
+		newlist.append(line)
+	useragent = random.sample(newlist,1)
+	useragent = useragent[0]
 	#DIALOG_OK(useragent,str(len(a)))
-	WRITE_TO_SQL3('SETTINGS','USERAGENT',useragent,SHORT_CACHE)
+	WRITE_TO_SQL3('MISC','USERAGENT',useragent,SHORT_CACHE)
 	return useragent
 
 def HANDLE_EXIT_ERRORS(error):
@@ -1877,17 +2026,18 @@ def HANDLE_EXIT_ERRORS(error):
 		DIALOG_NOTIFICATION('خطأ '+function+' '+lineno+' '+file,error_line,time=2000)
 	return
 
-def PRIVILEGED(priv):
+def PRIVS(priv):
 	privs = settings.getSetting('user.privs')
-	priv = priv.encode('base64').replace('\n','')
+	#priv = priv.encode('base64').replace('\n','')
 	user = dummyClientID(32)
-	md5 = hashlib.md5(priv+user).hexdigest()[0:32]
+	md5 = hashlib.md5('X19'+priv+'18='+user).hexdigest()[0:32]
 	if md5 in privs: return True
 	return False
 
 def WRITE_THIS(data):
 	with open('s:\\0000emad.html','w') as f: f.write(data)
 	return
+
 
 """
 def kodiJsonRequest(params):

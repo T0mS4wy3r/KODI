@@ -5,6 +5,7 @@ script_name='FAJERSHOW'
 menu_name='_FJS_'
 website0a = WEBSITES[script_name][0]
 ignoreLIST = ['التصنيفات','انشاء حساب','طلبات الزوّار']
+#headers = {'User-Agent':''}
 
 def MAIN(mode,url,text):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
@@ -188,16 +189,17 @@ def PLAY(url):
 	html_blocks = re.findall("""id='download' class(.*?)class=["|']sbox["|']""",html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
-		items = re.findall("img src='(.*?)'.*?href='(.*?)'.*?'quality'>(.*?)<",block,re.DOTALL)
+		items = re.findall("img src='(.*?)'.*?href='(.*?)'.*?'quality'>(.*?)<.*?<td>(.*?)<",block,re.DOTALL)
 		#DIALOG_OK(str(items),str(block))
-		for img,link,quality in items:
+		for img,link,quality,lang in items:
 			if '=' in img:
 				host = img.split('=')[1]
 				title = HOSTNAME(host,True)
 			else: title = ''
+			title = lang+' '+title
 			link = link+'?named='+title+'__download____'+quality
 			linkLIST.append(link)
-	#selection = DIALOG_SELECT('أختر البحث المناسب', linkLIST)
+	selection = DIALOG_SELECT('أختر البحث المناسب', linkLIST)
 	if len(linkLIST)==0:
 		DIALOG_OK('رسالة من المبرمج','الرابط ليس فيه فيديو')
 	else:

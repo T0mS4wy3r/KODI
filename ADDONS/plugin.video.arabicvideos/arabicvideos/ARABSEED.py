@@ -5,7 +5,7 @@ script_name='ARABSEED'
 headers = {'User-Agent':''}
 menu_name='_ARS_'
 website0a = WEBSITES[script_name][0]
-ignoreLIST = ['مصارعه','اعلن معنا – For ads','موبايلات','برامج كمبيوتر','العاب كمبيوتر','اسلاميات','اخرى','اقسام اخري','اشتراكات']
+ignoreLIST = ['الرئيسية','المضاف حديثاً','مصارعه','اعلن معنا – For ads','موبايلات','برامج كمبيوتر','العاب كمبيوتر','اسلاميات','اخرى','اقسام اخري','اشتراكات']
 
 def MAIN(mode,url,text):
 	#LOG_MENU_LABEL(script_name,menu_label,mode,menu_path)
@@ -21,11 +21,6 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a+'/main','','','','','ARABSEED-MENU-1st')
-	html = response.content
-	html_blocks2 = re.findall('aria-current="page"(.*?)</div>',html,re.DOTALL)
-	block2 = html_blocks2[0]
-	items2 = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	if website=='':
 		addMenuItem('folder',menu_name+'بحث في الموقع','',259,'','','_REMEMBERRESULTS_')
 		addMenuItem('folder',menu_name+'فلتر محدد',website0a+'/category/اخرى',254)
@@ -34,9 +29,14 @@ def MENU(website=''):
 	addMenuItem('folder',menu_name+'المضاف حديثاً',website0a+'/lastest',251,'','','lastest')
 	addMenuItem('folder',menu_name+'جديد الافلام',website0a+'/main',256,'','','new_movies')
 	addMenuItem('folder',menu_name+'جديد الحلقات',website0a+'/main',256,'','','new_episodes')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a+'/main','','','','','ARABSEED-MENU-1st')
+	html = response.content
+	html_blocks2 = re.findall('class="MenuHeader"(.*?)</div>',html,re.DOTALL)
+	block2 = html_blocks2[0]
+	items2 = re.findall('href="(.*?)".*?>(.*?)<',block2,re.DOTALL)
 	for link,title in items2:
 		title = unescapeHTML(title)
-		if title not in ignoreLIST:
+		if title not in ignoreLIST and title!='':
 			addMenuItem('folder',website+'___'+menu_name+title,link,256)
 	return html
 
@@ -93,8 +93,8 @@ def TITLES(url,type):
 		elif type=='most': html_blocks = re.findall('class="SliderInSection(.*?)class="LinksList',html,re.DOTALL)
 		else: html_blocks = re.findall('class="Blocks-UL"(.*?)class="AboElSeed"',html,re.DOTALL)
 		block = html_blocks[0]
-		#items = re.findall('href="(.*?)".*?data-image="(.*?)" alt="(.*?)"',block,re.DOTALL)
-		items = re.findall('href="(.*?)".*?src="(.*?)" alt="(.*?)"',block,re.DOTALL)
+		items = re.findall('href="(.*?)".*?data-image="(.*?)" alt="(.*?)"',block,re.DOTALL)
+		#items = re.findall('href="(.*?)".*?alt="(.*?)".*?src="(.*?)"',block,re.DOTALL)
 	allTitles = []
 	for link,img,title in items:
 		#DIALOG_OK(title,'')
@@ -122,18 +122,18 @@ def TITLES(url,type):
 def EPISODES(url):
 	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','ARABSEED-EPISODES-1st')
 	html = response.content
-	name = re.findall('class="Title">(.*?)<',html,re.DOTALL)
-	if 'الحلقة' in name[0]: name = name[0].split('الحلقة')[0].strip(' ')
-	elif 'حلقة' in name[0]: name = name[0].split('حلقة')[0].strip(' ')
-	else: name = name[0]
+	item = re.findall('background-image: url\((.*?)\).*?class="Title">(.*?)<',html,re.DOTALL)
+	img,name = item[0]
+	if 'الحلقة' in name: name = name.split('الحلقة')[0].strip(' ')
+	elif 'حلقة' in name: name = name.split('حلقة')[0].strip(' ')
 	html_blocks = re.findall('class="EpisodesArea"(.*?)style="clear: both;"',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?<em>(.*?)<',block,re.DOTALL)
 		for link,episode in reversed(items):
 			title = name+' - الحلقة رقم '+episode
-			addMenuItem('video',menu_name+title,link,252)
-	else: addMenuItem('video',menu_name+'ملف التشغيل',url,252)
+			addMenuItem('video',menu_name+title,link,252,img)
+	else: addMenuItem('video',menu_name+'ملف التشغيل',url,252,img)
 	return
 
 def PLAY(url):
@@ -147,7 +147,7 @@ def PLAY(url):
 		items = re.findall('<span>(.*?)<.*?src="(.*?)"',block,re.DOTALL|re.IGNORECASE)
 		for title,link in items:
 			if link=='': continue
-			link = unquote(link)
+			link = UNQUOTE(link)
 			if 'http' not in link: link = 'http:'+link
 			quality = re.findall('\d\d\d+',title,re.DOTALL)
 			if quality:
@@ -169,7 +169,7 @@ def PLAY(url):
 		items = re.findall('href="(.*?)".*?<span>(.*?)<.*?<p>(.*?)<',block,re.DOTALL)
 		for link,title,quality in items:
 			if link=='': continue
-			link = unquote(link)
+			link = UNQUOTE(link)
 			title = CLEAN_STREAM_NAME(title,link)
 			link = link+'?named='+title+'__download____'+quality
 			linkLIST.append(link)
@@ -213,7 +213,7 @@ def FILTERS_MENU(url,filter):
 		url2 = url+'//getposts??'+clean_filter
 	elif type=='FILTERS':
 		filter_show = RECONSTRUCT_FILTER(filter_options,'modified_values')
-		filter_show = unquote(filter_show)
+		filter_show = UNQUOTE(filter_show)
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'modified_filters')
 		if filter_values=='': url2 = url
 		else: url2 = url+'//getposts??'+filter_values
@@ -309,7 +309,7 @@ def RECONSTRUCT_FILTER(filters,mode):
 	for key in all_filters_list:
 		if key in filtersDICT.keys(): value = filtersDICT[key]
 		else: value = '0'
-		if '%' not in value: value = quote(value)
+		if '%' not in value: value = QUOTE(value)
 		if mode=='modified_values' and value!='0': new_filters = new_filters+' + '+value
 		elif mode=='modified_filters' and value!='0': new_filters = new_filters+'&&'+key+'=='+value
 		elif mode=='all': new_filters = new_filters+'&&'+key+'=='+value

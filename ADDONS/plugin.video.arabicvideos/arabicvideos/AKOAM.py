@@ -102,7 +102,7 @@ def SECTIONS(url):
 	if akwam_link1 or akwam_link2:
 		if akwam_link1: url3 = akwam_link1[0]
 		elif akwam_link2: url3 = RESOLVE_UNDERRUN(akwam_link2[0])
-		url3 = unquote(url3)
+		url3 = UNQUOTE(url3)
 		#DIALOG_OK(url3,'SECTIONS 22')
 		import AKWAM
 		if '/series/' in url3 or '/shows/' in url3: AKWAM.EPISODES(url3)

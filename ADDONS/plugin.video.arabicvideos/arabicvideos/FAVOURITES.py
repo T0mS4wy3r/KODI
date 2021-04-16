@@ -120,6 +120,13 @@ def GET_FAVOURITES_CONTEXT_MENU(path):
 	else:
 		menuItem = menuItem[:-1]
 		menuItem = tuple(menuItem)
+		favouriteID = context
+		if favouriteID in favouritesDICT.keys():
+			count = len(favouritesDICT[favouriteID])
+			if count>1: contextMenu.append(('تحريك 1 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP1)'))
+			if count>4: contextMenu.append(('تحريك 4 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP4)'))
+			if count>1: contextMenu.append(('تحريك 1 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN1)'))
+			if count>4: contextMenu.append(('تحريك 4 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN4)'))
 		for favouriteID in ['1','2','3','4','5']:
 			contextMenu += CREATE_ONE_CONTEXT_MENU(favouriteID,context,path,menuItem,favouritesDICT)
 	contextMenuNEW = []
@@ -134,12 +141,6 @@ def CREATE_ONE_CONTEXT_MENU(favouriteID,context,path,menuItem,favouritesDICT):
 	if favouriteID in favouritesDICT.keys() and menuItem in favouritesDICT[favouriteID]:
 		contextMenu.append(('مسح من مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_REMOVE1)'))
 		#DIALOG_OK(context,favouriteID)
-		if context==favouriteID:
-			count = len(favouritesDICT[favouriteID])
-			if count>1: contextMenu.append(('تحريك 1 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP1)'))
-			if count>4: contextMenu.append(('تحريك 4 للأعلى','XBMC.RunPlugin('+path+'&context='+favouriteID+'_UP4)'))
-			if count>1: contextMenu.append(('تحريك 1 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN1)'))
-			if count>4: contextMenu.append(('تحريك 4 للأسفل','XBMC.RunPlugin('+path+'&context='+favouriteID+'_DOWN4)'))
 	else: contextMenu.append(('إضافة إلى مفضلة '+favouriteID,'XBMC.RunPlugin('+path+'&context='+favouriteID+'_ADD1)'))
 	return contextMenu
 

@@ -144,7 +144,7 @@ def TITLES_OLD(url,html):
 		if 'adurl=' in link:
 			#title = 'AD:  '+title
 			#link = re.findall('adurl=(.*?)&amp;',link+'&amp;',re.DOTALL)
-			#link = unquote(link[0])
+			#link = UNQUOTE(link[0])
 			continue
 		img2 = re.findall('thumb="(.*?)"',count,re.DOTALL)
 		if img2: img = img2[0]

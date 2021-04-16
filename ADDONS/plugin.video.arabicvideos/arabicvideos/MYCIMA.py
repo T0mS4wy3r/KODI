@@ -21,24 +21,32 @@ def MAIN(mode,url,text):
 	return results
 
 def MENU(website=''):
-	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',website0a,'','',False,'','MYCIMA-MENU-1st')
-	hostname = response.headers['Location']
-	hostname = hostname.strip('/')
+	#response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',website0a,'','',False,'','MYCIMA-MENU-1st')
+	#hostname = response.headers['Location']
+	#hostname = hostname.strip('/')
+	hostname = website0a
 	if website=='':
 		addMenuItem('folder',menu_name+'بحث في الموقع',hostname,369,'','','_REMEMBERRESULTS_')
 		addMenuItem('folder',menu_name+'فلتر محدد',hostname,364)
 		addMenuItem('folder',menu_name+'فلتر كامل',hostname,365)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	headers2 = {'Referer':hostname,'User-Agent':''}
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',hostname,'',headers2,'','','MYCIMA-MENU-2nd')
+	#headers2 = {'Referer':hostname,'User-Agent':''}
+	url = hostname+'/AjaxCenter/RightBar'
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'','','','','MYCIMA-MENU-2nd')
 	html = response.content
-	html_blocks = re.findall('class="RightUI"(.*?)anime',html,re.DOTALL)
+	html = escapeUNICODE(html)
+	html = html.replace('\\','')
+	#WRITE_THIS(html)
+	html_blocks = re.findall('rightbar(.*?)filter',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)".*?span>(.*?)<',block,re.DOTALL)
 		for link,title in items:
+			if '%d9%85%d8%b5%d8%a7%d8%b1%d8%b9%d8%a9-%d8%ad%d8%b1%d8%a9' in link: continue
 			addMenuItem('folder',website+'___'+menu_name+title,link,366)
 		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',hostname,'','','','','MYCIMA-MENU-2nd')
+	html = response.content
 	html_blocks = re.findall('middle--header(.*?)middle--header',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -65,8 +73,8 @@ def MENU(website=''):
 
 def SUBMENU(url):
 	#DIALOG_OK(url,'')
-	headers2 = {'Referer':url,'User-Agent':''}
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'',headers2,'','','MYCIMA-SUBMENU-1st')
+	#headers2 = {'Referer':url,'User-Agent':''}
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'','','','','MYCIMA-SUBMENU-1st')
 	html = response.content
 	#addMenuItem('folder',menu_name+'فلتر محدد',url,364)
 	#addMenuItem('folder',menu_name+'فلتر كامل',url,365)
@@ -89,8 +97,8 @@ def TITLES(url9,type=''):
 	else: url,url3 = url9,url9
 	#DIALOG_OK(url,url3)
 	#DIALOG_OK(url3,'')
-	headers2 = {'Referer':url3,'User-Agent':''}
-	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers2,'','','MYCIMA-TITLES-1st')
+	#headers2 = {'Referer':url3,'User-Agent':''}
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','MYCIMA-TITLES-1st')
 	html = response.content
 	#LOG_THIS('NOTICE',html)
 	#DIALOG_OK(str(html_blocks),html)
@@ -137,17 +145,20 @@ def TITLES(url9,type=''):
 def EPISODES(url,type=''):
 	#DIALOG_OK(url,'')
 	#LOG_THIS('',url)
-	headers2 = {'Referer':url,'User-Agent':''}
-	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers2,'','','MYCIMA-EPISODES-1st')
+	#headers2 = {'Referer':url,'User-Agent':''}
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'','','','','MYCIMA-EPISODES-1st')
 	html = response.content
-	name = re.findall('class="Title--Content-.*?<h1.*?>(.*?) \(',html,re.DOTALL)
-	if 'موسم' in name[0] and type=='':
-		name = name[0].split('موسم')[0]
+	html = UNQUOTE(html)
+	#WRITE_THIS(html)
+	name = re.findall('itemprop="item" href=".*?/series/(.*?)"',html,re.DOTALL)
+	if name: name = name[-1].replace('-',' ').strip('/')
+	if 'موسم' in name and type=='':
+		name = name.split('موسم')[0]
 		name = name.replace('مشاهدة','').strip(' ')
-	elif 'حلقة' in name[0]:
-		name = name[0].split('حلقة')[0]
+	elif 'حلقة' in name:
+		name = name.split('حلقة')[0]
 		name = name.replace('مشاهدة','').strip(' ')
-	else: name = name[0]
+	else: name = name
 	#DIALOG_OK(name,'')
 	html_blocks = re.findall('class="Seasons--Episodes"(.*?)</singlesection',html,re.DOTALL)
 	if html_blocks:
@@ -177,13 +188,13 @@ def PLAY(url):
 	#DIALOG_OK(url,'')
 	#LOG_THIS('',url)
 	linkLIST = []
-	headers2 = {'Referer':url,'User-Agent':''}
-	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'',headers2,'','','MYCIMA-PLAY-1st')
+	#headers2 = {'Referer':url,'User-Agent':''}
+	response = OPENURL_REQUESTS_CACHED(SHORT_CACHE,'GET',url,'','','','','MYCIMA-PLAY-1st')
 	html = response.content
 	ratingLIST = re.findall('<span>التصنيف<.*?<a.*?">(.*?)<.*?">(.*?)<',html,re.DOTALL)
 	if ratingLIST:
 		ratingLIST = [ratingLIST[0][0],ratingLIST[0][1]]
-		if RATING_CHECK(script_name,url,ratingLIST): return
+		if ratingLIST and RATING_CHECK(script_name,url,ratingLIST): return
 	# watch links
 	html_blocks = re.findall('class="WatchServersList"(.*?)class="WatchServersEmbed"',html,re.DOTALL)
 	if html_blocks:
@@ -232,7 +243,7 @@ def FILTERS_MENU(url9,filter):
 	#DIALOG_OK(filter,url)
 	if '??' in url9: url = url9.split('//getposts??')[0]
 	else: url = url9
-	headers2 = {'Referer':url9,'User-Agent':''}
+	#headers2 = {'Referer':url9,'User-Agent':''}
 	filter = filter.replace('_FORGETRESULTS_','')
 	type,filter = filter.split('___',1)
 	if filter=='': filter_options,filter_values = '',''
@@ -248,7 +259,7 @@ def FILTERS_MENU(url9,filter):
 		url2 = url+'//getposts??'+clean_filter
 	elif type=='FILTERS':
 		filter_show = RECONSTRUCT_FILTER(filter_options,'modified_values')
-		filter_show = unquote(filter_show)
+		filter_show = UNQUOTE(filter_show)
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'modified_filters')
 		if filter_values=='': url2 = url
 		else: url2 = url+'//getposts??'+filter_values
@@ -256,7 +267,7 @@ def FILTERS_MENU(url9,filter):
 		addMenuItem('folder',menu_name+'أظهار قائمة الفيديو التي تم اختيارها ',url4,361,'','','filters')
 		addMenuItem('folder',menu_name+' [[   '+filter_show+'   ]]',url4,361,'','','filters')
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'',headers2,'','','MYCIMA-FILTERS_MENU-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'','','','','MYCIMA-FILTERS_MENU-1st')
 	html = response.content
 	html_blocks = re.findall('<mycima--filter(.*?)</mycima--filter>',html,re.DOTALL)
 	block = html_blocks[0]
@@ -334,7 +345,7 @@ def RECONSTRUCT_FILTER(filters,mode):
 	for key in all_filters_list:
 		if key in filtersDICT.keys(): value = filtersDICT[key]
 		else: value = '0'
-		if '%' not in value: value = quote(value)
+		if '%' not in value: value = QUOTE(value)
 		if mode=='modified_values' and value!='0': new_filters = new_filters+' + '+value
 		elif mode=='modified_filters' and value!='0': new_filters = new_filters+'&&'+key+'=='+value
 		elif mode=='all': new_filters = new_filters+'&&'+key+'=='+value

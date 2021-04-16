@@ -155,7 +155,7 @@ def EPISODES_OLD(url):
 	allTitles = []
 	for img,link,title in items:
 		if title not in allTitles:
-			link = website0a+unquote(link)
+			link = website0a+UNQUOTE(link)
 			title = title.strip(' ')
 			addMenuItem('video',menu_name+'مسلسل '+title,link,12,img)
 			allTitles.append(title)
@@ -167,28 +167,30 @@ def PLAY(url):
 	#DIALOG_OK(url,str(url))
 	linkLIST,titleLIST,videodeliveryID = [],[],[]
 	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,True,'ALARAB-PLAY-1st')
-	if 'vid=' in html:
-		# https://vod.alarab.com/v101949-_حلقة_25_حكايتي_HD_رمضان_252019
-		url2 = re.findall('class="resp.*?src="(.*?)"',html,re.DOTALL)
-		if url2:
-			url2 = url2[0]
-			html2 = OPENURL_CACHED(LONG_CACHE,url2,'',headers,True,'ALARAB-PLAY-2nd')
-			url3 = re.findall('source src="(.*?)"',html2,re.DOTALL)
-			if url3:
-				url3 = url3[0]
-				#if url3.count('http')>1: url3 = 'http'+url3.split('http',2)[2]
-				linkLIST.append(url3)
-				titleLIST.append('سيرفر خاص  m3u8')
-	else:
-		if '/viewVedio/' in url:
-			id = re.findall('.com/viewVedio/([0-9]+)/',url,re.DOTALL)
-		else:
-			id = re.findall('.com/v([0-9]+)-',url,re.DOTALL)
+	# https://vod.alarab.com/v101949-_حلقة_25_حكايتي_HD_رمضان_252019
+	# https://alarabplayers.alarab.com/vod.php?vid=110253
+	# https://embed.alarab.com/video/110272
+	# https://cdn.alarab.com/numeric/130128.mp4/playlist.m3u8
+	url2 = re.findall('class="resp.*?src="(.*?)"',html,re.DOTALL)
+	if url2:
+		url2 = url2[0]
+		html2 = OPENURL_CACHED(LONG_CACHE,url2,'',headers,False,'ALARAB-PLAY-2nd')
+		url3 = re.findall('source src="(.*?)"',html2,re.DOTALL)
+		if url3:
+			url3 = url3[0]
+			#if url3.count('http')>1: url3 = 'http'+url3.split('http',2)[2]
+			linkLIST.append(url3)
+			titleLIST.append('سيرفر خاص  m3u8')
+	if len(linkLIST)==0:
+		if '/viewVedio/' not in url: id = re.findall('.com/v([0-9]+)-',url,re.DOTALL)
+		else: id = re.findall('.com/viewVedio/([0-9]+)/',url,re.DOTALL)
 		if id:
+			id = id[0]
 			url2 = 'https://alarabplayers.alarab.com/vod.php?vid='+id
 			headers['Referer'] = url
-			html2 = OPENURL_CACHED(SHORT_CACHE,url2,'',headers,True,'ALARAB-PLAY-3rd')
+			html2 = OPENURL_CACHED(SHORT_CACHE,url2,'',headers,False,'ALARAB-PLAY-3rd')
 			html += html2
+	if len(linkLIST)==0:
 		html_blocks = re.findall('playerInstance.setup(.*?)primary',html,re.DOTALL)
 		for block in html_blocks:
 			youtube = re.findall('file:".*?youtu.*?=(.*?)"',block,re.DOTALL)
@@ -220,6 +222,7 @@ def PLAY(url):
 					for label,file in z:
 						linkLIST.append(file)
 						titleLIST.append('سيرفر خاص  '+label)
+	if len(linkLIST)==0:
 		id = re.findall('stream src="(.*?)"',html,re.DOTALL)
 		if id: videodeliveryID.append(id)
 		for id in videodeliveryID:
@@ -230,29 +233,29 @@ def PLAY(url):
 			title = 'سيرفر خاص  m3u8'
 			titleLIST.append(title)
 			linkLIST.append(url3)
-		"""
-		html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,True,'ALARAB-PLAY-3rd')
-		DIALOG_OK(url,str(html))
-		items2 = re.findall('RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
-		if items2:
-			for resolution,link in items2:
-				title = ' سيرفر خاص '+'m3u8 '+resolution.split('x')[1]
-				link = 'https://videodelivery.net/'+videodeliveryID[0]+'/manifest/'+link
-				titleLIST.append(title)
-				linkLIST.append(link)
-		#items = re.findall('resp-container.*?src="(.*?)".*?</div>',html,re.DOTALL)
-		#if items:
-		#	url = items[0]
-		#	linkLIST.append(url)
-		#	titleLIST.append('ملف التشغيل')
-		#DIALOG_OK('',str(linkLIST))
-		#url = website0a + '/download.php?file='+id
-		#html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,True,'ALARAB-PLAY-4th')
-		#items = re.findall('</h2>.*?href="(.*?mp4)"',html,re.DOTALL)
-		#if items:
-		#	linkLIST.append(items[0])
-		#	titleLIST.append('ملف التحميل')
-		"""
+	"""
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,True,'ALARAB-PLAY-3rd')
+	DIALOG_OK(url,str(html))
+	items2 = re.findall('RESOLUTION=(.*?),.*?\n(.*?)\n',html,re.DOTALL)
+	if items2:
+		for resolution,link in items2:
+			title = ' سيرفر خاص '+'m3u8 '+resolution.split('x')[1]
+			link = 'https://videodelivery.net/'+videodeliveryID[0]+'/manifest/'+link
+			titleLIST.append(title)
+			linkLIST.append(link)
+	#items = re.findall('resp-container.*?src="(.*?)".*?</div>',html,re.DOTALL)
+	#if items:
+	#	url = items[0]
+	#	linkLIST.append(url)
+	#	titleLIST.append('ملف التشغيل')
+	#DIALOG_OK('',str(linkLIST))
+	#url = website0a + '/download.php?file='+id
+	#html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,True,'ALARAB-PLAY-4th')
+	#items = re.findall('</h2>.*?href="(.*?mp4)"',html,re.DOTALL)
+	#if items:
+	#	linkLIST.append(items[0])
+	#	titleLIST.append('ملف التحميل')
+	"""
 	if len(linkLIST)==0:
 		#LOG_THIS('NOTICE',LOGGING(script_name)+'   No video file found   URL: [ '+url+' ]')
 		DIALOG_OK('رسالة من المبرمج','لا يوجد ملف فيديو')
@@ -269,8 +272,8 @@ def PLAY(url):
 		selection = DIALOG_SELECT('اختر الملف المناسب:', new_titleLIST)
 		if selection == -1 : return
 		url = new_linkLIST[selection]
+	#DIALOG_OK(url,'')
 	if 'youtu' in url:
-		#DIALOG_OK(url,'')
 		import RESOLVERS
 		RESOLVERS.PLAY_LINK(url,script_name,'video')
 	else: PLAY_VIDEO(url,script_name,'video')

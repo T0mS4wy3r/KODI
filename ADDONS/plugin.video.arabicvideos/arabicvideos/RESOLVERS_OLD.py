@@ -53,7 +53,7 @@ def UPTOBOX(url):
 		token = token[0]
 		headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 		payload = { 'waitingToken' : token }
-		data = urllib.urlencode(payload)
+		data = URLENCODE(payload)
 		progress = DIALOG_PROGRESS()
 		progress.create('Waiting 35 seconds ...')
 		for i in range(0,35):
@@ -134,7 +134,7 @@ def INTOUPLOAD_PROBLEM(url):
 	#DIALOG_OK(code,str(captcha))
 	headers = { 'User-Agent' : '' , 'Content-Type' : 'application/x-www-form-urlencoded' }
 	payload = { 'id':id , 'op':op , 'code':code , 'rand':rand }
-	data = urllib.urlencode(payload)
+	data = URLENCODE(payload)
 	progress = DIALOG_PROGRESS()
 	progress.create('Waiting 15 seconds ...')
 	for i in range(0,15):

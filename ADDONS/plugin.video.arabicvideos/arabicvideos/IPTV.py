@@ -60,6 +60,13 @@ def MENU():
 	addMenuItem('link','[COLOR FFC89008]IPT  [/COLOR]'+'تغيير IPTV User-Agent','',280)
 	return
 
+ALL_TYPES = ['ALL','VOD_SERIES_GROUPED','VOD_SERIES_GROUPED_SORTED'
+		,'VOD_MOVIES_GROUPED_SORTED','VOD_MOVIES_GROUPED','DUMMY'
+		,'VOD_ORIGINAL_GROUPED','VOD_FROM_NAME_SORTED','VOD_FROM_GROUP_SORTED'
+		,'LIVE_ARCHIVED_GROUPED_SORTED','LIVE_EPG_GROUPED_SORTED','LIVE_TIMESHIFT_GROUPED_SORTED','LIVE_GROUPED'
+		,'LIVE_ORIGINAL_GROUPED','LIVE_FROM_NAME_SORTED','LIVE_GROUPED_SORTED','LIVE_FROM_GROUP_SORTED'
+		,'VOD_UNKNOWN_GROUPED','LIVE_UNKNOWN_SORTED','LIVE_UNKNOWN','VOD_UNKNOWN_GROUPED_SORTED']
+
 def CHECK_ACCOUNT(showDialog=True):
 	#if not isIPTVFiles(True): return
 	ok,status = False,''
@@ -113,7 +120,9 @@ def CHECK_ACCOUNT(showDialog=True):
 				message += sep1+'Expiry Date:  '+'[COLOR FFC89008]'+exp_date+'[/COLOR]'
 				message += sep1+'Connections   ( Active / Maximum ) :  '+'[COLOR FFC89008]'+active+' / '+max+'[/COLOR]'
 				message += sep1+'Allowed Outputs:   '+'[COLOR FFC89008]'+" , ".join(dict['user_info']['allowed_output_formats'])+'[/COLOR]'
-				message += sep1+sep1+str(dict['server_info'])
+				server_info = '"server_info":'+html.split('"server_info":')[1]
+				server_info = server_info.replace(':',': ').replace(',',', ').replace('}}','}')
+				message += sep1+sep1+server_info
 				if status=='Active': DIALOG_TEXTVIEWER('الاشتراك يعمل بدون مشاكل',message)
 				else: DIALOG_TEXTVIEWER('يبدو أن هناك مشكلة في الاشتراك',message)
 	if iptvURL and ok and status=='Active':
@@ -132,7 +141,7 @@ def GROUPS(TYPE,GROUP,website=''):
 	results = READ_FROM_SQL3('IPTV_GROUPS',[TYPE,GROUP,website])
 	if results: menuItemsLIST[:] = menuItemsLIST+results ; return
 	else: previous_menuItemsLIST = menuItemsLIST[:] ; menuItemsLIST[:] = []
-	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
+	streams = READ_FROM_SQL3('IPTV_'+TYPE,TYPE)
 	groups,unique,logos = [],[],[]
 	for dict in streams:
 		groups.append(dict['group'])
@@ -180,7 +189,7 @@ def ITEMS(TYPE,GROUP):
 	results = READ_FROM_SQL3('IPTV_ITEMS',[TYPE,GROUP])
 	if results: menuItemsLIST[:] = menuItemsLIST+results ; return
 	else: previous_menuItemsLIST = menuItemsLIST[:] ; menuItemsLIST[:] = []
-	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
+	streams = READ_FROM_SQL3('IPTV_'+TYPE,TYPE)
 	#DIALOG_OK(TYPE+'___:'+GROUP,str(len(streams)))
 	if '__IPTVSERIES__' in GROUP: MAINGROUP,SUBGROUP = GROUP.split('__IPTVSERIES__')
 	else: MAINGROUP,SUBGROUP = GROUP,''
@@ -365,7 +374,7 @@ def SEARCH(search=''):
 	else:
 		if not isIPTVFiles(False): return
 		TYPE = 'ALL'
-	streams = READ_FROM_SQL3('IPTV_STREAMS',TYPE)
+	streams = READ_FROM_SQL3('IPTV_'+TYPE,TYPE)
 	searchLower = search.lower()
 	uniqueLIST = []
 	for dict in streams:
@@ -489,19 +498,22 @@ def CREATE_STREAMS(showDialogs=True):
 	chunksCount = int(filesize/chunksize)
 	i = 0
 	t1 = time.time()-30
-	for chunk in response.iter_content(chunk_size=chunksize):
-		i = i+1
-		#if i==2: break
-		if pDialog.iscanceled():
-			response.close()
-			return
-		t2 = time.time()
-		timeElapsed = t2-t1
-		chunkTime = timeElapsed/i
-		timeTotal = chunkTime*(chunksCount+1)
-		timeRemaining = timeTotal-timeElapsed
-		pDialog.update(0+int(35*i/chunksCount),'جلب الملف الرئيسي:- الجزء رقم',str(i*chunksize/MegaByte)+'/'+str(filesize_MB)+' MB    وقت متبقي: '+time.strftime("%H:%M:%S",time.gmtime(timeRemaining))+' ـ')
-		m3u_text = m3u_text+chunk
+	if 1:
+		for chunk in response.iter_content(chunk_size=chunksize):
+			i = i+1
+			#if i==2: break
+			if pDialog.iscanceled():
+				response.close()
+				return
+			t2 = time.time()
+			timeElapsed = t2-t1
+			chunkTime = timeElapsed/i
+			timeTotal = chunkTime*(chunksCount+1)
+			timeRemaining = timeTotal-timeElapsed
+			pDialog.update(0+int(35*i/chunksCount),'جلب الملف الرئيسي:- الجزء رقم',str(i*chunksize/MegaByte)+'/'+str(filesize_MB)+' MB    وقت متبقي: '+time.strftime("%H:%M:%S",time.gmtime(timeRemaining))+' ـ')
+			m3u_text = m3u_text+chunk
+	else:
+		with open(fulliptvfile,'rb') as f: m3u_text = f.read()
 	with open(fulliptvfile,'wb') as f: f.write(m3u_text)
 	#m3u_filename = 'iptv_'+str(int(now))+'_.m3u'
 	#iptvfile = os.path.join(addoncachefolder,m3u_filename)
@@ -544,7 +556,7 @@ def CREATE_STREAMS(showDialogs=True):
 	server = settings.getSetting('iptv.server')
 	live_archived_channels,live_epg_channels = [],[]
 	url = server+'/player_api.php?username='+username+'&password='+password+'&action=get_series_categories'
-	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-2nd')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-2nd')
 	if pDialog.iscanceled(): return
 	pDialog.update(40,'جلب الملفات الثانوية:- الملف رقم','2/3')
 	series_groups = re.findall('category_name":"(.*?)"',html,re.DOTALL)
@@ -553,14 +565,14 @@ def CREATE_STREAMS(showDialogs=True):
 		group = group.replace('\/','/').decode('unicode_escape').encode('utf8')
 		m3u_text = m3u_text.replace('group="'+group+'"','group="__IPTVSERIES__'+group+'"')
 	url = server+'/player_api.php?username='+username+'&password='+password+'&action=get_vod_categories'
-	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-3rd')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-3rd')
 	pDialog.update(45,'جلب الملفات الثانوية:- الملف رقم','3/3')
 	vod_groups = re.findall('category_name":"(.*?)"',html,re.DOTALL)
 	for group in vod_groups:
 		group = group.replace('\/','/').decode('unicode_escape').encode('utf8')
 		m3u_text = m3u_text.replace('group="'+group+'"','group="__MOVIES__'+group+'"')
 	url = server+'/player_api.php?username='+username+'&password='+password+'&action=get_live_streams'
-	html = OPENURL_CACHED(SHORT_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-4th')
+	html = OPENURL_CACHED(REGULAR_CACHE,url,'',headers,'','IPTV-CREATE_STREAMS-4th')
 	live_archived = re.findall('"name":"(.*?)".*?"tv_archive":(.*?),',html,re.DOTALL)
 	for name,archived in live_archived:
 		if archived=='1': live_archived_channels.append(name)
@@ -651,13 +663,7 @@ def CREATE_STREAMS(showDialogs=True):
 	#with open('S:\\0iptvemad.m3u','w') as f: f.write(str(streams_not_sorted).replace("},","}\n,"))
 	streams_sorted = sorted(streams_not_sorted, reverse=False, key=lambda key: key['title'].lower())
 	grouped_streams = {}
-	types = ['ALL','VOD_SERIES_GROUPED','VOD_SERIES_GROUPED_SORTED'
-			,'VOD_MOVIES_GROUPED_SORTED','VOD_MOVIES_GROUPED','DUMMY'
-			,'VOD_ORIGINAL_GROUPED','VOD_FROM_NAME_SORTED','VOD_FROM_GROUP_SORTED'
-			,'LIVE_ARCHIVED_GROUPED_SORTED','LIVE_EPG_GROUPED_SORTED','LIVE_TIMESHIFT_GROUPED_SORTED','LIVE_GROUPED'
-			,'LIVE_ORIGINAL_GROUPED','LIVE_FROM_NAME_SORTED','LIVE_GROUPED_SORTED','LIVE_FROM_GROUP_SORTED'
-			,'VOD_UNKNOWN_GROUPED','LIVE_UNKNOWN_SORTED','LIVE_UNKNOWN','VOD_UNKNOWN_GROUPED_SORTED']
-	for type in types: grouped_streams[type] = []
+	for type in ALL_TYPES: grouped_streams[type] = []
 	#LOG_THIS('NOTICE','EMAD 555 CREATE STREAMS START creating 1st STREAMS dictionary')
 	for dict in streams_sorted:
 		type = dict['type']
@@ -699,12 +705,12 @@ def CREATE_STREAMS(showDialogs=True):
 			if 'UNKNOWN' in type: grouped_streams['VOD_UNKNOWN_GROUPED'].append(dict2)
 	grouped_streams['DUMMY'].append('')
 	DELETE_IPTV_FILES(False)
-	length = len(types)
+	length = len(ALL_TYPES)
 	totalLines,finishedLines = 0,0
 	t1 = time.time()-60
-	for TYPE in types: totalLines += len(grouped_streams[TYPE])
+	for TYPE in ALL_TYPES: totalLines += len(grouped_streams[TYPE])
 	for i in range(length):
-		TYPE = types[i]
+		TYPE = ALL_TYPES[i]
 		if pDialog.iscanceled(): return
 		t2 = time.time()
 		timeElapsed = t2-t1
@@ -713,8 +719,8 @@ def CREATE_STREAMS(showDialogs=True):
 		expectedTotalTime = averageTimePerLine*totalLines#*1.25
 		timeRemaining = expectedTotalTime-timeElapsed
 		pDialog.update(85+int(15*i/length),'تخزين الملفات:- الملف رقم','وقت متبقي: '+time.strftime("%H:%M:%S",time.gmtime(timeRemaining))+'      '+str(i+1)+'/'+str(length))
-		WRITE_TO_SQL3('IPTV_STREAMS',TYPE,grouped_streams[TYPE],PERMANENT_CACHE)
-	#streams = READ_FROM_SQL3('IPTV_STREAMS','LIVE_GROUPED')
+		WRITE_TO_SQL3('IPTV_'+TYPE,TYPE,grouped_streams[TYPE],PERMANENT_CACHE)
+	#streams = READ_FROM_SQL3('IPTV_LIVE_GROUPED','LIVE_GROUPED')
 	#for dict in streams:
 	#	if 'EG - ' in dict['title']: LOG_THIS('NOTICE','======'+str(dict))
 	with open(dummyiptvfile,'w') as f: f.write('')
@@ -728,12 +734,12 @@ def COUNTS(show=True):
 	#DIALOG_OK('COUNTS','0000')
 	if not isIPTVFiles(show): return ''
 	#DIALOG_BUSY('start')
-	unknownLIVECount = len(READ_FROM_SQL3('IPTV_STREAMS','LIVE_UNKNOWN'))
-	knownLIVECount = len(READ_FROM_SQL3('IPTV_STREAMS','LIVE_GROUPED'))
+	unknownLIVECount = len(READ_FROM_SQL3('IPTV_LIVE_UNKNOWN','LIVE_UNKNOWN'))
+	knownLIVECount = len(READ_FROM_SQL3('IPTV_LIVE_GROUPED','LIVE_GROUPED'))
 	liveCount = unknownLIVECount+knownLIVECount
-	moviesCount = len(READ_FROM_SQL3('IPTV_STREAMS','VOD_MOVIES_GROUPED'))
-	unknownVODCount = len(READ_FROM_SQL3('IPTV_STREAMS','VOD_UNKNOWN_GROUPED'))
-	episodes = READ_FROM_SQL3('IPTV_STREAMS','VOD_SERIES_GROUPED')
+	moviesCount = len(READ_FROM_SQL3('IPTV_VOD_MOVIES_GROUPED','VOD_MOVIES_GROUPED'))
+	unknownVODCount = len(READ_FROM_SQL3('IPTV_VOD_UNKNOWN_GROUPED','VOD_UNKNOWN_GROUPED'))
+	episodes = READ_FROM_SQL3('IPTV_VOD_SERIES_GROUPED','VOD_SERIES_GROUPED')
 	episodesCount = len(episodes)
 	uniqeSeriesLIST = []
 	for dict in episodes:
@@ -754,18 +760,18 @@ def DELETE_IPTV_FILES(show=True):
 	if show:
 		yes = DIALOG_YESNO('مسح ملفات IPTV','تستطيع في أي وقت الدخول إلى قائمة IPTV وجلب ملفات IPTV جديدة .. هل تريد الآن مسح الملفات القديمة المخزنة في البرنامج ؟!','','','كلا','نعم')
 		if not yes: return
-	else: yes = False
-	try: os.remove(fulliptvfile)
-	except: pass
+		try: os.remove(fulliptvfile)
+		except: pass
 	try: os.remove(dummyiptvfile)
 	except: pass
-	DELETE_FROM_SQL3('IPTV_ITEMS')
 	DELETE_FROM_SQL3('IPTV_GROUPS')
-	DELETE_FROM_SQL3('IPTV_STREAMS')
-	#DELETE_FROM_SQL3('IMPORT_SECTIONS','LIVE')
+	DELETE_FROM_SQL3('IPTV_ITEMS')
+	for table in ALL_TYPES:
+		DELETE_FROM_SQL3('IPTV_'+table)
+	#DELETE_FROM_SQL3('MISC','SECTIONS_LIVE')
 	#CLEAN_KODI_CACHE_FOLDER()
 	if show: DIALOG_OK('رسالة من المبرمج','تم مسح جميع ملفات IPTV')
-	return yes
+	return
 
 def isIPTVFiles(showDialogs=True):
 	list = str(os.listdir(addoncachefolder))
@@ -775,13 +781,13 @@ def isIPTVFiles(showDialogs=True):
 	return False
 
 """
-def SAVE_STREAMS_TO_DISK(grouped_streams,types):
+def SAVE_STREAMS_TO_DISK(grouped_streams,ALL_TYPES):
 	global settings
 	filesLIST = []
 	filesLIST.append('iptv_'+str(int(now))+'_.m3u')
 	filename = 'iptv_'+str(int(now))+'__TYPE__.streams'
 	settings.setSetting('iptv.file',filename)
-	for TYPE in types:
+	for TYPE in ALL_TYPES:
 		new_streams = str(grouped_streams[TYPE])
 		new_streams = new_streams.replace('},','},\n')
 		new_filename = filename.replace('__TYPE__','_'+TYPE+'_')

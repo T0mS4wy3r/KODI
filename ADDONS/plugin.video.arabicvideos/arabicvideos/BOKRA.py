@@ -16,21 +16,12 @@ def MAIN(mode,url,text):
 
 def MENU(website=''):
 	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'','','','','BOKRA-MENU-1st')
-	if website=='':
-		addMenuItem('folder',menu_name+'بحث في الموقع','',379,'','','_REMEMBERRESULTS_')
-		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	if website=='': addMenuItem('folder',menu_name+'بحث في الموقع','',379,'','','_REMEMBERRESULTS_')
+	addMenuItem('folder',website+'___'+menu_name+'مسلسلات',website0a+'/Cat-43-1',371)
+	addMenuItem('folder',website+'___'+menu_name+'أفلام',website0a+'/Cat-42-1',371)
+	if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html = response.content
 	ignoreLIST = ['افلام للكبار','بكرا TV']
-	html_blocks = re.findall('class="container"(.*?)script type=',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
-		for link,title in items:
-			title = title.strip(' ')
-			link = website0a+link
-			if not any(value in title for value in ignoreLIST):
-				addMenuItem('folder',website+'___'+menu_name+title,link,371)
-		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	html_blocks = re.findall('class="row cat Tags"(.*?)class="row cat zone220"',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
@@ -41,9 +32,24 @@ def MENU(website=''):
 				addMenuItem('folder',website+'___'+menu_name+title,link,371)
 		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	global menuItemsLIST
-	last_items = menuItemsLIST[2:8]
-	del menuItemsLIST[2:8]
-	menuItemsLIST[:] = menuItemsLIST+last_items
+	first_items = menuItemsLIST[:]
+	menuItemsLIST[:] = []
+	html_blocks = re.findall('class="container"(.*?)script type=',html,re.DOTALL)
+	if html_blocks:
+		block = html_blocks[0]
+		items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
+		for link,title in items:
+			title = title.strip(' ')
+			link = website0a+link
+			if not any(value in title for value in ignoreLIST):
+				addMenuItem('folder',website+'___'+menu_name+title,link,371)
+		if website=='': addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	last_items = menuItemsLIST[:]
+	move_items1 = last_items[0:6]
+	del last_items[0:6]
+	move_items2 = first_items[4:5]
+	del first_items[4:5]
+	menuItemsLIST[:] = first_items+last_items+move_items1+move_items2
 	return html
 
 def TITLES(url,type=''):
@@ -107,8 +113,13 @@ def PLAY(url):
 	html2 = response.content
 	url3 = re.findall('src="(.*?)"',html2,re.DOTALL)
 	if url3:
-		url3 = url3[0]
+		url3 = url3[-1]
 		if 'http:' not in url3: url3 = 'http:'+url3
+		if 'embed.min.js' in url3:
+			ids = re.findall('data-publisher-id="(.*?)" data-video-id="(.*?)"',html2,re.DOTALL)
+			if ids:
+				publisher_id, video_id = ids[0]
+				url3 = SERVER(url3)+'/v2/'+publisher_id+'/config/'+video_id+'.json'
 		import RESOLVERS
 		RESOLVERS.PLAY([url3],script_name,'video')
 	else: DIALOG_OK('رسالة من المبرمج','للأسف ملف الفيديو غير موجود في الموقع الأصلي')

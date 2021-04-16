@@ -25,21 +25,26 @@ def MENU(website=''):
 		addMenuItem('folder',menu_name+'فلتر محدد',website0a,205)
 		addMenuItem('folder',menu_name+'فلتر كامل',website0a,204)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	addMenuItem('folder',menu_name+'مميزة',website0a+'??trending',201)
+	addMenuItem('folder',menu_name+'أفلام مميزة',website0a+'??trending_movies',201)
+	addMenuItem('folder',menu_name+'مسلسلات مميزة',website0a+'??trending_series',201)
+	addMenuItem('folder',website+'___'+menu_name+'الصفحة الرئيسية',website0a+'??mainpage',201)
 	#addMenuItem('folder',menu_name+'فلتر','',114,website0a)
-	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a+'/alz','',headers,True,'','ARBLIONZ-MENU-1st')
+	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',website0a,'',headers,True,'','ARBLIONZ-MENU-1st')
 	html = response.content#.encode('utf8')
-	html_blocks = re.findall('categories-tabs(.*?)advanced-search',html,re.DOTALL)
+	html_blocks = re.findall('categories-tabs(.*?)MainRow',html,re.DOTALL)
 	if html_blocks:
 		block = html_blocks[0]
 		items = re.findall('data-get="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
-		for url,title in items:
-			link = website0a+'/getposts?type=one&data='+url
+		for filter,title in items:
+			#link = website0a+'/getposts?type=one&data='+filter
+			link = website0a+'/ajax/home/more?filter='+filter
 			addMenuItem('folder',website+'___'+menu_name+title,link,201)
 		addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
 	#WRITE_FILE(html)
 	html_blocks = re.findall('navigation-menu(.*?)</div>',html,re.DOTALL)
 	block = html_blocks[0]
-	items = re.findall('href="(.*?)">(.*?)<',block,re.DOTALL)
+	items = re.findall('href="(.*?)".*?>(.*?)<',block,re.DOTALL)
 	#keepLIST = ['مسلسلات ','افلام ','برامج','عروض','كليبات','اغانى']
 	for link,title in items:
 		if 'http' not in link: link = website0a+link
@@ -49,8 +54,6 @@ def MENU(website=''):
 	return html
 
 def TITLES(url):
-	if url==website0a: url = url+'/alz'
-	#DIALOG_OK(url,'TITLES')
 	"""
 	# for POST filter:
 	if '/getposts?' in url:
@@ -67,19 +70,40 @@ def TITLES(url):
 		html = response.content#.encode('utf8')
 	else:
 	"""
+	if '??' in url: url,type = url.split('??')
+	else: type = ''
+	#DIALOG_OK(url,type)
+	#if url==website0a: url = url+'/alz'
+	#DIALOG_OK(url,'TITLES')
 	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'GET',url,'',headers,True,'','ARBLIONZ-TITLES-2nd')
 	html = response.content#.encode('utf8')
-	if 'getposts' in url: block = html
+	#WRITE_THIS(html)
+	if 'getposts' in url: html_blocks = [html]
+	elif type=='trending':
+		html_blocks = re.findall('MasterSlider(.*?)</div>\n *</div>\n *</div>',html,re.DOTALL)
+	elif type=='trending_movies':
+		html_blocks = re.findall('Slider_1(.*?)</div>.</div>.</div>.</div>',html,re.DOTALL)
+	elif type=='trending_series':
+		html_blocks = re.findall('Slider_2(.*?)</div>.</div>.</div>.</div>',html,re.DOTALL)
+	elif type=='111mainpage':
+		html_blocks = re.findall('class="container page-content"(.*?)class="tabs"',html,re.DOTALL)
 	else:
 		html_blocks = re.findall('page-content(.*?)main-footer',html,re.DOTALL)
-		block = html_blocks[0]
+	#DIALOG_OK('',str(html_blocks))
+	if not html_blocks: return
+	block = html_blocks[0]
 	#items = re.findall('class="box.*?src="(.*?)".*?href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
-	items = re.findall('content-box".*?src="(.*?)".*?href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
-	allTitles = []
 	itemLIST = ['مشاهدة','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
-	for img,link ,title in items:
+	#addMenuItem('link','[COLOR FFC89008]====================[/COLOR]','',9999)
+	items = re.findall('content-box".*?src="(.*?)".*?href="(.*?)".*?<h3>(.*?)<',block,re.DOTALL)
+	if not items:
+		items = re.findall('SliderItem".*?href="(.*?)".*?image: url\((.*?)\).*?<h2>(.*?)<',block,re.DOTALL)
+		links,imgs,titles = zip(*items)
+		items = zip(imgs,links,titles)
+	allTitles = []
+	for img,link,title in items:
 		#link = escapeUNICODE(link)
-		#link = quote(link)
+		#link = QUOTE(link)
 		if '/series/' in link: continue
 		link = link.strip('/')
 		title = unescapeHTML(title)
@@ -96,19 +120,20 @@ def TITLES(url):
 		elif '/pack/' in link:
 			addMenuItem('folder',menu_name+title,link+'/films',201,img)
 		else: addMenuItem('folder',menu_name+title,link,203,img)
-	html_blocks = re.findall('class="pagination(.*?)</div>',html,re.DOTALL)
-	if html_blocks:
-		block = html_blocks[0]
-		items = re.findall('<a href=["\'](http.*?)["\'].*?>(.*?)<',block,re.DOTALL)
-		for link,title in items:
-			link = unescapeHTML(link)
-			title = unescapeHTML(title)
-			title = title.replace('الصفحة ','')
-			if 'search?s=' in url:
-				page_new = link.split('page=')[1]
-				page_old = url.split('page=')[1]
-				link = url.replace('page='+page_old,'page='+page_new)
-			if title!='': addMenuItem('folder',menu_name+'صفحة '+title,link,201)
+	if type in ['','mainpage']:
+		html_blocks = re.findall('class="pagination(.*?)</div>',html,re.DOTALL)
+		if html_blocks:
+			block = html_blocks[0]
+			items = re.findall('href=["\'](http.*?)["\'].*?>(.*?)<',block,re.DOTALL)
+			for link,title in items:
+				link = unescapeHTML(link)
+				title = unescapeHTML(title)
+				title = title.replace('الصفحة ','')
+				if 'search?s=' in url:
+					page_new = link.split('page=')[1]
+					page_old = url.split('page=')[1]
+					link = url.replace('page='+page_old,'page='+page_new)
+				if title!='': addMenuItem('folder',menu_name+'صفحة '+title,link,201)
 	return
 
 def EPISODES(url):
@@ -137,15 +162,15 @@ def EPISODES(url):
 	if seasonsCount>1 and episodesCount>0 and '/season/' not in url:
 		for link,title,sequence in items:
 			if '/season/' in link:
-				#link = quote(link)
+				#link = QUOTE(link)
 				addMenuItem('folder',menu_name+title,link,203)
 	else:
 		for link,title,sequence in items:
 			if '/season/' not in link:
-				#if '%' not in link: link = quote(link)
-				#else: link = quote(unquote(link))
-				#link = unquote(link)
-				title = unquote(title)
+				#if '%' not in link: link = QUOTE(link)
+				#else: link = QUOTE(UNQUOTE(link))
+				#link = UNQUOTE(link)
+				title = UNQUOTE(title)
 				addMenuItem('video',menu_name+title,link,202)
 	return
 
@@ -154,7 +179,7 @@ def PLAY(url):
 	linkLIST = []
 	parts = url.split('/')
 	#DIALOG_OK(url,'PLAY-1st')
-	#url = unquote(quote(url))
+	#url = UNQUOTE(QUOTE(url))
 	hostname = website0a
 	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'',headers,True,True,'ARBLIONZ-PLAY-1st')
 	html = response.content#.encode('utf8')
@@ -334,7 +359,7 @@ def FILTERS_MENU(url,filter):
 		url2 = url+'/getposts?'+clean_filter
 	elif type=='FILTERS':
 		filter_show = RECONSTRUCT_FILTER(filter_options,'modified_values')
-		filter_show = unquote(filter_show)
+		filter_show = UNQUOTE(filter_show)
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'modified_filters')
 		if filter_values=='': url2 = url
 		else: url2 = url+'/getposts?'+filter_values
@@ -411,7 +436,7 @@ def RECONSTRUCT_FILTER(filters,mode):
 	for key in url_filter_list:
 		if key in filtersDICT.keys(): value = filtersDICT[key]
 		else: value = '0'
-		if '%' not in value: value = quote(value)
+		if '%' not in value: value = QUOTE(value)
 		if mode=='modified_values' and value!='0': new_filters = new_filters+' + '+value
 		elif mode=='modified_filters' and value!='0': new_filters = new_filters+'&'+key+'='+value
 		elif mode=='all': new_filters = new_filters+'&'+key+'='+value

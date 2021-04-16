@@ -74,7 +74,7 @@ def CHANGE_FOLDER():
 def DOWNLOAD_VIDEO(url,videofiletype):
 	DIALOG_NOTIFICATION('يرجى الانتظار','جاري فحص ملف التحميل')
 	LOG_THIS('NOTICE',LOGGING(script_name)+'   Preparing to download the video file   URL: [ '+url+' ]')
-	DIALOG_OK(url,videofiletype)
+	#DIALOG_OK(url,videofiletype)
 	if videofiletype=='':
 		if 'mp4' in url.lower(): videofiletype = '.mp4'
 		elif 'm3u8' in url.lower(): videofiletype = '.m3u8'

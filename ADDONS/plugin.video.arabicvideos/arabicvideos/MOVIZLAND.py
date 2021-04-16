@@ -55,7 +55,7 @@ def TITLES(url,type=''):
 		if type in ['top-views','top-movies']:
 			img,link,link2,title = img,var1,var2,var3
 		else: img,title,link,link2 = img,var1,var2,var3
-		link = unquote(link)
+		link = UNQUOTE(link)
 		link = link.replace('?view=true','')
 		#DIALOG_OK(link,link2)
 		title = unescapeHTML(title)
@@ -101,7 +101,7 @@ def EPISODES(url):
 		block = html_blocks[0]
 		items = re.findall('href="(.*?)"',block,re.DOTALL)
 		for link in items:
-			link = unquote(link)
+			link = UNQUOTE(link)
 			title = re.findall('(الحلقة|الحلقه)-([0-9]+)',link.split('/')[-2],re.DOTALL)
 			if not title: title = re.findall('()-([0-9]+)',link.split('/')[-2],re.DOTALL)
 			if title: title = ' ' + title[0][1]

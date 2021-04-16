@@ -61,7 +61,7 @@ def TITLES(url):
 	itemLIST = ['مشاهدة','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
 	for img,link,title in items:
 		if '/series/' in link: continue
-		link = unquote(link).strip('/')
+		link = UNQUOTE(link).strip('/')
 		title = unescapeHTML(title)
 		title = title.strip(' ')
 		if '/film/' in link or any(value in title for value in itemLIST):

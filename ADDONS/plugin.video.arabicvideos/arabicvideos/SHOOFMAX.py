@@ -53,7 +53,7 @@ def TITLES(url):
 	if '?' in url:
 		parts = url.split('?')
 		url = parts[0]
-		filter = '?' + urllib2.quote(parts[1],'=&:/%')
+		filter = '?' + QUOTE(parts[1],'=&:/%')
 	else: filter = ''
 	#DIALOG_OK(filter,'')
 	parts = url.split('/')
@@ -61,7 +61,7 @@ def TITLES(url):
 	if sort in ['yop','review','views']:
 		if type=='movie': type1='فيلم'
 		elif type=='series': type1='مسلسل'
-		url = website0a + '/filter-programs/' + quote(type1) + '/' + page + '/' + sort + filter
+		url = website0a + '/filter-programs/' + QUOTE(type1) + '/' + page + '/' + sort + filter
 		#DIALOG_OK(url,page)
 		html = OPENURL_CACHED(REGULAR_CACHE,url,'','','','SHOOFMAX-TITLES-1st')
 		items = re.findall('"ref":(.*?),.*?"title":"(.*?)".+?"numep":(.*?),"res":"(.*?)"',html,re.DOTALL)
@@ -96,7 +96,7 @@ def TITLES(url):
 def EPISODES(url):
 	parts = url.split('=')
 	episodes_count = int(parts[1])
-	name = unquote(parts[2])
+	name = UNQUOTE(parts[2])
 	name = name.replace('_MOD_مسلسل ','')
 	img = parts[3]
 	url = url.split('?')[0]
@@ -175,7 +175,7 @@ def FILTERS(url,type):
 	#DIALOG_OK(url,url)
 	if 'series' in url: url2 = website0a + '/genre/مسلسل'
 	else: url2 = website0a + '/genre/فيلم'
-	url2 = quote(url2)
+	url2 = QUOTE(url2)
 	html = OPENURL_CACHED(LONG_CACHE,url2,'','','','SHOOFMAX-FILTERS-1st')
 	#DIALOG_OK(url,html)
 	if type==1: html_blocks = re.findall('subgenre(.*?)div',html,re.DOTALL)
@@ -203,7 +203,7 @@ def SEARCH(search=''):
 	cookie = cookies['session']
 	csrf = re.findall('name="_csrf" value="(.*?)">',html,re.DOTALL)
 	csrf = csrf[0]
-	payload = '_csrf=' + csrf + '&q=' + quote(new_search)
+	payload = '_csrf=' + csrf + '&q=' + QUOTE(new_search)
 	headers = { 'content-type':'application/x-www-form-urlencoded' , 'cookie':'session='+cookie }
 	url = website0a + "/search"
 	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST', url, payload, headers, True,'','SHOOFMAX-SEARCH-2nd')
@@ -219,7 +219,7 @@ def SEARCH(search=''):
 				if '?ep=' in url:
 					title = '_MOD_مسلسل '+title
 					url = url.replace('?ep=1','?ep=0')
-					url = url+'='+quote(title)+'='+img
+					url = url+'='+QUOTE(title)+'='+img
 					addMenuItem('folder',menu_name+title,url,52,img)
 				else:
 					title = '_MOD_فيلم '+title

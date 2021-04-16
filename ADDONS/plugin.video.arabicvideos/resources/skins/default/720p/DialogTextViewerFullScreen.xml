@@ -37,7 +37,7 @@
 					<font>mono30</font>
 					<textcolor>ddFFFFFF</textcolor>
 					<align>left</align>
-					<aligny>top</aligny>
+					<aligny>center</aligny>
 					<pagecontrol>61</pagecontrol>
 				</control>
 				<control type="textbox" id="52">
@@ -50,7 +50,7 @@
 					<font>mono30</font>
 					<textcolor>ddFFFFFF</textcolor>
 					<align>right</align>
-					<aligny>top</aligny>
+					<aligny>center</aligny>
 					<pagecontrol>61</pagecontrol>
 				</control>
 				<control type="textbox" id="53">
@@ -63,7 +63,7 @@
 					<font>font13</font>
 					<textcolor>ddFFFFFF</textcolor>
 					<align>left</align>
-					<aligny>top</aligny>
+					<aligny>center</aligny>
 					<pagecontrol>61</pagecontrol>
 				</control>
 				<control type="textbox" id="54">

@@ -47,7 +47,7 @@ def MENU(website=''):
 			if 'http' not in link: link = website0a+link
 			"""
 			if '%' in link:
-				link = unquote(link)
+				link = UNQUOTE(link)
 				link = link.replace('ه','ة')
 				link = link.replace('ى','ي')
 			"""
@@ -70,7 +70,7 @@ def TITLES(url):
 	itemLIST = ['مشاهدة','فيلم','اغنية','كليب','اعلان','هداف','مباراة','عرض','مهرجان','البوم']
 	for img,link,title in items:
 		if '/series/' in link: continue
-		link = unquote(link).strip('/')
+		link = UNQUOTE(link).strip('/')
 		title = unescapeHTML(title)
 		title = title.strip(' ')
 		if '/film/' in link or any(value in title for value in itemLIST):
@@ -128,7 +128,7 @@ def PLAY(url):
 	linkLIST = []
 	parts = url.split('/')
 	#DIALOG_OK(url,'PLAY-1st')
-	#url = unquote(quote(url))
+	#url = UNQUOTE(QUOTE(url))
 	hostname = website0a
 	response = OPENURL_REQUESTS_CACHED(LONG_CACHE,'GET',url,'',headers,True,True,'SHAHID4U-PLAY-1st')
 	html = response.content#.encode('utf8')
@@ -306,7 +306,7 @@ def FILTERS_MENU(url,filter):
 		url2 = url+'/getposts?'+clean_filter
 	elif type=='FILTERS':
 		filter_show = RECONSTRUCT_FILTER(filter_options,'modified_values')
-		filter_show = unquote(filter_show)
+		filter_show = UNQUOTE(filter_show)
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'modified_filters')
 		if filter_values=='': url2 = url
 		else: url2 = url+'/getposts?'+filter_values
@@ -374,7 +374,7 @@ def RECONSTRUCT_FILTER(filters,mode):
 	for key in url_filter_list:
 		if key in filtersDICT.keys(): value = filtersDICT[key]
 		else: value = '0'
-		if '%' not in value: value = quote(value)
+		if '%' not in value: value = QUOTE(value)
 		if mode=='modified_values' and value!='0': new_filters = new_filters+' + '+value
 		elif mode=='modified_filters' and value!='0': new_filters = new_filters+'&'+key+'='+value
 		elif mode=='all': new_filters = new_filters+'&'+key+'='+value

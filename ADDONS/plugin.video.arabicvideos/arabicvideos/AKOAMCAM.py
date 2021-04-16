@@ -214,7 +214,7 @@ def FILTERS_MENU(url,filter):
 		url2 = url+'?'+clean_filter
 	elif type=='FILTERS':
 		filter_show = RECONSTRUCT_FILTER(filter_options,'modified_values')
-		filter_show = unquote(filter_show)
+		filter_show = UNQUOTE(filter_show)
 		if filter_values!='': filter_values = RECONSTRUCT_FILTER(filter_values,'all')
 		if filter_values=='': url2 = url
 		else: url2 = url+'?'+filter_values
@@ -282,7 +282,7 @@ def RECONSTRUCT_FILTER(filters,mode):
 	for key in url_filter_list:
 		if key in filtersDICT.keys(): value = filtersDICT[key]
 		else: value = '0'
-		#if '%' not in value: value = quote(value)
+		#if '%' not in value: value = QUOTE(value)
 		if mode=='modified_values' and value!='0': new_filters = new_filters+' + '+value
 		elif mode=='modified_filters' and value!='0': new_filters = new_filters+'&'+key+'='+value
 		elif mode=='all': new_filters = new_filters+'&'+key+'='+value
