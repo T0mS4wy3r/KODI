@@ -535,7 +535,7 @@ def VERSIONS(allowFIX=True,showDialogs=True):
 	#repos.append(['8.0.5','6.0.1','repository.emad.github','https://github.com/emadmahdi/KODI/raw/master/ADDONS/addons.xml'])
 	#DIALOG_BUSY('start')
 	#DIALOG_NOTIFICATION('جاري جمع المعلومات','الرجاء الانتظار')
-	need_update,least_REPO_VER,highest_REPO_VER = False,'999999',''
+	need_update,least_REPO_VER,highest_REPO_VER,highest_ADDON_VER = False,'999999','',''
 	installed_ADDON_VER = addon_version
 	latest_addon_version = ''
 	for addon_ver,repo_ver,repo_id,repo_url in repos:
@@ -544,6 +544,7 @@ def VERSIONS(allowFIX=True,showDialogs=True):
 		installed_REPO_VER = xbmc.getInfoLabel('System.AddonVersion('+repo_id+')')
 		if installed_REPO_VER!='' and installed_REPO_VER<=least_REPO_VER: least_REPO_VER = installed_REPO_VER
 		if latest_repo_version>=highest_REPO_VER: highest_REPO_VER = latest_repo_version
+		if latest_addon_version>=highest_ADDON_VER: highest_ADDON_VER = latest_addon_version
 		#if least_REPO_VER!='999999' or not repo_enabled or latest_addon_version>installed_ADDON_VER or latest_repo_version>installed_REPO_VER:
 		if not repo_enabled or latest_addon_version>installed_ADDON_VER or latest_repo_version>installed_REPO_VER:
 			need_update = True
@@ -554,7 +555,7 @@ def VERSIONS(allowFIX=True,showDialogs=True):
 		message3 = '\n\n' + 'الرجاء إبلاغ المبرمج عن المشكلة التي تواجهك'
 	if least_REPO_VER=='999999': installed_REPO_VER = 'لا يوجد'
 	else: installed_REPO_VER = ' '+least_REPO_VER
-	message2  = 'الإصدار الأخير لبرنامج عماد المتوفر الآن هو :   ' + latest_addon_version
+	message2  = 'الإصدار الأخير لبرنامج عماد المتوفر الآن هو :   ' + highest_ADDON_VER
 	message2 += '\n' + 'الإصدار الذي انت تستخدمه لبرنامج عماد هو :   ' + installed_ADDON_VER
 	message2 += '\n' + 'الإصدار الأخير لمخازن عماد المتوفر الآن هو :   ' + highest_REPO_VER
 	message2 += '\n' + 'الإصدار الذي انت تستخدمه لمخازن عماد هو :  ' + installed_REPO_VER

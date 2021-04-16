@@ -204,39 +204,6 @@ def MAIN():
 		message = '   Label: [ '+menu_label2+' ]   Mode: [ '+mode+' ]   Path: [ '+menu_path2+' ]'
 	LOG_THIS('NOTICE',LOGGING(script_name)+message)
 	new_release = (not os.path.exists(versionfile))
-	lastcheck_islamic = settings.getSetting('lastcheck.islamic')
-	if new_release or lastcheck_islamic=='' or now-int(lastcheck_islamic)>SHORT_CACHE:
-		url = WEBSITES['PYTHON'][4]
-		payload = {'user':dummyClientID(32)}
-		response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST',url,payload,'','',True,'LIBRARY-ISLAMIC-1st',True,True)
-		if not response.succeeded: return
-		messages = response.content
-		messages = EVAL(messages)
-		messages = list(messages)
-		default = messages[0][2]
-		messages = messages[1:]
-		message = random.sample(messages,1)[0][2]
-		message = message+'\n\n\n\n'
-		message = message.split('\n')
-		separator = '[COLOR FFC89008]------------------------------------[/COLOR]'
-		if message[1]=='': all_messages = message[0]
-		else: all_messages = message[0]+'\n'+separator+'\n'+message[1]
-		settings.setSetting('lastcheck.islamic',str(now))
-		buttons = ['رسول الشيعة','رسول السنة']#,'لا أعرف']
-		buttons2,choice = buttons,-1
-		while choice==-1:
-			buttons2 = random.sample(buttons,2)
-			#choice = DIALOG_THREEBUTTONS('من هو النبي الأفضل',message,buttons2[0],buttons2[1],buttons2[2])
-			choice = DIALOG_YESNO('من هو النبي الأفضل',all_messages,'','',buttons2[0],buttons2[1])
-			if buttons[0]!=buttons2[choice]:
-				if message[2]!='': default = message[2]
-				DIALOG_OK('رسالة من المبرمج',default)
-				choice = -1
-		#DIALOG_TEXTVIEWER_FULLSCREEN('رسالة من المبرمج',message,'big','right')
-	lastcheck_messages = settings.getSetting('lastcheck.messages')
-	if new_release or lastcheck_messages=='' or now-int(lastcheck_messages)>REGULAR_CACHE:
-		import MENUS
-		new_messages = MENUS.SHOW_MESSAGES(False)
 	if new_release:
 		if not os.path.exists(addoncachefolder): os.makedirs(addoncachefolder)
 		#CLEAN_KODI_CACHE_FOLDER([dbfile])
@@ -285,6 +252,39 @@ def MAIN():
 					settings2 = xbmcaddon.Addon(id='inputstream.adaptive')
 					settings2.setSetting('STREAMSELECTION','2')
 			except: pass
+	lastcheck_islamic = settings.getSetting('lastcheck.islamic')
+	if new_release or lastcheck_islamic=='' or now-int(lastcheck_islamic)>SHORT_CACHE:
+		url = WEBSITES['PYTHON'][4]
+		payload = {'user':dummyClientID(32)}
+		response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST',url,payload,'','',True,'LIBRARY-ISLAMIC-1st',True,True)
+		if not response.succeeded: return
+		messages = response.content
+		messages = EVAL(messages)
+		messages = list(messages)
+		default = messages[0][2]
+		messages = messages[1:]
+		message = random.sample(messages,1)[0][2]
+		message = message+'\n\n\n\n'
+		message = message.split('\n')
+		separator = '[COLOR FFC89008]------------------------------------[/COLOR]'
+		if message[1]=='': all_messages = message[0]
+		else: all_messages = message[0]+'\n'+separator+'\n'+message[1]
+		settings.setSetting('lastcheck.islamic',str(now))
+		buttons = ['رسول الشيعة','رسول السنة']#,'لا أعرف']
+		buttons2,choice = buttons,-1
+		while choice==-1:
+			buttons2 = random.sample(buttons,2)
+			#choice = DIALOG_THREEBUTTONS('من هو النبي الأفضل',message,buttons2[0],buttons2[1],buttons2[2])
+			choice = DIALOG_YESNO('من هو النبي الأفضل',all_messages,'','',buttons2[0],buttons2[1])
+			if buttons[0]!=buttons2[choice]:
+				if message[2]!='': default = message[2]
+				DIALOG_OK('رسالة من المبرمج',default)
+				choice = -1
+		#DIALOG_TEXTVIEWER_FULLSCREEN('رسالة من المبرمج',message,'big','right')
+	lastcheck_messages = settings.getSetting('lastcheck.messages')
+	if new_release or lastcheck_messages=='' or now-int(lastcheck_messages)>REGULAR_CACHE:
+		import MENUS
+		new_messages = MENUS.SHOW_MESSAGES(False)
 	if '_' in context: context1,context2 = context.split('_',1)
 	else: context1,context2 = context,''
 	if context1=='6':

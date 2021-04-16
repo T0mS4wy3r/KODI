@@ -1,4 +1,9 @@
 ﻿
+v8.1.1	2021-04-16
+Fixed a bug for installation of new release
+Fixed highest addon version report
+
+
 v8.1.0	2021-04-16
 Added EGYBEST site
 Added cache to sites sections
