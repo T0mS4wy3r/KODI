@@ -252,24 +252,22 @@ def MAIN():
 					settings2 = xbmcaddon.Addon(id='inputstream.adaptive')
 					settings2.setSetting('STREAMSELECTION','2')
 			except: pass
-	lastcheck_islamic = settings.getSetting('lastcheck.islamic')
-	if new_release or lastcheck_islamic=='' or now-int(lastcheck_islamic)>SHORT_CACHE:
-		url = WEBSITES['PYTHON'][4]
-		payload = {'user':dummyClientID(32)}
-		response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST',url,payload,'','',True,'LIBRARY-ISLAMIC-1st',True,True)
-		if not response.succeeded: return
-		messages = response.content
-		messages = EVAL(messages)
-		messages = list(messages)
-		default = messages[0][2]
-		messages = messages[1:]
+	lastcheck_messages = settings.getSetting('lastcheck.messages')
+	if new_release or lastcheck_messages=='' or now-int(lastcheck_messages)>REGULAR_CACHE:
+		import MENUS
+		new_messages = MENUS.SHOW_MESSAGES(False)
+	lastcheck_infos = settings.getSetting('lastcheck.infos')
+	if new_release or lastcheck_infos=='' or now-int(lastcheck_infos)>SHORT_CACHE:
+		messages = GENERIC_INFOS_MESSAGES()
+		default = messages[-1][2]
+		messages = messages[:-1]
 		message = random.sample(messages,1)[0][2]
 		message = message+'\n\n\n\n'
 		message = message.split('\n')
 		separator = '[COLOR FFC89008]------------------------------------[/COLOR]'
 		if message[1]=='': all_messages = message[0]
 		else: all_messages = message[0]+'\n'+separator+'\n'+message[1]
-		settings.setSetting('lastcheck.islamic',str(now))
+		settings.setSetting('lastcheck.infos',str(now))
 		buttons = ['رسول الشيعة','رسول السنة']#,'لا أعرف']
 		buttons2,choice = buttons,-1
 		while choice==-1:
@@ -281,10 +279,6 @@ def MAIN():
 				DIALOG_OK('رسالة من المبرمج',default)
 				choice = -1
 		#DIALOG_TEXTVIEWER_FULLSCREEN('رسالة من المبرمج',message,'big','right')
-	lastcheck_messages = settings.getSetting('lastcheck.messages')
-	if new_release or lastcheck_messages=='' or now-int(lastcheck_messages)>REGULAR_CACHE:
-		import MENUS
-		new_messages = MENUS.SHOW_MESSAGES(False)
 	if '_' in context: context1,context2 = context.split('_',1)
 	else: context1,context2 = context,''
 	if context1=='6':
@@ -2037,6 +2031,16 @@ def PRIVS(priv):
 def WRITE_THIS(data):
 	with open('s:\\0000emad.html','w') as f: f.write(data)
 	return
+
+def GENERIC_INFOS_MESSAGES():
+	url = WEBSITES['PYTHON'][4]
+	payload = {'user':dummyClientID(32)}
+	response = OPENURL_REQUESTS_CACHED(REGULAR_CACHE,'POST',url,payload,'','',True,'LIBRARY-GENERIC_ISLAMIC_MESSAGES-1st',True,True)
+	if not response.succeeded: return
+	messages = response.content
+	messages = EVAL(messages)
+	messages = list(messages)
+	return messages
 
 
 """

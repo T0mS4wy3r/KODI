@@ -1,4 +1,10 @@
 ﻿
+v8.1.2	2021-04-16
+Added showing all generic messages
+Fixed generic infos default answer
+Minor fixes and improvements
+
+
 v8.1.1	2021-04-16
 Fixed a bug for installation of new release
 Fixed highest addon version report

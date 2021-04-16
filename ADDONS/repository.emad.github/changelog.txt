@@ -1,4 +1,8 @@
 ﻿
+v6.2.0	2021-04-16
+Removed zombiB repository
+
+
 v6.1.1	2021-04-02
 Reordered ADDONS19 & ADDONS18
 

@@ -15,6 +15,7 @@ def MAIN(mode,url,text=''):
 	elif mode==265: results = LAST_VIDEOS_MENU(text)
 	elif mode==266: results = DELETE_LAST_VIDEOS_MENU(text)
 	elif mode==267: results = SHOW_MESSAGES(True)
+	elif mode==268: results = SHOW_GENERIC_INFOS()
 	else: results = False
 	return results
 
@@ -52,13 +53,14 @@ def MENU():
 	addMenuItem('folder','[COLOR FFC89008]17.  [/COLOR]'+'آخر 50 مجلد تم فتحها','',265,'','','folder')
 	addMenuItem('folder','[COLOR FFC89008]18.  [/COLOR]'+'آخر 50 قناة تم تشغيلها','',265,'','','live')
 	addMenuItem('link','[COLOR FFC89008]3====================3[/COLOR]','',9999)
-	addMenuItem('link','[COLOR FFC89008]19.  [/COLOR]'+'تقرير استخدام البرنامج','',176)
-	addMenuItem('link','[COLOR FFC89008]20.  [/COLOR]'+'رسائل وأخبار من المبرمج','',267)
-	addMenuItem('link','[COLOR FFC89008]21.  [/COLOR]البرنامج إصدار رقم ( '+addon_version+' )','',7)
-	addMenuItem('link','[COLOR FFC89008]22.  [/COLOR]'+'تقرير عن آخر التغييرات','',199)
-	addMenuItem('folder','[COLOR FFC89008]23.  [/COLOR]ـ Answers Menu  قائمة الأجوبة','',263)
-	addMenuItem('folder','[COLOR FFC89008]24.  [/COLOR]ـ Services Menu  قائمة الخدمات','',264)
-	addMenuItem('link','[COLOR FFC89008]25.  [/COLOR]ـ Contact Me  كيف تتصل بالمبرمج','',196)
+	addMenuItem('link','[COLOR FFC89008]19.  [/COLOR]'+'معلومات اسلامية عامة','',268)
+	addMenuItem('link','[COLOR FFC89008]20.  [/COLOR]'+'تقرير استخدام البرنامج','',176)
+	addMenuItem('link','[COLOR FFC89008]21.  [/COLOR]'+'رسائل وأخبار من المبرمج','',267)
+	addMenuItem('link','[COLOR FFC89008]22.  [/COLOR]البرنامج إصدار رقم ( '+addon_version+' )','',7)
+	addMenuItem('link','[COLOR FFC89008]23.  [/COLOR]'+'تقرير عن آخر التغييرات','',199)
+	addMenuItem('folder','[COLOR FFC89008]24.  [/COLOR]ـ Answers Menu  قائمة الأجوبة','',263)
+	addMenuItem('folder','[COLOR FFC89008]25.  [/COLOR]ـ Services Menu  قائمة الخدمات','',264)
+	addMenuItem('link','[COLOR FFC89008]26.  [/COLOR]ـ Contact Me  كيف تتصل بالمبرمج','',196)
 	return
 
 def WEBSITES_MENU():
@@ -284,5 +286,13 @@ def CHECK_VERSIONS():
 			DIALOG_TEXTVIEWER_FULLSCREEN(message1,message2+'\n\n\n\n'+message4,'big','right')
 	return need_update
 
+def SHOW_GENERIC_INFOS():
+	messages = GENERIC_INFOS_MESSAGES()
+	messages = sorted(messages,reverse=True,key=lambda key: int(key[0]))
+	messageText = ''
+	for messageID,messageType,message in messages[:-1]:
+		messageText += message+'\n\n==============================\n\n'
+	DIALOG_TEXTVIEWER_FULLSCREEN('معلومات عامة عن نبي الإسلام',messageText,'big','right')
+	return
 
 
