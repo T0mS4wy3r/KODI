@@ -1,4 +1,9 @@
 ﻿
+v8.2.0	2021-04-18
+Removed py files
+Minor fixes and improvements
+
+
 v8.1.2	2021-04-16
 Added showing all generic messages
 Fixed generic infos default answer
